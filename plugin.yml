@@ -1,0 +1,149 @@
+name: BukkitIRCd
+
+main: com.Jdbye.BukkitIRCd.BukkitIRCdPlugin
+
+version: 0.9.4
+website: http://www.jdbye.com
+author: Jdbye
+description: IRC server plugin for Bukkit
+softdepend: [dynmap, Permissions]
+commands:
+  irclist:
+    description: Lists the online users on IRC
+    usage: /<command>
+  ilist:
+    description: Alias for /irclist
+    usage: /<command>
+  irckick:
+    description: Kicks someone from IRC
+    usage: /<command> nick (reason)
+  ikick:
+    description: Alias for /irckick
+    usage: /<command> nick (reason)
+  ircban:
+    description: Bans a user from IRC by their host, ip, ident, nick or a full hostmask 
+    usage: /<command> (host/ip/ident/nick) nick/ip/fullhost (reason)
+  iban:
+    description: Alias for /ircban 
+    usage: /<command> (host/ip/ident/nick) nick/ip/fullhost (reason)
+  ircunban:
+    description: Unbans someone from IRC by their IP or full hostmask
+    usage: /<command> ip/fullhost
+  iunban:
+    description: Alias for /ircunban
+    usage: /<command> ip/fullhost
+  ircwhois:
+    description: Looks up someone on IRC
+    usage: /<command> nick
+  iwhois:
+    description: Alias for /ircwhois
+    usage: /<command> nick
+  ircmsg:
+    description: Messages someone on IRC
+    usage: /<command> nick message
+  imsg:
+    description: Alias for /ircmsg
+    usage: /<command> nick message
+  im:
+    description: Alias for /ircmsg
+    usage: /<command> nick message
+  ircreply:
+    description: Replies to the last IRC private message you received.
+    usage: /<command> message
+  ireply:
+    description: Alias for /ircreply
+    usage: /<command> message
+  ir:
+    description: Alias for /ircreply
+    usage: /<command> message
+  irctopic:
+    description: Changes the IRC topic
+    usage: /<command> newtopic
+  itopic:
+    description: Alias for /irctopic
+    usage: /<command> newtopic
+  irclink:
+    description: Attempts to link to the remote server if in linking mode.
+    usage: /<command>
+  ilink:
+    description: Alias for /irclink
+    usage: /<command>
+  ircreload:
+    description: Reloads the configuration and MOTD.
+    usage: /<command>
+  ireload:
+    description: Alias for /ircreload
+    usage: /<command>
+  rawsend:
+    description: Sends a raw server command to the linked server, if enabled. Only usable from console.
+    usage: /<command> command
+permissions:
+  bukkitircd.*:
+    description: Allows you to use every /irc command
+    children:
+      bukkitircd.kick: true
+      bukkitircd.ban: true
+      bukkitircd.unban: true
+      bukkitircd.list: true
+      bukkitircd.whois: true
+      bukkitircd.msg: true
+      bukkitircd.reply: true
+      bukkitircd.topic: true
+      bukkitircd.link: true
+      bukkitircd.reload: true
+  bukkitircd.kick:
+    description: Allows you to use the /irckick command
+    default: op
+  bukkitircd.ban:
+    description: Allows you to use the /ircban command
+    default: op
+  bukkitircd.unban:
+    description: Allows you to use the /ircunban command
+    default: op
+  bukkitircd.list:
+    description: Allows you to use the /irclist command
+    default: op
+  bukkitircd.whois:
+    description: Allows you to use the /ircwhois command
+    default: op
+  bukkitircd.msg:
+    description: Allows you to use the /ircmsg command
+    default: op
+  bukkitircd.reply:
+    description: Allows you to use the /ircreply command
+    default: op
+  bukkitircd.topic:
+    description: Allows you to use the /irctopic command
+    default: op
+  bukkitircd.link:
+    description: Allows you to use the /irclink command
+    default: op
+  bukkitircd.reload:
+    description: Allows you to use the /ircreload command
+    default: op
+  bukkitircd.oper:
+    description: Gives you oper status on IRC
+    default: op
+  bukkitircd.mode.*:
+    description: Gives you all IRC user modes (+qaohv)
+    children:
+      bukkitircd.mode.owner: true
+      bukkitircd.mode.protect: true
+      bukkitircd.mode.op: true
+      bukkitircd.mode.halfop: true
+      bukkitircd.mode.voice: true
+  bukkitircd.mode.owner:
+    description: Gives you owner status on IRC (+q)
+    default: op
+  bukkitircd.mode.protect:
+    description: Gives you protected status on IRC (+a)
+    default: op
+  bukkitircd.mode.op:
+    description: Gives you op status on IRC (+o)
+    default: op
+  bukkitircd.mode.halfop:
+    description: Gives you halfop status on IRC (+h)
+    default: op
+  bukkitircd.mode.voice:
+    description: Gives you voice status on IRC (+v)
+    default: op
