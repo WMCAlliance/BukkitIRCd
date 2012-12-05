@@ -20,7 +20,7 @@ This development is mainly for the benifit of the [Worldwide Minecraft Alliance]
 
 ### Required for Compiling
 
-After looking at the [.classpath](https://github.com/nathanblaney/BukkitIRCd/blob/master/.classpath), it is clear the following files are required. We will not upload them ourselves as they may need to be updated, or some people may prefer to get them from the original source rather than a third party.
+After looking at the [.classpath](https://github.com/nathanblaney/BukkitIRCd/blob/master/.classpath), it is clear the following files are required. We will not upload them ourselves as they may need to be updated, or some people may prefer to get them from the original source rather than a third party. When compiling, it is imperitive that it is compiled against Java 1.6, and not 1.7, as it could either cause the build to fail OR cause the plugin to not work on servers still running on Java 1.6 (although they should really update to 1.7).
 
 * [Bukkit](http://dl.bukkit.org/downloads/bukkit/) (not to be confused with [CraftBukkit](http://dl.bukkit.org/downloads/craftbukkit/), the server wrapper)
 * [Dynmap API](http://dev.bukkit.org/server-mods/dynmap/files/82-dynmap-api-v1-1/)
