@@ -16,4 +16,12 @@ If you'd like to join the team, let us know and we'll happily add you.
 
 ### Extra Notes
 
-This development is mainly for the benifit of the [Worldwide Minecraft Alliance](http://wma.im), an Australian multi-feature server hosted in Sydney, Australia.
+This development is mainly for the benifit of the [Worldwide Minecraft Alliance](http://wma.im), an Australian multi-feature server hosted in Sydney, Australia. However, if you'd like to use the plugin on your own server, then by all means go ahead. There currently are no compiled builds of this version, so you will need to compile it yourself.
+
+### Required for Compiling
+
+After looking at the [.classpath](https://github.com/nathanblaney/BukkitIRCd/blob/master/.classpath), it is clear the following files are required. We will not upload them ourselves as they may need to be updated, or some people may prefer to get them from the original source rather than a third party.
+
+* [Bukkit](http://dl.bukkit.org/downloads/bukkit/) (not to be confused with [CraftBukkit](http://dl.bukkit.org/downloads/craftbukkit/), the server wrapper)
+* [Dynmap API](http://dev.bukkit.org/server-mods/dynmap/files/82-dynmap-api-v1-1/)
+* Permissions (two notes here, we don't have a download available, and we are going to try and rid ourselves of this requirement, as it is oudated and must make way for SuperPerms)
