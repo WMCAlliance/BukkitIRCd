@@ -1,18 +1,33 @@
-mode: "standalone"  # Which mode the plugin runs in. Valid choices are standalone, for running a standalone IRC server, and inspircd, for linking with a InspIRCd server.
-ingame-suffix: "/minecraft"  # The suffix for ingame players on the irc server, to distinguish between them.
-enable-notices: yes  # Whether to enable IRC->Game notice support. Disable this if you're using the plugin in linking mode and ingame users are being messaged by services.
-convert-color-codes: yes  # Whether to convert color codes between IRC/Minecraft format or not.
-irc-colors: "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15"  # IRC color map separated by commas. You should not touch this, it is only for reference when modifying the color map below and modifying it might have unexpected results.
-game-colors: "0,f,1,2,c,4,5,6,e,a,3,b,9,d,8,7"  # Minecraft color map separated by commas. This is used for color code conversion
-channel-name: "#minecraft"  # Channel name for the IRC server.
-console-channel-name: "#staff"  # Name of the console channel for executing server commands (oper only)
-server-creation-date: "Tue Mar 13 03:44:06 2012"  # The date the IRC server was created. Should not need to be modified. However, keep it in the same format if you modify it.
-server-name: "BukkitIRCd"  # Name of the standalone IRC server, e.g. TempCraft. Must not contain spaces.
-server-description: "Minecraft BukkitIRCd Server"  # Description of the IRC server, e.g. TempCraft BukkitIRCd Server. May contain spaces.
-server-host: "bukkitircd.localhost"  # Hostname of the IRC server, e.g. irc.tempcraft.net
-ban-type: "ip"  # Default ban type for /ircban. Valid choices are host,ip,ident,nick
-debug-mode: no  # With this enabled all server link traffic will be outputted to the console.
-enable-raw-send: no  # Lets you use the /rawsend command (console only) to send raw commands to the linked server. Don't enable this unless you know what you are doing.
+mode: "standalone"  
+# Which mode the plugin runs in. Valid choices are standalone, for running a standalone IRC server, and inspircd, for linking with a InspIRCd server.
+ingame-suffix: "/minecraft"  
+# The suffix for ingame players on the irc server, to distinguish between them.
+enable-notices: yes  
+# Whether to enable IRC->Game notice support. Disable this if you're using the plugin in linking mode and ingame users are being messaged by services.
+convert-color-codes: yes  
+# Whether to convert color codes between IRC/Minecraft format or not.
+irc-colors: "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15"  
+# IRC color map separated by commas. You should not touch this, it is only for reference when modifying the color map below and modifying it might have unexpected results.
+game-colors: "0,f,1,2,c,4,5,6,e,a,3,b,9,d,8,7"  
+# Minecraft color map separated by commas. This is used for color code conversion
+channel-name: "#minecraft"  
+# Channel name for the IRC server.
+console-channel-name: "#staff"  
+# Name of the console channel for executing server commands (oper only)
+server-creation-date: "Tue Mar 13 03:44:06 2012"  
+# The date the IRC server was created. Should not need to be modified. However, keep it in the same format if you modify it.
+server-name: "BukkitIRCd"  
+# Name of the standalone IRC server, e.g. TempCraft. Must not contain spaces.
+server-description: "Minecraft BukkitIRCd Server"  
+# Description of the IRC server, e.g. TempCraft BukkitIRCd Server. May contain spaces.
+server-host: "bukkitircd.localhost"  
+# Hostname of the IRC server, e.g. irc.tempcraft.net
+ban-type: "ip"  
+# Default ban type for /ircban. Valid choices are host,ip,ident,nick
+debug-mode: no  
+# With this enabled all server link traffic will be outputted to the console.
+enable-raw-send: no  
+# Lets you use the /rawsend command (console only) to send raw commands to the linked server. Don't enable this unless you know what you are doing.
 standalone:
     port: 6667  # Port to use for the standalone IRC server.
     max-connections: 1000  # Max number of simultaneous connections.
