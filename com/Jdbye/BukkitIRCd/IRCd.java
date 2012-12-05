@@ -114,7 +114,7 @@ public class IRCd implements Runnable {
 	public static int timeoutInterval = 180;
 	public static int nickLen = 32;
 	public static String operUser = "", operPass = "";
-	public static String operModes = "~&@%+";
+	public static String operModes = "@";
 	
 	// Link settings
 	public static String remoteHost = "localhost";

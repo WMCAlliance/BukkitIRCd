@@ -46,7 +46,7 @@ public class IRCCommandSender implements CommandSender {
 
     public boolean isOp() {
         //return client.isOper;
-    	return true;
+    	return false;
     }
 
     public void setOp(boolean value) {
