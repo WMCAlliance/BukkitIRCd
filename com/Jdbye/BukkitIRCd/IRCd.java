@@ -91,7 +91,7 @@ public class IRCd implements Runnable {
 	
 	// Universal settings
 	public static boolean debugMode = false;
-	public static String version = "BukkitIRCd by Jdbye";
+	public static String version = "BukkitIRCd by Jdbye Edited by Mu5tank05";
 	public static String serverName = "Minecraft"; 
 	public static String serverDescription ="Minecraft BukkitIRCd Server"; 
 	public static String serverHostName = "bukkitircd.localhost"; 
