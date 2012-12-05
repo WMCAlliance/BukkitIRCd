@@ -1,6 +1,6 @@
 mode: "standalone"  
 # Which mode the plugin runs in. Valid choices are standalone, for running a standalone IRC server, and inspircd, for linking with a InspIRCd server.
-ingame-suffix: "/minecraft"  
+ingame-suffix: "-mc"  
 # The suffix for ingame players on the irc server, to distinguish between them.
 enable-notices: yes  
 # Whether to enable IRC->Game notice support. Disable this if you're using the plugin in linking mode and ingame users are being messaged by services.
@@ -12,7 +12,7 @@ game-colors: "0,f,1,2,c,4,5,6,e,a,3,b,9,d,8,7"
 # Minecraft color map separated by commas. This is used for color code conversion
 channel-name: "#minecraft"  
 # Channel name for the IRC server.
-console-channel-name: "#staff"  
+console-channel-name: "#minecraft-staff"  
 # Name of the console channel for executing server commands (oper only)
 server-creation-date: "Tue Mar 13 03:44:06 2012"  
 # The date the IRC server was created. Should not need to be modified. However, keep it in the same format if you modify it.
@@ -34,7 +34,7 @@ standalone:
     ping-interval: 45  # Interval for sending pings, in seconds.
     timeout: 180  # How long with no ping responses before a timeout occurs, in seconds.
     max-nick-length: 32  # Max IRC nick length.
-    channel-topic: "Welcome to a Bukkit server!"  # Channel topic. Formatting codes are supported with ^K for color, ^B for bold, ^I for italic, ^O for normal and ^U for underline
+    channel-topic: "Minecraft Server Chatroom"  # Channel topic. Formatting codes are supported with ^K for color, ^B for bold, ^I for italic, ^O for normal and ^U for underline
     channel-topic-set-date: "Fri Jan 16 10:53:26 1970"  # Date the topic was last changed. Keep it in the same format!
     channel-topic-set-by: "BukkitIRCd"  # Name of the user who changed the topic last.
     oper-username: ""  # Username for the /oper command to access kick/ban/topic set/server commands. Leave it blank to not use oper login.
