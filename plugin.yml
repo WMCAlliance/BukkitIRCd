@@ -11,69 +11,43 @@ commands:
   irclist:
     description: Lists the online users on IRC
     usage: /<command>
-  ilist:
-    description: Alias for /irclist
-    usage: /<command>
+    aliases: [ilist]
   irckick:
     description: Kicks someone from IRC
     usage: /<command> nick (reason)
-  ikick:
-    description: Alias for /irckick
-    usage: /<command> nick (reason)
+    aliases: [ikick]
   ircban:
     description: Bans a user from IRC by their host, ip, ident, nick or a full hostmask 
     usage: /<command> (host/ip/ident/nick) nick/ip/fullhost (reason)
-  iban:
-    description: Alias for /ircban 
-    usage: /<command> (host/ip/ident/nick) nick/ip/fullhost (reason)
+    aliases: [iban]
   ircunban:
     description: Unbans someone from IRC by their IP or full hostmask
     usage: /<command> ip/fullhost
-  iunban:
-    description: Alias for /ircunban
-    usage: /<command> ip/fullhost
+    aliases: [iunban]
   ircwhois:
     description: Looks up someone on IRC
     usage: /<command> nick
-  iwhois:
-    description: Alias for /ircwhois
-    usage: /<command> nick
+    aliases: [iwhois]
   ircmsg:
     description: Messages someone on IRC
     usage: /<command> nick message
-  imsg:
-    description: Alias for /ircmsg
-    usage: /<command> nick message
-  im:
-    description: Alias for /ircmsg
-    usage: /<command> nick message
+    aliases: [imsg, im]
   ircreply:
     description: Replies to the last IRC private message you received.
     usage: /<command> message
-  ireply:
-    description: Alias for /ircreply
-    usage: /<command> message
-  ir:
-    description: Alias for /ircreply
-    usage: /<command> message
+    aliases: [ireply, ir]
   irctopic:
     description: Changes the IRC topic
     usage: /<command> newtopic
-  itopic:
-    description: Alias for /irctopic
-    usage: /<command> newtopic
+    aliases: [itopic]
   irclink:
     description: Attempts to link to the remote server if in linking mode.
     usage: /<command>
-  ilink:
-    description: Alias for /irclink
-    usage: /<command>
+    aliases: [ilink]
   ircreload:
     description: Reloads the configuration and MOTD.
     usage: /<command>
-  ireload:
-    description: Alias for /ircreload
-    usage: /<command>
+    aliases: [ireload]
   rawsend:
     description: Sends a raw server command to the linked server, if enabled. Only usable from console.
     usage: /<command> command
