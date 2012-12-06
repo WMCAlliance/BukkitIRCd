@@ -29,7 +29,6 @@ After looking at the [.classpath](https://github.com/nathanblaney/BukkitIRCd/blo
 
 * [Bukkit](http://dl.bukkit.org/downloads/bukkit/) (not to be confused with [CraftBukkit](http://dl.bukkit.org/downloads/craftbukkit/), the server wrapper)
 * [Dynmap API](http://dev.bukkit.org/server-mods/dynmap/files/82-dynmap-api-v1-1/)
-* Permissions (two notes here, we don't have a download available, and we are going to try and rid ourselves of this requirement, as it is oudated and must make way for SuperPerms)
  
 ### Licensing
 
