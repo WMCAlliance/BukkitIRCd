@@ -6,7 +6,7 @@ version: 1.0
 website: http://wma.im
 author: WMA
 description: IRC server plugin for Bukkit, originally by Jdbye
-softdepend: [dynmap, Permissions]
+softdepend: [dynmap]
 commands:
   irclist:
     description: Lists the online users on IRC
