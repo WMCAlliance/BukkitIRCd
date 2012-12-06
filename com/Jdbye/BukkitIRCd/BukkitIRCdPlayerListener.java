@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -55,7 +55,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onPlayerChat(PlayerChatEvent event)
+	public void onPlayerChat(AsyncPlayerChatEvent event)
 	{
 		if (event.isCancelled()) return;
 		plugin.ircd.updateBukkitUserIdleTime(plugin.ircd.getBukkitUser(event.getPlayer().getName()));
