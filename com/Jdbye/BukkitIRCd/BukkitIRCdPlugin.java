@@ -215,7 +215,6 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			else log.warning("[BukkitIRCd] Failed to create bans file.");
 		}
 
-		setupPermissions();
 		setupDynmap();
 		
 		ircd = new IRCd();
@@ -282,25 +281,6 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 	public void setDebugging(final Player player, final boolean value) {
 		debugees.put(player, value);
-	}
-
-	private void setupPermissions() {
-		Plugin plugin = this.getServer().getPluginManager().getPlugin("Permissions");
-
-		if (this.permissionHandler == null) {
-			if (plugin != null) {
-				setupPermissions((Permissions)plugin);
-			} else {
-				log.info("[BukkitIRCd] Permissions plugin not found. Using Superperms.");
-			}
-		}
-	}
-	
-	public void setupPermissions(Permissions plugin) {
-		if (plugin != null) {
-			this.permissionHandler = plugin.getHandler();
-			log.info("[BukkitIRCd] Hooked into Permissions 2.x");
-		}
 	}
 	
 	public void unloadPermissions() {
@@ -739,12 +719,12 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 				if (hasPermission(player, "bukkitircd.list")) {
 					String players[] = ircd.getIRCNicks();
 					String allplayers = "";
-					for (String curplayer : players) allplayers += "§7"+curplayer+"§f, ";
-					player.sendMessage("§9There are §c"+players.length+" §9users on IRC.");
+					for (String curplayer : players) allplayers += "ï¿½7"+curplayer+"ï¿½f, ";
+					player.sendMessage("ï¿½9There are ï¿½c"+players.length+" ï¿½9users on IRC.");
 					if (players.length > 0) player.sendMessage(allplayers.substring(0,allplayers.length()-2));
 				}
 				else {
-					player.sendMessage("§cYou don't have access to that command.");
+					player.sendMessage("ï¿½cYou don't have access to that command.");
 				}
 				return true;
 			}
@@ -756,16 +736,16 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 						IRCUser ircuser = ircd.getIRCUser(trimmedArgs[0]);
 						if (ircuser != null) {
 							if (ircd.kickIRCUser(ircuser, player.getName(), player.getName(), player.getAddress().getAddress().getHostName(), reason, true))
-								player.sendMessage("§cPlayer kicked.");
+								player.sendMessage("ï¿½cPlayer kicked.");
 							else
-								player.sendMessage("§cFailed to kick player.");
+								player.sendMessage("ï¿½cFailed to kick player.");
 						}
-						else { player.sendMessage("§cThat user is not online."); }
+						else { player.sendMessage("ï¿½cThat user is not online."); }
 					}
-					else { player.sendMessage("§cPlease provide a nickname and optionally a kick reason."); return false; }
+					else { player.sendMessage("ï¿½cPlease provide a nickname and optionally a kick reason."); return false; }
 				}
 				else {
-					player.sendMessage("§cYou don't have access to that command.");
+					player.sendMessage("ï¿½cYou don't have access to that command.");
 				}
 				return true;
 			}
@@ -792,33 +772,33 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 							if (ircd.banIRCUser(ban, player.getName()+IRCd.ingameSuffix+"!"+player.getName()+"@"+player.getAddress().getAddress().getHostName())) {
 								if (ircd.msgIRCBan.length() > 0) getServer().broadcastMessage(ircd.msgIRCBan.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%",player.getName()));
 								if ((dynmap != null) && (ircd.msgIRCBanDynmap.length() > 0)) dynmap.sendBroadcastToWeb("IRC", ircd.msgIRCBanDynmap.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%",player.getName()));
-								player.sendMessage("§cUser banned.");
+								player.sendMessage("ï¿½cUser banned.");
 							}
-							else player.sendMessage("§cUser is already banned.");
+							else player.sendMessage("ï¿½cUser is already banned.");
 						}
 						else if (countStr(ban, ".") == 3) { // It's an IP
 							if (ircd.banIRCUser("*!*@"+ban, player.getName()+"!"+player.getName()+"@"+player.getAddress().getAddress().getHostName())) {
 								if (ircd.msgIRCBan.length() > 0) getServer().broadcastMessage(ircd.msgIRCBan.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%",player.getName()));
 								if ((dynmap != null) && (ircd.msgIRCBanDynmap.length() > 0)) dynmap.sendBroadcastToWeb("IRC", ircd.msgIRCBanDynmap.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%",player.getName()));
-								player.sendMessage("§cIP banned.");
+								player.sendMessage("ï¿½cIP banned.");
 							}
 							else
-								player.sendMessage("§cIP is already banned.");
+								player.sendMessage("ï¿½cIP is already banned.");
 						}
 						else {
 							if (ircuser != null) {
 								if (ircd.kickBanIRCUser(ircuser, player.getName(), player.getName()+"!"+player.getName()+"@"+player.getAddress().getAddress().getHostName(), reason, true, banType))
-									player.sendMessage("§cUser banned.");
+									player.sendMessage("ï¿½cUser banned.");
 								else
-									player.sendMessage("§cUser is already banned.");
+									player.sendMessage("ï¿½cUser is already banned.");
 							}
-							else { player.sendMessage("§cThat user is not online."); }
+							else { player.sendMessage("ï¿½cThat user is not online."); }
 						}
 					}
-					else { player.sendMessage("§cPlease provide a nickname or IP and optionally a ban reason."); return false; }
+					else { player.sendMessage("ï¿½cPlease provide a nickname or IP and optionally a ban reason."); return false; }
 				}
 				else {
-					player.sendMessage("§cYou don't have access to that command.");
+					player.sendMessage("ï¿½cYou don't have access to that command.");
 				}
 				return true;
 			}
@@ -836,26 +816,26 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 							if (ircd.unBanIRCUser(ban, player.getName()+IRCd.ingameSuffix+"!"+player.getName()+"@"+player.getAddress().getAddress().getHostName())) {
 								if (ircd.msgIRCUnban.length() > 0) getServer().broadcastMessage(ircd.msgIRCUnban.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%",player.getName()));
 								if ((dynmap != null) && (ircd.msgIRCUnbanDynmap.length() > 0)) dynmap.sendBroadcastToWeb("IRC", ircd.msgIRCUnbanDynmap.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%",player.getName()));
-								player.sendMessage("§cUser unbanned.");
+								player.sendMessage("ï¿½cUser unbanned.");
 							}
 							else
-								player.sendMessage("§cUser is not banned.");
+								player.sendMessage("ï¿½cUser is not banned.");
 						}
 						else if (countStr(ban, ".") == 3) { // It's an IP
 							if (ircd.unBanIRCUser("*!*@"+ban, player.getName()+IRCd.ingameSuffix+"!"+player.getName()+"@"+player.getAddress().getAddress().getHostName())) {
 								if (ircd.msgIRCUnban.length() > 0) getServer().broadcastMessage(ircd.msgIRCUnban.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%",player.getName()));
 								if ((dynmap != null) && (ircd.msgIRCUnbanDynmap.length() > 0)) dynmap.sendBroadcastToWeb("IRC", ircd.msgIRCUnbanDynmap.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%",player.getName()));
-								player.sendMessage("§cIP unbanned.");
+								player.sendMessage("ï¿½cIP unbanned.");
 							}
 							else
-								player.sendMessage("§cIP is not banned.");
+								player.sendMessage("ï¿½cIP is not banned.");
 						} 
-						else { player.sendMessage("§cInvalid hostmask."); return false; }
+						else { player.sendMessage("ï¿½cInvalid hostmask."); return false; }
 					}
-					else { player.sendMessage("§cPlease provide a IP/full hostmask."); return false; }
+					else { player.sendMessage("ï¿½cPlease provide a IP/full hostmask."); return false; }
 				}
 				else {
-					player.sendMessage("§cYou don't have access to that command.");
+					player.sendMessage("ï¿½cYou don't have access to that command.");
 				}
 				return true;
 			}
@@ -869,11 +849,11 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 								for (String whoisline : whois) player.sendMessage(whoisline);
 							}
 						}
-						else { player.sendMessage("§cThat user is not online."); }
+						else { player.sendMessage("ï¿½cThat user is not online."); }
 					}
-					else { player.sendMessage("§cPlease provide a nickname."); return false; }		}
+					else { player.sendMessage("ï¿½cPlease provide a nickname."); return false; }		}
 				else {
-					player.sendMessage("§cYou don't have access to that command.");
+					player.sendMessage("ï¿½cYou don't have access to that command.");
 				}
 				return true;
 			}
@@ -884,7 +864,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 						if (ircuser != null) {
 							if (ircd.mode == Modes.STANDALONE) { 
 								ircd.writeTo(ircuser.nick, ":"+player.getName()+ircd.ingameSuffix+"!"+player.getName()+"@"+player.getAddress().getAddress().getHostName()+" PRIVMSG "+ircuser.nick+" :"+ircd.convertColors(ircd.join(trimmedArgs, " ", 1), false));
-								player.sendMessage("§cMessage sent.");
+								player.sendMessage("ï¿½cMessage sent.");
 							}
 							else if (ircd.mode == Modes.INSPIRCD) {
 								BukkitPlayer bp;
@@ -893,24 +873,24 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 									if (UID != null) {
 										if (IRCd.linkcompleted) {
 											IRCd.println(":"+bp.getUID()+" PRIVMSG "+UID+" :"+ircd.convertColors(ircd.join(trimmedArgs, " ", 1), false));
-											player.sendMessage("§cMessage sent.");
+											player.sendMessage("ï¿½cMessage sent.");
 										}
-										else player.sendMessage("§cFailed to send message, not currently linked to IRC server.");
+										else player.sendMessage("ï¿½cFailed to send message, not currently linked to IRC server.");
 									}
 									else {
 										log.severe("UID not found in list: "+UID); // Log this as severe since it should never occur unless something is wrong with the code
-										player.sendMessage("§cFailed to send message, UID not found. This should not happen, please report it to Jdbye.");
+										player.sendMessage("ï¿½cFailed to send message, UID not found. This should not happen, please report it to Jdbye.");
 									}
 								}
-								else player.sendMessage("§cFailed to send message, you could not be found in the UID list. This should not happen, please report it to Jdbye.");
+								else player.sendMessage("ï¿½cFailed to send message, you could not be found in the UID list. This should not happen, please report it to Jdbye.");
 							}
 						}
-						else { player.sendMessage("§cThat user is not online."); }
+						else { player.sendMessage("ï¿½cThat user is not online."); }
 					}
-					else { player.sendMessage("§cPlease provide a nickname and a message."); return false; }
+					else { player.sendMessage("ï¿½cPlease provide a nickname and a message."); return false; }
 				}
 				else {
-					player.sendMessage("§cYou don't have access to that command.");
+					player.sendMessage("ï¿½cYou don't have access to that command.");
 				}    		
 				return true;
 			}
@@ -919,14 +899,14 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 					if (trimmedArgs.length > 0) {
 						String lastReceivedFrom = lastReceived.get(player.getName());
 						if (lastReceivedFrom == null) {
-							player.sendMessage("§cThere are no messages to reply to!");
+							player.sendMessage("ï¿½cThere are no messages to reply to!");
 						}
 						else {
 							IRCUser ircuser = ircd.getIRCUser(lastReceivedFrom);
 							if (ircuser != null) {
 								if (ircd.mode == Modes.STANDALONE) {
 									ircd.writeTo(ircuser.nick, ":"+player.getName()+ircd.ingameSuffix+"!"+player.getName()+"@"+player.getAddress().getAddress().getHostName()+" PRIVMSG "+ircuser.nick+" :"+ircd.convertColors(ircd.join(trimmedArgs, " ", 0), false));
-									player.sendMessage("§cMessage sent to "+lastReceivedFrom+".");
+									player.sendMessage("ï¿½cMessage sent to "+lastReceivedFrom+".");
 								}
 								else if (ircd.mode == Modes.INSPIRCD) {
 									BukkitPlayer bp;
@@ -935,24 +915,24 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 										if (UID != null) {
 											if (IRCd.linkcompleted) {
 												IRCd.println(":"+bp.getUID()+" PRIVMSG "+UID+" :"+ircd.convertColors(ircd.join(trimmedArgs, " ", 0), false));
-												player.sendMessage("§cMessage sent to "+lastReceivedFrom+".");
-											} else player.sendMessage("§cFailed to send message, not currently linked to IRC server.");
+												player.sendMessage("ï¿½cMessage sent to "+lastReceivedFrom+".");
+											} else player.sendMessage("ï¿½cFailed to send message, not currently linked to IRC server.");
 										}
 										else {
 											log.severe("UID not found in list: "+UID); // Log this as severe since it should never occur unless something is wrong with the code
-											player.sendMessage("§cFailed to send message, UID not found. This should not happen, please report it to Jdbye.");
+											player.sendMessage("ï¿½cFailed to send message, UID not found. This should not happen, please report it to Jdbye.");
 										}
 									}
-									else player.sendMessage("§cFailed to send message, you could not be found in the UID list. This should not happen, please report it to Jdbye.");
+									else player.sendMessage("ï¿½cFailed to send message, you could not be found in the UID list. This should not happen, please report it to Jdbye.");
 								}
 							}
-							else { player.sendMessage("§cThat user is not online."); }
+							else { player.sendMessage("ï¿½cThat user is not online."); }
 						}
 					}
-					else { player.sendMessage("§cPlease provide a nickname and a message."); return false; }
+					else { player.sendMessage("ï¿½cPlease provide a nickname and a message."); return false; }
 				}
 				else {
-					player.sendMessage("§cYou don't have access to that command.");
+					player.sendMessage("ï¿½cYou don't have access to that command.");
 				}    			
 				return true;
 			}
@@ -963,12 +943,12 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 						String playername = player.getName();
 						String playerhost = player.getAddress().getAddress().getHostName();
 						ircd.setTopic(ircd.convertColors(topic, false), playername+IRCd.ingameSuffix, playername+IRCd.ingameSuffix+"!"+playername+"@"+playerhost);
-						player.sendMessage("§cTopic set to "+topic);
+						player.sendMessage("ï¿½cTopic set to "+topic);
 					}
-					else { player.sendMessage("§cPlease provide a topic to set."); return false; }
+					else { player.sendMessage("ï¿½cPlease provide a topic to set."); return false; }
 				}
 				else {
-					player.sendMessage("§cYou don't have access to that command.");
+					player.sendMessage("ï¿½cYou don't have access to that command.");
 				}    		
 				return true;
 			}
@@ -976,18 +956,18 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 				if (hasPermission(player, "bukkitircd.link")) {
 					if ((IRCd.mode == Modes.INSPIRCD) || (IRCd.mode == Modes.UNREALIRCD)) {
 						if ((!IRCd.linkcompleted) && (!IRCd.isConnected())) {
-							if (IRCd.connect()) player.sendMessage("§cSuccessfully connected to "+IRCd.remoteHost+" on port "+IRCd.remotePort);
-							else player.sendMessage("§cFailed to connect to "+IRCd.remoteHost+" on port "+IRCd.remotePort);
+							if (IRCd.connect()) player.sendMessage("ï¿½cSuccessfully connected to "+IRCd.remoteHost+" on port "+IRCd.remotePort);
+							else player.sendMessage("ï¿½cFailed to connect to "+IRCd.remoteHost+" on port "+IRCd.remotePort);
 						}
 						else {
-							if (IRCd.linkcompleted) player.sendMessage("§cAlready linked to "+IRCd.linkName+".");
-							else player.sendMessage("§cAlready connected to "+IRCd.linkName+", but not linked.");
+							if (IRCd.linkcompleted) player.sendMessage("ï¿½cAlready linked to "+IRCd.linkName+".");
+							else player.sendMessage("ï¿½cAlready connected to "+IRCd.linkName+", but not linked.");
 						}
 					}
-					else { player.sendMessage("§cNot in linking mode."); }
+					else { player.sendMessage("ï¿½cNot in linking mode."); }
 				}
 				else {
-					player.sendMessage("§cYou don't have access to that command.");
+					player.sendMessage("ï¿½cYou don't have access to that command.");
 				}
 				return true;
 			}
@@ -995,18 +975,18 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 				if (hasPermission(player, "bukkitircd.reload")) {
 					pluginInit(true);
 					log.info("[BukkitIRCd] Configuration file reloaded.");
-					player.sendMessage("§cConfiguration file reloaded.");
+					player.sendMessage("ï¿½cConfiguration file reloaded.");
 				}
 				else {
-					player.sendMessage("§cYou don't have access to that command.");
+					player.sendMessage("ï¿½cYou don't have access to that command.");
 				}
 				return true;
 			}
 			else if (commandName.equalsIgnoreCase("rawsend")) {
 				if (enableRawSend) {
-					sender.sendMessage("§cRawsend is only usable from console.");
+					sender.sendMessage("ï¿½cRawsend is only usable from console.");
 				}
-				else { sender.sendMessage("§cRawsend is not enabled."); }
+				else { sender.sendMessage("ï¿½cRawsend is not enabled."); }
 				return true;
 			}
 		}
@@ -1014,8 +994,8 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			if (commandName.equalsIgnoreCase("irclist") || commandName.equalsIgnoreCase("ilist")) {
 				String players[] = ircd.getIRCNicks();
 				String allplayers = "";
-				for (String curplayer : players) allplayers += "§7"+curplayer+"§f, ";
-				sender.sendMessage("§9There are §c"+players.length+" §9users on IRC.");
+				for (String curplayer : players) allplayers += "ï¿½7"+curplayer+"ï¿½f, ";
+				sender.sendMessage("ï¿½9There are ï¿½c"+players.length+" ï¿½9users on IRC.");
 				if (players.length > 0) sender.sendMessage(allplayers.substring(0,allplayers.length()-2));
 				return true;
 			}
@@ -1025,13 +1005,13 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 					if (trimmedArgs.length > 1) reason = ircd.join(trimmedArgs, " ", 1);
 					IRCUser ircuser = ircd.getIRCUser(trimmedArgs[0]);
 					if (ircuser != null) {
-						if (ircd.kickIRCUser(ircuser, ircd.serverName, ircd.serverName, ircd.serverHostName, reason, false)) sender.sendMessage("§cPlayer kicked.");
-						else sender.sendMessage("§cFailed to kick player.");
+						if (ircd.kickIRCUser(ircuser, ircd.serverName, ircd.serverName, ircd.serverHostName, reason, false)) sender.sendMessage("ï¿½cPlayer kicked.");
+						else sender.sendMessage("ï¿½cFailed to kick player.");
 						
 					}
-					else { sender.sendMessage("§cThat user is not online."); }
+					else { sender.sendMessage("ï¿½cThat user is not online."); }
 				}
-				else { sender.sendMessage("§cPlease provide a nickname and optionally a kick reason."); return false; }		
+				else { sender.sendMessage("ï¿½cPlease provide a nickname and optionally a kick reason."); return false; }		
 				return true;
 			}
 			else if (commandName.equalsIgnoreCase("ircban") || commandName.equalsIgnoreCase("iban")) {
@@ -1056,31 +1036,31 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 						if (ircd.banIRCUser(ban, IRCd.serverName+"!"+IRCd.serverName+"@"+IRCd.serverHostName)) {
 							if (ircd.msgIRCBan.length() > 0) getServer().broadcastMessage(ircd.msgIRCBan.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%","console"));
 							if ((dynmap != null) && (ircd.msgIRCBanDynmap.length() > 0)) dynmap.sendBroadcastToWeb("IRC", ircd.msgIRCBanDynmap.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%","console"));
-							sender.sendMessage("§cUser banned.");
+							sender.sendMessage("ï¿½cUser banned.");
 						}
 						else
-							sender.sendMessage("§cUser is already banned.");
+							sender.sendMessage("ï¿½cUser is already banned.");
 					}
 					else if (countStr(ban, ".") == 3) { // It's an IP
 						if (ircd.banIRCUser("*!*@"+ban, IRCd.serverName+"!"+IRCd.serverName+"@"+IRCd.serverHostName)) {
 							if (ircd.msgIRCBan.length() > 0) getServer().broadcastMessage(ircd.msgIRCBan.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%","console"));
 							if ((dynmap != null) && (ircd.msgIRCBanDynmap.length() > 0)) dynmap.sendBroadcastToWeb("IRC", ircd.msgIRCBanDynmap.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%","console"));
-							sender.sendMessage("§cIP banned.");
+							sender.sendMessage("ï¿½cIP banned.");
 						}
 						else
-							sender.sendMessage("§cIP is already banned.");
+							sender.sendMessage("ï¿½cIP is already banned.");
 					}
 					else {
 						if (ircuser != null) {
 							if (ircd.kickBanIRCUser(ircuser, "server", IRCd.serverName+"!"+IRCd.serverName+"@"+IRCd.serverHostName, reason, true, banType))
-								sender.sendMessage("§cUser banned.");
+								sender.sendMessage("ï¿½cUser banned.");
 							else
-								sender.sendMessage("§cUser is already banned.");
+								sender.sendMessage("ï¿½cUser is already banned.");
 						}
-						else { sender.sendMessage("§cThat user is not online."); }
+						else { sender.sendMessage("ï¿½cThat user is not online."); }
 					}
 				}
-				else { sender.sendMessage("§cPlease provide a nickname or IP and optionally a ban reason."); return false; }
+				else { sender.sendMessage("ï¿½cPlease provide a nickname or IP and optionally a ban reason."); return false; }
 				return true;
 			}
 			else if (commandName.equalsIgnoreCase("ircunban") || commandName.equalsIgnoreCase("iunban")) {
@@ -1096,24 +1076,24 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 						if (ircd.unBanIRCUser(ban, IRCd.serverName+"!"+IRCd.serverName+"@"+IRCd.serverHostName)) {
 							if (ircd.msgIRCUnban.length() > 0) getServer().broadcastMessage(ircd.msgIRCUnban.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%","console"));
 							if ((dynmap != null) && (ircd.msgIRCUnbanDynmap.length() > 0)) dynmap.sendBroadcastToWeb("IRC", ircd.msgIRCUnbanDynmap.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%","console"));
-							sender.sendMessage("§cUser unbanned.");
+							sender.sendMessage("ï¿½cUser unbanned.");
 						}
 						else
-							sender.sendMessage("§cUser is not banned.");
+							sender.sendMessage("ï¿½cUser is not banned.");
 					}
 					else if (countStr(ban, ".") == 3) { // It's an IP
 						if (ircd.unBanIRCUser("*!*@"+ban, IRCd.serverName+"!"+IRCd.serverName+"@"+IRCd.serverHostName)) {
 							if (ircd.msgIRCUnban.length() > 0) getServer().broadcastMessage(ircd.msgIRCUnban.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%","console"));
 							if ((dynmap != null) && (ircd.msgIRCUnbanDynmap.length() > 0)) dynmap.sendBroadcastToWeb("IRC", ircd.msgIRCUnbanDynmap.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%","console"));
-							sender.sendMessage("§cIP unbanned.");
+							sender.sendMessage("ï¿½cIP unbanned.");
 						}
 						else
-							sender.sendMessage("§cIP is not banned.");
+							sender.sendMessage("ï¿½cIP is not banned.");
 					} 
-					else { sender.sendMessage("§cInvalid hostmask."); return false; }
+					else { sender.sendMessage("ï¿½cInvalid hostmask."); return false; }
 
 				}
-				else { sender.sendMessage("§cPlease provide a IP/full hostmask."); return false; }
+				else { sender.sendMessage("ï¿½cPlease provide a IP/full hostmask."); return false; }
 				return true;
 			}
 			else if (commandName.equalsIgnoreCase("ircwhois") || commandName.equalsIgnoreCase("iwhois")) {
@@ -1123,9 +1103,9 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 						String[] whois = ircd.getIRCWhois(ircuser);
 						for (String whoisline : whois) sender.sendMessage(whoisline);
 					}
-					else { sender.sendMessage("§cThat user is not online."); }
+					else { sender.sendMessage("ï¿½cThat user is not online."); }
 				}
-				else { sender.sendMessage("§cPlease provide a nickname."); return false; }		
+				else { sender.sendMessage("ï¿½cPlease provide a nickname."); return false; }		
 				return true;
 			}
 			else if (commandName.equalsIgnoreCase("ircmsg") || commandName.equalsIgnoreCase("imsg") || commandName.equalsIgnoreCase("im")) {
@@ -1134,100 +1114,100 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 					if (ircuser != null) {
 						if (ircd.mode == Modes.STANDALONE) {
 							ircd.writeTo(ircuser.nick, ":"+ircd.serverName+"!"+ircd.serverName+"@"+ircd.serverHostName+" PRIVMSG "+ircuser.nick+" :"+ircd.convertColors(ircd.join(trimmedArgs, " ", 1),false));
-							sender.sendMessage("§cMessage sent.");
+							sender.sendMessage("ï¿½cMessage sent.");
 						}
 						else if (ircd.mode == Modes.INSPIRCD) {
 							String UID = IRCd.getUIDFromIRCUser(ircuser);
 							if (UID != null) {
 								if (IRCd.linkcompleted) {
 									IRCd.println(":"+IRCd.serverUID+" PRIVMSG "+UID+" :"+ircd.convertColors(ircd.join(trimmedArgs, " ", 1), false));
-									sender.sendMessage("§cMessage sent.");
-								} else sender.sendMessage("§Failed to send message, not currently linked to IRC server.");
+									sender.sendMessage("ï¿½cMessage sent.");
+								} else sender.sendMessage("ï¿½Failed to send message, not currently linked to IRC server.");
 							}
 							else {
 								log.severe("UID not found in list: "+UID); // Log this as severe since it should never occur unless something is wrong with the code
-								sender.sendMessage("§cFailed to send message, UID not found. This should not happen, please report it to Jdbye.");
+								sender.sendMessage("ï¿½cFailed to send message, UID not found. This should not happen, please report it to Jdbye.");
 							}
 						}
 					}
-					else { sender.sendMessage("§cThat user is not online."); }
+					else { sender.sendMessage("ï¿½cThat user is not online."); }
 				}
-				else { sender.sendMessage("§cPlease provide a nickname and a message."); return false; }		
+				else { sender.sendMessage("ï¿½cPlease provide a nickname and a message."); return false; }		
 				return true;
 			}
 			else if (commandName.equalsIgnoreCase("ircreply") || commandName.equalsIgnoreCase("ireply") || commandName.equalsIgnoreCase("ir")) {
 				if (trimmedArgs.length > 0) {
 					String lastReceivedFrom = lastReceived.get("@CONSOLE@");
 					if (lastReceivedFrom == null) {
-						sender.sendMessage("§cThere are no messages to reply to!");
+						sender.sendMessage("ï¿½cThere are no messages to reply to!");
 					}
 					else {
 						IRCUser ircuser = ircd.getIRCUser(lastReceivedFrom);
 						if (ircuser != null) {
 							if (ircd.mode == Modes.STANDALONE) {
 								ircd.writeTo(ircuser.nick, ":"+ircd.serverName+"!"+ircd.serverName+"@"+ircd.serverHostName+" PRIVMSG "+ircuser.nick+" :"+ircd.convertColors(ircd.join(trimmedArgs, " ", 0),false));
-								sender.sendMessage("§cMessage sent to "+lastReceivedFrom+".");
+								sender.sendMessage("ï¿½cMessage sent to "+lastReceivedFrom+".");
 							}
 							else if (ircd.mode == Modes.INSPIRCD) {
 								String UID = IRCd.getUIDFromIRCUser(ircuser);
 								if (UID != null) {
 									if (IRCd.linkcompleted) {
 										IRCd.println(":"+IRCd.serverUID+" PRIVMSG "+UID+" :"+ircd.convertColors(ircd.join(trimmedArgs, " ", 0), false));
-										sender.sendMessage("§cMessage sent to "+lastReceivedFrom+".");
-									} else sender.sendMessage("§cFailed to send message, not currently linked to IRC server.");
+										sender.sendMessage("ï¿½cMessage sent to "+lastReceivedFrom+".");
+									} else sender.sendMessage("ï¿½cFailed to send message, not currently linked to IRC server.");
 								}
 								else {
 									log.severe("UID not found in list: "+UID); // Log this as severe since it should never occur unless something is wrong with the code
-									sender.sendMessage("§cFailed to send message, UID not found. This should not happen, please report it to Jdbye.");
+									sender.sendMessage("ï¿½cFailed to send message, UID not found. This should not happen, please report it to Jdbye.");
 								}
 							}
 						}
-						else { sender.sendMessage("§cThat user is not online."); }
+						else { sender.sendMessage("ï¿½cThat user is not online."); }
 					}
 				}
-				else { sender.sendMessage("§cPlease provide a nickname and a message."); return false; }		
+				else { sender.sendMessage("ï¿½cPlease provide a nickname and a message."); return false; }		
 				return true;
 			}
 			else if (commandName.equalsIgnoreCase("irctopic") || commandName.equalsIgnoreCase("itopic")) {
 				if (trimmedArgs.length > 0) {
 					String topic = ircd.join(trimmedArgs, " ", 0);
 					ircd.setTopic(ircd.convertColors(topic, false), ircd.serverName, ircd_servername+"!"+ircd_servername+"@"+ircd_serverhostname);
-					sender.sendMessage("§cTopic set to "+topic);
+					sender.sendMessage("ï¿½cTopic set to "+topic);
 				}
-				else { sender.sendMessage("§cPlease provide a topic to set."); return false; }		
+				else { sender.sendMessage("ï¿½cPlease provide a topic to set."); return false; }		
 				return true;
 			}
 			else if (commandName.equalsIgnoreCase("irclink") || commandName.equalsIgnoreCase("ilink")) {
 				if ((IRCd.mode == Modes.INSPIRCD) || (IRCd.mode == Modes.UNREALIRCD)) {
 					if ((!IRCd.linkcompleted) && (!IRCd.isConnected())) {
-						if (IRCd.connect()) sender.sendMessage("§cSuccessfully connected to "+IRCd.remoteHost+" on port "+IRCd.remotePort);
-						else sender.sendMessage("§cFailed to connect to "+IRCd.remoteHost+" on port "+IRCd.remotePort);
+						if (IRCd.connect()) sender.sendMessage("ï¿½cSuccessfully connected to "+IRCd.remoteHost+" on port "+IRCd.remotePort);
+						else sender.sendMessage("ï¿½cFailed to connect to "+IRCd.remoteHost+" on port "+IRCd.remotePort);
 					}
 					else {
-						if (IRCd.linkcompleted) sender.sendMessage("§cAlready linked to "+IRCd.linkName+".");
-						else sender.sendMessage("§cAlready connected to "+IRCd.linkName+", but not linked.");
+						if (IRCd.linkcompleted) sender.sendMessage("ï¿½cAlready linked to "+IRCd.linkName+".");
+						else sender.sendMessage("ï¿½cAlready connected to "+IRCd.linkName+", but not linked.");
 					}
 				}
-				else { sender.sendMessage("§cNot in linking mode."); }
+				else { sender.sendMessage("ï¿½cNot in linking mode."); }
 				return true;
 			}
 			else if (commandName.equalsIgnoreCase("ircreload") || commandName.equalsIgnoreCase("ireload")) {
 				pluginInit(true);
 				log.info("[BukkitIRCd] Configuration file reloaded.");
-				sender.sendMessage("§cConfiguration file reloaded.");
+				sender.sendMessage("ï¿½cConfiguration file reloaded.");
 				return true;
 			}
 			else if (commandName.equalsIgnoreCase("rawsend")) {
 				if (enableRawSend) {
 					if (trimmedArgs.length > 0) {
 						if ((IRCd.mode == Modes.INSPIRCD) || (IRCd.mode == Modes.UNREALIRCD)) {
-							if (IRCd.println(IRCd.join(trimmedArgs, " ", 0))) sender.sendMessage("§cCommand sent to IRC server link.");
-							else sender.sendMessage("§cFailed to send command to IRC server link, not currently linked.");
+							if (IRCd.println(IRCd.join(trimmedArgs, " ", 0))) sender.sendMessage("ï¿½cCommand sent to IRC server link.");
+							else sender.sendMessage("ï¿½cFailed to send command to IRC server link, not currently linked.");
 						}
 					}
-					else { sender.sendMessage("§cPlease provide a command to send."); return false; }
+					else { sender.sendMessage("ï¿½cPlease provide a command to send."); return false; }
 				}
-				else { sender.sendMessage("§cRawsend is not enabled."); }
+				else { sender.sendMessage("ï¿½cRawsend is not enabled."); }
 				return true;
 			}
 		}
