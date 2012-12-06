@@ -3,7 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="E:/Dev/Eclipse/BukkitIRCd/libs/bukkit-1.2.3-R0.2.jar"/>
-	<classpathentry kind="lib" path="libs/Permissions.jar"/>
 	<classpathentry kind="lib" path="libs/dynmap-api.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
