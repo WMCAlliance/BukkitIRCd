@@ -1,5 +1,7 @@
 BukkitIRCd
 =============
+(Note the plugin is still in the process of being moved to SuperPerms, because of this there are tons of issues.
+We do plan on fixing them)
 
 This plugin was [originally](http://dev.bukkit.org/server-mods/bukkitircd) by Jdbye. As he hasn't touched it in months, we decided to make some edits of our own.
 
