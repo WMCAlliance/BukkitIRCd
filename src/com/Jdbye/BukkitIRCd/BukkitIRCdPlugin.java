@@ -34,9 +34,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.dynmap.DynmapAPI;
-
-import com.nijiko.permissions.PermissionHandler;
-import com.nijikokun.bukkit.Permissions.Permissions;
+//import com.nijiko.permissions.PermissionHandler;
+//import com.nijikokun.bukkit.Permissions.Permissions;
 
 /**
  * BukkitIRCdPlugin for Bukkit
@@ -106,7 +105,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	
 	private boolean enableRawSend = false;
 
-	public static PermissionHandler permissionHandler = null;
+//	public static PermissionHandler permissionHandler = null;
 	public static DynmapAPI dynmap = null;
 	FileConfiguration config,messages;
 
@@ -283,12 +282,12 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		debugees.put(player, value);
 	}
 	
-	public void unloadPermissions() {
-		if (this.permissionHandler != null) {
-			this.permissionHandler = null;
-			log.info("[BukkitIRCd] Permissions plugin lost.");
-		}
-	}
+//	public void unloadPermissions() {
+//		if (this.permissionHandler != null) {
+//			this.permissionHandler = null;
+//			log.info("[BukkitIRCd] Permissions plugin lost.");
+//		}
+//	}
 	
 	private void setupDynmap() {
 		PluginManager pm = getServer().getPluginManager();

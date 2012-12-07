@@ -13,7 +13,7 @@ import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.Plugin;
 import org.dynmap.DynmapAPI;
 
-import com.nijikokun.bukkit.Permissions.Permissions;
+//import com.nijikokun.bukkit.Permissions.Permissions;
 
 /**
  * BukkitIRCd block listener
