@@ -158,7 +158,7 @@ public class IRCd implements Runnable {
 	public static String msgIRCActionDynmap = "* %USER% %MESSAGE%";
 	public static String msgIRCMessageDynmap = "<%USER%> %MESSAGE%";
 	public static String msgIRCNoticeDynmap = "-%USER%- %MESSAGE%";
-	public String msgDynmapMessage = "[Dynmap] %USER%: %MESSAGE%";
+	public static String msgDynmapMessage = "[Dynmap] %USER%: %MESSAGE%";
 	public static String msgPlayerList = "^BOnline Players (%COUNT%):^B %USERS%";
 	
 	public static final long serverStartTime = System.currentTimeMillis() / 1000L;
