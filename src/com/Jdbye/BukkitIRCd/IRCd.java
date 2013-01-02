@@ -82,6 +82,7 @@ import java.net.SocketTimeoutException;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -130,31 +131,31 @@ public class IRCd implements Runnable {
 	public static int SID = 111;
 	
 	// Custom messages
-	public static String msgLinked = "§e[IRC] Linked to server %LINKNAME%";
-	public static String msgDelinked = "§e[IRC] Split from server %LINKNAME%";
-	public static String msgDelinkedReason = "§e[IRC] Split from server %LINKNAME% (%REASON%)";
-	public static String msgIRCJoin = "§e[IRC] %USER% joined IRC";
+	public static String msgLinked = "ï¿½e[IRC] Linked to server %LINKNAME%";
+	public static String msgDelinked = "ï¿½e[IRC] Split from server %LINKNAME%";
+	public static String msgDelinkedReason = "ï¿½e[IRC] Split from server %LINKNAME% (%REASON%)";
+	public static String msgIRCJoin = "ï¿½e[IRC] %USER% joined IRC";
 	public static String msgIRCJoinDynmap = "%USER% joined IRC";
-	public static String msgIRCLeave = "§e[IRC] %USER% left IRC";
-	public static String msgIRCLeaveReason = "§e[IRC] %USER% left IRC (%REASON%)";
+	public static String msgIRCLeave = "ï¿½e[IRC] %USER% left IRC";
+	public static String msgIRCLeaveReason = "ï¿½e[IRC] %USER% left IRC (%REASON%)";
 	public static String msgIRCLeaveDynmap = "%USER% left IRC";
 	public static String msgIRCLeaveReasonDynmap = "%USER% left IRC (%REASON%)";
-	public static String msgIRCKick = "§e[IRC] %KICKEDUSER% was kicked by %KICKEDBY%";
-	public static String msgIRCKickReason = "§e[IRC] %KICKEDUSER% was kicked by %KICKEDBY% (%REASON%)";
+	public static String msgIRCKick = "ï¿½e[IRC] %KICKEDUSER% was kicked by %KICKEDBY%";
+	public static String msgIRCKickReason = "ï¿½e[IRC] %KICKEDUSER% was kicked by %KICKEDBY% (%REASON%)";
 	public static String msgIRCKickDynmap = "%KICKEDUSER% was kicked by %KICKEDBY%";
 	public static String msgIRCKickReasonDynmap = "%KICKEDUSER% was kicked by %KICKEDBY% (%REASON%)";
-	public static String msgIRCBan = "§e[IRC] %BANNEDUSER% was banned by %BANNEDBY%";
+	public static String msgIRCBan = "ï¿½e[IRC] %BANNEDUSER% was banned by %BANNEDBY%";
 	public static String msgIRCBanDynmap = "%BANNEDUSER% was banned by %BANNEDBY%";
-	public static String msgIRCUnban = "§e[IRC] %BANNEDUSER% was unbanned by %BANNEDBY%";
+	public static String msgIRCUnban = "ï¿½e[IRC] %BANNEDUSER% was unbanned by %BANNEDBY%";
 	public static String msgIRCUnbanDynmap = "%BANNEDUSER% was unbanned by %BANNEDBY%";
-	public static String msgIRCNickChange = "§e[IRC] %OLDNICK% is now known as %NEWNICK%§f";
+	public static String msgIRCNickChange = "ï¿½e[IRC] %OLDNICK% is now known as %NEWNICK%ï¿½f";
 	public static String msgIRCNickChangeDynmap = "%OLDNICK% is now known as %NEWNICK%";
-	public static String msgIRCAction = "[IRC] * §7%USER%§f %MESSAGE%";
-	public static String msgIRCMessage = "[IRC] <§7%USER%§f> %MESSAGE%";
-	public static String msgIRCNotice = "[IRC] -§7%USER%§f- %MESSAGE%";
-	public static String msgIRCPrivateAction = "[IRC] §aTo you§f: * §7%USER%§f %MESSAGE%";
-	public static String msgIRCPrivateMessage = "[IRC] §aTo you§f: <§7%USER%§f> %MESSAGE%";
-	public static String msgIRCPrivateNotice = "[IRC] §aTo you§f: -§7%USER%§f- %MESSAGE%";
+	public static String msgIRCAction = "[IRC] * ï¿½7%USER%ï¿½f %MESSAGE%";
+	public static String msgIRCMessage = "[IRC] <ï¿½7%USER%ï¿½f> %MESSAGE%";
+	public static String msgIRCNotice = "[IRC] -ï¿½7%USER%ï¿½f- %MESSAGE%";
+	public static String msgIRCPrivateAction = "[IRC] ï¿½aTo youï¿½f: * ï¿½7%USER%ï¿½f %MESSAGE%";
+	public static String msgIRCPrivateMessage = "[IRC] ï¿½aTo youï¿½f: <ï¿½7%USER%ï¿½f> %MESSAGE%";
+	public static String msgIRCPrivateNotice = "[IRC] ï¿½aTo youï¿½f: -ï¿½7%USER%ï¿½f- %MESSAGE%";
 	public static String msgIRCActionDynmap = "* %USER% %MESSAGE%";
 	public static String msgIRCMessageDynmap = "<%USER%> %MESSAGE%";
 	public static String msgIRCNoticeDynmap = "-%USER%- %MESSAGE%";
@@ -321,7 +322,7 @@ public class IRCd implements Runnable {
 								line = in.readLine();
 								if (line == null) throw new IOException("Lost connection to server before sending handshake!");
 								String[] split = line.split(" ");
-								if (debugMode) BukkitIRCdPlugin.log.info("[BukkitIRCd]§e[->] "+line);
+								if (debugMode) BukkitIRCdPlugin.log.info("[BukkitIRCd]ï¿½e[->] "+line);
 
 								if (!isIncoming) {
 									sendLinkCAPAB();
@@ -346,7 +347,7 @@ public class IRCd implements Runnable {
 										line = in.readLine();
 										if (line != null) {
 											split = line.split(" ");
-											if (debugMode) BukkitIRCdPlugin.log.info("[BukkitIRCd]§e[->] "+line);
+											if (debugMode) BukkitIRCdPlugin.log.info("[BukkitIRCd]ï¿½e[->] "+line);
 										}
 									}
 								}
@@ -391,7 +392,7 @@ public class IRCd implements Runnable {
 										if ((line != null) && (line.trim().length() > 0)) {
 											if (line.startsWith("ERROR ")) {
 												// ERROR :Invalid password.
-												if (debugMode) BukkitIRCdPlugin.log.info("[BukkitIRCd]§e[->] "+line);
+												if (debugMode) BukkitIRCdPlugin.log.info("[BukkitIRCd]ï¿½e[->] "+line);
 												String[] split = line.split(" ");
 												if (split[1].startsWith(":")) split[1] = split[1].substring(1);
 												try { server.close(); } catch (IOException e) { } 
@@ -735,15 +736,15 @@ public class IRCd implements Runnable {
 			whois = new String[8];
 			ClientConnection processor;
 			String idletime = TimeUtils.millisToLongDHMS(ircuser.getSecondsIdle()*1000);
-			whois[0] = "§2Nickname: §7"+ircuser.nick+"§f";
-			whois[1] = "§2Ident: §7"+ircuser.ident+"§f";
-			whois[2] = "§2Hostname: §7"+ircuser.hostmask+"§f";
-			whois[3] = "§2Realname: §7"+ircuser.realname+"§f";
-			whois[4] = "§2Is registered: §7"+(ircuser.isRegistered ? "Yes" : "No")+"§f";
-			whois[5] = "§2Is operator: §7"+(ircuser.isOper ? "Yes" : "No")+"§f";
-			whois[5] = "§2Away: §7"+((!ircuser.awayMsg.equals("")) ? ircuser.awayMsg : "No")+"§f";
-			whois[6] = "§2Idle §7"+idletime+"§f";
-			whois[7] = "§2Signed on at §7"+dateFormat.format(ircuser.signonTime*1000)+"§f";
+			whois[0] = "ï¿½2Nickname: ï¿½7"+ircuser.nick+"ï¿½f";
+			whois[1] = "ï¿½2Ident: ï¿½7"+ircuser.ident+"ï¿½f";
+			whois[2] = "ï¿½2Hostname: ï¿½7"+ircuser.hostmask+"ï¿½f";
+			whois[3] = "ï¿½2Realname: ï¿½7"+ircuser.realname+"ï¿½f";
+			whois[4] = "ï¿½2Is registered: ï¿½7"+(ircuser.isRegistered ? "Yes" : "No")+"ï¿½f";
+			whois[5] = "ï¿½2Is operator: ï¿½7"+(ircuser.isOper ? "Yes" : "No")+"ï¿½f";
+			whois[5] = "ï¿½2Away: ï¿½7"+((!ircuser.awayMsg.equals("")) ? ircuser.awayMsg : "No")+"ï¿½f";
+			whois[6] = "ï¿½2Idle ï¿½7"+idletime+"ï¿½f";
+			whois[7] = "ï¿½2Signed on at ï¿½7"+dateFormat.format(ircuser.signonTime*1000)+"ï¿½f";
 		}
 		return whois;
 	}
@@ -1476,9 +1477,9 @@ public class IRCd implements Runnable {
 					i--;
 					if (ircColors[i] < 10) irccolor = "0"+ircColors[i];
 					else irccolor=Integer.toString(ircColors[i]);
-					output = output.replace("§"+gameColors[i].toLowerCase(), ((char)3)+irccolor);
+					output = output.replace("ï¿½"+gameColors[i].toLowerCase(), ((char)3)+irccolor);
 					output = output.replace("&"+gameColors[i].toLowerCase(), ((char)3)+irccolor);
-					output = output.replace("§"+gameColors[i].toUpperCase(), ((char)3)+irccolor);
+					output = output.replace("ï¿½"+gameColors[i].toUpperCase(), ((char)3)+irccolor);
 					output = output.replace("&"+gameColors[i].toUpperCase(), ((char)3)+irccolor);
 				}
 				output = output.replace("^K", (char)3+"").replace("^B", (char)2+"").replace("^I", (char)29+"").replace("^O", (char)15+"").replace("^U", (char)31+"");
@@ -1493,11 +1494,11 @@ public class IRCd implements Runnable {
 				while (i > 0) {
 					i--;
 					if (ircColors[i] < 10) {
-						output = output.replace(((char)3)+"0"+Integer.toString(ircColors[i]), "§"+gameColors[i]);
+						output = output.replace(((char)3)+"0"+Integer.toString(ircColors[i]), "ï¿½"+gameColors[i]);
 					}
-					output = output.replace(((char)3)+Integer.toString(ircColors[i]), "§"+gameColors[i]);
+					output = output.replace(((char)3)+Integer.toString(ircColors[i]), "ï¿½"+gameColors[i]);
 				}
-				output = output.replace((char)3+"", "§f").replace((char)2+"", "").replace((char)29+"", "").replace((char)15+"", "").replace((char)31+"", "");
+				output = output.replace((char)3+"", ChatColor.WHITE.toString()).replace((char)2+"", "").replace((char)29+"", "").replace((char)15+"", "").replace((char)31+"", "");
 			}
 			else {
 				String irccolor;
@@ -1505,9 +1506,9 @@ public class IRCd implements Runnable {
 					i--;
 					if (ircColors[i] < 10) irccolor = "0"+ircColors[i];
 					else irccolor=Integer.toString(ircColors[i]);
-					output = output.replace("§"+gameColors[i].toLowerCase(), ((char)3)+irccolor);
+					output = output.replace(ChatColor.COLOR_CHAR+gameColors[i].toLowerCase(), ((char)3)+irccolor);
 					output = output.replace("&"+gameColors[i].toLowerCase(), ((char)3)+irccolor);
-					output = output.replace("§"+gameColors[i].toUpperCase(), ((char)3)+irccolor);
+					output = output.replace(ChatColor.COLOR_CHAR+gameColors[i].toUpperCase(), ((char)3)+irccolor);
 					output = output.replace("&"+gameColors[i].toUpperCase(), ((char)3)+irccolor);
 				}
 				output = output.replace("^K", (char)3+"").replace("^B", (char)2+"").replace("^I", (char)29+"").replace("^O", (char)15+"").replace("^U", (char)31+"");
@@ -1596,7 +1597,7 @@ public class IRCd implements Runnable {
 	public static boolean println(String line) {
 		if ((server == null) || (!server.isConnected()) || (server.isClosed()) || (out == null)) return false;
 		synchronized(csServer) {
-			if (debugMode) System.out.println("[BukkitIRCd]§1[<-] "+line);
+			if (debugMode) System.out.println("[BukkitIRCd]ï¿½1[<-] "+line);
 			out.println(line);
 			return true;
 		}
@@ -1649,7 +1650,7 @@ public class IRCd implements Runnable {
 	}
 	
 	public void parseLinkCommand(String command) throws IOException {
-		if (debugMode) BukkitIRCdPlugin.log.info("[BukkitIRCd]§e[->] "+command);
+		if (debugMode) BukkitIRCdPlugin.log.info("[BukkitIRCd]ï¿½e[->] "+command);
 				
 		String split[] = command.split(" ");
 		if (split.length <= 1) return;

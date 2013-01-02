@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="EclipseModuleManager">
+    <libelement value="file://C:/Users/Nathan/Desktop/Things/Eclipse Workspace's/bukkit-1.4.5-R0.3-20121206.015817-14.jar" />
+    <libelement value="file://C:/Users/Nathan/Desktop/Things/Eclipse Workspace's/dynmap-api.jar" />
+    <src_description expected_position="0">
+      <src_folder value="file://$MODULE_DIR$/src" expected_position="0" />
+    </src_description>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/target/classes" />
+    <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/res" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/target" />
+    </content>
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="module-library">
+      <library name="bukkit-1.4.5-R0.3-20121206.015817-14.jar">
+        <CLASSES>
+          <root url="file://C:/Users/Nathan/Desktop/Things/Eclipse Workspace's/bukkit-1.4.5-R0.3-20121206.015817-14.jar" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="http://jd.bukkit.org/apidocs/" />
+        </JAVADOC>
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="dynmap-api.jar">
+        <CLASSES>
+          <root url="file://C:/Users/Nathan/Desktop/Things/Eclipse Workspace's/dynmap-api.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="Maven: org.bukkit:bukkit:1.4.6-R0.2" level="project" />
+    <orderEntry type="library" name="Maven: dynmap-api:dynmap-api:1.2" level="project" />
+  </component>
+</module>
+

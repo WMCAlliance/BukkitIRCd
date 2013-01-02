@@ -19,16 +19,14 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.4.6-R0.1-SNAPSHOT</version>
+            <version>1.4.6-R0.2</version>
         </dependency>
         <dependency>
 			<groupId>dynmap-api</groupId>
 			<artifactId>dynmap-api</artifactId>
 			<version>1.2</version>
 			<type>jar</type>
-			<scope>system</scope>
-			<systemPath>/var/lib/jenkins/jobs/BukkitIRCd/workspace/dynmap-api.jar</systemPath>
-			</dependency>
+	    </dependency>
     </dependencies>
 
   <name>BukkitIRCd</name>
@@ -38,7 +36,7 @@
     <sourceDirectory>src/</sourceDirectory>
 	<resources>
 		<resource>
-			<directory>${project.basedir}/src</directory>
+			<directory>${project.basedir}/res</directory>
 			<filtering>true</filtering>
 			<includes>
 				<include>plugin.yml</include>

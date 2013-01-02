@@ -152,7 +152,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 		dynmapEventRegistered = false;
 
-		File configFile = new File(getDataFolder(), "config.yml");
+		File configFile = new File(getDataFolder(), "res/config.yml");
 		writeSettings(configFile);
 
 		writeBans();
@@ -187,14 +187,14 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		reloadConfig();
 		config = getConfig();
 		// Create default config if it doesn't exist.
-		if (!(new File(getDataFolder(), "config.yml")).exists()) {
+		if (!(new File(getDataFolder(), "res/config.yml")).exists()) {
 			log.info("[BukkitIRCd] Creating default configuration file - please modify this file then type /ireload.");
 		}
 		config.options().copyDefaults(true);
 		loadSettings();
 		
 		// Create default config if it doesn't exist.
-		File messagesFile = new File(getDataFolder(), "messages.yml");
+		File messagesFile = new File(getDataFolder(), "res/messages.yml");
 		messages = YamlConfiguration.loadConfiguration(messagesFile);
 		if (!(messagesFile.exists())) {
 			log.info("[BukkitIRCd] Creating default messages file...");
