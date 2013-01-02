@@ -1218,14 +1218,6 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		if (player.hasPermission(permission)) {
 			//log.info("[BukkitIRCd] "+player.getName()+" has permission "+permission+" (Superperms)");
 			return true;
-		}
-		else try {
-			if (permissionHandler != null) {
-				if (this.permissionHandler.has(player, permission)) {
-					//log.info("[BukkitIRCd] "+player.getName()+" has permission "+permission+" (Permissions 2.x)");
-					return true;
-				}
-			}
 		} catch (Exception e) { }
 		return false;
 	}
