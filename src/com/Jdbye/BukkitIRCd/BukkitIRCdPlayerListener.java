@@ -25,17 +25,22 @@ public class BukkitIRCdPlayerListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onPlayerJoin(PlayerJoinEvent event)
-	{
-		String mode = "";
-		Player player = event.getPlayer(); 
-		if (plugin.hasPermission("bukkitircd.mode.owner")) mode += "~";
-		if (plugin.hasPermission("bukkitircd.mode.protect")) mode += "&";
-		if (plugin.hasPermission("bukkitircd.mode.op")) mode += "@";
-		if (plugin.hasPermission("bukkitircd.mode.halfop")) mode += "%";
-		if (plugin.hasPermission("bukkitircd.mode.voice")) mode += "+";
-		plugin.ircd.addBukkitUser(mode,player);
-	}
+    public void onPlayerJoin(PlayerJoinEvent event)
+    {
+            String mode = "";
+            Player player = event.getPlayer();
+            if (plugin.hasPermission(player, "bukkitircd.mode.owner")) mode += "~";
+            if (plugin.hasPermission(player, "bukkitircd.mode.protect")) mode += "&";
+            if (plugin.hasPermission(player, "bukkitircd.mode.op")) mode += "@";
+            if (plugin.hasPermission(player, "bukkitircd.mode.halfop")) mode += "%";
+            if (plugin.hasPermission(player, "bukkitircd.mode.voice")) mode += "+";
+            //if (plugin.hasPermission("bukkitircd.mode.owner")) mode += "~";
+            //if (plugin.hasPermission("bukkitircd.mode.protect")) mode += "&";
+            //if (plugin.hasPermission("bukkitircd.mode.op")) mode += "@";
+            //if (plugin.hasPermission("bukkitircd.mode.halfop")) mode += "%";
+            //if (plugin.hasPermission("bukkitircd.mode.voice")) mode += "+";
+            plugin.ircd.addBukkitUser(mode,player);
+    }
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerQuit(PlayerQuitEvent event)
