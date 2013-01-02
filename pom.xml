@@ -24,10 +24,10 @@
         <dependency>
 			<groupId>dynmap-api</groupId>
 			<artifactId>dynmap-api</artifactId>
-			<version>1.2</version>
+			<version>0.35</version>
 			<type>jar</type>
 			<scope>system</scope>
-			<systemPath>/dynmap-api.jar</systemPath>
+			<systemPath>/var/lib/jenkins/jobs/BukkitIRCd/workspace/dynmap-api-old.jar</systemPath>
 			</dependency>
     </dependencies>
 
