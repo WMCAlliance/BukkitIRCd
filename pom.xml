@@ -21,6 +21,14 @@
             <artifactId>bukkit</artifactId>
             <version>1.4.6-R0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+			<groupId>dynmap-api</groupId>
+			<artifactId>dynmap-api</artifactId>
+			<version>1.2<version>
+			<type>jar</type>
+			<scope>system</scope>
+			<systemPath>/var/lib/jenkins/jobs/BukkitIRCd/workspace/</systemPath>
+			</dependency>
     </dependencies>
 
   <name>BukkitIRCd</name>
