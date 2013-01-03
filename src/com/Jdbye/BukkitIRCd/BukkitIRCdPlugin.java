@@ -37,6 +37,13 @@ import org.dynmap.DynmapAPI;
 import org.bukkit.ChatColor;
 //import com.nijiko.permissions.PermissionHandler;
 //import com.nijikokun.bukkit.Permissions.Permissions;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * BukkitIRCdPlugin for Bukkit
