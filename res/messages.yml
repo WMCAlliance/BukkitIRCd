@@ -1,30 +1,30 @@
 # You may leave any of these values blank to not display that type of message at all.
 
-linked: "§e[IRC] Linked to server %LINKNAME%"  # Displays when successfully linked to a remote server.
-delinked: "§e[IRC] Split from server %LINKNAME%"  # Displays when delinked from a remote server.
-delinked-reason: "§e[IRC] Split from server %LINKNAME% (%REASON%)"  # Displays when delinked from a remote server with a reason.
-irc-join: "§e[IRC] %USER% joined IRC"  # Displays ingame when someone joins IRC.
+linked: "&3[IRC] &eLinked to server %LINKNAME%"  # Displays when successfully linked to a remote server.
+delinked: "&3[IRC] &eSplit from server %LINKNAME%"  # Displays when delinked from a remote server.
+delinked-reason: "&3[IRC] &eSplit from server %LINKNAME% (%REASON%)"  # Displays when delinked from a remote server with a reason.
+irc-join: "&3[IRC] &e%USER% joined IRC"  # Displays ingame when someone joins IRC.
 irc-join-dynmap: "%USER% joined IRC"  # Displays on dynmap when someone joins IRC.
-irc-leave: "§e[IRC] %USER% left IRC"  # Displays ingame when someone leaves IRC.
-irc-leave-reason: "§e[IRC] %USER% left IRC (%REASON%)"  # Displays ingame when someone leaves IRC with a reason.
+irc-leave: "&3[IRC] &e%USER% left IRC"  # Displays ingame when someone leaves IRC.
+irc-leave-reason: "&3[IRC] &e%USER% left IRC (%REASON%)"  # Displays ingame when someone leaves IRC with a reason.
 irc-leave-dynmap: "%USER% left IRC"  # Displays on dynmap when someone leaves IRC.
 irc-leave-reason-dynmap: "%USER% left IRC (%REASON%)"  # Displays on dynmap when someone leaves IRC with a reason.
-irc-kick: "§e[IRC] %KICKEDUSER% was kicked by %KICKEDBY%"  # Displays ingame when someone is kicked from IRC.
-irc-kick-reason: "§e[IRC] %KICKEDUSER% was kicked by %KICKEDBY% (%REASON%)"  # Displays ingame when someone is kicked from IRC with a reason.
+irc-kick: "&3[IRC] &e%KICKEDUSER% was kicked by %KICKEDBY%"  # Displays ingame when someone is kicked from IRC.
+irc-kick-reason: "&3[IRC] &e%KICKEDUSER% was kicked by %KICKEDBY% (%REASON%)"  # Displays ingame when someone is kicked from IRC with a reason.
 irc-kick-dynmap: "%KICKEDUSER% was kicked by %KICKEDBY%"  # Displays on dynmap when someone is kicked from IRC.
 irc-kick-reason-dynmap: "%KICKEDUSER% was kicked by %KICKEDBY% (%REASON%)"  # Displays on dynmap when someone is kicked from IRC with a reason.
-irc-ban: "§e[IRC] %BANNEDUSER% was banned by %BANNEDBY%"  # Displays ingame when someone is banned from IRC.
-irc-unban: "§e[IRC] %BANNEDUSER% was unbanned by %BANNEDBY%"  # Displays ingame when someone is unbanned from IRC.
+irc-ban: "&3[IRC] &e%BANNEDUSER% was banned by %BANNEDBY%"  # Displays ingame when someone is banned from IRC.
+irc-unban: "&3[IRC] &e%BANNEDUSER% was unbanned by %BANNEDBY%"  # Displays ingame when someone is unbanned from IRC.
 irc-ban-dynmap: "%BANNEDUSER% was banned by %BANNEDBY%"  # Displays on dynmap when someone is banned from IRC.
 irc-unban-dynmap: "%BANNEDUSER% was unbanned by %BANNEDBY%"  # Displays on dynmap when someone is unbanned from IRC.
-irc-nick-change: "§e[IRC] %OLDNICK% is now known as %NEWNICK%§f"  # Displays ingame when someone changes their nick on IRC.
+irc-nick-change: "&3[IRC] &e%OLDNICK% is now known as %NEWNICK%&f"  # Displays ingame when someone changes their nick on IRC.
 irc-nick-change-dynmap: "%OLDNICK% is now known as %NEWNICK%"  # Displays on dynmap when someone changes their nick on IRC.
-irc-action: "[IRC] * §7%USER%§f %MESSAGE%"  # Displays ingame when someone sends an action on IRC.
-irc-message: "[IRC] <§7%USER%§f> %MESSAGE%"  # Displays ingame when someone sends a message on IRC.
-irc-notice: "[IRC] -§7%USER%§f- %MESSAGE%"  # Displays ingame when someone sends a notice on IRC.
-irc-private-action: "[IRC] §aTo you§f: * §7%USER%§f %MESSAGE%"  # Displays ingame when someone sends a private action on IRC.
-irc-private-message: "[IRC] §aTo you§f: <§7%USER%§f> %MESSAGE%"  # Displays ingame when someone sends a private message on IRC.
-irc-private-notice: "[IRC] §aTo you§f: -§7%USER%§f- %MESSAGE%"  # Displays ingame when someone sends a private notice on IRC.
+irc-action: "[IRC] * &7%USER%&f %MESSAGE%"  # Displays ingame when someone sends an action on IRC.
+irc-message: "[IRC] <&7%USER%&f> %MESSAGE%"  # Displays ingame when someone sends a message on IRC.
+irc-notice: "[IRC] -&7%USER%&f- %MESSAGE%"  # Displays ingame when someone sends a notice on IRC.
+irc-private-action: "[IRC] &aTo you&f: * &7%USER%&f %MESSAGE%"  # Displays ingame when someone sends a private action on IRC.
+irc-private-message: "[IRC] &aTo you&f: <&7%USER%&f> %MESSAGE%"  # Displays ingame when someone sends a private message on IRC.
+irc-private-notice: "[IRC] &aTo you&f: -&7%USER%&f- %MESSAGE%"  # Displays ingame when someone sends a private notice on IRC.
 irc-action-dynmap: "* %USER% %MESSAGE%"  # Displays on dynmap when someone sends an action on IRC.
 irc-message-dynmap: "<%USER%> %MESSAGE%"  # Displays on dynmap when someone sends a message on IRC.
 irc-notice-dynmap: "-%USER%- %MESSAGE%"  # Displays on dynmap when someone sends a notice on IRC.
