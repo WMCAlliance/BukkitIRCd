@@ -1,8 +1,6 @@
 BukkitIRCd
 =============
 
-### Currently won't compile
-
 (Note the plugin is still in the process of being moved to SuperPerms, because of this there are tons of issues.
 We do plan on fixing them)
 
