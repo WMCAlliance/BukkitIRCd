@@ -92,15 +92,15 @@ public class IRCd implements Runnable {
 	
 	// Universal settings
 	public static boolean debugMode = false;
-	public static String version = "BukkitIRCd by Jdbye Edited by Mu5tank05";
+	public static String version = "BukkitIRCd by Jdbye edited by WMCAlliance";
 	public static String serverName = "Minecraft"; 
 	public static String serverDescription ="Minecraft BukkitIRCd Server"; 
 	public static String serverHostName = "bukkitircd.localhost"; 
-	public static String ingameSuffix = "/minecraft"; 
+	public static String ingameSuffix = "-mc"; 
 	public static String channelName = "#minecraft"; 
 	public static String channelTopic = "Welcome to a Bukkit server!";
 	public static String channelTopicSet = serverName;
-	public static String consoleChannelName = "#staff";
+	public static String consoleChannelName = "#minecraft-staff";
 	public static String ircBanType = "ip";
 	public static long channelTopicSetDate = System.currentTimeMillis() / 1000L;
 	public static boolean enableNotices = true;

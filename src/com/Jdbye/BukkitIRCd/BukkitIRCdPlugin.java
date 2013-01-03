@@ -719,8 +719,8 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 				if (hasPermission(player, "bukkitircd.list")) {
 					String players[] = ircd.getIRCNicks();
 					String allplayers = "";
-					for (String curplayer : players) allplayers += "§7"+curplayer+"§f, ";
-					player.sendMessage(ChatColor.BLUE + "There are " + Color.RED + players.length + Color.BLUE + " users on IRC.");
+					for (String curplayer : players) allplayers += Chat+curplayer+"§f, ";
+					player.sendMessage(ChatColor.BLUE + "There are " + ChatColor.RED + players.length + ChatColor.BLUE + " users on IRC.");
 					if (players.length > 0) player.sendMessage(allplayers.substring(0,allplayers.length()-2));
 				}
 				else {
@@ -994,8 +994,8 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			if (commandName.equalsIgnoreCase("irclist") || commandName.equalsIgnoreCase("ilist")) {
 				String players[] = ircd.getIRCNicks();
 				String allplayers = "";
-				for (String curplayer : players) allplayers += ChatColor.GRAY + curplayer + Color.White + ", ";
-				sender.sendMessage(ChatColor.BLUE + "There are " + Color.RED + players.length + Color.BLUE + " users on IRC.");
+				for (String curplayer : players) allplayers += ChatColor.GRAY + curplayer + ChatColor.White + ", ";
+				sender.sendMessage(ChatColor.BLUE + "There are " + ChatColor.RED + players.length + ChatColor.BLUE + " users on IRC.");
 				if (players.length > 0) sender.sendMessage(allplayers.substring(0,allplayers.length()-2));
 				return true;
 			}
