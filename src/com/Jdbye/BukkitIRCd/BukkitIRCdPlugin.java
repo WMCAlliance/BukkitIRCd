@@ -218,6 +218,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		setupDynmap();
 		
 		ircd = new IRCd();
+		
 		loadMessages(ircd);
 		
 		ircd.port = ircd_port;
@@ -376,13 +377,48 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 	}
 
+	
+	/**
+     * Converts color codes to processed codes
+     *
+     * @param message Message with raw color codes
+     * @return String with processed colors
+     */
+    public String colorize(final String message) {
+        if (message == null) return null;
+        return message.replaceAll("&([a-f0-9k-or])", "\u00a7$1");
+    }
+
+    /**
+     * Removes color codes that have not been processed yet (&char)
+     * <p/>
+     * This fixes a common exploit where color codes can be embedded into other codes:
+     * &&aa (replaces &a, and the other letters combine to make &a again)
+     *
+     * @param message String with raw color codes
+     * @return String without raw color codes
+     */
+    public String decolorize(String message) {
+        Pattern p = Pattern.compile("(?i)&[a-f0-9k-or]");
+        boolean contains = p.matcher(message).find();
+        while (contains) {
+            message = message.replaceAll("(?i)&[a-f0-9k-or]", "");
+            contains = p.matcher(message).find();
+        }
+        return message;
+    }
+	
+	
+	
+	
+	
 	private void loadMessages(IRCd ircd) {
 		try {
 			ircd.msgLinked = messages.getString("linked", ircd.msgLinked);
-
+			
 			ircd.msgDelinked = messages.getString("delinked", ircd.msgDelinked);
 			ircd.msgDelinkedReason = messages.getString("delinked-reason", ircd.msgDelinkedReason);
-
+			
 			ircd.msgIRCJoin = messages.getString("irc-join", ircd.msgIRCJoin);
 			ircd.msgIRCJoinDynmap = messages.getString("irc-join-dynmap", ircd.msgIRCJoinDynmap);
 
@@ -419,6 +455,42 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 			ircd.msgDynmapMessage = messages.getString("dynmap-message", ircd.msgDynmapMessage);
 			ircd.msgPlayerList = messages.getString("player-list", ircd.msgPlayerList);
+			
+			
+			//** RECOLOUR ALL MESSAGES **/
+			
+			ircd.msgLinked = colorize(ircd.msgLinked);
+			ircd.msgDelinked = colorize(ircd.msgDelinked);
+			ircd.msgDelinkedReason = colorize(ircd.msgDelinked);
+			ircd.msgIRCJoin = colorize(ircd.msgIRCJoin);
+			ircd.msgIRCJoinDynmap = colorize(ircd.msgIRCJoinDynmap);
+			ircd.msgIRCLeave = colorize(ircd.msgIRCLeave);
+			ircd.msgIRCLeaveReason = colorize(ircd.msgIRCLeaveReason);
+			ircd.msgIRCLeaveDynmap = colorize(ircd.msgIRCLeaveDynmap);
+			ircd.msgIRCLeaveReasonDynmap = colorize(ircd.msgIRCLeaveReasonDynmap);
+			ircd.msgIRCKick = colorize(ircd.msgIRCKick);
+			ircd.msgIRCKickReason = colorize(ircd.msgIRCKickReason);
+			ircd.msgIRCKickDynmap = colorize(ircd.msgIRCKickDynmap);
+			ircd.msgIRCKickReasonDynmap = colorize(ircd.msgIRCKickReasonDynmap);
+			ircd.msgIRCBan = colorize(ircd.msgIRCBan);
+			ircd.msgIRCBanDynmap = colorize(ircd.msgIRCBanDynmap);
+			ircd.msgIRCUnban = colorize(ircd.msgIRCUnban);
+			ircd.msgIRCUnbanDynmap = colorize(ircd.msgIRCUnbanDynmap);
+			ircd.msgIRCNickChange = colorize(ircd.msgIRCNickChange);
+			ircd.msgIRCNickChangeDynmap = colorize(ircd.msgIRCNickChangeDynmap);
+			ircd.msgIRCAction = colorize(ircd.msgIRCAction);
+			ircd.msgIRCMessage = colorize(ircd.msgIRCMessage);
+			ircd.msgIRCNotice = colorize(ircd.msgIRCNotice);
+			ircd.msgIRCPrivateAction = colorize(ircd.msgIRCPrivateAction);
+			ircd.msgIRCPrivateMessage = colorize(ircd.msgIRCPrivateMessage);
+			ircd.msgIRCPrivateNotice = colorize(ircd.msgIRCPrivateNotice);
+			ircd.msgIRCActionDynmap = colorize(ircd.msgIRCActionDynmap);
+			ircd.msgIRCMessageDynmap = colorize(ircd.msgIRCMessageDynmap);
+			ircd.msgIRCNoticeDynmap = colorize(ircd.msgIRCNoticeDynmap);
+
+			ircd.msgDynmapMessage = colorize(ircd.msgDynmapMessage);
+			ircd.msgPlayerList = colorize(ircd.msgPlayerList);
+			
 
 			log.info("[BukkitIRCd] Loaded messages file.");
 		}
