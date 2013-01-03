@@ -29,8 +29,8 @@ public class BukkitIRCdPlayerListener implements Listener {
     {
             String mode = "";
             Player player = event.getPlayer();
-            if (plugin.hasPermission(player, "bukkitircd.mode.owner")) mode += "~";
-            if (plugin.hasPermission(player, "bukkitircd.mode.protect")) mode += "&";
+            //if (plugin.hasPermission(player, "bukkitircd.mode.owner")) mode += "~";
+            //if (plugin.hasPermission(player, "bukkitircd.mode.protect")) mode += "&";
             if (plugin.hasPermission(player, "bukkitircd.mode.op")) mode += "@";
             if (plugin.hasPermission(player, "bukkitircd.mode.halfop")) mode += "%";
             if (plugin.hasPermission(player, "bukkitircd.mode.voice")) mode += "+";

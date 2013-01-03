@@ -274,8 +274,8 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		ircd.bukkitPlayers.clear();
 		for (Player player : getServer().getOnlinePlayers()) {
 			String mode = "";
-			if (hasPermission(player, "bukkitircd.mode.owner")) mode += "~";
-			if (hasPermission(player, "bukkitircd.mode.protect")) mode += "&";
+			//if (hasPermission(player, "bukkitircd.mode.owner")) mode += "~";
+			//if (hasPermission(player, "bukkitircd.mode.protect")) mode += "&";
 			if (hasPermission(player, "bukkitircd.mode.op")) mode += "@";
 			if (hasPermission(player, "bukkitircd.mode.halfop")) mode += "%";
 			if (hasPermission(player, "bukkitircd.mode.voice")) mode += "+";
