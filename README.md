@@ -1,6 +1,8 @@
 BukkitIRCd
 =============
 
+** Working download now available at [http://file.wizrd.tk/bukkitircd-1.0-SNAPSHOT.jar](http://file.wizrd.tk/bukkitircd-1.0-SNAPSHOT.jar)
+
 This plugin was [originally](http://dev.bukkit.org/server-mods/bukkitircd) by Jdbye. As he hasn't touched it in months, we decided to make some edits of our own.
 
 What we are trying to do is continue the work of Jdbye. We are starting off with a few minor fixes that we've noticed are needed for this plugin to continue functioning.
@@ -18,6 +20,7 @@ If you'd like to join the team, let us know and we'll happily add you.
 
 * peerau - uploaded BukkitIRCd to Github so we wouldn't have to
 * SonarBeserk - fixed up all the old permissions for us, removed old class files
+* jkcclemens - for letting us use the 'colorize' code that allowed us to change from section signs to ampersands in the messages.yml, among other things
 
 ### Extra Notes
 
