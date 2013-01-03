@@ -188,14 +188,14 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		reloadConfig();
 		config = getConfig();
 		// Create default config if it doesn't exist.
-		if (!(new File(getDataFolder(), "res/config.yml")).exists()) {
-			log.info("[BukkitIRCd] Creating default configuration file - please modify this file then type /ireload.");
+		if (!(new File(getDataFolder(), "config.yml")).exists()) {
+			log.info("[BukkitIRCd] Creating default configuration file.");
 		}
 		config.options().copyDefaults(true);
 		loadSettings();
 		
 		// Create default config if it doesn't exist.
-		File messagesFile = new File(getDataFolder(), "res/messages.yml");
+		File messagesFile = new File(getDataFolder(), "messages.yml");
 		messages = YamlConfiguration.loadConfiguration(messagesFile);
 		if (!(messagesFile.exists())) {
 			log.info("[BukkitIRCd] Creating default messages file...");
