@@ -1,12 +1,13 @@
 package com.Jdbye.BukkitIRCd;
 
-// BukkitIRCd by Jdbye
+// BukkitIRCd by Jdbye and WMCAlliance
 // A standalone IRC server plugin for Bukkit
 
 // Last changes
-// - Added a configuration setting to disable notices. This is useful if the plugin is in linking mode and ingame players are being messaged by services.
-// - Minecraft 1.2 compatible
-// - The YAML parsing error "invalid character 0xFFFD" should now be fixed.
+// - Minecraft 1.4.6 compatible
+// - Changed config to use & signs
+// - Removed unused includes
+// - Check our github
 
 /* TODO:
  * HeroChat/Towny compatibility.
@@ -44,7 +45,7 @@ package com.Jdbye.BukkitIRCd;
 // - /irclink - Attempts to link to the remote server if in linking mode.
 // - /rawsend - Sends a raw server command in linking mode. Warning, dangerous! Disabled by default in the config file.
 
-// Permission Nodes (Permissions 2.x):
+// Permission Nodes (SuperPerms):
 // - bukkitircd.kick - Permission for /irckick
 // - bukkitircd.ban - Permission for /ircban
 // - bukkitircd.unban - Permission for /ircunban
