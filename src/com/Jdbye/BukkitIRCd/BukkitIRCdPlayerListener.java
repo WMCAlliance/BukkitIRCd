@@ -68,7 +68,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 		else {
 			BukkitPlayer bp;
 			if ((bp = IRCd.getBukkitUserObject(event.getPlayer().getName())) != null) {
-				if (IRCd.linkcompleted) IRCd.println(":"+bp.getUID()+" PRIVMSG "+IRCd.channelName+" :"+IRCd.convertColors(event.getMessage(), false));
+				if (IRCd.linkcompleted) IRCd.println(":" + bp.getUID() + " PRIVMSG " + IRCd.channelName + " :" + IRCd.convertColors(event.getMessage(), false));
 			}
 		}
 		event.setMessage(IRCd.stripFormatting(event.getMessage()));
@@ -85,12 +85,12 @@ public class BukkitIRCdPlayerListener implements Listener {
 			// ACTION/EMOTE can't be claimed, so use onPlayerCommandPreprocess
 			if (split[0].equalsIgnoreCase("/me")) {
 				if (IRCd.mode == Modes.STANDALONE) {
-					IRCd.writeAll((char)1+"ACTION "+IRCd.convertColors(IRCd.join(event.getMessage().split(" ")," ",1),false)+(char)1, event.getPlayer());
+					IRCd.writeAll((char)1 + "ACTION " + IRCd.convertColors(IRCd.join(event.getMessage().split(" ")," ",1),false) + (char)1, event.getPlayer());
 				}
 				else {
 					BukkitPlayer bp;
 					if ((bp = IRCd.getBukkitUserObject(event.getPlayer().getName())) != null) {
-						if (IRCd.linkcompleted) IRCd.println(":"+bp.getUID()+" PRIVMSG "+IRCd.channelName+" :"+(char)1+"ACTION "+IRCd.convertColors(IRCd.join(event.getMessage().split(" ")," ",1), false)+(char)1);
+						if (IRCd.linkcompleted) IRCd.println(":" + bp.getUID() + " PRIVMSG " + IRCd.channelName + " :" + (char)1 + "ACTION " + IRCd.convertColors(IRCd.join(event.getMessage().split(" ")," ",1), false) + (char)1);
 					}
 				}
 				event.setMessage(IRCd.stripFormatting(event.getMessage()));

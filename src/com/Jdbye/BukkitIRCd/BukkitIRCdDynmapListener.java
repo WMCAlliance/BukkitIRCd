@@ -18,16 +18,16 @@ public class BukkitIRCdDynmapListener implements Listener {
 		
 			DynmapWebChatEvent webevt = (DynmapWebChatEvent) evt;
 			if (IRCd.mode == Modes.STANDALONE) {
-				IRCd.writeAll(":"+IRCd.serverName+"!"+IRCd.serverName+"@"+IRCd.serverHostName+" PRIVMSG " + IRCd.channelName + " :[Dynmap] "+webevt.getName()+": "+webevt.getMessage());
+				IRCd.writeAll(":" + IRCd.serverName + "!"+IRCd.serverName + "@" + IRCd.serverHostName + " PRIVMSG " + IRCd.channelName + " :[Dynmap] " + webevt.getName() + ": "+webevt.getMessage());
 			}
 			else {
 				if (IRCd.linkcompleted) {
-					if (IRCd.msgDynmapMessage.length() > 0) IRCd.println(":"+IRCd.serverUID+" PRIVMSG "+IRCd.channelName+" :"+IRCd.msgDynmapMessage.replace("%USER%", webevt.getName()).replace("%MESSAGE%", webevt.getMessage()));
+					if (IRCd.msgDynmapMessage.length() > 0) IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.channelName+" :" + IRCd.msgDynmapMessage.replace("%USER%", webevt.getName()).replace("%MESSAGE%", webevt.getMessage()));
 				}
 			}
 		} catch (Exception e) {
 			// Catch-all block to avoid plugin crashes
-			BukkitIRCdPlugin.log.warning("Unexpected error occurred in event "+evt.getEventName());
+			BukkitIRCdPlugin.log.warning("Unexpected error occurred in event " + evt.getEventName());
 			e.printStackTrace();
 		}
 	}
