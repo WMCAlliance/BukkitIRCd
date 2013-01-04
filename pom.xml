@@ -49,4 +49,12 @@
 	</resources>
   </build>
 
+  <ciManagement>
+  	<system>Jenkins</system>
+  	<url>ci.wma.im</url>
+  </ciManagement>
+  <organization>
+  	<name>The Worldwide Minecraft Alliance</name>
+  	<url>wma.im</url>
+  </organization>
 </project>

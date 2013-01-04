@@ -59,33 +59,26 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.LinkedList;
-import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 public class IRCd implements Runnable {
 	
@@ -221,7 +214,7 @@ public class IRCd implements Runnable {
 	public void run() {
 		while (running) {
 			try {
-				Class c = Class.forName("org.bukkit.plugin.java.JavaPlugin");
+				Class<?> c = Class.forName("org.bukkit.plugin.java.JavaPlugin");
 				if (c != null) isPlugin = true;
 			} catch (ClassNotFoundException e) { isPlugin = false; }
 
@@ -280,7 +273,8 @@ public class IRCd implements Runnable {
 									writeAll("PING :"+tickCount);
 								}
 							}
-							try { Thread.currentThread().sleep(1); } catch (InterruptedException e) { }
+							try { Thread.currentThread();
+							Thread.sleep(1); } catch (InterruptedException e) { }
 						}
 					} catch (IOException e) {
 						synchronized(csStdOut) {
