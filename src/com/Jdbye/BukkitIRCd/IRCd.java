@@ -396,9 +396,11 @@ public class IRCd implements Runnable {
 										}
 									}
 								} catch (SocketTimeoutException e) { }
-								try { Thread.currentThread().sleep(1); } catch (InterruptedException e) { }
+								try { Thread.currentThread();
+								Thread.sleep(1); } catch (InterruptedException e) { }
 							}
-							try { Thread.currentThread().sleep(1); } catch (InterruptedException e) { }
+							try { Thread.currentThread();
+							Thread.sleep(1); } catch (InterruptedException e) { }
 						} catch (IOException e) {
 							synchronized(csStdOut) {
 								BukkitIRCdPlugin.log.warning("[BukkitIRCd] Server link failed: " + e);
@@ -427,7 +429,8 @@ public class IRCd implements Runnable {
 								long endTime = System.currentTimeMillis()+(linkDelay*1000);
 								while (System.currentTimeMillis() < endTime) {
 									if ((!running) || isConnected()) break;
-									Thread.currentThread().sleep(10);
+									Thread.currentThread();
+									Thread.sleep(10);
 									try {
 										server = listener.accept();
 										if ((server != null) && server.isConnected() && (!server.isClosed())) {
@@ -452,7 +455,8 @@ public class IRCd implements Runnable {
 									}							
 								} catch (IOException e) { }
 							}
-							Thread.currentThread().sleep(1);
+							Thread.currentThread();
+							Thread.sleep(1);
 						}
 					}		
 				}
@@ -599,9 +603,10 @@ public class IRCd implements Runnable {
 			}
 			else if (mode == Modes.INSPIRCD) {
 				IRCUser iuser;
-				Iterator iter = uid2ircuser.entrySet().iterator();
+				Iterator<?> iter = uid2ircuser.entrySet().iterator();
 				while (iter.hasNext()) {
-					Map.Entry<String, IRCUser> entry = (Map.Entry)iter.next();
+					@SuppressWarnings("unchecked")
+					Map.Entry<String, IRCUser> entry = (Entry<String, IRCUser>)iter.next();
 					iuser = entry.getValue();
 					if (iuser.nick.equalsIgnoreCase(nick)) return iuser;
 				}
@@ -616,7 +621,6 @@ public class IRCd implements Runnable {
 		synchronized(csIrcUsers) {
 			if (mode == Modes.STANDALONE) {
 				for (ClientConnection processor : clientConnections) {
-					String nick,realname,ident;
 					IRCUser iu = new IRCUser(processor.nick, processor.realname, processor.ident, processor.hostmask, processor.ipaddress, processor.modes, processor.customWhois, processor.isRegistered, processor.isOper, processor.awayMsg, processor.signonTime, processor.lastActivity);
 					iu.joined = (processor.isIdented && processor.isNickSet);
 					users.add(iu);
@@ -705,13 +709,11 @@ public class IRCd implements Runnable {
 		List<String> users = new ArrayList<String>();
 		synchronized(csIrcUsers) {
 			if (mode == Modes.STANDALONE) {
-				int i=0;
 				for (ClientConnection processor : clientConnections) {
 					if (processor.isIdented && processor.isNickSet) users.add(processor.nick); 
 				}
 			}
 			else if (mode == Modes.INSPIRCD) {
-				int i=0;
 				for (Object user : uid2ircuser.values().toArray()) {
 					if (((IRCUser)user).joined) users.add(((IRCUser)user).nick); 
 				}
@@ -728,7 +730,6 @@ public class IRCd implements Runnable {
 		String whois[]=null;
 		synchronized(csIrcUsers) {
 			whois = new String[8];
-			ClientConnection processor;
 			String idletime = TimeUtils.millisToLongDHMS(ircuser.getSecondsIdle()*1000);
 			whois[0] = "§2Nickname: §7"+ircuser.nick+"§f";
 			whois[1] = "§2Ident: §7"+ircuser.ident+"§f";
@@ -759,11 +760,11 @@ public class IRCd implements Runnable {
 								BukkitIRCdPlugin.thePlugin.removeLastReceivedFrom(processor.nick);
 								if (reason != null) {
 									if (msgIRCLeave.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCLeaveReason.replace("%USER%", processor.nick).replace("%REASON%", convertColors(reason, IRCToGame)));
-									if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (msgIRCLeaveDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveReasonDynmap.replace("%USER%", processor.nick).replace("%REASON%", stripFormatting(reason)));
+									if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCLeaveDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveReasonDynmap.replace("%USER%", processor.nick).replace("%REASON%", stripFormatting(reason)));
 								}
 								else {
 									if (msgIRCLeave.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCLeave.replace("%USER%", processor.nick));
-									if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (msgIRCLeaveDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveDynmap.replace("%USER%", processor.nick));									
+									if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCLeaveDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveDynmap.replace("%USER%", processor.nick));									
 								}
 							}
 						}
@@ -787,7 +788,7 @@ public class IRCd implements Runnable {
 						if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
 							BukkitIRCdPlugin.thePlugin.removeLastReceivedFrom(processor.nick);
 							if (msgIRCLeave.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCLeave.replace("%USER%", processor.nick));
-							if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (msgIRCLeaveDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveDynmap.replace("%USER%", processor.nick));
+							if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCLeaveDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveDynmap.replace("%USER%", processor.nick));
 						}
 					}
 					iter.remove();
@@ -803,7 +804,7 @@ public class IRCd implements Runnable {
 		if (mode != Modes.INSPIRCD) return false;
 		IRCServer is = servers.get(serverID);
 		if (is != null) {
-			if (debugMode) BukkitIRCdPlugin.thePlugin.log.info("[BukkitIRCd] Server "+serverID+" ("+is.host+") delinked");
+			if (debugMode) BukkitIRCdPlugin.log.info("[BukkitIRCd] Server "+serverID+" ("+is.host+") delinked");
 			Iterator<Entry<String, IRCUser>> iter = uid2ircuser.entrySet().iterator();
 			while (iter.hasNext()) {
 				Map.Entry<String, IRCUser> entry = iter.next();
@@ -812,7 +813,7 @@ public class IRCd implements Runnable {
 				if (curUID.startsWith(serverID)) {
 					if (curUser.joined) {
 						if (msgIRCLeaveReason.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCLeaveReason.replace("%USER%", curUser.nick).replace("%REASON%", is.host+" split"));
-						if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (msgIRCLeaveReasonDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveReasonDynmap.replace("%USER%",curUser.nick).replace("%REASON%", is.host+" split"));
+						if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCLeaveReasonDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveReasonDynmap.replace("%USER%",curUser.nick).replace("%REASON%", is.host+" split"));
 					}
 					iter.remove();
 				}
@@ -848,6 +849,7 @@ public class IRCd implements Runnable {
 		return kickIRCUser(ircuser, kickedByNick, kickedByIdent, kickedByHost, null,isIngame);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static boolean kickIRCUser(IRCUser ircuser, String kickedByNick,String kickedByIdent, String kickedByHost,String reason,boolean isIngame) {
 		if (ircuser == null) return false;
 		synchronized(csIrcUsers) {
@@ -861,11 +863,11 @@ public class IRCd implements Runnable {
 							if ((isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
 								if (reason != null) {
 									if (msgIRCKickReason.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCKickReason.replace("%KICKEDUSER%",processor.nick).replace("%KICKEDBY%",kickedByNick).replace("%REASON%",convertColors(reason,true)));
-									if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (msgIRCKickReasonDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCKickReasonDynmap.replace("%KICKEDUSER%",processor.nick).replace("%KICKEDBY%",kickedByNick).replace("%REASON%",stripFormatting(reason)));								
+									if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCKickReasonDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCKickReasonDynmap.replace("%KICKEDUSER%",processor.nick).replace("%KICKEDBY%",kickedByNick).replace("%REASON%",stripFormatting(reason)));								
 								}
 								else {
 									if (msgIRCKick.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCKick.replace("%KICKEDUSER%",processor.nick).replace("%KICKEDBY%",kickedByNick));
-									if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (msgIRCKickDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCKickDynmap.replace("%KICKEDUSER%",processor.nick).replace("%KICKEDBY%",kickedByNick));
+									if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCKickDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCKickDynmap.replace("%KICKEDUSER%",processor.nick).replace("%KICKEDBY%",kickedByNick));
 								}
 							}
 						}
@@ -891,10 +893,10 @@ public class IRCd implements Runnable {
 			}
 			else if (mode == Modes.INSPIRCD) {
 				IRCUser iuser = null;
-				Iterator iter = uid2ircuser.entrySet().iterator();
+				Iterator<?> iter = uid2ircuser.entrySet().iterator();
 				String uid = null;
 				while (iter.hasNext()) {
-					Map.Entry<String, IRCUser> entry = (Map.Entry)iter.next();
+					Map.Entry<String, IRCUser> entry = (Entry<String, IRCUser>)iter.next();
 					iuser = entry.getValue();
 					if (iuser.nick.equalsIgnoreCase(ircuser.nick)) {
 						uid = entry.getKey();
@@ -923,12 +925,12 @@ public class IRCd implements Runnable {
 						if (reason != null) {
 							println(":"+sourceUID+" KICK "+channelName+" "+uid+" :"+reason);
 							if (msgIRCKickReason.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCKickReason.replace("%KICKEDUSER%",iuser.nick).replace("%KICKEDBY%",kickedByNick).replace("%REASON%",convertColors(reason,true)));
-							if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (msgIRCKickReasonDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCKickReasonDynmap.replace("%KICKEDUSER%",iuser.nick).replace("%KICKEDBY%",kickedByNick).replace("%REASON%",stripFormatting(reason)));
+							if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCKickReasonDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCKickReasonDynmap.replace("%KICKEDUSER%",iuser.nick).replace("%KICKEDBY%",kickedByNick).replace("%REASON%",stripFormatting(reason)));
 						}
 						else {
 							println(":"+sourceUID+" KICK "+channelName+" "+uid+" :"+kickedByNick);						
 							if (msgIRCKick.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCKick.replace("%KICKEDUSER%",iuser.nick).replace("%KICKEDBY%",kickedByNick));
-							if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (msgIRCKickDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCKickDynmap.replace("%KICKEDUSER%",iuser.nick).replace("%KICKEDBY%",kickedByNick));
+							if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCKickDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCKickDynmap.replace("%KICKEDUSER%",iuser.nick).replace("%KICKEDBY%",kickedByNick));
 						}
 						returnVal = true;
 						iuser.joined = false;
@@ -967,7 +969,7 @@ public class IRCd implements Runnable {
 						if (ircuser.joined) {
 							if ((isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
 								if (msgIRCBan.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCBan.replace("%BANNEDUSER%", ircuser.nick).replace("%BANNEDBY%", bannedBy));
-								if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (msgIRCBanDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCBanDynmap.replace("%BANNEDUSER%", ircuser.nick).replace("%BANNEDBY%", bannedBy));
+								if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCBanDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCBanDynmap.replace("%BANNEDUSER%", ircuser.nick).replace("%BANNEDBY%", bannedBy));
 							}
 						}
 					}
@@ -1540,7 +1542,6 @@ public class IRCd implements Runnable {
 		}
 		else if (mode == Modes.INSPIRCD) {
 			BukkitPlayer bp;
-			String UID;
 			if ((bp = getBukkitUserObject(user)) != null) {
 				println(":"+bp.getUID()+" TOPIC "+channelName+" :"+channelTopic);
 			}
@@ -1617,7 +1618,6 @@ public class IRCd implements Runnable {
 	
 	public static String getUIDFromIRCUser(IRCUser user) {
 		Iterator<Entry<String, IRCUser>> iter = uid2ircuser.entrySet().iterator();
-		boolean done = false;
 		while (iter.hasNext()) {
 			Map.Entry<String, IRCUser> entry = iter.next();
 			String UID = entry.getKey();
@@ -1631,7 +1631,6 @@ public class IRCd implements Runnable {
 
 	public static String getUIDFromIRCUser(String user) {
 		Iterator<Entry<String, IRCUser>> iter = uid2ircuser.entrySet().iterator();
-		boolean done = false;
 		while (iter.hasNext()) {
 			Map.Entry<String, IRCUser> entry = iter.next();
 			String UID = entry.getKey();
@@ -1727,7 +1726,6 @@ public class IRCd implements Runnable {
 		else if (split[1].equalsIgnoreCase("SERVER")) {
 			// :dev.tempcraft.net SERVER Esper.janus * 1 0JJ Esper
 			String hub;
-			int level;
 			try {
 				if (split[0].equalsIgnoreCase(remoteSID) || split[0].equalsIgnoreCase(linkName)) {
 					hub = remoteSID;
@@ -1739,7 +1737,7 @@ public class IRCd implements Runnable {
 						Iterator<Entry<String, IRCServer>> iter = servers.entrySet().iterator();
 						while (iter.hasNext()) {
 							Map.Entry<String, IRCServer> entry = iter.next();
-							String curSID = entry.getKey();
+							entry.getKey();
 							IRCServer curServer = entry.getValue();
 							if (curServer.host.equalsIgnoreCase(split[0])) { is = curServer; break; }
 						}
@@ -1784,8 +1782,7 @@ public class IRCd implements Runnable {
 			// :0KJAAAAAA MODE 0KJAAAAAA +w
 			// Ignores other modes than o and r for now.
 			// Also ignores the source UID - it's not needed and the UID/SID detection was buggy
-			IRCUser ircusersource,ircusertarget;
-			IRCServer server;
+			IRCUser ircusertarget;
 			if (split[3].startsWith(":")) split[3] = split[3].substring(1);
 			//if (((ircusersource = uid2ircuser.get(split[0])) != null) || ((server = servers.get(split[0])) != null)) {
 				if ((ircusertarget = uid2ircuser.get(split[2])) != null) {
@@ -1826,7 +1823,7 @@ public class IRCd implements Runnable {
 						if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
 							if (!ircuser.joined) {
 								if (msgIRCJoin.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCJoin.replace("%USER%", ircuser.nick));
-								if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (msgIRCJoinDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCJoinDynmap.replace("%USER%", ircuser.nick));
+								if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCJoinDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCJoinDynmap.replace("%USER%", ircuser.nick));
 							}
 						}
 						ircuser.joined = true;
@@ -1926,11 +1923,11 @@ public class IRCd implements Runnable {
 								if ((ircuser = uid2ircuser.get(split[0])) != null) {
 									if (add) {
 										if (msgIRCBan.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCBan.replace("%BANNEDUSER%", user).replace("%BANNEDBY%", ircuser.nick));
-										if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (msgIRCBanDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCBanDynmap.replace("%BANNEDUSER%", user).replace("%BANNEDBY%", ircuser.nick));
+										if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCBanDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCBanDynmap.replace("%BANNEDUSER%", user).replace("%BANNEDBY%", ircuser.nick));
 									}
 									else {
 										if (msgIRCUnban.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCUnban.replace("%BANNEDUSER%", user).replace("%BANNEDBY%", ircuser.nick));
-										if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (msgIRCUnbanDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCUnbanDynmap.replace("%BANNEDUSER%", user).replace("%BANNEDBY%", ircuser.nick));
+										if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCUnbanDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCUnbanDynmap.replace("%BANNEDUSER%", user).replace("%BANNEDBY%", ircuser.nick));
 									}
 								}
 							}
@@ -2009,7 +2006,7 @@ public class IRCd implements Runnable {
 				BukkitIRCdPlugin.thePlugin.updateLastReceived(ircuser.nick, split[2]);
 				if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null) && (ircuser.joined)) {
 					if (msgIRCNickChange.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCNickChange.replace("%OLDNICK%",ircuser.nick).replace("%NEWNICK%",split[2]));
-					if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (msgIRCNickChangeDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCNickChangeDynmap.replace("%OLDNICK%",ircuser.nick).replace("%NEWNICK%",split[2]));
+					if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCNickChangeDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCNickChangeDynmap.replace("%OLDNICK%",ircuser.nick).replace("%NEWNICK%",split[2]));
 				}
 				ircuser.nick = split[2];
 			}
@@ -2074,11 +2071,11 @@ public class IRCd implements Runnable {
 							if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
 								if (reason != null) {
 									if (msgIRCKickReason.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCKickReason.replace("%KICKEDUSER%",kicked).replace("%KICKEDBY%", kicker).replace("%REASON%", convertColors(reason,true)));
-									if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (msgIRCKickReasonDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCKickReasonDynmap.replace("%KICKEDUSER%",kicked).replace("%KICKEDBY%", kicker).replace("%REASON%", stripFormatting(reason)));
+									if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCKickReasonDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCKickReasonDynmap.replace("%KICKEDUSER%",kicked).replace("%KICKEDBY%", kicker).replace("%REASON%", stripFormatting(reason)));
 								}
 								else {
 									if (msgIRCKick.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCKick.replace("%KICKEDUSER%",kicked).replace("%KICKEDBY%", kicker));
-									if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (msgIRCKickDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCKickDynmap.replace("%KICKEDUSER%",kicked).replace("%KICKEDBY%", kicker));
+									if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCKickDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCKickDynmap.replace("%KICKEDUSER%",kicked).replace("%KICKEDBY%", kicker));
 								}
 								ircvictim.joined = false;
 							}
@@ -2115,11 +2112,11 @@ public class IRCd implements Runnable {
 					if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
 						if (reason != null) {
 							if (msgIRCLeaveReason.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCLeaveReason.replace("%USER%", ircuser.nick).replace("%REASON%", convertColors(reason, true)));
-							if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (msgIRCLeaveReasonDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveReasonDynmap.replace("%USER%", ircuser.nick).replace("%REASON%", stripFormatting(reason)));
+							if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCLeaveReasonDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveReasonDynmap.replace("%USER%", ircuser.nick).replace("%REASON%", stripFormatting(reason)));
 						}
 						else {
 							if (msgIRCLeave.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCLeave.replace("%USER%", ircuser.nick));
-							if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (msgIRCLeaveDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveDynmap.replace("%USER%", ircuser.nick));
+							if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCLeaveDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveDynmap.replace("%USER%", ircuser.nick));
 						}
 						ircuser.joined = false;
 						ircuser.setModes("");
@@ -2152,11 +2149,11 @@ public class IRCd implements Runnable {
 					if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
 						if (reason != null) {
 							if (msgIRCLeaveReason.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCLeaveReason.replace("%USER%", ircuser.nick).replace("%REASON%", convertColors(reason, true)));
-							if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (msgIRCLeaveReasonDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveReasonDynmap.replace("%USER%", ircuser.nick).replace("%REASON%", stripFormatting(reason)));
+							if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCLeaveReasonDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveReasonDynmap.replace("%USER%", ircuser.nick).replace("%REASON%", stripFormatting(reason)));
 						}
 						else {
 							if (msgIRCLeave.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCLeave.replace("%USER%", ircuser.nick));
-							if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (msgIRCLeaveDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveDynmap.replace("%USER%", ircuser.nick));
+							if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCLeaveDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveDynmap.replace("%USER%", ircuser.nick));
 						}
 					}
 					ircuser.setConsoleModes("");
@@ -2216,7 +2213,7 @@ public class IRCd implements Runnable {
 						if (reason.startsWith(":")) reason = reason.substring(1);
 						if (ircuser2.joined) {
 							if (msgIRCLeaveReason.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCLeaveReason.replace("%USER%", user).replace("%REASON%", convertColors(reason, true)));
-							if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (msgIRCLeaveReasonDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveReasonDynmap.replace("%USER%", user).replace("%REASON%", stripFormatting(reason)));
+							if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCLeaveReasonDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveReasonDynmap.replace("%USER%", user).replace("%REASON%", stripFormatting(reason)));
 							ircuser2.setConsoleModes("");
 							ircuser2.setModes("");
 							ircuser2.joined = false;
@@ -2247,11 +2244,9 @@ public class IRCd implements Runnable {
 			
 			IRCUser ircuser;
 			String uidfrom = split[0];
-			String uidto = split[2];
 			if ((ircuser = uid2ircuser.get(split[0])) != null) {
 				synchronized(csBukkitPlayers) {
 					BukkitPlayer bp;
-					IRCUser ircuserto;
 					if (split[2].equalsIgnoreCase(channelName)) { // Messaging the public channel
 						if (isAction) {
 							msgtemplate = msgIRCAction;
@@ -2278,7 +2273,7 @@ public class IRCd implements Runnable {
 							}
 							else {
 								if (msgtemplate.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgtemplate.replace("%USER%", ircuser.nick).replace("%MESSAGE%", IRCd.convertColors(message,true)));
-								if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (msgtemplatedynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", msgtemplatedynmap.replace("%USER%", ircuser.nick).replace("%MESSAGE%", stripFormatting(message)));
+								if ((BukkitIRCdPlugin.dynmap != null) && (msgtemplatedynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgtemplatedynmap.replace("%USER%", ircuser.nick).replace("%MESSAGE%", stripFormatting(message)));
 							}
 						}
 					}
@@ -2409,7 +2404,8 @@ public class IRCd implements Runnable {
 								}
 							}
 						} catch (SocketTimeoutException e) { }
-						try { Thread.currentThread().sleep(1); } catch(InterruptedException e){ }
+						try { Thread.currentThread();
+						Thread.sleep(1); } catch(InterruptedException e){ }
 					}
 				} catch (IOException ioe) {
 					synchronized(IRCd.csStdOut) {
@@ -2447,7 +2443,7 @@ public class IRCd implements Runnable {
 							BukkitIRCdPlugin.thePlugin.updateLastReceived(nick, split[1]);
 							if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
 								if (IRCd.msgIRCNickChange.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(IRCd.msgIRCNickChange.replace("%OLDNICK%",nick).replace("%NEWNICK%",split[1]));
-								if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (IRCd.msgIRCNickChangeDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCNickChangeDynmap.replace("%OLDNICK%",nick).replace("%NEWNICK%",split[1]));
+								if ((BukkitIRCdPlugin.dynmap != null) && (IRCd.msgIRCNickChangeDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCNickChangeDynmap.replace("%OLDNICK%",nick).replace("%NEWNICK%",split[1]));
 							}
 							IRCd.writeAll(":"+getFullHost()+" NICK "+split[1]);
 							nick = split[1];
@@ -2579,12 +2575,12 @@ public class IRCd implements Runnable {
 											else host = mask+"!*@*";
 											if (add == 1) {
 												if (IRCd.msgIRCBan.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(IRCd.msgIRCBan.replace("%BANNEDUSER%", host).replace("%BANNEDBY%", nick));
-												if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (IRCd.msgIRCBanDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCBanDynmap.replace("%BANNEDUSER%", host).replace("%BANNEDBY%", nick));
+												if ((BukkitIRCdPlugin.dynmap != null) && (IRCd.msgIRCBanDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCBanDynmap.replace("%BANNEDUSER%", host).replace("%BANNEDBY%", nick));
 												IRCd.banIRCUser(host, getFullHost());
 											}
 											else if (add == 0) {
 												if (IRCd.msgIRCUnban.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(IRCd.msgIRCUnban.replace("%BANNEDUSER%", host).replace("%BANNEDBY%", nick));
-												if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (IRCd.msgIRCUnbanDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCUnbanDynmap.replace("%BANNEDUSER%", host).replace("%BANNEDBY%", nick));
+												if ((BukkitIRCdPlugin.dynmap != null) && (IRCd.msgIRCUnbanDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCUnbanDynmap.replace("%BANNEDUSER%", host).replace("%BANNEDBY%", nick));
 												IRCd.unBanIRCUser(host, getFullHost());										
 											}
 
@@ -2667,12 +2663,11 @@ public class IRCd implements Runnable {
 								reason = IRCd.join(split, " ", 3);
 							}
 
-							int ID;
 							IRCUser ircuser;
 							if ((ircuser = IRCd.getIRCUser(bannick)) != null) {
 								IRCd.kickIRCUser(ircuser, nick, ident, hostmask, reason, false);
 							}
-							else if ((ID = IRCd.getBukkitUser(bannick)) >= 0) {
+							else if ((IRCd.getBukkitUser(bannick)) >= 0) {
 								if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
 									if (bannick.endsWith(IRCd.ingameSuffix)) bannick = bannick.substring(0, bannick.length()-IRCd.ingameSuffix.length()); 
 									Server s = BukkitIRCdPlugin.thePlugin.getServer();
@@ -2800,11 +2795,11 @@ public class IRCd implements Runnable {
 									else if (isAction || (!isCTCP)) { 
 										if (isAction) {
 											if (IRCd.msgIRCAction.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(IRCd.msgIRCAction.replace("%USER%", nick).replace("%MESSAGE%", IRCd.convertColors(message2,true)));
-											if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (IRCd.msgIRCActionDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCActionDynmap.replace("%USER%", nick).replace("%MESSAGE%", IRCd.stripFormatting(message2)));
+											if ((BukkitIRCdPlugin.dynmap != null) && (IRCd.msgIRCActionDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCActionDynmap.replace("%USER%", nick).replace("%MESSAGE%", IRCd.stripFormatting(message2)));
 										}
 										else {
 											if (IRCd.msgIRCMessage.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(IRCd.msgIRCMessage.replace("%USER%", nick).replace("%MESSAGE%", IRCd.convertColors(message2,true)));
-											if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (IRCd.msgIRCMessageDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCMessageDynmap.replace("%USER%", nick).replace("%MESSAGE%", IRCd.stripFormatting(message2)));
+											if ((BukkitIRCdPlugin.dynmap != null) && (IRCd.msgIRCMessageDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCMessageDynmap.replace("%USER%", nick).replace("%MESSAGE%", IRCd.stripFormatting(message2)));
 										}
 									}
 								}
@@ -2877,7 +2872,7 @@ public class IRCd implements Runnable {
 							if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
 								if ((!isCTCP) && IRCd.enableNotices) {
 									if (IRCd.msgIRCNotice.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(IRCd.msgIRCNotice.replace("%USER%", nick).replace("%MESSAGE%",IRCd.convertColors(message,true)));
-									if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (IRCd.msgIRCNoticeDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCNoticeDynmap.replace("%USER%", nick).replace("%MESSAGE%",IRCd.stripFormatting(message)));
+									if ((BukkitIRCdPlugin.dynmap != null) && (IRCd.msgIRCNoticeDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCNoticeDynmap.replace("%USER%", nick).replace("%MESSAGE%",IRCd.stripFormatting(message)));
 								}
 							}
 							IRCd.writeAllExcept(nick,":"+getFullHost()+" NOTICE " + IRCd.channelName + " :"+message);
@@ -2930,7 +2925,7 @@ public class IRCd implements Runnable {
 				sendMOTD();
 				if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
 					if (IRCd.msgIRCJoin.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(IRCd.msgIRCJoin.replace("%USER%", nick));
-					if ((BukkitIRCdPlugin.thePlugin.dynmap != null) && (IRCd.msgIRCJoinDynmap.length() > 0)) BukkitIRCdPlugin.thePlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCJoinDynmap.replace("%USER%", nick));
+					if ((BukkitIRCdPlugin.dynmap != null) && (IRCd.msgIRCJoinDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCJoinDynmap.replace("%USER%", nick));
 				}
 				sendChanWelcome(IRCd.channelName);
 			}
@@ -2947,7 +2942,6 @@ public class IRCd implements Runnable {
 
 		public void sendWhois(String whoisUser)
 		{
-			int user;
 			IRCUser ircuser;
 			BukkitPlayer bp;
 			if (whoisUser.equalsIgnoreCase(IRCd.serverName)) {
@@ -2984,9 +2978,10 @@ public class IRCd implements Runnable {
 			}
 			else if ((bp = IRCd.getBukkitUserObject(whoisUser)) != null) {
 				if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
-					String whoisUserTrimmed;
-					if ((IRCd.ingameSuffix.length() > 0) && (whoisUser.endsWith(IRCd.ingameSuffix))) whoisUserTrimmed = whoisUser.substring(0,whoisUser.length()-IRCd.ingameSuffix.length());
-					else whoisUserTrimmed = whoisUser;
+					if ((IRCd.ingameSuffix.length() > 0) && (whoisUser.endsWith(IRCd.ingameSuffix)))
+						whoisUser.substring(0,whoisUser.length()-IRCd.ingameSuffix.length());
+					else {
+					}
 					String bukkitversion = BukkitIRCdPlugin.thePlugin.getServer().getVersion();
 
 					String playermodes;

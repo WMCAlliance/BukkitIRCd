@@ -3,7 +3,6 @@ package com.Jdbye.BukkitIRCd;
 import java.util.Set;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.permissions.PermissibleBase;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
