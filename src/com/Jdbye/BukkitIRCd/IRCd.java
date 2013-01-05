@@ -804,7 +804,7 @@ public class IRCd implements Runnable {
 		if (mode != Modes.INSPIRCD) return false;
 		IRCServer is = servers.get(serverID);
 		if (is != null) {
-			if (debugMode) BukkitIRCdPlugin.log.info("[BukkitIRCd] Server "+serverID+" ("+is.host+") delinked");
+			if (debugMode) BukkitIRCdPlugin.log.info("[BukkitIRCd] Server " + serverID + " (" + is.host + ") delinked");
 			Iterator<Entry<String, IRCUser>> iter = uid2ircuser.entrySet().iterator();
 			while (iter.hasNext()) {
 				Map.Entry<String, IRCUser> entry = iter.next();
@@ -913,10 +913,10 @@ public class IRCd implements Runnable {
 					boolean returnVal = false;
 					if (iuser.consoleJoined) {
 						if (reason != null) {
-							println(":"+sourceUID+" KICK "+consoleChannelName+" "+uid+" :"+reason);
+							println(":" + sourceUID + " KICK " + consoleChannelName + " " + uid + " :" + reason);
 						}
 						else {
-							println(":"+sourceUID+" KICK "+consoleChannelName+" "+uid+" :"+kickedByNick);
+							println(":" + sourceUID + " KICK " + consoleChannelName + " " + uid + " :" + kickedByNick);
 						}
 						returnVal = true;
 						iuser.consoleJoined = false;
@@ -935,11 +935,11 @@ public class IRCd implements Runnable {
 						returnVal = true;
 						iuser.joined = false;
 					}
-					else BukkitIRCdPlugin.log.info("Player "+kickedByNick+" tried to kick IRC user not on channel: "+iuser.nick); // Log this as severe since it should never occur unless something is wrong with the code
+					else BukkitIRCdPlugin.log.info("Player " + kickedByNick + " tried to kick IRC user not on channel: " + iuser.nick); // Log this as severe since it should never occur unless something is wrong with the code
 					
 					return returnVal;
 				}
-				else BukkitIRCdPlugin.log.severe("[BukkitIRCd] User "+ircuser.nick+" not found in UID list. Please notify Jdbye about this."); // Log this as severe since it should never occur unless something is wrong with the code
+				else BukkitIRCdPlugin.log.severe("[BukkitIRCd] User " + ircuser.nick + " not found in UID list. Please notify Jdbye about this."); // Log this as severe since it should never occur unless something is wrong with the code
 			}
 		}
 		return false;
@@ -960,10 +960,10 @@ public class IRCd implements Runnable {
 						bannedBy += ingameSuffix;
 					}
 					String banHost;
-					if ((banType.equals("host")) || (banType.equals("hostname"))) banHost = "*!*@"+ircuser.hostmask;
-					else if ((banType.equals("ip")) || (banType.equals("ipaddress"))) banHost = "*!*@"+ircuser.ipaddress;
+					if ((banType.equals("host")) || (banType.equals("hostname"))) banHost = "*!*@" + ircuser.hostmask;
+					else if ((banType.equals("ip")) || (banType.equals("ipaddress"))) banHost = "*!*@" + ircuser.ipaddress;
 					else if (banType.equals("ident")) banHost = "*!"+ircuser.ident+"@*";
-					else banHost = ircuser.nick+"!*@*";
+					else banHost = ircuser.nick + "!*@*";
 					boolean result = banIRCUser(banHost, bannedByHost);
 					if (result) {
 						if (ircuser.joined) {
@@ -1001,7 +1001,7 @@ public class IRCd implements Runnable {
 						return true;
 					}
 					else {
-						BukkitIRCdPlugin.log.severe("[BukkitIRCd] User "+user+" not found in UID list. Please notify Jdbye about this."); // Log this as severe since it should never occur unless something is wrong with the code
+						BukkitIRCdPlugin.log.severe("[BukkitIRCd] User " + user + " not found in UID list. Please notify Jdbye about this."); // Log this as severe since it should never occur unless something is wrong with the code
 						return false;
 					}
 				}
@@ -1016,7 +1016,7 @@ public class IRCd implements Runnable {
 			if (mode == Modes.STANDALONE) {
 				if ((ban = getIRCBan(banHost)) < 0) return false;
 				ircBans.remove(ban);
-				IRCd.writeAll(":"+bannedByHost+" MODE "+IRCd.channelName+" -b "+banHost);
+				IRCd.writeAll(":" + bannedByHost + " MODE " + IRCd.channelName + " -b " + banHost);
 				return true;
 			}
 			else if (mode == Modes.INSPIRCD) {
@@ -1027,11 +1027,11 @@ public class IRCd implements Runnable {
 				if (((UID = getUIDFromIRCUser(user)) != null) || ((bp = getBukkitUserObject(user)) != null) || (user.equals(serverName))) {
 					if (user.equals(serverName)) UID = serverUID;
 					else if (UID == null) UID = bp.getUID();
-					println(":"+UID+" FMODE "+channelName+" "+channelTS+" -b :"+banHost);
+					println(":" + UID + " FMODE " + channelName + " " + channelTS + " -b :" + banHost);
 					return true;
 				}
 				else {
-					BukkitIRCdPlugin.log.severe("[BukkitIRCd] User "+user+" not found in UID list. Please notify Jdbye about this."); // Log this as severe since it should never occur unless something is wrong with the code
+					BukkitIRCdPlugin.log.severe("[BukkitIRCd] User " + user + " not found in UID list. Please notify Jdbye about this."); // Log this as severe since it should never occur unless something is wrong with the code
 					return false;
 				}
 			}
@@ -1099,17 +1099,17 @@ public class IRCd implements Runnable {
 				bukkitPlayers.add(bp);
 
 				if (mode == Modes.STANDALONE) {
-					writeAll(":"+nick+ingameSuffix+"!"+nick+"@"+host+" JOIN "+IRCd.channelName);
+					writeAll(":" + nick + ingameSuffix + "!" + nick + "@" + host + " JOIN " + IRCd.channelName);
 				}
 				String mode1="+", mode2="";
-				if (modes.contains("~")) { mode1+="q"; mode2+=nick+ingameSuffix+" "; }
-				if (modes.contains("&")) { mode1+="a"; mode2+=nick+ingameSuffix+" "; }
-				if (modes.contains("@")) { mode1+="o"; mode2+=nick+ingameSuffix+" "; }
-				if (modes.contains("%")) { mode1+="h"; mode2+=nick+ingameSuffix+" "; }
-				if (modes.contains("+")) { mode1+="v"; mode2+=nick+ingameSuffix+" "; }
+				if (modes.contains("~")) { mode1+="q"; mode2+=nick + ingameSuffix + " "; }
+				if (modes.contains("&")) { mode1+="a"; mode2+=nick + ingameSuffix + " "; }
+				if (modes.contains("@")) { mode1+="o"; mode2+=nick + ingameSuffix + " "; }
+				if (modes.contains("%")) { mode1+="h"; mode2+=nick + ingameSuffix + " "; }
+				if (modes.contains("+")) { mode1+="v"; mode2+=nick + ingameSuffix + " "; }
 				if (!mode1.equals("+")) {
 					if (mode == Modes.STANDALONE) {
-						writeAll(":"+serverName+"!"+serverName+"@"+serverHostName+" MODE "+IRCd.channelName+" "+mode1+" "+mode2.substring(0, mode2.length()-1));
+						writeAll(":" + serverName + "!" + serverName + "@" + serverHostName + " MODE " + IRCd.channelName + " " + mode1 + " " + mode2.substring(0, mode2.length()-1));
 					}
 				}
 				
@@ -1120,19 +1120,19 @@ public class IRCd implements Runnable {
 					synchronized(csBukkitPlayers) {
 						String textMode = bp.getTextMode();
 						if (bp.hasPermission("bukkitircd.oper")) {
-							println(pre+"UID "+UID+" "+(bp.idleTime / 1000L)+" "+bp.nick+ingameSuffix+" "+bp.host+" "+bp.host+" "+bp.nick+" "+bp.ip+" "+bp.signedOn+" +or :Minecraft Player");
-							println(":"+UID+" OPERTYPE IRC_Operator");
+							println(pre + "UID " + UID + " " + (bp.idleTime / 1000L) + " " + bp.nick + ingameSuffix + " " + bp.host + " " + bp.host + " " + bp.nick + " " + bp.ip + " " + bp.signedOn + " +or :Minecraft Player");
+							println(":" + UID + " OPERTYPE IRC_Operator");
 						}
-						else println(pre+"UID "+UID+" "+(bp.idleTime / 1000L)+" "+bp.nick+ingameSuffix+" "+bp.host+" "+bp.host+" "+bp.nick+" "+bp.ip+" "+bp.signedOn+" +r :Minecraft Player");
+						else println(pre + "UID " + UID + " " + (bp.idleTime / 1000L) + " " + bp.nick + ingameSuffix + " " + bp.host + " " + bp.host + " " + bp.nick + " " + bp.ip + " " + bp.signedOn + " +r :Minecraft Player");
 
-						println(pre+"FJOIN "+channelName+" "+channelTS+" +nt :,"+UID);
+						println(pre + "FJOIN " + channelName + " " + channelTS + " +nt :," + UID);
 						if (textMode.length() > 0) {
 							String modestr = "";
 							for (int i = 0; i < textMode.length(); i++) {
-								modestr += UID+" ";
+								modestr += UID + " ";
 							}
 							modestr = modestr.substring(0, modestr.length()-1);
-							println(":"+serverUID+" FMODE "+channelName+" "+channelTS+" +"+textMode+" "+modestr);
+							println(":" + serverUID + " FMODE " + channelName + " " + channelTS + " +" + textMode + " "+modestr);
 						}
 						if (world != null) println(pre + "METADATA " + UID + " swhois :is currently in "+world);
 						else println(pre + "METADATA " + UID + " swhois :is currently in an unknown world");
@@ -1154,17 +1154,17 @@ public class IRCd implements Runnable {
 				BukkitPlayer bp = new BukkitPlayer(nick, world, modes, host, ip, System.currentTimeMillis() / 1000L, System.currentTimeMillis());
 				bukkitPlayers.add(bp);
 				if (mode == Modes.STANDALONE) {
-					writeAll(":"+nick+ingameSuffix+"!"+nick+"@"+host+" JOIN "+IRCd.channelName);
+					writeAll(":" + nick + ingameSuffix + "!" + nick + "@" + host + " JOIN " + IRCd.channelName);
 				}
 				String mode1="+", mode2="";
-				if (modes.contains("~")) { mode1+="q"; mode2+=nick+ingameSuffix+" "; }
-				if (modes.contains("&")) { mode1+="a"; mode2+=nick+ingameSuffix+" "; }
-				if (modes.contains("@")) { mode1+="o"; mode2+=nick+ingameSuffix+" "; }
-				if (modes.contains("%")) { mode1+="h"; mode2+=nick+ingameSuffix+" "; }
-				if (modes.contains("+")) { mode1+="v"; mode2+=nick+ingameSuffix+" "; }
+				if (modes.contains("~")) { mode1+="q"; mode2+=nick + ingameSuffix + " "; }
+				if (modes.contains("&")) { mode1+="a"; mode2+=nick + ingameSuffix + " "; }
+				if (modes.contains("@")) { mode1+="o"; mode2+=nick + ingameSuffix + " "; }
+				if (modes.contains("%")) { mode1+="h"; mode2+=nick + ingameSuffix + " "; }
+				if (modes.contains("+")) { mode1+="v"; mode2+=nick + ingameSuffix + " "; }
 				if (!mode1.equals("+")) {
 					if (mode == Modes.STANDALONE) {
-						writeAll(":"+serverName+"!"+serverName+"@"+serverHostName+" MODE "+IRCd.channelName+" "+mode1+" "+mode2.substring(0, mode2.length()-1));
+						writeAll(":" + serverName + "!" + serverName + "@" + serverHostName + " MODE " + IRCd.channelName + " " + mode1 + " " + mode2.substring(0, mode2.length()-1));
 					}
 				}
 				
@@ -1174,19 +1174,19 @@ public class IRCd implements Runnable {
 					synchronized(csBukkitPlayers) {
 						String textMode = bp.getTextMode();
 						if (bp.hasPermission("bukkitircd.oper")) {
-							println(pre+"UID "+UID+" "+(bp.idleTime / 1000L)+" "+bp.nick+ingameSuffix+" "+bp.host+" "+bp.host+" "+bp.nick+" "+bp.ip+" "+bp.signedOn+" +or :Minecraft Player");
-							println(":"+UID+" OPERTYPE IRC_Operator");
+							println(pre + "UID " + UID + " " + (bp.idleTime / 1000L) + " " + bp.nick + ingameSuffix + " " + bp.host + " " + bp.host + " " + bp.nick + " " + bp.ip + " " + bp.signedOn + " +or :Minecraft Player");
+							println(":" + UID + " OPERTYPE IRC_Operator");
 						}
-						else println(pre+"UID "+UID+" "+(bp.idleTime / 1000L)+" "+bp.nick+ingameSuffix+" "+bp.host+" "+bp.host+" "+bp.nick+" "+bp.ip+" "+bp.signedOn+" +r :Minecraft Player");
+						else println(pre + "UID " + UID + " " + (bp.idleTime / 1000L) + " " + bp.nick+ingameSuffix + " " + bp.host + " " + bp.host + " " + bp.nick + " " + bp.ip + " " + bp.signedOn + " +r :Minecraft Player");
 
-						println(pre+"FJOIN "+channelName+" "+channelTS+" +nt :,"+UID);
+						println(pre + "FJOIN " + channelName + " " + channelTS + " +nt :," + UID);
 						if (textMode.length() > 0) {
 							String modestr = "";
 							for (int i = 0; i < textMode.length(); i++) {
-								modestr += UID+" ";
+								modestr += UID + " ";
 							}
 							modestr = modestr.substring(0, modestr.length()-1);
-							println(":"+serverUID+" FMODE "+channelName+" "+channelTS+" +"+textMode+" "+modestr);
+							println(":" + serverUID + " FMODE " + channelName + " " + channelTS + " +" + textMode + " " + modestr);
 						}
 						if (world != null) println(pre + "METADATA " + UID + " swhois :is currently in "+world);
 						else println(pre + "METADATA " + UID + " swhois :is currently in an unknown world");
@@ -1203,10 +1203,10 @@ public class IRCd implements Runnable {
 			if (ID >= 0) {
 				BukkitPlayer bp = bukkitPlayers.get(ID);
 				if (mode == Modes.STANDALONE) {
-					writeAll(":"+bp.nick+ingameSuffix+"!"+bp.nick+"@"+bp.host+" QUIT :Left the server");
+					writeAll(":" + bp.nick + ingameSuffix + "!" + bp.nick + "@" + bp.host + " QUIT :Left the server");
 				}
 				else if (mode == Modes.INSPIRCD) {
-					println(":"+bp.getUID()+" QUIT :Left the server");
+					println(":" + bp.getUID() + " QUIT :Left the server");
 				}
 				bukkitPlayers.remove(ID);
 				return true;

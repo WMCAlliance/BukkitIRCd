@@ -145,7 +145,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 		dynmapEventRegistered = false;
 
-		File configFile = new File(getDataFolder(), "res/config.yml");
+		File configFile = new File(getDataFolder(), "config.yml");
 		writeSettings(configFile);
 
 		writeBans();
@@ -469,7 +469,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 	}
 
-	/*
+	// It was originally disabled, I'd like to know why.
 	private void firstRunSettings(File dataFolder)
 	{
 		log.info("[BukkitIRCd] Configuration file not found, creating new one.");
@@ -488,7 +488,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 		writeSettings(configFile);
 	}
-	*/
+	
 
 	private void loadMOTD() {
 		File motdFile = new File(getDataFolder(), "motd.txt");
@@ -517,7 +517,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			}
 		}
 		catch (Exception e) {
-			log.info("[BukkitIRCd] Failed to load MOTD file: "+e.toString());
+			log.info("[BukkitIRCd] Failed to load MOTD file: " + e.toString());
 		}
 	}
 
@@ -698,7 +698,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 	}
 	
-	/*
+	// Was also disabled, I'd like to know why
 	private void saveDefaultMessages(File dataFolder, String fileName)
 	{
 		log.info("[BukkitIRCd] Messages file not found, creating new one.");
@@ -717,7 +717,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 		writeMessages(msgFile);
 	}
-	*/
+	
 	
 	@SuppressWarnings("unused")
 	private void writeMessages(File messagesFile)
