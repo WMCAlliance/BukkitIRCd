@@ -5,7 +5,7 @@ package com.Jdbye.BukkitIRCd;
 
 // Last changes
 // - Minecraft 1.4.6 compatible
-// - Changed config to use & signs
+// - Changed messages.yml to use & signs
 // - Removed unused includes
 // - Check our github
 
@@ -13,7 +13,6 @@ package com.Jdbye.BukkitIRCd;
  * HeroChat/Towny compatibility.
  * UnrealIRCd/TS5 links
  */
-
 
 // Features:
 // - Standalone IRC server with ingame chat, easily integrated with website using a IRC widget or applet.

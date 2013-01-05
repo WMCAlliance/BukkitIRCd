@@ -1,11 +1,10 @@
 name: BukkitIRCd
-
 main: com.Jdbye.BukkitIRCd.BukkitIRCdPlugin
-
-version: 1.0
+version: 1.1
+dev-url: http://ci.wma.im/job/BukkitIRCd-dev
 website: http://wma.im
-author: WMA
-description: IRC server plugin for Bukkit, originally by Jdbye
+authors: [Jdbye, WizardCM, Mu5tank05]
+description: Powerful IRC plugin for Bukkit
 softdepend: [dynmap]
 commands:
   irclist:
