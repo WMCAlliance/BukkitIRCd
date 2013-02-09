@@ -29,4 +29,4 @@ irc-action-dynmap: "* %USER% %MESSAGE%"  # Displays on dynmap when someone sends
 irc-message-dynmap: "<%USER%> %MESSAGE%"  # Displays on dynmap when someone sends a message on IRC.
 irc-notice-dynmap: "-%USER%- %MESSAGE%"  # Displays on dynmap when someone sends a notice on IRC.
 dynmap-message: "[Map] %USER%: %MESSAGE%"  # Displays on IRC when someone sends a message on Dynmap.
-player-list: "^BWe have(%COUNT%)Players. They are:^B %USERS%"  # The template used for the !players IRC command. If you make this blank, the command will be disabled.
+player-list: "^BWe have (%COUNT%) players online. They are:^B %USERS%"  # The template used for the !players IRC command. If you make this blank, the command will be disabled.
