@@ -18,7 +18,7 @@ public class BukkitIRCdDynmapListener implements Listener {
 		
 			DynmapWebChatEvent webevt = (DynmapWebChatEvent) evt;
 			if (IRCd.mode == Modes.STANDALONE) {
-				IRCd.writeAll(":" + IRCd.serverName + "!"+IRCd.serverName + "@" + IRCd.serverHostName + " PRIVMSG " + IRCd.channelName + " :[Map] " + webevt.getName() + ": "+webevt.getMessage());
+				IRCd.writeAll(":" + IRCd.serverName + "!"+IRCd.serverName + "@" + IRCd.serverHostName + " PRIVMSG " + IRCd.channelName + " :[DynMap] " + webevt.getName() + ": "+webevt.getMessage());
 			}
 			else {
 				if (IRCd.linkcompleted) {
