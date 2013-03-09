@@ -28,7 +28,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.dynmap.DynmapAPI;
 import org.bukkit.ChatColor;
-import java.util.regex.Pattern;
 
 /**
  * BukkitIRCdPlugin for Bukkit
@@ -470,6 +469,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	}
 
 	// It was originally disabled, I'd like to know why.
+	@SuppressWarnings("unused")
 	private void firstRunSettings(File dataFolder)
 	{
 		log.info("[BukkitIRCd] Configuration file not found, creating new one.");
@@ -699,6 +699,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	}
 	
 	// Was also disabled, I'd like to know why
+	@SuppressWarnings("unused")
 	private void saveDefaultMessages(File dataFolder, String fileName)
 	{
 		log.info("[BukkitIRCd] Messages file not found, creating new one.");
