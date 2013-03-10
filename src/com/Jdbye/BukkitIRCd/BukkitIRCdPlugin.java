@@ -719,7 +719,6 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	}
 	
 	
-	@SuppressWarnings("unused")
 	private void writeMessages(File messagesFile)
 	{
 		try
