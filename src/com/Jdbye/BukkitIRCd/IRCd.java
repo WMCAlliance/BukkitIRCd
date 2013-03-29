@@ -645,7 +645,7 @@ public class IRCd implements Runnable {
 					if (processor.modes.length() > 0) nick = processor.modes.substring(0,1)+ processor.nick;
 					else nick = processor.nick;
 					if (users.length() == 0) { users = nick; }
-					else { users = userS + " " + nick; }
+					else { users = users + " " + nick; }
 				}
 			}
 			else if (mode == Modes.INSPIRCD) {
@@ -655,7 +655,7 @@ public class IRCd implements Runnable {
 					if (modes.length() > 0) nick = modes.substring(0,1)+user.nick;
 					else nick = user.nick;
 					if (users.length() == 0) { users = nick; }
-					else { users = userS + " " + nick; }					
+					else { users = users + " " + nick; }					
 				}
 			}
 		}
@@ -669,7 +669,7 @@ public class IRCd implements Runnable {
 				if (modes.length() > 0) nick2 = modes.substring(0,1)+ nick + ingameSuffix;
 				else nick2 = nick + ingameSuffix;
 				if (users.length() == 0) { users = nick2; }
-				else { users = userS + " " + nick2; }
+				else { users = users + " " + nick2; }
 				i++;
 			}
 		}
@@ -686,7 +686,7 @@ public class IRCd implements Runnable {
 						if (processor.modes.length() > 0) nick = processor.modes.substring(0,1)+ processor.nick;
 						else nick = processor.nick;
 						if (users.length() == 0) { users = nick; }
-						else { users = userS + " " + nick; }
+						else { users = users + " " + nick; }
 					}
 				}
 			}
@@ -698,7 +698,7 @@ public class IRCd implements Runnable {
 						if (modes.length() > 0) nick = modes.substring(0,1)+user.nick;
 						else nick = user.nick;
 						if (users.length() == 0) { users = nick; }
-						else { users = userS + " " + nick; }
+						else { users = users + " " + nick; }
 					}
 				}
 			}
@@ -1817,10 +1817,10 @@ public class IRCd implements Runnable {
 				String users[] = command.split(" ");
 				for (String user : users) {
 					if (!user.contains(",")) continue;
-					String userSplit[] = user.split(",");
+					String usersplit[] = user.split(",");
 					IRCUser ircuser;
-					if ((ircuser = uid2ircuser.get(userSplit[1])) != null) {
-						ircuser.setModes(userSplit[0]);
+					if ((ircuser = uid2ircuser.get(usersplit[1])) != null) {
+						ircuser.setModes(usersplit[0]);
 						if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
 							if (!ircuser.joined) {
 								if (msgIRCJoin.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCJoin.replace("%USER%", ircuser.nick));
@@ -1829,7 +1829,7 @@ public class IRCd implements Runnable {
 						}
 						ircuser.joined = true;
 					}
-					else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + userSplit[1] + " not found in list. Error code IRCd1831."); // Log as severe because this situation should never occur and points to a bug in the code
+					else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + usersplit[1] + " not found in list. Error code IRCd1831."); // Log as severe because this situation should never occur and points to a bug in the code
 				}
 			}
 			else if (split[2].equalsIgnoreCase(consoleChannelName)) {
@@ -1841,13 +1841,13 @@ public class IRCd implements Runnable {
 				String users[] = command.split(" ");
 				for (String user : users) {
 					if (!user.contains(",")) continue;
-					String userSplit[] = user.split(",");
+					String usersplit[] = user.split(",");
 					IRCUser ircuser;
-					if ((ircuser = uid2ircuser.get(userSplit[1])) != null) {
-						ircuser.setConsoleModes(userSplit[0]);
+					if ((ircuser = uid2ircuser.get(usersplit[1])) != null) {
+						ircuser.setConsoleModes(usersplit[0]);
 						ircuser.consoleJoined = true;
 					}
-					else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + userSplit[1] + " not found in list. Error code IRCd1849."); // Log as severe because this situation should never occur and points to a bug in the code
+					else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + usersplit[1] + " not found in list. Error code IRCd1849."); // Log as severe because this situation should never occur and points to a bug in the code
 				}
 			}
 			// Ignore other channels, since this plugin only cares about the main channel and console channel.
