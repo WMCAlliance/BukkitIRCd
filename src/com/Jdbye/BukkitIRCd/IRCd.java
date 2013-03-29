@@ -470,7 +470,7 @@ public class IRCd implements Runnable {
 			}
 			catch (Exception e) {
 				BukkitIRCdPlugin.log.severe("[BukkitIRCd] Unexpected exception in "+Thread.currentThread().getName()+": "+e.toString());
-				BukkitIRCdPlugin.log.severe("[BukkitIRCd] Please notify Jdbye about this error.");
+				BukkitIRCdPlugin.log.severe("[BukkitIRCd] Error code IRCd473.");
 				e.printStackTrace();
 			}
 		}
@@ -939,7 +939,7 @@ public class IRCd implements Runnable {
 					
 					return returnVal;
 				}
-				else BukkitIRCdPlugin.log.severe("[BukkitIRCd] User " + ircuser.nick + " not found in UID list. Please notify Jdbye about this."); // Log this as severe since it should never occur unless something is wrong with the code
+				else BukkitIRCdPlugin.log.severe("[BukkitIRCd] User " + ircuser.nick + " not found in UID list. Error code IRCd942."); // Log this as severe since it should never occur unless something is wrong with the code
 			}
 		}
 		return false;
@@ -1001,7 +1001,7 @@ public class IRCd implements Runnable {
 						return true;
 					}
 					else {
-						BukkitIRCdPlugin.log.severe("[BukkitIRCd] User " + user + " not found in UID list. Please notify Jdbye about this."); // Log this as severe since it should never occur unless something is wrong with the code
+						BukkitIRCdPlugin.log.severe("[BukkitIRCd] User " + user + " not found in UID list. Error code IRCd1004."); // Log this as severe since it should never occur unless something is wrong with the code
 						return false;
 					}
 				}
@@ -1031,7 +1031,7 @@ public class IRCd implements Runnable {
 					return true;
 				}
 				else {
-					BukkitIRCdPlugin.log.severe("[BukkitIRCd] User " + user + " not found in UID list. Please notify Jdbye about this."); // Log this as severe since it should never occur unless something is wrong with the code
+					BukkitIRCdPlugin.log.severe("[BukkitIRCd] User " + user + " not found in UID list. Error code IRCd1034."); // Log this as severe since it should never occur unless something is wrong with the code
 					return false;
 				}
 			}
@@ -1704,7 +1704,7 @@ public class IRCd implements Runnable {
 					iuser.awayMsg = "";
 				}
 			}
-			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+UID+" not found in list. Please notify Jdbye about this."); // Log this as severe since it should never occur unless something is wrong with the code
+			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+UID+" not found in list. Error code IRCd1707."); // Log this as severe since it should never occur unless something is wrong with the code
 		}
 		else if (split[1].equalsIgnoreCase("TIME")) {
 			// TIME request from user
@@ -1776,7 +1776,7 @@ public class IRCd implements Runnable {
 			if ((ircuser = uid2ircuser.get(split[0])) != null) {
 				ircuser.isOper = true;
 			}
-			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[0]+" not found in list. Please notify Jdbye about this."); // Log as severe because this situation should never occur and points to a bug in the code			
+			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[0]+" not found in list. Error code IRCd1779."); // Log as severe because this situation should never occur and points to a bug in the code			
 		}
 		else if (split[1].equalsIgnoreCase("MODE")) {
 			// :0KJAAAAAA MODE 0KJAAAAAA +w
@@ -1801,9 +1801,9 @@ public class IRCd implements Runnable {
 						}
 					}
 				}
-				else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[2]+" not found in list. Please notify Jdbye about this."); // Log as severe because this situation should never occur and points to a bug in the code
-			//}
-			//else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID "+split[0]+" not found in list. Please notify Jdbye about this."); // Log as severe because this situation should never occur and points to a bug in the code			
+				else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[2]+" not found in list. Error code IRCd1804."); // Log as severe because this situation should never occur and points to a bug in the code
+			}
+			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID "+split[0]+" not found in list. Error code IRCd1806."); // Log as severe because this situation should never occur and points to a bug in the code			
 		}
 		else if (split[1].equalsIgnoreCase("FJOIN")) {
 			// :dev.tempcraft.net FJOIN #tempcraft.staff 1321829730 +tnsk MASTER-RACE :qa,0AJAAAAAA o,0IJAAAAAP v,0IJAAAAAQ
@@ -1828,7 +1828,7 @@ public class IRCd implements Runnable {
 						}
 						ircuser.joined = true;
 					}
-					else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+userSplit[1]+" not found in list. Please notify Jdbye about this."); // Log as severe because this situation should never occur and points to a bug in the code
+					else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+userSplit[1]+" not found in list. Error code IRCd1831."); // Log as severe because this situation should never occur and points to a bug in the code
 				}
 			}
 			else if (split[2].equalsIgnoreCase(consoleChannelName)) {
@@ -1846,7 +1846,7 @@ public class IRCd implements Runnable {
 						ircuser.setConsoleModes(userSplit[0]);
 						ircuser.consoleJoined = true;
 					}
-					else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+userSplit[1]+" not found in list. Please notify Jdbye about this."); // Log as severe because this situation should never occur and points to a bug in the code
+					else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+userSplit[1]+" not found in list. Error code IRCd1849."); // Log as severe because this situation should never occur and points to a bug in the code
 				}
 			}
 			// Ignore other channels, since this plugin only cares about the main channel and console channel.
@@ -1858,7 +1858,7 @@ public class IRCd implements Runnable {
 			if ((ircuser = uid2ircuser.get(split[0])) != null) {
 				ircuser.hostmask = split[2];
 			}
-			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[0]+" not found in list. Please notify Jdbye about this."); // Log as severe because this situation should never occur and points to a bug in the code
+			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[0]+" not found in list. Error code IRCd1861."); // Log as severe because this situation should never occur and points to a bug in the code
 		}
 		else if (split[1].equalsIgnoreCase("FNAME")) {
 			// :0KJAAAAAA FNAME TEST
@@ -1867,7 +1867,7 @@ public class IRCd implements Runnable {
 			if ((ircuser = uid2ircuser.get(split[0])) != null) {
 				ircuser.realname = join(split, " ", 2);
 			}
-			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[0]+" not found in list. Please notify Jdbye about this."); // Log as severe because this situation should never occur and points to a bug in the code
+			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[0]+" not found in list. Error code IRCd1870."); // Log as severe because this situation should never occur and points to a bug in the code
 		}
 		else if (split[1].equalsIgnoreCase("FMODE")) {
 			// :0KJAAAAAA FMODE #tempcraft.staff 1320330110 +o 0KJAAAAAB
@@ -1982,7 +1982,7 @@ public class IRCd implements Runnable {
 						BukkitIRCdPlugin.ircd_topicsetby = user;
 					}
 				}
-				else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID "+UID+" not found in list. Please notify Jdbye about this."); // Log as severe because this situation should never occur and points to a bug in the code
+				else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID "+UID+" not found in list. Error code IRCd1985."); // Log as severe because this situation should never occur and points to a bug in the code
 			}
 			else if (split[2].equalsIgnoreCase(consoleChannelName)) {
 				// This is of no interest to us
@@ -1996,7 +1996,7 @@ public class IRCd implements Runnable {
 			if ((ircuser = uid2ircuser.get(split[2])) != null) {
 				println(":" + split[2] + " IDLE " + split[0] + " "+ircuser.signonTime+" "+ircuser.getSecondsIdle());
 			}
-			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[2]+" not found in list. Please notify Jdbye about this."); // Log as severe because this situation should never occur and points to a bug in the code
+			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[2]+" not found in list. Error code IRCd1999."); // Log as severe because this situation should never occur and points to a bug in the code
 		}
 		else if (split[1].equalsIgnoreCase("NICK")) {
 			// :280AAAAAA NICK test 1321981244
@@ -2010,7 +2010,7 @@ public class IRCd implements Runnable {
 				}
 				ircuser.nick = split[2];
 			}
-			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[2]+" not found in list. Please notify Jdbye about this."); // Log as severe because this situation should never occur and points to a bug in the code
+			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[2]+" not found in list. Error code IRCd2013."); // Log as severe because this situation should never occur and points to a bug in the code
 		}
 		else if (split[1].equalsIgnoreCase("KICK")) {
 			// :280AAAAAA KICK #tempcraft.survival 280AAAAAB :reason
@@ -2048,9 +2048,9 @@ public class IRCd implements Runnable {
 								removeBukkitUserByUID(split[3]);
 							}
 						}
-						else BukkitIRCdPlugin.log.severe("[BukkitIRCd] Bukkit Player UID "+split[3]+" not found in list. Please notify Jdbye about this."); // Log as severe because this situation should never occur and points to a bug in the code
+						else BukkitIRCdPlugin.log.severe("[BukkitIRCd] Bukkit Player UID "+split[3]+" not found in list. Error code IRCd2051."); // Log as severe because this situation should never occur and points to a bug in the code
 					}
-					else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID "+split[0]+" not found in list. Please notify Jdbye about this."); // Log as severe because this situation should never occur and points to a bug in the code
+					else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID "+split[0]+" not found in list. Error code IRCd2053."); // Log as severe because this situation should never occur and points to a bug in the code
 				}
 				else if (split[2].equalsIgnoreCase(consoleChannelName)) {
 					if (split[3].equalsIgnoreCase(serverUID)) {
@@ -2080,9 +2080,9 @@ public class IRCd implements Runnable {
 								ircvictim.joined = false;
 							}
 						}
-						else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[3]+" not found in list. Please notify Jdbye about this."); // Log as severe because this situation should never occur and points to a bug in the code
+						else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[3]+" not found in list. Error code IRCd2083."); // Log as severe because this situation should never occur and points to a bug in the code
 					}
-					else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID "+split[0]+" not found in list. Please notify Jdbye about this."); // Log as severe because this situation should never occur and points to a bug in the code
+					else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID "+split[0]+" not found in list. Error code IRCd2085."); // Log as severe because this situation should never occur and points to a bug in the code
 				}
 				else if (split[2].equalsIgnoreCase(consoleChannelName)) {
 					// Console channel
@@ -2091,7 +2091,7 @@ public class IRCd implements Runnable {
 						ircvictim.setConsoleModes("");
 						ircvictim.consoleJoined = false;
 					}
-					else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[3]+" not found in list. Please notify Jdbye about this."); // Log as severe because this situation should never occur and points to a bug in the code
+					else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[3]+" not found in list. Error code IRCd2094."); // Log as severe because this situation should never occur and points to a bug in the code
 				}
 			}
 		}
@@ -2122,7 +2122,7 @@ public class IRCd implements Runnable {
 						ircuser.setModes("");
 					}
 				}
-				else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[0]+" not found in list. Please notify Jdbye about this."); // Log as severe because this situation should never occur and points to a bug in the code
+				else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[0]+" not found in list. Error code IRCd2125."); // Log as severe because this situation should never occur and points to a bug in the code
 			}
 			else if (split[2].equalsIgnoreCase(consoleChannelName)) {
 				// Console channel
@@ -2131,7 +2131,7 @@ public class IRCd implements Runnable {
 					ircuser.setConsoleModes("");
 					ircuser.consoleJoined = false;
 				}
-				else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[0]+" not found in list. Please notify Jdbye about this."); // Log as severe because this situation should never occur and points to a bug in the code
+				else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[0]+" not found in list. Error code IRCd2134."); // Log as severe because this situation should never occur and points to a bug in the code
 			}
 		}
 		else if (split[1].equalsIgnoreCase("QUIT")) {
@@ -2163,7 +2163,7 @@ public class IRCd implements Runnable {
 				}
 				uid2ircuser.remove(split[0]);
 			}			
-			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[0]+" not found in list. Please notify Jdbye about this."); // Log as severe because this situation should never occur and points to a bug in the code
+			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[0]+" not found in list. Error code IRCd2166."); // Log as severe because this situation should never occur and points to a bug in the code
 		}
 		else if (split[1].equalsIgnoreCase("KILL")) {
 			// :280AAAAAA KILL 123AAAAAA :Killed (test (testng))
@@ -2221,11 +2221,11 @@ public class IRCd implements Runnable {
 						}
 						uid2ircuser.remove(split[2]);
 					}
-					else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[2]+" not found in list. Please notify Jdbye about this."); // Log as severe because this situation should never occur and points to a bug in the code
+					else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[2]+" not found in list. Error code IRCd2224."); // Log as severe because this situation should never occur and points to a bug in the code
 				}
 
 			}
-			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID "+split[0]+" not found in list. Please notify Jdbye about this."); // Log as severe because this situation should never occur and points to a bug in the code
+			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID "+split[0]+" not found in list. Error code IRCd2228."); // Log as severe because this situation should never occur and points to a bug in the code
 		}
 		else if (split[1].equalsIgnoreCase("PRIVMSG") || split[1].equalsIgnoreCase("NOTICE")) {
 			// :280AAAAAA PRIVMSG 123AAAAAA :test
@@ -2333,7 +2333,7 @@ public class IRCd implements Runnable {
 				}
 
 			}
-			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[0]+" not found in list. Please notify Jdbye about this."); // Log as severe because this situation should never occur and points to a bug in the code
+			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "+split[0]+" not found in list. Error code IRCd2336."); // Log as severe because this situation should never occur and points to a bug in the code
 		}
 		// End of IF command check
 	}
