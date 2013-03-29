@@ -342,7 +342,7 @@ public class IRCd implements Runnable {
 										line = in.readLine();
 										if (line != null) {
 											split = line.split(" ");
-											if (debugMode) BukkitIRCdPlugin.log.info("[BukkitIRCd]§e[->] " +line);
+											if (debugMode) BukkitIRCdPlugin.log.info("[BukkitIRCd]" + ChatColor.YELLOW + "[->] " + line);
 										}
 									}
 								}
@@ -387,7 +387,7 @@ public class IRCd implements Runnable {
 										if ((line != null) && (line.trim().length() > 0)) {
 											if (line.startsWith("ERROR ")) {
 												// ERROR :Invalid password.
-												if (debugMode) BukkitIRCdPlugin.log.info("[BukkitIRCd]§e[->] " +line);
+												if (debugMode) BukkitIRCdPlugin.log.info("[BukkitIRCd]" + ChatColor.YELLOW + "[->] " + line);
 												String[] split = line.split(" ");
 												if (split[1].startsWith(":")) split[1] = split[1].substring(1);
 												try { server.close(); } catch (IOException e) { } 
@@ -731,7 +731,7 @@ public class IRCd implements Runnable {
 		String whois[]=null;
 		synchronized(csIrcUsers) {
 			whois = new String[8];
-			String idletime = TimeUtils.millisToLongDHMS(ircuser.getSecondsIdle()*1000);
+			String idletime = TimeUtils.millisToLongDHMS(ircuser.getSecondsIdle() * 1000);
 			whois[0] = "§2Nickname: §7" + ircuser.nick + "§f";
 			whois[1] = "§2Ident: §7" + ircuser.ident+ "§f";
 			whois[2] = "§2Hostname: §7" + ircuser.hostmask + "§f";
@@ -740,7 +740,7 @@ public class IRCd implements Runnable {
 			whois[5] = "§2Is operator: §7" +(ircuser.isOper ? "Yes" : "No") + "§f";
 			whois[5] = "§2Away: §7" +((!ircuser.awayMsg.equals("")) ? ircuser.awayMsg : "No") + "§f";
 			whois[6] = "§2Idle §7" + idletime + "§f";
-			whois[7] = "§2Signed on at §7" +dateFormat.format(ircuser.signonTime*1000) + "§f";
+			whois[7] = "§2Signed on at §7" + dateFormat.format(ircuser.signonTime * 1000) + "§f";
 		}
 		return whois;
 	}
@@ -1593,7 +1593,7 @@ public class IRCd implements Runnable {
 	public static boolean println(String line) {
 		if ((server == null) || (!server.isConnected()) || (server.isClosed()) || (out == null)) return false;
 		synchronized(csServer) {
-			if (debugMode) System.out.println("[BukkitIRCd]§1[<-] " +line);
+			if (debugMode) System.out.println("[BukkitIRCd]" + ChatColor.DARK_BLUE + "[<-] " + line);
 			out.println(line);
 			return true;
 		}
