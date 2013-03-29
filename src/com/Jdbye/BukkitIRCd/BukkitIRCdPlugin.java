@@ -190,6 +190,9 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		messages = YamlConfiguration.loadConfiguration(messagesFile);
 		if (!(messagesFile.exists())) {
 			log.info("[BukkitIRCd] Creating default messages file. Code BukkitIRCdPlugin192.");
+			messages.save(messagesFile);
+			log.info("[BukkitIRCd] Saving initial messages file. Code BukkitIRCdPlugin194.");
+			
 		}
 		messages.options().copyDefaults(true);
 		
@@ -361,8 +364,9 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			else { ircd_operpass = Hash.compute(operpass, HashType.SHA_512); }
 
 			log.info("[BukkitIRCd] Loaded configuration file. Code BukkitIRCdPlugin363.");
+			
 			saveConfig();
-			log.info("[BukkitIRCd] Saved configuration file. Code BukkitIRCdPlugin365.");
+			log.info("[BukkitIRCd] Saved initial configuration file. Code BukkitIRCdPlugin365.");
 		}
 		catch (Exception e) {
 			log.info("[BukkitIRCd] Failed to load configuration file: " + e.toString());
