@@ -1779,6 +1779,8 @@ public class IRCd implements Runnable {
 			}
 			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0] + " not found in list. Error code IRCd1779."); // Log as severe because this situation should never occur and points to a bug in the code			
 		}
+/**		PREVIOUSLY ERRORING CODE, LOOK BELOW FOR REVISED VERSION
+
 		else if (split[1].equalsIgnoreCase("MODE")) {
 			// :0KJAAAAAA MODE 0KJAAAAAA + w
 			// Ignores other modes than o and r for now.
@@ -1802,10 +1804,42 @@ public class IRCd implements Runnable {
 						}
 					}
 				}
-		/**		else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[2] + " not found in list. Error code IRCd1804."); // Log as severe because this situation should never occur and points to a bug in the code
-			}*/
+		//		else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[2] + " not found in list. Error code IRCd1804."); // Log as severe because this situation should never occur and points to a bug in the code
+		//	}
 			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID " + split[0] + " not found in list. Error code IRCd1806."); // Log as severe because this situation should never occur and points to a bug in the code			
+		}*/
+		
+		else if (split[1].equalsIgnoreCase("MODE")) {
+			IRCUser ircusertarget;
+			if (split[3].startsWith(":")) split[3] = split[3].substring(1);
+		
+			//if (((ircusersource = uid2ircuser.get(split[0])) != null) || ((server = servers.get(split[0])) != null)) {
+			if ((ircusertarget = uid2ircuser.get(split[2])) != null) {
+				String modes = split[3];
+				boolean add = true;
+				for (int i = 0; i < modes.length(); i++) {
+					if ((modes.charAt(i) + "").equals(" + ")) {
+						add = true;
+					} else if ((modes.charAt(i) + "").equals("-")) {
+						add = false;
+					} else if ((modes.charAt(i) + "").equals("o")) {
+						if (add) ircusertarget.isOper = true;
+							else ircusertarget.isOper = false;
+						} else if ((modes.charAt(i) + "").equals("r")) {
+							if (add) {
+								ircusertarget.isRegistered = true;
+							} else {
+								ircusertarget.isRegistered = false;
+							}
+						}
+					}
+				}
+			} else {
+				// Log as severe because this situation should never occur and points to a bug in the code
+				BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID " + split[0] + " not found in list. Error code IRCd1806.");
+			}
 		}
+		
 		else if (split[1].equalsIgnoreCase("FJOIN")) {
 			// :dev.tempcraft.net FJOIN #tempcraft.staff 1321829730 +tnsk MASTER-RACE :qa,0AJAAAAAA o,0IJAAAAAP v,0IJAAAAAQ
 			if (split[2].equalsIgnoreCase(channelName)) {
