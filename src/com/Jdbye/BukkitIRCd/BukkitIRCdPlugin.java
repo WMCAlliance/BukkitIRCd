@@ -820,7 +820,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 							else player.sendMessage(ChatColor.RED + "User is already banned.");
 						}
 						else if (countStr(ban, ".") == 3) { // It's an IP
-							if (IRCd.banIRCUser("*!*@" + ban, player.getName() + "!" + player.getName() + "@"+player.getAddress().getAddress().getHostName())) {
+							if (IRCd.banIRCUser("*!*@" + ban, player.getName() + "!" + player.getName() + "@" + player.getAddress().getAddress().getHostName())) {
 								if (IRCd.msgIRCBan.length() > 0) getServer().broadcastMessage(IRCd.msgIRCBan.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%",player.getName()));
 								if ((dynmap != null) && (IRCd.msgIRCBanDynmap.length() > 0)) dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCBanDynmap.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%",player.getName()));
 								player.sendMessage(ChatColor.RED + "IP banned.");
@@ -1121,7 +1121,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 							sender.sendMessage(ChatColor.RED + "User is not banned.");
 					}
 					else if (countStr(ban, ".") == 3) { // It's an IP
-						if (IRCd.unBanIRCUser("*!*@"+ban, IRCd.serverName+"!"+IRCd.serverName+"@"+IRCd.serverHostName)) {
+						if (IRCd.unBanIRCUser("*!*@" + ban, IRCd.serverName+"!" + IRCd.serverName+"@" + IRCd.serverHostName)) {
 							if (IRCd.msgIRCUnban.length() > 0) getServer().broadcastMessage(IRCd.msgIRCUnban.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%","console"));
 							if ((dynmap != null) && (IRCd.msgIRCUnbanDynmap.length() > 0)) dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCUnbanDynmap.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%","console"));
 							sender.sendMessage(ChatColor.RED + "IP unbanned.");
@@ -1185,7 +1185,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 						if (ircuser != null) {
 							if (IRCd.mode == Modes.STANDALONE) {
 								IRCd.writeTo(ircuser.nick, ":" + IRCd.serverName + "!" + IRCd.serverName + "@" + IRCd.serverHostName + " PRIVMSG " + ircuser.nick + " :" + IRCd.convertColors(IRCd.join(trimmedArgs, " ", 0),false));
-								sender.sendMessage(ChatColor.RED + "Message sent to "+lastReceivedFrom+".");
+								sender.sendMessage(ChatColor.RED + "Message sent to " + lastReceivedFrom + ".");
 							}
 							else if (IRCd.mode == Modes.INSPIRCD) {
 								String UID = IRCd.getUIDFromIRCUser(ircuser);
