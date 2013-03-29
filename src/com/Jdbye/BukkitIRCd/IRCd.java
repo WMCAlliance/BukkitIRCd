@@ -286,7 +286,7 @@ public class IRCd implements Runnable {
 					Thread.currentThread().setName("Thread-BukkitIRCd-InspIRCd");
 					String line = null;
 					serverUID = ugen.generateUID(SID);
-					pre = ":" + sID + " ";
+					pre = ":" + SID + " ";
 					lastconnected = false;
 					isIncoming = false;
 					remoteSID = null;
@@ -379,7 +379,7 @@ public class IRCd implements Runnable {
 									}
 									else {
 										if (linkLastPingSent+(linkPingInterval * 1000) < System.currentTimeMillis()) {
-											println(pre + "PING " + sID + " " +remoteSID);
+											println(pre + "PING " + SID + " " +remoteSID);
 											linkLastPingSent = System.currentTimeMillis();
 										}
 										line = in.readLine();
@@ -508,7 +508,7 @@ public class IRCd implements Runnable {
 		//println("CAPAB CHANMODES :admin=&a ban=b founder=~q halfop=%h op=@o operonly=O voice=+v"); // Don't send this line, the server will complain that we don't support various modes and refuse to link
 		//println("CAPAB USERMODES :bot=B oper=o u_registered=r"); // Don't send this line, the server will complain that we don't support various modes and refuse to link
 		println("CAPAB END");
-		println("SERVER " + serverHostName + " " + connectPassworD + " 0 " + sID + " :" + serverDescription);
+		println("SERVER " + serverHostName + " " + connectPassworD + " 0 " + SID + " :" + serverDescription);
 		capabSent = true;
 		return true;
 	}
@@ -1604,7 +1604,7 @@ public class IRCd implements Runnable {
 		synchronized(csServer) {
 			if (mode == Modes.INSPIRCD) {
 				 if ((server != null) && server.isConnected()) {
-					println(pre + "SQUIT " + sID + " :" +reason);
+					println(pre + "SQUIT " + SID + " :" +reason);
 					if (linkcompleted) {
 						if (msgDelinkedReason.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgDelinkedReason.replace("%LINKNAME%",linkName).replace("%REASON%",reason));
 						linkcompleted = false;
