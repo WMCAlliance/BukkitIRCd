@@ -178,31 +178,31 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		
 		reloadConfig();
 		config = getConfig();
-		// Create default config if it doesn't exist.
+		// Create default config.yml if it doesn't exist.
 		if (!(new File(getDataFolder(), "config.yml")).exists()) {
-			log.info("[BukkitIRCd] Creating default configuration file.");
+			log.info("[BukkitIRCd] Creating default configuration file. Code BukkitIRCdPlugin183.");
 		}
 		config.options().copyDefaults(true);
 		loadSettings();
 		
-		// Create default config if it doesn't exist.
+		// Create default messages.yml if it doesn't exist.
 		File messagesFile = new File(getDataFolder(), "messages.yml");
 		messages = YamlConfiguration.loadConfiguration(messagesFile);
 		if (!(messagesFile.exists())) {
-			log.info("[BukkitIRCd] Creating default messages file...");
+			log.info("[BukkitIRCd] Creating default messages file. Code BukkitIRCdPlugin192.");
 		}
 		messages.options().copyDefaults(true);
 		
 
 		if (!(new File(getDataFolder(), "motd.txt")).exists()) {
 			saveDefaultMOTD(getDataFolder(),"motd.txt");
-			log.info("[BukkitIRCd] Default MOTD file created.");
+			log.info("[BukkitIRCd] Default MOTD file created. Code BukkitIRCdPlugin199.");
 		}
 		loadMOTD();
 
 		if (!(new File(getDataFolder(), "bans.txt")).exists()) {
-			if (writeBans()) log.info("[BukkitIRCd] Blank bans file created.");
-			else log.warning("[BukkitIRCd] Failed to create bans file.");
+			if (writeBans()) log.info("[BukkitIRCd] Blank bans file created. Code BukkitIRCdPlugin204.");
+			else log.warning("[BukkitIRCd] Failed to create bans file. Error Code BukkitIRCdPlugin205.");
 		}
 
 		setupDynmap();
@@ -298,14 +298,14 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	public void setupDynmap(DynmapAPI plugin) {
 		if (plugin != null) {
 			dynmap = plugin;
-			log.info("[BukkitIRCd] Hooked into Dynmap.");
+			log.info("[BukkitIRCd] Hooked into Dynmap. Code BukkitIRCdPlugin301.");
 		}
 	}
 
 	public void unloadDynmap() {
 		if (BukkitIRCdPlugin.dynmap != null) {
 			BukkitIRCdPlugin.dynmap = null;
-			log.info("[BukkitIRCd] Dynmap plugin lost.");
+			log.info("[BukkitIRCd] Dynmap plugin lost. Error Code BukkitIRCdPlugin308.");
 		}
 	}
 
@@ -360,7 +360,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			else if (operpass.startsWith("~")) { ircd_operpass = operpass.substring(1); }
 			else { ircd_operpass = Hash.compute(operpass, HashType.SHA_512); }
 
-			log.info("[BukkitIRCd] Loaded configuration file.");
+			log.info("[BukkitIRCd] Loaded configuration file. Code BukkitIRCdPlugin363.");
 		}
 		catch (Exception e) {
 			log.info("[BukkitIRCd] Failed to load configuration file: " + e.toString());
@@ -461,7 +461,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			IRCd.msgPlayerList = colorize(IRCd.msgPlayerList);
 			
 
-			log.info("[BukkitIRCd] Loaded messages file.");
+			log.info("[BukkitIRCd] Loaded messages file. Code BukkitIRCdPlugin464.");
 		}
 		catch (Exception e) {
 			log.info("[BukkitIRCd] Failed to load messages file: " + e.toString());
@@ -472,7 +472,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	@SuppressWarnings("unused")
 	private void firstRunSettings(File dataFolder)
 	{
-		log.info("[BukkitIRCd] Configuration file not found, creating new one.");
+		log.info("[BukkitIRCd] Configuration file not found, creating new one. Code BukkitIRCdPlugin475.");
 		dataFolder.mkdirs();
 
 		File configFile = new File(dataFolder, "config.yml");
@@ -483,7 +483,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 		catch(IOException e)
 		{
-			log.warning("[BukkitIRCd] Could not create config file!");
+			log.warning("[BukkitIRCd] Could not create config file! Error Code BukkitIRCdPlugin486.");
 		}
 
 		writeSettings(configFile);
@@ -513,7 +513,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			}
 			finally {
 				input.close();
-				log.info("[BukkitIRCd] Loaded MOTD file.");
+				log.info("[BukkitIRCd] Loaded MOTD file. Code BukkitIRCdPlugin516.");
 			}
 		}
 		catch (Exception e) {
@@ -548,7 +548,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			}
 			finally {
 				input.close();
-				log.info("[BukkitIRCd] Loaded bans file.");
+				log.info("[BukkitIRCd] Loaded bans file. Code BukkitIRCdPlugin551.");
 			}
 		}
 		catch (Exception e) {
@@ -582,7 +582,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			}
 
 			bufferWriter.flush();
-			log.info("[BukkitIRCd] Saved bans file.");
+			log.info("[BukkitIRCd] Saved bans file. Code BukkitIRCdPlugin585.");
 			result = true;
 		}
 		catch(IOException e)
@@ -613,7 +613,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 	private void saveDefaultMOTD(File dataFolder, String fileName)
 	{
-		log.info("[BukkitIRCd] MOTD file not found, creating new one.");
+		log.info("[BukkitIRCd] MOTD file not found, creating new one. Code BukkitIRCdPlugin616");
 		dataFolder.mkdirs();
 
 		File motdFile = new File(dataFolder, fileName);
@@ -624,7 +624,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 		catch(IOException e)
 		{
-			log.warning("[BukkitIRCd] Could not create MOTD file!");
+			log.warning("[BukkitIRCd] Could not create MOTD file! BukkitIRCdPlugin627");
 		}
 
 		writeMOTD(motdFile);
@@ -671,7 +671,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			bufferWriter.newLine();
 
 			bufferWriter.flush();
-			log.info("[BukkitIRCd] Saved MOTD file.");
+			log.info("[BukkitIRCd] Saved MOTD file. Code BukkitIRCdPlugin674");
 		}
 		catch(IOException e)
 		{
@@ -702,7 +702,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	@SuppressWarnings("unused")
 	private void saveDefaultMessages(File dataFolder, String fileName)
 	{
-		log.info("[BukkitIRCd] Messages file not found, creating new one.");
+		log.info("[BukkitIRCd] Messages file not found, creating new one. Code BukkitIRCdPlugin705");
 		dataFolder.mkdirs();
 
 		File msgFile = new File(dataFolder, fileName);
@@ -713,7 +713,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 		catch(IOException e)
 		{
-			log.warning("[BukkitIRCd] Could not create messages file!");
+			log.warning("[BukkitIRCd] Could not create messages file! Error code BukkitIRCdPlugin716.");
 		}
 
 		writeMessages(msgFile);
@@ -725,7 +725,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		try
 		{
 			messages.save(messagesFile);
-			log.info("[BukkitIRCd] Saved messages file.");
+			log.info("[BukkitIRCd] Saved messages file. Code BukkitIRCdPlugin728.");
 		}
 		catch(Exception e)
 		{
@@ -739,7 +739,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		try
 		{
 			saveConfig();
-			log.info("[BukkitIRCd] Saved configuration file.");
+			log.info("[BukkitIRCd] Saved configuration file. Code BukkitIRCdPlugin742.");
 		}
 		catch(Exception e)
 		{

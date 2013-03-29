@@ -24,7 +24,7 @@ public class IRCCommandSender implements CommandSender {
 
     public void sendMessage(String message) {
     	if (enabled) {
-    		if (!message.contains("IRC ")) { // Don't show IRC messages
+    		if (!message.contains("IRC ")) { // Don't show IRC messages - this really needs to be improved
     			if (IRCd.mode == Modes.STANDALONE) IRCd.writeOpers(":" + IRCd.serverName + "!" + IRCd.serverName + "@" + IRCd.serverHostName + " PRIVMSG " + IRCd.consoleChannelName + " :" + IRCd.convertColors(message, false));
     			else if (IRCd.linkcompleted) IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.consoleChannelName + " :" + IRCd.convertColors(message, false));
     		}

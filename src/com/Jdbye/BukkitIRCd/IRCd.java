@@ -1489,9 +1489,9 @@ public class IRCd implements Runnable {
 					i--;
 					if (ircColors[i] < 10) irccolor = "0" + ircColors[i];
 					else irccolor=Integer.toString(ircColors[i]);
-					output = output.replace("§" + gameColors[i].toLowerCase(), ((char)3)+ irccolor);
+					output = output.replace("\u00a7" + gameColors[i].toLowerCase(), ((char)3)+ irccolor);
 					output = output.replace("&" + gameColors[i].toLowerCase(), ((char)3)+ irccolor);
-					output = output.replace("§" + gameColors[i].toUpperCase(), ((char)3)+ irccolor);
+					output = output.replace("\u00a7" + gameColors[i].toUpperCase(), ((char)3)+ irccolor);
 					output = output.replace("&" + gameColors[i].toUpperCase(), ((char)3)+ irccolor);
 				}
 				output = output.replace("^K", (char)3+ "").replace("^B", (char)2 + "").replace("^I", (char)29 + "").replace("^O", (char)15 + "").replace("^U", (char)31 + "");
@@ -1506,9 +1506,9 @@ public class IRCd implements Runnable {
 				while (i > 0) {
 					i--;
 					if (ircColors[i] < 10) {
-						output = output.replace(((char)3) + "0" + Integer.toString(ircColors[i]), "§" + gameColors[i]);
+						output = output.replace(((char)3) + "0" + Integer.toString(ircColors[i]), "\u00a7" + gameColors[i]);
 					}
-					output = output.replace(((char)3) + Integer.toString(ircColors[i]), "§" + gameColors[i]);
+					output = output.replace(((char)3) + Integer.toString(ircColors[i]), "\u00a7" + gameColors[i]);
 				}
 				output = output.replace((char)3 + "", ChatColor.WHITE.toString()).replace((char)2 + "", "").replace((char)29 + "", "").replace((char)15 + "", "").replace((char)31 + "", "");
 			}
@@ -1538,7 +1538,7 @@ public class IRCd implements Runnable {
 			if (ircColors[i] < 10) output=output.replace("^K0" + i,"");
 			output = output.replace("^K" + i,"");
 		}
-		output = output.replace("^K", "").replace("^B", "§l" ).replace("^I", "§o" ).replace("^O", "§r").replace("^U", "§n");
+		output = output.replace("^K", "").replace("^B", "\u00a7l" ).replace("^I", "\u00a7o" ).replace("^O", "\u00a7r").replace("^U", "\u00a7n");
 		return output;
 	}
 

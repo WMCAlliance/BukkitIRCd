@@ -43,7 +43,6 @@ public class IRCUser {
 	public void setModes(String mode) {
 		this.textModes = mode.replace("~", "q").replace("&", "a").replace("@", "o").replace("%", "h").replace("+", "v").replaceAll("[^A-Za-z0-9 ]", "");
 		this.modes = textModes.replace("q", "~").replace("a", "&").replace("o", "@").replace("h", "%").replace("v", "+");
-		if (debugMode) BukkitIRCdPlugin.log.info("[BukkitIRCd] Setting IRC user modes");
 	}
 	
 	public String getModes() {
@@ -57,7 +56,6 @@ public class IRCUser {
 	public void setConsoleModes(String mode) {
 		this.consoleTextModes = mode.replace("~", "q").replace("&", "a").replace("@", "o").replace("%", "h").replace("+", "v").replaceAll("[^A-Za-z0-9 ]", "");
 		this.consoleModes = consoleTextModes.replace("q", "~").replace("a", "&").replace("o", "@").replace("h", "%").replace("v", "+");
-		if (debugMode) BukkitIRCdPlugin.log.info("[BukkitIRCd] Setting IRC console modes");
 	}
 	
 	public String getConsoleModes() {
