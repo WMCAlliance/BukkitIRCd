@@ -1808,7 +1808,6 @@ public class IRCd implements Runnable {
 		//	}
 			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID " + split[0] + " not found in list. Error code IRCd1806."); // Log as severe because this situation should never occur and points to a bug in the code			
 		}*/
-		
 		else if (split[1].equalsIgnoreCase("MODE")) {
 			IRCUser ircusertarget;
 			if (split[3].startsWith(":")) split[3] = split[3].substring(1);
@@ -1839,7 +1838,6 @@ public class IRCd implements Runnable {
 				BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID " + split[0] + " not found in list. Error code IRCd1806.");
 			}
 		}
-		
 		else if (split[1].equalsIgnoreCase("FJOIN")) {
 			// :dev.tempcraft.net FJOIN #tempcraft.staff 1321829730 +tnsk MASTER-RACE :qa,0AJAAAAAA o,0IJAAAAAP v,0IJAAAAAQ
 			if (split[2].equalsIgnoreCase(channelName)) {
