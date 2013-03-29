@@ -504,7 +504,7 @@ public class IRCd implements Runnable {
 	public static boolean sendLinkCAPAB() {
 		if (capabSent) return false;
 		println("CAPAB START 1201");
-		println("CAPAB CAPABILITIES :NICKMAX=" +(nickLen +1) + " CHANMAX=50 IDENTMAX=33 MAXTOPIC=500 MAXQUIT=500 MAXKICK=500 MAXGECOS=500 MAXAWAY=999 MAXMODES=1 HALFOP=1 PROTOCOL=1201");
+		println("CAPAB CAPABILITIES :NICKMAX=" + (nickLen +1) + " CHANMAX=50 IDENTMAX=33 MAXTOPIC=500 MAXQUIT=500 MAXKICK=500 MAXGECOS=500 MAXAWAY=999 MAXMODES=1 HALFOP=1 PROTOCOL=1201");
 		//println("CAPAB CHANMODES :admin=&a ban=b founder=~q halfop=%h op=@o operonly=O voice=+ v"); // Don't send this line, the server will complain that we don't support various modes and refuse to link
 		//println("CAPAB USERMODES :bot=B oper=o u_registered=r"); // Don't send this line, the server will complain that we don't support various modes and refuse to link
 		println("CAPAB END");
@@ -528,7 +528,7 @@ public class IRCd implements Runnable {
 				println(pre + "UID " + UID + " " +(bp.idleTime / 1000L) + " " + bp.nick + ingameSuffix + " " + bp.host + " " + bp.host + " " + bp.nick + " " + bp.ip + " " + bp.signedOn + " +or :Minecraft Player");
 				println(":" + UID + " OPERTYPE IRC_Operator");
 			}
-			else println(pre + "UID " + UID + " " +(bp.idleTime / 1000L) + " " + bp.nick + ingameSuffix + " " + bp.host + " " + bp.host + " " + bp.nick + " " + bp.ip + " " + bp.signedOn + " + r :Minecraft Player");
+			else println(pre + "UID " + UID + " " +(bp.idleTime / 1000L) + " " + bp.nick + ingameSuffix + " " + bp.host + " " + bp.host + " " + bp.nick + " " + bp.ip + " " + bp.signedOn + " +r :Minecraft Player");
 
 			String world = bp.getWorld();
 			if (world != null) println(pre + "METADATA " + UID + " swhois :is currently in " + world);
@@ -1139,7 +1139,7 @@ public class IRCd implements Runnable {
 							println(pre + "UID " + UID + " " + (bp.idleTime / 1000L) + " " + bp.nick + ingameSuffix + " " + bp.host + " " + bp.host + " " + bp.nick + " " + bp.ip + " " + bp.signedOn + " +or :Minecraft Player");
 							println(":" + UID + " OPERTYPE IRC_Operator");
 						}
-						else println(pre + "UID " + UID + " " + (bp.idleTime / 1000L) + " " + bp.nick + ingameSuffix + " " + bp.host + " " + bp.host + " " + bp.nick + " " + bp.ip + " " + bp.signedOn + " + r :Minecraft Player");
+						else println(pre + "UID " + UID + " " + (bp.idleTime / 1000L) + " " + bp.nick + ingameSuffix + " " + bp.host + " " + bp.host + " " + bp.nick + " " + bp.ip + " " + bp.signedOn + " +r :Minecraft Player");
 
 						println(pre + "FJOIN " + channelName + " " + channelTS + " +nt :," + UID);
 						if (textMode.length() > 0) {
@@ -1193,7 +1193,7 @@ public class IRCd implements Runnable {
 							println(pre + "UID " + UID + " " + (bp.idleTime / 1000L) + " " + bp.nick + ingameSuffix + " " + bp.host + " " + bp.host + " " + bp.nick + " " + bp.ip + " " + bp.signedOn + " +or :Minecraft Player");
 							println(":" + UID + " OPERTYPE IRC_Operator");
 						}
-						else println(pre + "UID " + UID + " " + (bp.idleTime / 1000L) + " " + bp.nick + ingameSuffix + " " + bp.host + " " + bp.host + " " + bp.nick + " " + bp.ip + " " + bp.signedOn + " + r :Minecraft Player");
+						else println(pre + "UID " + UID + " " + (bp.idleTime / 1000L) + " " + bp.nick + ingameSuffix + " " + bp.host + " " + bp.host + " " + bp.nick + " " + bp.ip + " " + bp.signedOn + " +r :Minecraft Player");
 
 						println(pre + "FJOIN " + channelName + " " + channelTS + " +nt :," + UID);
 						if (textMode.length() > 0) {
@@ -2242,7 +2242,7 @@ public class IRCd implements Runnable {
 							println(pre + "UID " + UID + " " +(bp.idleTime / 1000L) + " " + bp.nick + ingameSuffix + " " + bp.host + " " + bp.host + " " + bp.nick + " " + bp.ip + " " + bp.signedOn + " +or :Minecraft Player");
 							println(":" + UID + " OPERTYPE IRC_Operator");
 						}
-						else println(pre + "UID " + UID + " " +(bp.idleTime / 1000L) + " " + bp.nick + ingameSuffix + " " + bp.host + " " + bp.host + " " + bp.nick + " " + bp.ip + " " + bp.signedOn + " + r :Minecraft Player");
+						else println(pre + "UID " + UID + " " +(bp.idleTime / 1000L) + " " + bp.nick + ingameSuffix + " " + bp.host + " " + bp.host + " " + bp.nick + " " + bp.ip + " " + bp.signedOn + " +r :Minecraft Player");
 
 						println(pre + "FJOIN " + channelName + " " + channelTS + " +nt :," + UID);
 						if (textMode.length() > 0) {
