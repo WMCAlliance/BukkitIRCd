@@ -508,7 +508,7 @@ public class IRCd implements Runnable {
 		//println("CAPAB CHANMODES :admin=&a ban=b founder=~q halfop=%h op=@o operonly=O voice=+v"); // Don't send this line, the server will complain that we don't support various modes and refuse to link
 		//println("CAPAB USERMODES :bot=B oper=o u_registered=r"); // Don't send this line, the server will complain that we don't support various modes and refuse to link
 		println("CAPAB END");
-		println("SERVER " + serverHostName + " " + connectPassworD + " 0 " + SID + " :" + serverDescription);
+		println("SERVER " + serverHostName + " " + connectPassword + " 0 " + SID + " :" + serverDescription);
 		capabSent = true;
 		return true;
 	}
@@ -525,10 +525,10 @@ public class IRCd implements Runnable {
 			String UID = ugen.generateUID(SID);
 			bp.setUID(UID);
 			if (bp.hasPermission("bukkitircd.oper")) {
-				println(pre + "UID " + uID + " " +(bp.idleTime / 1000L) + " " +bp.nick + ingameSuffix + " " +bp.host+ " " +bp.host+ " " +bp.nick + " " +bp.ip+ " " +bp.signedOn + " +or :Minecraft Player");
-				println(":" + uID + " OPERTYPE IRC_Operator");
+				println(pre + "UID " + UID + " " +(bp.idleTime / 1000L) + " " + bp.nick + ingameSuffix + " " +bp.host+ " " +bp.host+ " " +bp.nick + " " +bp.ip+ " " +bp.signedOn + " +or :Minecraft Player");
+				println(":" + UID + " OPERTYPE IRC_Operator");
 			}
-			else println(pre + "UID " + uID + " " +(bp.idleTime / 1000L) + " " +bp.nick + ingameSuffix + " " +bp.host+ " " +bp.host+ " " +bp.nick + " " +bp.ip+ " " +bp.signedOn + " +r :Minecraft Player");
+			else println(pre + "UID " + UID + " " +(bp.idleTime / 1000L) + " " + bp.nick + ingameSuffix + " " +bp.host+ " " +bp.host+ " " +bp.nick + " " +bp.ip+ " " +bp.signedOn + " +r :Minecraft Player");
 
 			String world = bp.getWorld();
 			if (world != null) println(pre + "METADATA " + UID + " swhois :is currently in " + world);
@@ -543,7 +543,7 @@ public class IRCd implements Runnable {
 		for (BukkitPlayer bp : bukkitPlayers) {
 			String UID = bp.getUID();
 			String textMode = bp.getTextMode();
-			println(pre + "FJOIN " + channelName + " " + channelTS + " + nt :," + uID);
+			println(pre + "FJOIN " + channelName + " " + channelTS + " + nt :," + UID);
 			if (textMode.length() > 0) {
 				String modestr = "";
 				for (int i = 0; i < textMode.length(); i++) {
@@ -998,7 +998,7 @@ public class IRCd implements Runnable {
 					if (((UID = getUIDFromIRCUser(user)) != null) || ((bp = getBukkitUserObject(user)) != null) || (user.equals(serverName))) {
 						if (user.equals(serverName)) UID = serverUID;
 						else if (UID == null) UID = bp.getUID();
-						println(":" + uID + " FMODE " + channelName + " " + channelTS + " +b :" +banHost);
+						println(":" + UID + " FMODE " + channelName + " " + channelTS + " +b :" +banHost);
 						return true;
 					}
 					else {
@@ -1983,7 +1983,7 @@ public class IRCd implements Runnable {
 						BukkitIRCdPlugin.ircd_topicsetby = user;
 					}
 				}
-				else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID " + uID + " not found in list. Error code IRCd1985."); // Log as severe because this situation should never occur and points to a bug in the code
+				else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID " + UID + " not found in list. Error code IRCd1985."); // Log as severe because this situation should never occur and points to a bug in the code
 			}
 			else if (split[2].equalsIgnoreCase(consoleChannelName)) {
 				// This is of no interest to us
@@ -2190,12 +2190,12 @@ public class IRCd implements Runnable {
 						String UID = bp.getUID();
 						String textMode = bp.getTextMode();
 						if (bp.hasPermission("bukkitircd.oper")) {
-							println(pre + "UID " + uID + " " +(bp.idleTime / 1000L) + " " +bp.nick + ingameSuffix + " " +bp.host+ " " +bp.host+ " " +bp.nick + " " +bp.ip+ " " +bp.signedOn + " +or :Minecraft Player");
-							println(":" + uID + " OPERTYPE IRC_Operator");
+							println(pre + "UID " + UID + " " +(bp.idleTime / 1000L) + " " +bp.nick + ingameSuffix + " " +bp.host+ " " +bp.host+ " " +bp.nick + " " +bp.ip+ " " +bp.signedOn + " +or :Minecraft Player");
+							println(":" + UID + " OPERTYPE IRC_Operator");
 						}
-						else println(pre + "UID " + uID + " " +(bp.idleTime / 1000L) + " " +bp.nick + ingameSuffix + " " +bp.host+ " " +bp.host+ " " +bp.nick + " " +bp.ip+ " " +bp.signedOn + " +r :Minecraft Player");
+						else println(pre + "UID " + UID + " " +(bp.idleTime / 1000L) + " " +bp.nick + ingameSuffix + " " +bp.host+ " " +bp.host+ " " +bp.nick + " " +bp.ip+ " " +bp.signedOn + " +r :Minecraft Player");
 
-						println(pre + "FJOIN " + channelName + " " + channelTS + " + nt :," + uID);
+						println(pre + "FJOIN " + channelName + " " + channelTS + " + nt :," + UID);
 						if (textMode.length() > 0) {
 							String modestr = "";
 							for (int i = 0; i < textMode.length(); i++) {
