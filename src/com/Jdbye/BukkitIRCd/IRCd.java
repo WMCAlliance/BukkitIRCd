@@ -1119,11 +1119,11 @@ public class IRCd implements Runnable {
 					mode1 += "h"; 
 					mode2 += nick + ingameSuffix + " "; 
 				}
-				if (modes.contains(" + ")) { 
+				if (modes.contains("+")) { 
 					mode1+="v"; 
 					mode2 += nick + ingameSuffix + " "; 
 				}
-				if (!mode1.equals(" + ")) {
+				if (!mode1.equals("+")) {
 					if (mode == Modes.STANDALONE) {
 						writeAll(":" + serverName + "!" + serverName + "@" + serverHostName + " MODE " + IRCd.channelName + " " + mode1 + " " + mode2.substring(0, mode2.length()-1));
 					}
@@ -1831,7 +1831,7 @@ public class IRCd implements Runnable {
 				String modes = split[3];
 				boolean add = true;
 				for (int i = 0; i < modes.length(); i++) {
-					if ((modes.charAt(i) + "").equals(" + ")) {
+					if ((modes.charAt(i) + "").equals("+")) {
 						add = true;
 					} else if ((modes.charAt(i) + "").equals("-")) {
 						add = false;
@@ -1940,7 +1940,7 @@ public class IRCd implements Runnable {
 					String user = split[5+ modecount];
 					if (user.startsWith(":")) user = user.substring(1);
 					String mode = split[4].charAt(i) + "";
-					if (mode.equals(" + ")) add = true;
+					if (mode.equals("+")) add = true;
 					else if (mode.equals("-")) add = false;
 					else {
 						if ((ircusertarget = uid2ircuser.get(user)) != null) {
@@ -2599,7 +2599,7 @@ public class IRCd implements Runnable {
 							int add = -1;
 							int i = 0, i2 = 0;
 							if (split.length == 3) {
-								if ((split[2].equals(" + b")) || (split[2].equals("-b"))) {
+								if ((split[2].equals("+b")) || (split[2].equals("-b"))) {
 									// Send list of bans
 									synchronized(IRCd.csIrcBans) {
 										for (IrcBan ban : IRCd.ircBans) {
@@ -2610,7 +2610,7 @@ public class IRCd implements Runnable {
 								}
 							}
 							else while (i < split[2].length()) {
-								if (split[2].substring(i,i + 1).equals(" + ")) add = 1;
+								if (split[2].substring(i,i + 1).equals("+")) add = 1;
 								else if (split[2].substring(i,i + 1).equals("-")) add = 0;
 								else if (split[2].substring(i,i + 1).equals("b")) {
 									if (i2+3 < split.length) {
@@ -2754,15 +2754,15 @@ public class IRCd implements Runnable {
 							writeln(IRCd.serverMessagePrefix + " 381 " + nick + " :You are now an IRC Operator");
 							if (IRCd.operModes.length() > 0) {
 								modes = IRCd.operModes;
-								String mode1=" + ", mode2="";
+								String mode1="+", mode2="";
 								if (modes.contains("~")) { mode1+="q"; mode2+=nick + " "; }
 								if (modes.contains("&")) { mode1+="a"; mode2+=nick + " "; }
 								if (modes.contains("@")) { mode1+="o"; mode2+=nick + " "; }
 								if (modes.contains("%")) { mode1+="h"; mode2+=nick + " "; }
-								if (modes.contains(" + ")) { mode1+="v"; mode2+=nick + " "; }
+								if (modes.contains("+")) { mode1+="v"; mode2+=nick + " "; }
 								
 								sendChanWelcome(IRCd.consoleChannelName);
-								if (!mode1.equals(" + ")) {
+								if (!mode1.equals("+")) {
 									IRCd.writeAll(":" + IRCd.serverName + "!" + IRCd.serverName + "@" + IRCd.serverHostName + " MODE " + IRCd.channelName + " " + mode1+ " " + mode2.substring(0, mode2.length()-1));
 									IRCd.writeAll(":" + IRCd.serverName + "!" + IRCd.serverName + "@" + IRCd.serverHostName + " MODE " + IRCd.consoleChannelName + " " + mode1+ " " + mode2.substring(0, mode2.length()-1));
 								}
