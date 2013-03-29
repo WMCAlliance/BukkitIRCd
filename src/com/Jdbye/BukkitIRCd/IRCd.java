@@ -924,12 +924,12 @@ public class IRCd implements Runnable {
 					}
 					if (iuser.joined) {
 						if (reason != null) {
-							println(":" + sourceUID + " KICK " + channelName + " " + uiD + " :" +reason);
+							println(":" + sourceUID + " KICK " + channelName + " " + uid + " :" +reason);
 							if (msgIRCKickReason.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCKickReason.replace("%KICKEDUSER%",iuser.nick).replace("%KICKEDBY%",kickedByNick).replace("%REASON%",convertColors(reason,true)));
 							if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCKickReasonDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCKickReasonDynmap.replace("%KICKEDUSER%",iuser.nick).replace("%KICKEDBY%",kickedByNick).replace("%REASON%",stripFormatting(reason)));
 						}
 						else {
-							println(":" + sourceUID + " KICK " + channelName + " " + uiD + " :" +kickedByNick);						
+							println(":" + sourceUID + " KICK " + channelName + " " + uid + " :" +kickedByNick);						
 							if (msgIRCKick.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCKick.replace("%KICKEDUSER%",iuser.nick).replace("%KICKEDBY%",kickedByNick));
 							if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCKickDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCKickDynmap.replace("%KICKEDUSER%",iuser.nick).replace("%KICKEDBY%",kickedByNick));
 						}
@@ -1570,7 +1570,7 @@ public class IRCd implements Runnable {
 		String joined = "";
 		int noOfItems = 0;
 		for (String item : strArray) {
-			if (noOfItems < start) { noOfItemS ++; continue; }
+			if (noOfItems < start) { noOfItems ++; continue; }
 			joined += item;
 			if (++ noOfItems < strArray.length)
 				joined += delimiter;
@@ -1900,7 +1900,7 @@ public class IRCd implements Runnable {
 								String textModes = ircusertarget.getTextModes();
 								if (add) {
 									System.out.println("Adding mode " + mode + " for " + ircusertarget.nick);
-									if (!textModes.contains(mode)) ircusertarget.setModes(textModeS +mode);
+									if (!textModes.contains(mode)) ircusertarget.setModes(textModes + mode);
 								}
 								else {
 									System.out.println("Removing mode " + mode + " for " + ircusertarget.nick);
@@ -1911,7 +1911,7 @@ public class IRCd implements Runnable {
 								String consoleTextModes = ircusertarget.getConsoleTextModes();
 								if (add) {
 									System.out.println("Adding console mode " + mode + " for " + ircusertarget.nick);
-									if (!consoleTextModes.contains(mode)) ircusertarget.setConsoleModes(consoleTextModeS +mode);
+									if (!consoleTextModes.contains(mode)) ircusertarget.setConsoleModes(consoleTextModes + mode);
 								}
 								else {
 									System.out.println("Removing console mode " + mode + " for " + ircusertarget.nick);
@@ -2922,7 +2922,7 @@ public class IRCd implements Runnable {
 				writeln(IRCd.serverMessagePrefix + " 254 " + nick + " 1 :channels formed");
 				writeln(IRCd.serverMessagePrefix + " 255 " + nick + " :I have " + IRCd.getClientCount() + " clients and " + IRCd.getServerCount() + " servers.");
 				writeln(IRCd.serverMessagePrefix + " 265 " + nick + " :Current local users: " + IRCd.getClientCount() + " Max: " + IRCd.maxConnections);
-				writeln(IRCd.serverMessagePrefix + " 266 " + nick + " :Current global users: " +(IRCd.getClientCount()+ IRCd.getRemoteClientCount()) + " Max: " +(IRCd.maxConnectionS + IRCd.getRemoteMaxConnections()));
+				writeln(IRCd.serverMessagePrefix + " 266 " + nick + " :Current global users: " +(IRCd.getClientCount()+ IRCd.getRemoteClientCount()) + " Max: " +(IRCd.maxConnections + IRCd.getRemoteMaxConnections()));
 				sendMOTD();
 				if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
 					if (IRCd.msgIRCJoin.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(IRCd.msgIRCJoin.replace("%USER%", nick));
@@ -2968,7 +2968,7 @@ public class IRCd implements Runnable {
 						writeln(IRCd.serverMessagePrefix + " 378 " + nick + " " + ircuser.nick + " :is connecting from *@" + ircuser.realhost+ " " + ircuser.ipaddress);
 					}
 					if (ircuser.isRegistered) writeln(IRCd.serverMessagePrefix + " 307 " + nick + " " + ircuser.nick + " :is a registered nick");
-					writeln(IRCd.serverMessagePrefix + " 319 " + nick + " " + ircuser.nick + " :" + cmodeS + IRCd.channelName);
+					writeln(IRCd.serverMessagePrefix + " 319 " + nick + " " + ircuser.nick + " :" + cmodes + IRCd.channelName);
 					writeln(IRCd.serverMessagePrefix + " 312 " + nick + " " + ircuser.nick + " " + IRCd.serverHostName + " :" + IRCd.serverDescription);
 					if (ircuser.awayMsg.length() > 0) writeln(IRCd.serverMessagePrefix + " 301 " + nick + " " + ircuser.nick + " :" + ircuser.awayMsg);
 					if (ircuser.isOper) writeln(IRCd.serverMessagePrefix + " 313 " + nick + " " + ircuser.nick + " :is an IRC Operator.");
@@ -3009,7 +3009,7 @@ public class IRCd implements Runnable {
 
 					writeln(IRCd.serverMessagePrefix + " 311 " + nick + " " + playernick + " " + playerident+ " " + playerhost+ " " + " * :Minecraft Player");
 					if (isOper) writeln(IRCd.serverMessagePrefix + " 378 " + nick + " " + playernick + " :is connecting from *@" + playerhost+ " " + playerip);
-					writeln(IRCd.serverMessagePrefix + " 319 " + nick + " " + playernick + " :" + playermodeS + IRCd.channelName);
+					writeln(IRCd.serverMessagePrefix + " 319 " + nick + " " + playernick + " :" + playermodes + IRCd.channelName);
 					writeln(IRCd.serverMessagePrefix + " 312 " + nick + " " + playernick + " " + IRCd.serverHostName + " :Bukkit " +bukkitversion);
 					if (playerisoper) writeln(IRCd.serverMessagePrefix + " 313 " + nick + " " + playernick + " :is an IRC Operator.");
 					writeln(IRCd.serverMessagePrefix + " 320 " + nick + " " + playernick + " :is currently in " + playerworld);
