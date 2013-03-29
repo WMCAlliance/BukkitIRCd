@@ -190,6 +190,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		messages = YamlConfiguration.loadConfiguration(messagesFile);
 		if (!(messagesFile.exists())) {
 			log.info("[BukkitIRCd] Creating default messages file. Code BukkitIRCdPlugin192.");
+			messages.options().copyDefaults(true);
 			saveDefaultMessages(getDataFolder(),"messages.yml");
 			log.info("[BukkitIRCd] Saving initial messages file. Code BukkitIRCdPlugin194.");
 			
