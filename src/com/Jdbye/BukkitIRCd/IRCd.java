@@ -1172,13 +1172,13 @@ public class IRCd implements Runnable {
 				if (mode == Modes.STANDALONE) {
 					writeAll(":" + nick + ingameSuffix + "!" + nick + "@" + host + " JOIN " + IRCd.channelName);
 				}
-				String mode1=" + ", mode2="";
+				String mode1="+", mode2="";
 				if (modes.contains("~")) { mode1+="q"; mode2+=nick + ingameSuffix + " "; }
 				if (modes.contains("&")) { mode1+="a"; mode2+=nick + ingameSuffix + " "; }
 				if (modes.contains("@")) { mode1+="o"; mode2+=nick + ingameSuffix + " "; }
 				if (modes.contains("%")) { mode1+="h"; mode2+=nick + ingameSuffix + " "; }
-				if (modes.contains(" + ")) { mode1+="v"; mode2+=nick + ingameSuffix + " "; }
-				if (!mode1.equals(" + ")) {
+				if (modes.contains("+")) { mode1+="v"; mode2+=nick + ingameSuffix + " "; }
+				if (!mode1.equals("+")) {
 					if (mode == Modes.STANDALONE) {
 						writeAll(":" + serverName + "!" + serverName + "@" + serverHostName + " MODE " + IRCd.channelName + " " + mode1 + " " + mode2.substring(0, mode2.length()-1));
 					}
@@ -2239,10 +2239,10 @@ public class IRCd implements Runnable {
 						String UID = bp.getUID();
 						String textMode = bp.getTextMode();
 						if (bp.hasPermission("bukkitircd.oper")) {
-							println(pre + "UID " + UID + " " +(bp.idleTime / 1000L) + " " + bp.nick + ingameSuffix + " " + bp.host + " " + bp.host + " " + bp.nick + " " + bp.ip + " " + bp.signedOn + " +or :Minecraft Player");
+							println(pre + "UID " + UID + " " + (bp.idleTime / 1000L) + " " + bp.nick + ingameSuffix + " " + bp.host + " " + bp.host + " " + bp.nick + " " + bp.ip + " " + bp.signedOn + " +or :Minecraft Player");
 							println(":" + UID + " OPERTYPE IRC_Operator");
 						}
-						else println(pre + "UID " + UID + " " +(bp.idleTime / 1000L) + " " + bp.nick + ingameSuffix + " " + bp.host + " " + bp.host + " " + bp.nick + " " + bp.ip + " " + bp.signedOn + " +r :Minecraft Player");
+						else println(pre + "UID " + UID + " " + (bp.idleTime / 1000L) + " " + bp.nick + ingameSuffix + " " + bp.host + " " + bp.host + " " + bp.nick + " " + bp.ip + " " + bp.signedOn + " +r :Minecraft Player");
 
 						println(pre + "FJOIN " + channelName + " " + channelTS + " +nt :," + UID);
 						if (textMode.length() > 0) {
