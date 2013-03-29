@@ -1802,8 +1802,8 @@ public class IRCd implements Runnable {
 						}
 					}
 				}
-				else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[2] + " not found in list. Error code IRCd1804."); // Log as severe because this situation should never occur and points to a bug in the code
-			}
+		/**		else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[2] + " not found in list. Error code IRCd1804."); // Log as severe because this situation should never occur and points to a bug in the code
+			}*/
 			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID " + split[0] + " not found in list. Error code IRCd1806."); // Log as severe because this situation should never occur and points to a bug in the code			
 		}
 		else if (split[1].equalsIgnoreCase("FJOIN")) {
