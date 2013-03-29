@@ -1523,7 +1523,7 @@ public class IRCd implements Runnable {
 			if (ircColors[i] < 10) output=output.replace("^K0" + i,"");
 			output = output.replace("^K" + i,"");
 		}
-		output = output.replace("^K", "").replace("^B", ChatColor.BOLD).replace("^I", ChatColor.ITALIC).replace("^O", ChatColor.RESET).replace("^U", ChatColor.UNDERLINE);
+		output = output.replace("^K", "").replace("^B", "§l" ).replace("^I", "§o" ).replace("^O", "§r").replace("^U", "§n");
 		return output;
 	}
 
