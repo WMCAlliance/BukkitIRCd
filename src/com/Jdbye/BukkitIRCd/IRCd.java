@@ -1585,7 +1585,7 @@ public class IRCd implements Runnable {
 		String joined = "";
 		int noOfItems = 0;
 		for (String item : strArray) {
-			if (noOfItems < start) { noOfItems ++; continue; }
+			if (noOfItems < start) { noOfItems++; continue; }
 			joined += item;
 			if (++ noOfItems < strArray.length)
 				joined += delimiter;
@@ -1981,7 +1981,7 @@ public class IRCd implements Runnable {
 								}
 							}
 						}
-						modecount ++;
+						modecount++;
 					}
 				}
 			}
@@ -2045,6 +2045,7 @@ public class IRCd implements Runnable {
 			if ((ircuser = uid2ircuser.get(split[2])) != null) {
 				println(":" + split[2] + " IDLE " + split[0] + " " + ircuser.signonTime + " " + ircuser.getSecondsIdle());
 			}
+			// The error below can/will happen in the event a player is /whois'ed from IRC
 			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[2] + " not found in list. Error code IRCd1999."); // Log as severe because this situation should never occur and points to a bug in the code
 		}
 		else if (split[1].equalsIgnoreCase("NICK")) {
@@ -2315,7 +2316,7 @@ public class IRCd implements Runnable {
 								if (msgPlayerList.length() > 0) {
 									String s = "";
 									int count = 0;
-									for (BukkitPlayer player : bukkitPlayers) { count ++; s = s + player.nick + ", "; }
+									for (BukkitPlayer player : bukkitPlayers) { count++; s = s + player.nick + ", "; }
 									if (s.length() == 0) s = "None, ";
 									println(":" + serverUID + " PRIVMSG " + IRCd.channelName + " :" + convertColors(msgPlayerList.replace("%COUNT%", Integer.toString(count)).replace("%USERS%", s.substring(0, s.length()-2)), false));
 								}
@@ -2836,7 +2837,7 @@ public class IRCd implements Runnable {
 										if (IRCd.msgPlayerList.length() > 0) {
 											String s = "";
 											int count = 0;
-											for (BukkitPlayer player : IRCd.bukkitPlayers) { count ++; s = s + player.nick + ", "; }
+											for (BukkitPlayer player : IRCd.bukkitPlayers) { count++; s = s + player.nick + ", "; }
 											if (s.length() == 0) s = "None, ";
 											IRCd.writeAll(":" + IRCd.serverName + "!" + IRCd.serverName + "@" + IRCd.serverHostName + " PRIVMSG " + IRCd.channelName + " :" + IRCd.convertColors(IRCd.msgPlayerList.replace("%COUNT%", Integer.toString(count)).replace("%USERS%", s.substring(0, s.length()-2)), false));
 										}
