@@ -535,15 +535,15 @@ public class IRCd implements Runnable {
 			else println(pre + "METADATA " + UID + " swhois :is currently in an unknown world");
 		}
 
-		println(pre + "FJOIN " + consoleChannelName + " " + consoleChannelTS + " + nt :," + serverUID);
+		println(pre + "FJOIN " + consoleChannelName + " " + consoleChannelTS + " +nt :," + serverUID);
 		println(":" + serverUID + " FMODE " + consoleChannelName + " " + consoleChannelTS + " +qaohv " + serverUID + " " + serverUID + " " + serverUID + " " + serverUID + " " + serverUID);
-		println(pre + "FJOIN " + channelName + " " + channelTS + " + nt :," + serverUID);
+		println(pre + "FJOIN " + channelName + " " + channelTS + " +nt :," + serverUID);
 		println(":" + serverUID + " FMODE " + channelName + " " + channelTS + " +qaohv " + serverUID + " " + serverUID + " " + serverUID + " " + serverUID + " " + serverUID);
 		
 		for (BukkitPlayer bp : bukkitPlayers) {
 			String UID = bp.getUID();
 			String textMode = bp.getTextMode();
-			println(pre + "FJOIN " + channelName + " " + channelTS + " + nt :," + UID);
+			println(pre + "FJOIN " + channelName + " " + channelTS + " +nt :," + UID);
 			if (textMode.length() > 0) {
 				String modestr = "";
 				for (int i = 0; i < textMode.length(); i++) {
@@ -1141,7 +1141,7 @@ public class IRCd implements Runnable {
 						}
 						else println(pre + "UID " + UID + " " + (bp.idleTime / 1000L) + " " + bp.nick + ingameSuffix + " " + bp.host + " " + bp.host + " " + bp.nick + " " + bp.ip + " " + bp.signedOn + " + r :Minecraft Player");
 
-						println(pre + "FJOIN " + channelName + " " + channelTS + " + nt :," + UID);
+						println(pre + "FJOIN " + channelName + " " + channelTS + " +nt :," + UID);
 						if (textMode.length() > 0) {
 							String modestr = "";
 							for (int i = 0; i < textMode.length(); i++) {
@@ -1195,7 +1195,7 @@ public class IRCd implements Runnable {
 						}
 						else println(pre + "UID " + UID + " " + (bp.idleTime / 1000L) + " " + bp.nick + ingameSuffix + " " + bp.host + " " + bp.host + " " + bp.nick + " " + bp.ip + " " + bp.signedOn + " + r :Minecraft Player");
 
-						println(pre + "FJOIN " + channelName + " " + channelTS + " + nt :," + UID);
+						println(pre + "FJOIN " + channelName + " " + channelTS + " +nt :," + UID);
 						if (textMode.length() > 0) {
 							String modestr = "";
 							for (int i = 0; i < textMode.length(); i++) {
@@ -2077,7 +2077,7 @@ public class IRCd implements Runnable {
 			if (split[3].startsWith(Integer.toString(SID))) {
 				if (split[2].equalsIgnoreCase(channelName)) {
 					if (split[3].equalsIgnoreCase(serverUID)) {
-						println(pre + "FJOIN " + channelName + " " + channelTS + " + nt :," + serverUID);
+						println(pre + "FJOIN " + channelName + " " + channelTS + " +nt :," + serverUID);
 						println(":" + serverUID + " FMODE " + channelName + " " + channelTS + " +qaohv " + serverUID + " " + serverUID + " " + serverUID + " " + serverUID + " " + serverUID);
 
 					}
@@ -2103,7 +2103,7 @@ public class IRCd implements Runnable {
 				}
 				else if (split[2].equalsIgnoreCase(consoleChannelName)) {
 					if (split[3].equalsIgnoreCase(serverUID)) {
-						println(pre + "FJOIN " + consoleChannelName + " " + consoleChannelTS + " + nt :," + serverUID);
+						println(pre + "FJOIN " + consoleChannelName + " " + consoleChannelTS + " +nt :," + serverUID);
 						println(":" + serverUID + " FMODE " + consoleChannelName + " " + consoleChannelTS + " +qaohv " + serverUID + " " + serverUID + " " + serverUID + " " + serverUID + " " + serverUID);
 
 					}
@@ -2229,9 +2229,9 @@ public class IRCd implements Runnable {
 					if (split[2].equalsIgnoreCase(serverUID)) {
 						println(pre + "UID " + serverUID + " " + serverStartTime + " " + serverName + " " + serverHostName + " " + serverHostName + " " + serverName + " 127.0.0.1 " + serverStartTime + " +Bro :" + version);
 						println(":" + serverUID + " OPERTYPE Network_Service");
-						println(pre + "FJOIN " + consoleChannelName + " " + consoleChannelTS + " + nt :," + serverUID);
+						println(pre + "FJOIN " + consoleChannelName + " " + consoleChannelTS + " +nt :," + serverUID);
 						println(":" + serverUID + " FMODE " + consoleChannelName + " " + consoleChannelTS + " +qaohv " + serverUID + " " + serverUID + " " + serverUID + " " + serverUID + " " + serverUID);
-						println(pre + "FJOIN " + channelName + " " + channelTS + " + nt :," + serverUID);
+						println(pre + "FJOIN " + channelName + " " + channelTS + " +nt :," + serverUID);
 						println(":" + serverUID + " FMODE " + channelName + " " + channelTS + " +qaohv " + serverUID + " " + serverUID + " " + serverUID + " " + serverUID + " " + serverUID);
 					}
 					else if ((bp = getBukkitUserByUID(split[2])) != null) {
@@ -2243,7 +2243,7 @@ public class IRCd implements Runnable {
 						}
 						else println(pre + "UID " + UID + " " +(bp.idleTime / 1000L) + " " + bp.nick + ingameSuffix + " " + bp.host + " " + bp.host + " " + bp.nick + " " + bp.ip + " " + bp.signedOn + " + r :Minecraft Player");
 
-						println(pre + "FJOIN " + channelName + " " + channelTS + " + nt :," + UID);
+						println(pre + "FJOIN " + channelName + " " + channelTS + " +nt :," + UID);
 						if (textMode.length() > 0) {
 							String modestr = "";
 							for (int i = 0; i < textMode.length(); i++) {
@@ -3099,7 +3099,7 @@ public class IRCd implements Runnable {
 		{
 			if (IRCd.channelTopic.length()>0) {
 				if (channelName.equals(IRCd.consoleChannelName)) writeln(IRCd.serverMessagePrefix + " 324 " + nick + " " + channelName + " +Ont");
-				else writeln(IRCd.serverMessagePrefix + " 324 " + nick + " " + channelName + " + nt");
+				else writeln(IRCd.serverMessagePrefix + " 324 " + nick + " " + channelName + " +nt");
 				try { writeln(IRCd.serverMessagePrefix + " 329 " + nick + " " + channelName + " " +((IRCd.dateFormat.parse(IRCd.serverCreationDate).getTime()) / 1000)); }
 				catch (ParseException e) { writeln(IRCd.serverMessagePrefix + " 329 " + nick + " " + channelName + " " +(System.currentTimeMillis() / 1000L)); }
 			}
