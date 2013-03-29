@@ -190,7 +190,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		messages = YamlConfiguration.loadConfiguration(messagesFile);
 		if (!(messagesFile.exists())) {
 			log.info("[BukkitIRCd] Creating default messages file. Code BukkitIRCdPlugin192.");
-			messages.save(messagesFile);
+			writeMessages(msgFile);
 			log.info("[BukkitIRCd] Saving initial messages file. Code BukkitIRCdPlugin194.");
 			
 		}
@@ -619,7 +619,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 	private void saveDefaultMOTD(File dataFolder, String fileName)
 	{
-		log.info("[BukkitIRCd] MOTD file not found, creating new one. Code BukkitIRCdPlugin616");
+		log.info("[BukkitIRCd] MOTD file not found, creating new one. Code BukkitIRCdPlugin616.");
 		dataFolder.mkdirs();
 
 		File motdFile = new File(dataFolder, fileName);
@@ -630,7 +630,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 		catch(IOException e)
 		{
-			log.warning("[BukkitIRCd] Could not create MOTD file! BukkitIRCdPlugin627");
+			log.warning("[BukkitIRCd] Could not create MOTD file! Code BukkitIRCdPlugin627.");
 		}
 
 		writeMOTD(motdFile);
