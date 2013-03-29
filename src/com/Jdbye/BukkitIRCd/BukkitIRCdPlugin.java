@@ -167,7 +167,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		if (reload) {
 			if (ircd != null) {
 				ircd.running = false;
-				IRCd.disconnectAll("Reloading configuration");
+				IRCd.disconnectAll("Reloading configuration.");
 				ircd = null; 
 			}
 			if (thr != null) {
@@ -1012,7 +1012,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 							else player.sendMessage(ChatColor.RED + "Already connected to " + IRCd.linkName + ", but not linked.");
 						}
 					}
-					else { player.sendMessage(ChatColor.RED + "Not in linking mode."); }
+					else { player.sendMessage(ChatColor.RED + "[BukkitIRCd] You are currently in standalone mode. To link to a server, modify the config."); }
 				}
 				else {
 					player.sendMessage(ChatColor.RED + "You don't have access to that command.");
@@ -1032,9 +1032,9 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			}
 			else if (commandName.equalsIgnoreCase("rawsend")) {
 				if (enableRawSend) {
-					sender.sendMessage(ChatColor.RED + "Rawsend is only usable from console.");
+					sender.sendMessage(ChatColor.RED + "[BukkitIRCd] Only the console can use this command.");
 				}
-				else { sender.sendMessage(ChatColor.RED + "Rawsend is not enabled."); }
+				else { sender.sendMessage(ChatColor.RED + "[BukkitIRCd] Sending raw messages is disabled. Please enable them in the config first."); }
 				return true;
 			}
 		}
@@ -1234,7 +1234,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 						else sender.sendMessage(ChatColor.RED + "Already connected to " + IRCd.linkName + ", but not linked.");
 					}
 				}
-				else { sender.sendMessage(ChatColor.RED + "Not in linking mode."); }
+				else { sender.sendMessage(ChatColor.RED + "[BukkitIRCd] You are currently in standalone mode. To link to a server, modify the config."); }
 				return true;
 			}
 			else if (commandName.equalsIgnoreCase("ircreload") || commandName.equalsIgnoreCase("ireload")) {
