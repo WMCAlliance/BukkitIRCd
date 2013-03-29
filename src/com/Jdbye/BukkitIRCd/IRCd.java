@@ -268,9 +268,9 @@ public class IRCd implements Runnable {
 										t.start();
 									}
 								} catch (SocketTimeoutException e) { }
-								if (tickCount +(pingInterval*1000) < System.currentTimeMillis()) {
+								if (tickCount +(pingInterval * 1000) < System.currentTimeMillis()) {
 									tickCount = System.currentTimeMillis();
-									writeAll("PING :" +tickCount);
+									writeAll("PING :" + tickCount);
 								}
 							}
 							try { Thread.currentThread();
@@ -560,7 +560,7 @@ public class IRCd implements Runnable {
 	}
 
 	public static int getClientCount() {
-		if (mode == Modes.STANDALONE) return clientConnections.size()+ bukkitPlayers.size();
+		if (mode == Modes.STANDALONE) return clientConnections.size() + bukkitPlayers.size();
 		else return bukkitPlayers.size();
 	}
 
@@ -570,7 +570,7 @@ public class IRCd implements Runnable {
 			if (mode == Modes.STANDALONE) {
 				for (ClientConnection processor : clientConnections) {
 					if (processor.isOper) {
-						count ++;
+						count++;
 					}
 				}
 			}
@@ -588,7 +588,7 @@ public class IRCd implements Runnable {
 
 	public static int getServerCount() {
 		if (mode == Modes.STANDALONE) return 0;
-		else return 1+ servers.size();
+		else return 1 + servers.size();
 	}
 
 	public static IRCUser getIRCUser(String nick) {
@@ -1102,12 +1102,27 @@ public class IRCd implements Runnable {
 				if (mode == Modes.STANDALONE) {
 					writeAll(":" + nick + ingameSuffix + "!" + nick + "@" + host + " JOIN " + IRCd.channelName);
 				}
-				String mode1=" + ", mode2="";
-				if (modes.contains("~")) { mode1+="q"; mode2+=nick + ingameSuffix + " "; }
-				if (modes.contains("&")) { mode1+="a"; mode2+=nick + ingameSuffix + " "; }
-				if (modes.contains("@")) { mode1+="o"; mode2+=nick + ingameSuffix + " "; }
-				if (modes.contains("%")) { mode1+="h"; mode2+=nick + ingameSuffix + " "; }
-				if (modes.contains(" + ")) { mode1+="v"; mode2+=nick + ingameSuffix + " "; }
+				String mode1 = " + ", mode2 = "";
+				if (modes.contains("~")) { 
+					mode1 += "q";
+					mode2 += nick + ingameSuffix + " ";
+				}
+				if (modes.contains("&")) { 
+					mode1 += "a";
+					mode2 += nick + ingameSuffix + " "; 
+				}
+				if (modes.contains("@")) { 
+					mode1 += "o";
+					mode2 += nick + ingameSuffix + " ";
+				}
+				if (modes.contains("%")) { 
+					mode1 += "h"; 
+					mode2 += nick + ingameSuffix + " "; 
+				}
+				if (modes.contains(" + ")) { 
+					mode1+="v"; 
+					mode2 += nick + ingameSuffix + " "; 
+				}
 				if (!mode1.equals(" + ")) {
 					if (mode == Modes.STANDALONE) {
 						writeAll(":" + serverName + "!" + serverName + "@" + serverHostName + " MODE " + IRCd.channelName + " " + mode1 + " " + mode2.substring(0, mode2.length()-1));
@@ -1503,12 +1518,12 @@ public class IRCd implements Runnable {
 					i--;
 					if (ircColors[i] < 10) irccolor = "0" + ircColors[i];
 					else irccolor=Integer.toString(ircColors[i]);
-					output = output.replace(ChatColor.COLOR_CHAR+ gameColors[i].toLowerCase(), ((char)3)+ irccolor);
-					output = output.replace("&" + gameColors[i].toLowerCase(), ((char)3)+ irccolor);
-					output = output.replace(ChatColor.COLOR_CHAR+ gameColors[i].toUpperCase(), ((char)3)+ irccolor);
-					output = output.replace("&" + gameColors[i].toUpperCase(), ((char)3)+ irccolor);
+					output = output.replace(ChatColor.COLOR_CHAR+ gameColors[i].toLowerCase(), ((char)3) + irccolor);
+					output = output.replace("&" + gameColors[i].toLowerCase(), ((char)3) + irccolor);
+					output = output.replace(ChatColor.COLOR_CHAR+ gameColors[i].toUpperCase(), ((char)3) + irccolor);
+					output = output.replace("&" + gameColors[i].toUpperCase(), ((char)3) + irccolor);
 				}
-				output = output.replace("^K", (char)3 + "").replace("^B", (char)2 + "").replace("^I", (char)29 + "").replace("^O", (char)15 + "").replace("^U", (char)31+ "");
+				output = output.replace("^K", (char)3 + "").replace("^B", (char)2 + "").replace("^I", (char)29 + "").replace("^O", (char)15 + "").replace("^U", (char)31 + "");
 			}
 			return output;
 		}
@@ -2506,7 +2521,7 @@ public class IRCd implements Runnable {
 					if (split[1].indexOf(":") == 0) { split[1] = split[1].substring(1); }
 					quitmsg = IRCd.join(split, " ", 1);
 					if (isIdented && isNickSet) IRCd.writeAll(":" + getFullHost() + " QUIT :Quit: " +quitmsg);
-					synchronized(IRCd.csStdOut) { System.out.println("[BukkitIRCd] Cleaning up connection from " + getFullHost() + " (Quit: " +quitmsg + ")"); }
+					synchronized(IRCd.csStdOut) { System.out.println("[BukkitIRCd] Cleaning up connection from " + getFullHost() + " (Quit: "  + quitmsg + ")"); }
 				}
 				else {
 					if (isIdented && isNickSet) IRCd.writeAll(":" + getFullHost() + " QUIT :Quit");
