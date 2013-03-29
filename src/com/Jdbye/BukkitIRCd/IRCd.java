@@ -278,7 +278,7 @@ public class IRCd implements Runnable {
 						}
 					} catch (IOException e) {
 						synchronized(csStdOut) {
-							System.out.println("[BukkitIRCd] IOException on socket listen: " + e.toString());
+							System.out.println("[BukkitIRCd] IOException on socket listen: " + e.toString() + ". Error Code IRCd281.");
 						}
 					}
 				}
