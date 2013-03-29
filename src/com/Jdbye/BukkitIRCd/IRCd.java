@@ -1812,7 +1812,6 @@ public class IRCd implements Runnable {
 			IRCUser ircusertarget;
 			if (split[3].startsWith(":")) split[3] = split[3].substring(1);
 		
-			//if (((ircusersource = uid2ircuser.get(split[0])) != null) || ((server = servers.get(split[0])) != null)) {
 			if ((ircusertarget = uid2ircuser.get(split[2])) != null) {
 				String modes = split[3];
 				boolean add = true;
@@ -1822,14 +1821,16 @@ public class IRCd implements Runnable {
 					} else if ((modes.charAt(i) + "").equals("-")) {
 						add = false;
 					} else if ((modes.charAt(i) + "").equals("o")) {
-						if (add) ircusertarget.isOper = true;
-							else ircusertarget.isOper = false;
-						} else if ((modes.charAt(i) + "").equals("r")) {
-							if (add) {
-								ircusertarget.isRegistered = true;
-							} else {
-								ircusertarget.isRegistered = false;
-							}
+						if (add) {
+							ircusertarget.isOper = true;
+						} else{
+							ircusertarget.isOper = false;
+						}
+					} else if ((modes.charAt(i) + "").equals("r")) {
+						if (add) {
+							ircusertarget.isRegistered = true;
+						} else {
+							ircusertarget.isRegistered = false;
 						}
 					}
 				}
