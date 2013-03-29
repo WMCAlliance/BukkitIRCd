@@ -91,7 +91,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	public static int link_pinginterval = 60;
 	public static int link_timeout = 180;
 	public static int link_delay = 60;
-	public static int link_serverid = new Random().nextInt(900)+100;
+	public static int link_serverid = new Random().nextInt(900) + 100;
 
 	public static final Logger log = Logger.getLogger("Minecraft");
 	
@@ -257,8 +257,8 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		IRCd.bukkitPlayers.clear();
 		for (Player player : getServer().getOnlinePlayers()) {
 			String mode = "";
-			//if (hasPermission(player, "bukkitircd.mode.owner")) mode += "~";
-			//if (hasPermission(player, "bukkitircd.mode.protect")) mode += "&";
+			if (hasPermission(player, "bukkitircd.mode.owner")) mode += "~";
+			if (hasPermission(player, "bukkitircd.mode.protect")) mode += "&";
 			if (hasPermission(player, "bukkitircd.mode.op")) mode += "@";
 			if (hasPermission(player, "bukkitircd.mode.halfop")) mode += "%";
 			if (hasPermission(player, "bukkitircd.mode.voice")) mode += "+";
@@ -363,7 +363,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			log.info("[BukkitIRCd] Loaded configuration file.");
 		}
 		catch (Exception e) {
-			log.info("[BukkitIRCd] Failed to load configuration file: "+e.toString());
+			log.info("[BukkitIRCd] Failed to load configuration file: " + e.toString());
 		}
 	}
 
@@ -464,7 +464,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			log.info("[BukkitIRCd] Loaded messages file.");
 		}
 		catch (Exception e) {
-			log.info("[BukkitIRCd] Failed to load messages file: "+e.toString());
+			log.info("[BukkitIRCd] Failed to load messages file: " + e.toString());
 		}
 	}
 
@@ -645,7 +645,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			Date curDate = new Date();
 			SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss");
 
-			bufferWriter.append("Last changed on "+dateFormat.format(curDate));
+			bufferWriter.append("Last changed on " + dateFormat.format(curDate));
 			bufferWriter.newLine();
 			bufferWriter.append("");
 			bufferWriter.newLine();
@@ -665,7 +665,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			bufferWriter.newLine();
 			bufferWriter.append("");
 			bufferWriter.newLine();
-			bufferWriter.append("Welcome to "+ircd_servername+", running "+ircd_version+".");
+			bufferWriter.append("Welcome to " + ircd_servername + ", running " + ircd_version + ".");
 			bufferWriter.newLine();
 			bufferWriter.append("Enjoy your stay!");
 			bufferWriter.newLine();
@@ -830,7 +830,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 						}
 						else {
 							if (ircuser != null) {
-								if (IRCd.kickBanIRCUser(ircuser, player.getName(), player.getName() + "!"+player.getName() + "@" + player.getAddress().getAddress().getHostName(), reason, true, banType))
+								if (IRCd.kickBanIRCUser(ircuser, player.getName(), player.getName() + "!" + player.getName() + "@" + player.getAddress().getAddress().getHostName(), reason, true, banType))
 									player.sendMessage(ChatColor.RED + "User banned.");
 								else
 									player.sendMessage(ChatColor.RED + "User is already banned.");
@@ -904,7 +904,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 						IRCUser ircuser = IRCd.getIRCUser(trimmedArgs[0]);
 						if (ircuser != null) {
 							if (IRCd.mode == Modes.STANDALONE) { 
-								IRCd.writeTo(ircuser.nick, ":" + player.getName() + IRCd.ingameSuffix + "!" + player.getName() + "@"+player.getAddress().getAddress().getHostName() + " PRIVMSG " + ircuser.nick + " :" + IRCd.convertColors(IRCd.join(trimmedArgs, " ", 1), false));
+								IRCd.writeTo(ircuser.nick, ":" + player.getName() + IRCd.ingameSuffix + "!" + player.getName() + "@" + player.getAddress().getAddress().getHostName() + " PRIVMSG " + ircuser.nick + " :" + IRCd.convertColors(IRCd.join(trimmedArgs, " ", 1), false));
 								player.sendMessage(ChatColor.RED + "Message sent.");
 							}
 							else if (IRCd.mode == Modes.INSPIRCD) {
@@ -946,7 +946,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 							IRCUser ircuser = IRCd.getIRCUser(lastReceivedFrom);
 							if (ircuser != null) {
 								if (IRCd.mode == Modes.STANDALONE) {
-									IRCd.writeTo(ircuser.nick, ":" + player.getName() + IRCd.ingameSuffix + "!" + player.getName() + "@" + player.getAddress().getAddress().getHostName() + " PRIVMSG " + ircuser.nick+" :" + IRCd.convertColors(IRCd.join(trimmedArgs, " ", 0), false));
+									IRCd.writeTo(ircuser.nick, ":" + player.getName() + IRCd.ingameSuffix + "!" + player.getName() + "@" + player.getAddress().getAddress().getHostName() + " PRIVMSG " + ircuser.nick + " :" + IRCd.convertColors(IRCd.join(trimmedArgs, " ", 0), false));
 									player.sendMessage(ChatColor.RED + "Message sent to " + lastReceivedFrom + ".");
 								}
 								else if (IRCd.mode == Modes.INSPIRCD) {
@@ -1161,7 +1161,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 								if (IRCd.linkcompleted) {
 									IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + UID + " :" + IRCd.convertColors(IRCd.join(trimmedArgs, " ", 1), false));
 									sender.sendMessage(ChatColor.RED + "Message sent.");
-								} else sender.sendMessage("§4Failed to send message, not currently linked to IRC server.");
+								} else sender.sendMessage(ChatColor.DARK_RED + "Failed to send message, not currently linked to IRC server.");
 							}
 							else {
 								log.severe("UID not found in list: " + UID); // Log this as severe since it should never occur unless something is wrong with the code
