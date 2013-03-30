@@ -9,7 +9,7 @@ package com.Jdbye.BukkitIRCd;
 // - Removed unused includes
 // - Check our github
 
-/* TODO:
+/* TODO: (this list was made by Jdbye, we may or may not do this
  * HeroChat/Towny compatibility.
  * UnrealIRCd/TS5 links
  */
