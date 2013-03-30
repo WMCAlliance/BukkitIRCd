@@ -34,6 +34,7 @@ import org.bukkit.ChatColor;
  *
  * @author Jdbye
  */
+ 
 public class BukkitIRCdPlugin extends JavaPlugin {
 	static class CriticalSection extends Object {
 	}
@@ -259,6 +260,8 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 		loadBans();
 		IRCd.bukkitPlayers.clear();
+		
+		// Set players to different IRC modes based on permission
 		for (Player player : getServer().getOnlinePlayers()) {
 			String mode = "";
 			if (hasPermission(player, "bukkitircd.mode.owner")) mode += "~";
@@ -285,6 +288,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 //		}
 //	}
 	
+	// check for Dynmap, and if it's installed, register events and hooks
 	private void setupDynmap() {
 		PluginManager pm = getServer().getPluginManager();
 		Plugin plugin = pm.getPlugin("dynmap");
@@ -387,7 +391,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
         return message.replaceAll("&([a-f0-9k-or])", "\u00a7$1");
     }
 	
-	
+	// Load the messages from messages.yml
 	private void loadMessages(IRCd ircd) {
 		try {
 			IRCd.msgLinked = messages.getString("linked", IRCd.msgLinked);
@@ -433,7 +437,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			IRCd.msgPlayerList = messages.getString("player-list", IRCd.msgPlayerList);
 			
 			
-			//** RECOLOUR ALL MESSAGES **/
+			//** RECOLOUR ALL MESSAGES **
 			
 			IRCd.msgLinked = colorize(IRCd.msgLinked);
 			IRCd.msgDelinked = colorize(IRCd.msgDelinked);
@@ -496,18 +500,18 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		writeSettings(configFile);
 	}
 	
-
+	// Set up the MOTD for the standalone BukkitIRCd server
 	private void loadMOTD() {
 		File motdFile = new File(getDataFolder(), "motd.txt");
 
 		IRCd.MOTD.clear();
 
 		try {
-			//use buffering, reading one line at a time
-			//FileReader always assumes default encoding is OK!
+			// use buffering, reading one line at a time
+			// FileReader always assumes default encoding is OK!
 			BufferedReader input =  new BufferedReader(new FileReader(motdFile));
 			try {
-				String line = null; //not declared within while loop
+				String line = null; // not declared within while loop
 				/*
 				 * readLine is a bit quirky :
 				 * it returns the content of a line MINUS the newline.
@@ -528,14 +532,15 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 	}
 
+	// Load the bans file
 	private void loadBans() {
 		File bansFile = new File(getDataFolder(), "bans.txt");
 
 		IRCd.ircBans.clear();
 
 		try {
-			//use buffering, reading one line at a time
-			//FileReader always assumes default encoding is OK!
+			// use buffering, reading one line at a time
+			// FileReader always assumes default encoding is OK!
 			BufferedReader input =  new BufferedReader(new FileReader(bansFile));
 			try {
 				String line = null; //not declared within while loop
@@ -563,6 +568,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 	}
 
+	// Write the bans file
 	private boolean writeBans()
 	{
 		File bansFile = new File(getDataFolder(), "bans.txt");
@@ -618,6 +624,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		return result;
 	}
 
+	// If a motd is not found, save it
 	private void saveDefaultMOTD(File dataFolder, String fileName)
 	{
 		log.info("[BukkitIRCd] MOTD file not found, creating new one. Code BukkitIRCdPlugin616.");
@@ -627,7 +634,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		try
 		{
 			if(!motdFile.createNewFile())
-				throw new IOException("Failed file creation");
+				throw new IOException("Failed file creation.");
 		}
 		catch(IOException e)
 		{
@@ -755,6 +762,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 	}
 
+	// The current structure for commands. At some point I'd like to improve this
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
 		if (!isEnabled()) { return true; }

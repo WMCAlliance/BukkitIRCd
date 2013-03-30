@@ -316,7 +316,7 @@ public class IRCd implements Runnable {
 								line = in.readLine();
 								if (line == null) throw new IOException("Lost connection to server before sending handshake!");
 								String[] split = line.split(" ");
-								if (debugMode) BukkitIRCdPlugin.log.info("[BukkitIRCd]" + ChatColor.YELLOW + "[->] " + line);
+								if (debugMode) BukkitIRCdPlugin.log.info("[BukkitIRCd] " + ChatColor.YELLOW + "[->] " + line);
 								
 
 								if (!isIncoming) {
@@ -342,7 +342,7 @@ public class IRCd implements Runnable {
 										line = in.readLine();
 										if (line != null) {
 											split = line.split(" ");
-											if (debugMode) BukkitIRCdPlugin.log.info("[BukkitIRCd]" + ChatColor.YELLOW + "[->] " + line);
+											if (debugMode) BukkitIRCdPlugin.log.info("[BukkitIRCd]" + ChatColor.YELLOW + " [->] " + line);
 										}
 									}
 								}
@@ -476,7 +476,7 @@ public class IRCd implements Runnable {
 			}
 		}
 		BukkitIRCdPlugin.ircd = null;
-		if (running) BukkitIRCdPlugin.log.warning("[BukkitIRCd] Thread quit unexpectedly. If there are any errors above, please notify Jdbye about them.");
+		if (running) BukkitIRCdPlugin.log.warning("[BukkitIRCd] Thread quit unexpectedly. If there are any errors above, please notify WizardCM or Mu5tank05 about them.");
 		running = false;
 	}
 	
@@ -484,6 +484,7 @@ public class IRCd implements Runnable {
 		return ((server != null) && server.isConnected() && (!server.isClosed()));
 	}
 	
+	// Connect to InspIRCd link
 	public static boolean connect() {
 		if (mode == Modes.INSPIRCD) {
 			BukkitIRCdPlugin.log.info("[BukkitIRCd] Attempting connection to " + remoteHost + ":" + remotePort);
@@ -501,6 +502,7 @@ public class IRCd implements Runnable {
 		return false;
 	}
 	
+	// IRC servers are required to send a list of capabilities to the server they're linking to
 	public static boolean sendLinkCAPAB() {
 		if (capabSent) return false;
 		println("CAPAB START 1201");
@@ -726,9 +728,10 @@ public class IRCd implements Runnable {
 		return userArray;
 	}
 
+	// This doesn't seem to work - find out why
 	public static String[] getIRCWhois(IRCUser ircuser) {
 		if (ircuser == null) return null;
-		String whois[]=null;
+		String whois[] = null;
 		synchronized(csIrcUsers) {
 			whois = new String[8];
 			String idletime = TimeUtils.millisToLongDHMS(ircuser.getSecondsIdle() * 1000);
@@ -1102,7 +1105,7 @@ public class IRCd implements Runnable {
 				if (mode == Modes.STANDALONE) {
 					writeAll(":" + nick + ingameSuffix + "!" + nick + "@" + host + " JOIN " + IRCd.channelName);
 				}
-				String mode1 = " + ", mode2 = "";
+				String mode1 = "+", mode2 = "";
 				if (modes.contains("~")) { 
 					mode1 += "q";
 					mode2 += nick + ingameSuffix + " ";
@@ -1214,6 +1217,7 @@ public class IRCd implements Runnable {
 		else return false;
 	}
 
+	// Run when a player disconnects (maybe make the quit message configurable
 	public static boolean removeBukkitUser(int ID) {
 		synchronized(csBukkitPlayers) {
 			if (ID >= 0) {
@@ -1245,6 +1249,7 @@ public class IRCd implements Runnable {
 		return false;
 	}
 
+	// This is where we need to modify the disconnect on kick to a proper kick instead
 	public static boolean kickBukkitUser(String kickReason, int ID) {
 		if (ID >= 0) {
 			synchronized(csBukkitPlayers) {
@@ -1334,7 +1339,7 @@ public class IRCd implements Runnable {
 
 	public static void writeAll(String message, Player sender) {
 		int i = 0;
-		String line="", host="unknown", nick="Unknown";
+		String line = "", host = "unknown", nick = "Unknown";
 
 		synchronized(csBukkitPlayers) {
 			int ID = getBukkitUser(sender.getName());
@@ -1542,6 +1547,7 @@ public class IRCd implements Runnable {
 		return output;
 	}
 
+	// This is where the channel topic is configured
 	public static void setTopic(String topic, String user, String userhost) {
 		channelTopic = topic;
 		channelTopicSetDate = System.currentTimeMillis() / 1000L;
@@ -1794,35 +1800,7 @@ public class IRCd implements Runnable {
 			}
 			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0] + " not found in list. Error code IRCd1779."); // Log as severe because this situation should never occur and points to a bug in the code			
 		}
-/**		PREVIOUSLY ERRORING CODE, LOOK BELOW FOR REVISED VERSION
 
-		else if (split[1].equalsIgnoreCase("MODE")) {
-			// :0KJAAAAAA MODE 0KJAAAAAA + w
-			// Ignores other modes than o and r for now.
-			// Also ignores the source UID - it's not needed and the UID/SID detection was buggy
-			IRCUser ircusertarget;
-			if (split[3].startsWith(":")) split[3] = split[3].substring(1);
-			//if (((ircusersource = uid2ircuser.get(split[0])) != null) || ((server = servers.get(split[0])) != null)) {
-				if ((ircusertarget = uid2ircuser.get(split[2])) != null) {
-					String modes = split[3];
-					boolean add = true;
-					for (int i = 0; i < modes.length(); i++) {
-						if ((modes.charAt(i) + "").equals(" + ")) add = true;
-						else if ((modes.charAt(i) + "").equals("-")) add = false;
-						else if ((modes.charAt(i) + "").equals("o")) {
-							if (add) ircusertarget.isOper = true;
-							else ircusertarget.isOper = false;
-						}
-						else if ((modes.charAt(i) + "").equals("r")) {
-							if (add) ircusertarget.isRegistered = true;
-							else ircusertarget.isRegistered = false;
-						}
-					}
-				}
-		//		else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[2] + " not found in list. Error code IRCd1804."); // Log as severe because this situation should never occur and points to a bug in the code
-		//	}
-			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID " + split[0] + " not found in list. Error code IRCd1806."); // Log as severe because this situation should never occur and points to a bug in the code			
-		}*/
 		else if (split[1].equalsIgnoreCase("MODE")) {
 			IRCUser ircusertarget;
 			if (split[3].startsWith(":")) split[3] = split[3].substring(1);
@@ -2329,7 +2307,7 @@ public class IRCd implements Runnable {
 					}
 					else if (split[2].equalsIgnoreCase(consoleChannelName)) { // Messaging the console channel
 						if (message.startsWith("!") && (!isAction) && (!isNotice)) {
-							if (!ircuser.getConsoleTextModes().contains("o")) println(":" + serverUID + " NOTICE " + uidfrom + " :You don't have access."); // Only let them execute commands if they're oper
+							if (!ircuser.getConsoleTextModes().contains("o")) println(":" + serverUID + " NOTICE " + uidfrom + " :You are not a channel operator (or above). Command failed."); // Only let them execute commands if they're oper
 							else {
 								message = message.substring(1);
 								if (!executeCommand(message)) {
@@ -2672,7 +2650,7 @@ public class IRCd implements Runnable {
 								targetnick = IRCd.serverName;
 								targetident = IRCd.serverName;
 								targethost = IRCd.serverHostName;
-								hosts += targetnick + "=+ " + targetident + "@" + targethost + " ";
+								hosts += targetnick + "=+" + targetident + "@" + targethost + " ";
 							}
 							else if ((ircuser = IRCd.getIRCUser(split[i])) != null) {
 								synchronized(IRCd.csIrcUsers) {
@@ -2680,7 +2658,7 @@ public class IRCd implements Runnable {
 									targetident = ircuser.ident;
 									targethost = ircuser.hostmask;
 								}
-								hosts += targetnick + "=+ " + targetident + "@" + targethost + " ";
+								hosts += targetnick + "=+" + targetident + "@" + targethost + " ";
 							}
 							else if ((ID = IRCd.getBukkitUser(split[i])) >= 0) {
 								if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) { 
@@ -2691,7 +2669,7 @@ public class IRCd implements Runnable {
 										targethost = p.host;
 									}
 								}
-								hosts += targetnick + "=+ " + targetident + "@" + targethost + " ";
+								hosts += targetnick + "=+" + targetident + "@" + targethost + " ";
 							}
 							i++;
 							if (i > 5) break;
@@ -2754,7 +2732,7 @@ public class IRCd implements Runnable {
 							writeln(IRCd.serverMessagePrefix + " 381 " + nick + " :You are now an IRC Operator");
 							if (IRCd.operModes.length() > 0) {
 								modes = IRCd.operModes;
-								String mode1="+", mode2="";
+								String mode1 = "+", mode2 = "";
 								if (modes.contains("~")) { mode1+="q"; mode2+=nick + " "; }
 								if (modes.contains("&")) { mode1+="a"; mode2+=nick + " "; }
 								if (modes.contains("@")) { mode1+="o"; mode2+=nick + " "; }
@@ -2990,6 +2968,7 @@ public class IRCd implements Runnable {
 			writeln(IRCd.serverMessagePrefix + " 376 " + nick + " :End of /MOTD command.");
 		}
 
+		// A whois currently fails. Someone please find out why.
 		public void sendWhois(String whoisUser)
 		{
 			IRCUser ircuser;
@@ -3080,7 +3059,7 @@ public class IRCd implements Runnable {
 
 		public boolean sendChanTopic(String channelName)
 		{
-			String consoleChannelTopic = "BukkitIRCd console channel - prefix commands with !";
+			String consoleChannelTopic = "BukkitIRCd console channel - prefix commands with ! instead of /";
 			if (IRCd.channelTopic.length()>0) {
 				if (channelName.equalsIgnoreCase(IRCd.consoleChannelName)) {
 					writeln(IRCd.serverMessagePrefix + " 332 " + nick + " " + channelName + " :" + consoleChannelTopic);
@@ -3134,7 +3113,7 @@ public class IRCd implements Runnable {
 					String name = user.realname;
 
 					if ((opersOnly && user.isOper) || (!opersOnly)) {
-						if (addAll || IRCd.wildCardMatch(onick,pattern) || IRCd.wildCardMatch(onick + "!" +oident + "@" +ohost, pattern)) users.add(IRCd.serverMessagePrefix + " 352 " + nick + " " + channel + " " +oident + " " +ohost + " " + IRCd.serverHostName + " " +onick + " " + away +oper + " :0 " + name);
+						if (addAll || IRCd.wildCardMatch(onick,pattern) || IRCd.wildCardMatch(onick + "!" +oident + "@" + ohost, pattern)) users.add(IRCd.serverMessagePrefix + " 352 " + nick + " " + channel + " " +oident + " " +ohost + " " + IRCd.serverHostName + " " +onick + " " + away +oper + " :0 " + name);
 					}
 				}
 			}
