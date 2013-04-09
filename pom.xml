@@ -27,7 +27,7 @@
 		<version>1.2</version>
 		<type>jar</type>
 		<scope>system</scope>
-		<systemPath>/var/lib/jenkins/workspace/BukkitIRCd-dev/dynmap-api.jar</systemPath>
+		<systemPath>/var/lib/jenkins//workspace/BukkitIRCd-dev/dynmap-api.jar</systemPath>
 	    </dependency>
     </dependencies>
 
