@@ -3,7 +3,6 @@ package com.Jdbye.BukkitIRCd;
 import java.util.Set;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.permissions.PermissibleBase;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
@@ -25,9 +24,9 @@ public class IRCCommandSender implements CommandSender {
 
     public void sendMessage(String message) {
     	if (enabled) {
-    		if (!message.contains("3IRC ")) { // Don't show IRC messages
-    			if (IRCd.mode == Modes.STANDALONE) IRCd.writeOpers(":"+IRCd.serverName+"!"+IRCd.serverName+"@"+IRCd.serverHostName+" PRIVMSG " + IRCd.consoleChannelName + " :"+IRCd.convertColors(message, false));
-    			else if (IRCd.linkcompleted) IRCd.println(":"+IRCd.serverUID+" PRIVMSG "+IRCd.consoleChannelName+" :"+IRCd.convertColors(message, false));
+    		if (!message.contains("IRC ")) { // Don't show IRC messages - this really needs to be improved
+    			if (IRCd.mode == Modes.STANDALONE) IRCd.writeOpers(":" + IRCd.serverName + "!" + IRCd.serverName + "@" + IRCd.serverHostName + " PRIVMSG " + IRCd.consoleChannelName + " :" + IRCd.convertColors(message, false));
+    			else if (IRCd.linkcompleted) IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.consoleChannelName + " :" + IRCd.convertColors(message, false));
     		}
     	}
     }
