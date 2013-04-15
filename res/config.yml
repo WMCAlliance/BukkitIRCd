@@ -6,9 +6,9 @@ enable-notices: yes
 # Whether to enable IRC->Game notice support. Disable this if you're using the plugin in linking mode and ingame users are being messaged by services.
 convert-color-codes: yes  
 # Whether to convert color codes between IRC/Minecraft format or not.
-irc-colors: "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15"  
+irc-colors: "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16"  
 # IRC color map separated by commas. You should not touch this, it is only for reference when modifying the color map below and modifying it might have unexpected results.
-game-colors: "0,f,1,2,c,4,5,6,e,a,3,b,9,d,8,7"  
+game-colors: "0,f,1,2,c,4,5,6,e,a,3,b,9,d,8,7,f"  
 # Minecraft color map separated by commas. This is used for color code conversion
 channel-name: "#minecraft"  
 # Channel name for the IRC server.
