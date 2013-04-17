@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.ServerCommandEvent;
 
 /**
  * Handle events for all Player related events
@@ -47,7 +48,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 		plugin.removeLastReceivedBy(name);
 		IRCd.removeBukkitUser(IRCd.getBukkitUser(name));
 	}
-
+	/*
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerKick(PlayerKickEvent event)
 	{
@@ -56,6 +57,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 		plugin.removeLastReceivedBy(name);
 		IRCd.kickBukkitUser(event.getReason(), IRCd.getBukkitUser(event.getPlayer().getName()));
 	}
+	*/
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerChat(AsyncPlayerChatEvent event)
@@ -74,6 +76,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 		event.setMessage(IRCd.stripFormatting(event.getMessage()));
 	}
 
+	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event)
 	{
@@ -95,8 +98,30 @@ public class BukkitIRCdPlayerListener implements Listener {
 				}
 				event.setMessage(IRCd.stripFormatting(event.getMessage()));
 			}
+			
+			
+			if (BukkitIRCdPlugin.kickCommands.contains(split[0].substring(1))){
+				//PlayerKickEvent does not give kicker, so we listen to kick commands instead
+				if (event.getPlayer().hasPermission("bukkitircd.kick")){
+					StringBuilder s = new StringBuilder(300);
+					for(int i = 2; i < split.length;i++){
+						 s.append(split[i]).append(" ");
+					}
+					String kickMessage = s.toString();
+					String kickedPlayer = split[1];
+					System.out.println(kickMessage);
+					System.out.println(kickedPlayer);
+					BukkitPlayer bp;
+					if ((bp = IRCd.getBukkitUserObject(event.getPlayer().getName())) != null) {
+						IRCd.kickBukkitUser(kickMessage, IRCd.getBukkitUser(kickedPlayer), IRCd.getBukkitUser(event.getPlayer().getName()));
+					}
+					
+					}
+				}
+				
+			}
 		}
-	}
+	
 	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerMove(PlayerMoveEvent event)

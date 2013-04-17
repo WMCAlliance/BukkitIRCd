@@ -1249,6 +1249,7 @@ public class IRCd implements Runnable {
 		return false;
 	}
 
+	/*
 	// This is where we need to modify the disconnect on kick to a proper kick instead
 	public static boolean kickBukkitUser(String kickReason, int ID) {
 		if (ID >= 0) {
@@ -1267,8 +1268,37 @@ public class IRCd implements Runnable {
 			}
 		}
 		else return false;
-	}
+	}*/
 
+	public static boolean kickBukkitUser(String kickReason, int kickedID, int kickerID) {
+		if (kickedID >= 0) {
+			synchronized(csBukkitPlayers) {
+				BukkitPlayer kickedBukkitPlayer = bukkitPlayers.get(kickedID);
+				String kickedHost = kickedBukkitPlayer.host;
+				String kickedName = kickedBukkitPlayer.nick;
+				
+				BukkitPlayer kickerBukkitPlayer = bukkitPlayers.get(kickerID);
+				String kickerHost = kickedBukkitPlayer.host;
+				String kickerName = kickerBukkitPlayer.nick;
+				
+				if (!kickReason.isEmpty()){
+					kickReason = " :"+convertColors(kickReason,false);
+				}
+				if (mode == Modes.STANDALONE) {
+					//TODO StandaloneKick
+					writeAll(":" + kickedName + ingameSuffix + "!" + kickedName + "@" + kickedHost + " QUIT :Kicked: " + convertColors(kickReason,false));
+				}
+				else {
+					
+					//KICK
+					println(":" + kickerBukkitPlayer.getUID() + " KICK "+IRCd.channelName +" "+ kickedBukkitPlayer.nick + ingameSuffix + kickReason);
+				}
+				bukkitPlayers.remove(kickedID);
+				return true;
+			}
+		}
+		else return false;
+	}
 	public static int getBukkitUser(String nick) {
 		synchronized(csBukkitPlayers) {
 			int i = 0;
@@ -2069,9 +2099,11 @@ public class IRCd implements Runnable {
 						BukkitPlayer bp;
 						if ((bp = getBukkitUserByUID(split[3])) != null) {
 							if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
+								//TODO Remove Suffix
 								Player p = BukkitIRCdPlugin.thePlugin.getServer().getPlayer(bp.nick);
 								if (p != null) {
 									if (reason != null) p.kickPlayer("Kicked by " + user + " on IRC: " + reason);
+									//TODO Make this Synchronous
 									else p.kickPlayer("Kicked by " + user + " on IRC");
 								}
 								removeBukkitUserByUID(split[3]);
@@ -2704,10 +2736,12 @@ public class IRCd implements Runnable {
 									if (p != null) {
 										if (reason != null) {
 											if (IRCd.msgIRCKickReason.length() > 0) s.broadcastMessage(IRCd.msgIRCKickReason.replace("%KICKEDUSER%", bannick).replace("%KICKEDBY%", nick).replace("%REASON%", IRCd.convertColors(reason, true)));
+											//TODO Make this synchronous
 											p.kickPlayer("Kicked by " + nick + " on IRC: " + IRCd.stripFormatting(reason));
 										}
 										else {
 											if (IRCd.msgIRCKick.length() > 0) s.broadcastMessage(IRCd.msgIRCKick.replace("%KICKEDUSER%", bannick).replace("%KICKEDBY%", nick));
+											//TODO Make this synchronous
 											p.kickPlayer("Kicked by " + nick + " on IRC");
 										}
 									}
