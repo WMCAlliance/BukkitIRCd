@@ -1265,7 +1265,6 @@ public class IRCd implements Runnable {
 					kickReason = " :"+convertColors(kickReason,false);
 				}
 				if (mode == Modes.STANDALONE) {
-					//TODO StandaloneKick
 					writeAll(":" + serverName + "!" + serverName + "@" + serverHostName + " KICK "+IRCd.channelName +" "+ kickedBukkitPlayer.nick + ingameSuffix + kickReason);
 				}
 				else {
@@ -2115,7 +2114,6 @@ public class IRCd implements Runnable {
 						BukkitPlayer bp;
 						if ((bp = getBukkitUserByUID(split[3])) != null) {
 							if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
-								//TODO Remove Suffix
 								Player p = BukkitIRCdPlugin.thePlugin.getServer().getPlayer(bp.nick);
 								if (p != null) {
 									if (reason != null) p.kickPlayer("Kicked by " + user + " on IRC: " + reason);
