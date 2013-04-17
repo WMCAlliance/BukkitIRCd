@@ -1256,7 +1256,6 @@ public class IRCd implements Runnable {
 	 * @param ID
 	 * @return
 	 */
-	// This is where we need to modify the disconnect on kick to a proper kick instead
 	public static boolean kickBukkitUser(String kickReason, int kickedID) {
 		if (kickedID >= 0) {
 			synchronized(csBukkitPlayers) {
@@ -1314,6 +1313,18 @@ public class IRCd implements Runnable {
 		}
 		else return false;
 	}
+	
+	/**
+	 * Kicks player synchronously
+	 * @param player
+	 * @param reason
+	 */
+	public static void kickPlayerIngame(Player player, String kickReason){
+		int IRCUser = getBukkitUser(player.getName());
+		IRCd.kickBukkitUser(kickReason, IRCUser);
+		BukkitTask kickUser = new BukkitKickRunnable(BukkitIRCdPlugin.thePlugin, player, kickReason).runTaskLater(BukkitIRCdPlugin.thePlugin, 1L);
+	}
+	
 	public static int getBukkitUser(String nick) {
 		synchronized(csBukkitPlayers) {
 			int i = 0;
@@ -2116,9 +2127,8 @@ public class IRCd implements Runnable {
 							if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
 								Player p = BukkitIRCdPlugin.thePlugin.getServer().getPlayer(bp.nick);
 								if (p != null) {
-									if (reason != null) p.kickPlayer("Kicked by " + user + " on IRC: " + reason);
-									//TODO Make this Synchronous
-									else p.kickPlayer("Kicked by " + user + " on IRC");
+									if (reason != null) kickPlayerIngame(p,"Kicked by " + user + " on IRC: " + reason);
+									else kickPlayerIngame(p,"Kicked by " + user + " on IRC");
 								}
 								removeBukkitUserByUID(split[3]);
 							}
@@ -2751,12 +2761,12 @@ public class IRCd implements Runnable {
 										if (reason != null) {
 											if (IRCd.msgIRCKickReason.length() > 0) s.broadcastMessage(IRCd.msgIRCKickReason.replace("%KICKEDUSER%", bannick).replace("%KICKEDBY%", nick).replace("%REASON%", IRCd.convertColors(reason, true)));
 											//TODO Make this synchronous
-											p.kickPlayer("Kicked by " + nick + " on IRC: " + IRCd.stripFormatting(reason));
+											IRCd.kickPlayerIngame(p,"Kicked by " + nick + " on IRC: " + IRCd.stripFormatting(reason));
 										}
 										else {
 											if (IRCd.msgIRCKick.length() > 0) s.broadcastMessage(IRCd.msgIRCKick.replace("%KICKEDUSER%", bannick).replace("%KICKEDBY%", nick));
 											//TODO Make this synchronous
-											p.kickPlayer("Kicked by " + nick + " on IRC");
+											IRCd.kickPlayerIngame(p,"Kicked by " + nick + " on IRC");
 										}
 									}
 								}
@@ -3215,7 +3225,7 @@ public class IRCd implements Runnable {
 			}
 			else { return false; }
 		}
-
+		
 		static class CriticalSection extends Object {
 		}
 		static public CriticalSection csWrite = new CriticalSection();
