@@ -79,7 +79,7 @@ import java.util.LinkedList;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
-
+import org.bukkit.scheduler.BukkitTask;
 public class IRCd implements Runnable {
 	
 	
@@ -1602,7 +1602,8 @@ public class IRCd implements Runnable {
 	public static boolean executeCommand(String command) {
 		try {
 			if ((commandSender != null) && (bukkitServer != null)) {
-				return bukkitServer.dispatchCommand(commandSender, convertColors(command, true));
+				BukkitTask commandTask = new BukkitCommandExecutorRunnable(BukkitIRCdPlugin.thePlugin,command).runTaskLater(BukkitIRCdPlugin.thePlugin,1L);
+				return true;
 			}
 			else return false;
 		} catch (Exception e) {
