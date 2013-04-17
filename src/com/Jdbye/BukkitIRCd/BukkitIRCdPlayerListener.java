@@ -7,9 +7,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.ServerCommandEvent;
 
 /**
  * Handle events for all Player related events
@@ -22,21 +22,43 @@ public class BukkitIRCdPlayerListener implements Listener {
 		plugin = instance;
 	}
 
+	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onServerCommand(ServerCommandEvent event){
+		
+		//Console Command Listener
+		String[] split = event.getCommand().split(" ");
+			
+		if (split.length > 1){
+			
+			if (BukkitIRCdPlugin.kickCommands.contains(split[0].toLowerCase())){
+			
+				//PlayerKickEvent does not give kicker, so we listen to kick commands instead
+					StringBuilder s = new StringBuilder(300);
+					for(int i = 2; i < split.length;i++){
+						 s.append(split[i]).append(" ");
+					}
+					String kickMessage = s.toString();
+					String kickedPlayer = split[1];
+					plugin.removeLastReceivedBy(kickedPlayer);
+					IRCd.kickBukkitUser(kickMessage, IRCd.getBukkitUser(kickedPlayer));
+			}
+		}
+	}
 	@EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event)
     {
             String mode = "";
             Player player = event.getPlayer();
-            //if (plugin.hasPermission(player, "bukkitircd.mode.owner")) mode += "~";
-            //if (plugin.hasPermission(player, "bukkitircd.mode.protect")) mode += "&";
+            if (plugin.hasPermission(player, "bukkitircd.mode.owner")) mode += "~";
+            if (plugin.hasPermission(player, "bukkitircd.mode.protect")) mode += "&";
+            //Most IRC networks have support for owner and superop mode. 
+            
+            
             if (plugin.hasPermission(player, "bukkitircd.mode.op")) mode += "@";
             if (plugin.hasPermission(player, "bukkitircd.mode.halfop")) mode += "%";
             if (plugin.hasPermission(player, "bukkitircd.mode.voice")) mode += "+";
-            //if (plugin.hasPermission("bukkitircd.mode.owner")) mode += "~";
-            //if (plugin.hasPermission("bukkitircd.mode.protect")) mode += "&";
-            //if (plugin.hasPermission("bukkitircd.mode.op")) mode += "@";
-            //if (plugin.hasPermission("bukkitircd.mode.halfop")) mode += "%";
-            //if (plugin.hasPermission("bukkitircd.mode.voice")) mode += "+";
+
             IRCd.addBukkitUser(mode,player);
     }
 
@@ -46,15 +68,6 @@ public class BukkitIRCdPlayerListener implements Listener {
 		String name = event.getPlayer().getName();
 		plugin.removeLastReceivedBy(name);
 		IRCd.removeBukkitUser(IRCd.getBukkitUser(name));
-	}
-
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onPlayerKick(PlayerKickEvent event)
-	{
-		if (event.isCancelled()) return;
-		String name = event.getPlayer().getName();
-		plugin.removeLastReceivedBy(name);
-		IRCd.kickBukkitUser(event.getReason(), IRCd.getBukkitUser(event.getPlayer().getName()));
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -74,6 +87,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 		event.setMessage(IRCd.stripFormatting(event.getMessage()));
 	}
 
+	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event)
 	{
@@ -95,8 +109,29 @@ public class BukkitIRCdPlayerListener implements Listener {
 				}
 				event.setMessage(IRCd.stripFormatting(event.getMessage()));
 			}
+			
+			
+			if (BukkitIRCdPlugin.kickCommands.contains(split[0].substring(1).toLowerCase())){
+				//PlayerKickEvent does not give kicker, so we listen to kick commands instead
+				if (event.getPlayer().hasPermission("bukkitircd.kick")){
+					StringBuilder s = new StringBuilder(300);
+					for(int i = 2; i < split.length;i++){
+						 s.append(split[i]).append(" ");
+					}
+					String kickMessage = s.toString();
+					String kickedPlayer = split[1];
+					BukkitPlayer bp;
+					if ((bp = IRCd.getBukkitUserObject(event.getPlayer().getName())) != null) {
+						plugin.removeLastReceivedBy(kickedPlayer);
+						IRCd.kickBukkitUser(kickMessage, IRCd.getBukkitUser(kickedPlayer), IRCd.getBukkitUser(event.getPlayer().getName()));
+					}
+					
+					}
+				}
+				
+			}
 		}
-	}
+	
 	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerMove(PlayerMoveEvent event)

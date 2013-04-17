@@ -10,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -94,6 +95,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	public static int link_delay = 60;
 	public static int link_serverid = new Random().nextInt(900) + 100;
 
+	public static List<String> kickCommands = Arrays.asList("/kick");
 	public static final Logger log = Logger.getLogger("Minecraft");
 	
 	private boolean enableRawSend = false;
@@ -334,6 +336,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			ircd_bantype = config.getString("ban-type", ircd_bantype);
 			debugmode = config.getBoolean("debug-mode", debugmode);
 			enableRawSend = config.getBoolean("enable-raw-send", enableRawSend);
+			kickCommands = config.getStringList("kick-commands");
 
 			String operpass = "";
 			ircd_port = config.getInt("standalone.port", ircd_port);
