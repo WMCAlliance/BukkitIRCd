@@ -15,8 +15,8 @@
             <url>http://repo.bukkit.org/content/groups/public</url>
         </repository>
         <repository>
-        <id>dynmap-repo</id>
-        <url>http://repo.mikeprimm.com/</url>
+	        <id>dynmap-repo</id>
+	        <url>http://repo.mikeprimm.com/</url>
         </repository>
     </repositories>
    

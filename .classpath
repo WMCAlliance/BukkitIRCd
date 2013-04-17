@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/Nathan/Workspaces/BukkitPlugins/Jars/bukkit-1.4.7-R1.1-20130302.063502-10.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Nathan/Workspaces/BukkitPlugins/Jars/dynmap-api.jar"/>
-	<classpathentry kind="output" path="bin"/>
-</classpath>
