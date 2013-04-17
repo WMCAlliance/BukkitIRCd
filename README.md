@@ -22,10 +22,11 @@ This development is mainly for the benifit of the [Worldwide Minecraft Alliance]
 
 ### Required for Compiling
 
-After looking at the [.classpath](https://github.com/WMCAlliance/BukkitIRCd/blob/development/.classpath), it is clear the following files are required.
+Maven handles the dependencies of BukkitIRCd, including BukkitAPI and dynmap-api. In order to compile
 
-* [Bukkit](http://dl.bukkit.org/downloads/bukkit/) (not to be confused with [CraftBukkit](http://dl.bukkit.org/downloads/craftbukkit/), the server wrapper)
-* [Dynmap API](http://dev.bukkit.org/server-mods/dynmap/files/82-dynmap-api-v1-1/)
+* Install [Maven 3](http://maven.apache.org/download.html)
+* Check out this repo and: `mvn clean install`
+
  
 ### Licensing
 
