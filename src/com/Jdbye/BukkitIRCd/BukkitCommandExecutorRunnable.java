@@ -1,7 +1,7 @@
 package com.Jdbye.BukkitIRCd;
 
 import org.bukkit.scheduler.BukkitRunnable;
-
+import org.bukkit.event.server.ServerCommandEvent;
 public class BukkitCommandExecutorRunnable extends BukkitRunnable{
 
 	private String command;
@@ -12,8 +12,10 @@ public class BukkitCommandExecutorRunnable extends BukkitRunnable{
 	}
 
 	public void run() {
-		instance.getServer().dispatchCommand(instance.getServer().getConsoleSender(), command);
-		
+		//Call a ServerCommandEvent whenever a command is run from IRC to allow other plugins to get to it
+		ServerCommandEvent commandEvent = new ServerCommandEvent(instance.getServer().getConsoleSender(),command);
+		instance.getServer().getPluginManager().callEvent(commandEvent);
+		instance.getServer().dispatchCommand(commandEvent.getSender(), commandEvent.getCommand());
 	}
 	
 
