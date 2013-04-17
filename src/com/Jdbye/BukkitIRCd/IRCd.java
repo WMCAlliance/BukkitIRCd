@@ -1249,33 +1249,50 @@ public class IRCd implements Runnable {
 		return false;
 	}
 
-	/*
+	
+	/**
+	 * Used for Console Kicks
+	 * @param kickReason
+	 * @param ID
+	 * @return
+	 */
 	// This is where we need to modify the disconnect on kick to a proper kick instead
-	public static boolean kickBukkitUser(String kickReason, int ID) {
-		if (ID >= 0) {
+	public static boolean kickBukkitUser(String kickReason, int kickedID) {
+		if (kickedID >= 0) {
 			synchronized(csBukkitPlayers) {
-				BukkitPlayer bukkitPlayer = bukkitPlayers.get(ID);
-				String host = bukkitPlayer.host;
-				String name = bukkitPlayer.nick;
+				BukkitPlayer kickedBukkitPlayer = bukkitPlayers.get(kickedID);
+				if (!kickReason.isEmpty()){
+					kickReason = " :"+convertColors(kickReason,false);
+				}
 				if (mode == Modes.STANDALONE) {
-					writeAll(":" + name + ingameSuffix + "!" + name + "@" + host + " QUIT :Kicked: " + convertColors(kickReason,false));
+					//TODO StandaloneKick
+					writeAll(":" + serverName + "!" + serverName + "@" + serverHostName + " KICK "+IRCd.channelName +" "+ kickedBukkitPlayer.nick + ingameSuffix + kickReason);
 				}
 				else {
-					println(":" + bukkitPlayer.getUID() + " QUIT :Kicked: " + convertColors(kickReason,false));
+					
+					//KICK
+					println(":" + serverUID + " KICK "+IRCd.channelName +" "+ kickedBukkitPlayer.nick + ingameSuffix + kickReason);
 				}
-				bukkitPlayers.remove(ID);
+				bukkitPlayers.remove(kickedID);
 				return true;
 			}
 		}
 		else return false;
-	}*/
+	}
+	
 
+	
+	/**
+	 * Used for player kicks
+	 * @param kickReason
+	 * @param kickedID
+	 * @param kickerID
+	 * @return
+	 */
 	public static boolean kickBukkitUser(String kickReason, int kickedID, int kickerID) {
 		if (kickedID >= 0) {
 			synchronized(csBukkitPlayers) {
 				BukkitPlayer kickedBukkitPlayer = bukkitPlayers.get(kickedID);
-				String kickedHost = kickedBukkitPlayer.host;
-				String kickedName = kickedBukkitPlayer.nick;
 				
 				BukkitPlayer kickerBukkitPlayer = bukkitPlayers.get(kickerID);
 				String kickerHost = kickedBukkitPlayer.host;
@@ -1285,13 +1302,12 @@ public class IRCd implements Runnable {
 					kickReason = " :"+convertColors(kickReason,false);
 				}
 				if (mode == Modes.STANDALONE) {
-					//TODO StandaloneKick
-					writeAll(":" + kickedName + ingameSuffix + "!" + kickedName + "@" + kickedHost + " QUIT :Kicked: " + convertColors(kickReason,false));
+					writeAll(":" + kickerName + ingameSuffix + "!" + kickerName + "@" + kickerHost + " KICK "+IRCd.channelName +" "+ kickedBukkitPlayer.nick + ingameSuffix + convertColors(kickReason,false));
 				}
 				else {
 					
 					//KICK
-					println(":" + kickerBukkitPlayer.getUID() + " KICK "+IRCd.channelName +" "+ kickedBukkitPlayer.nick + ingameSuffix + kickReason);
+					println(":" + kickerBukkitPlayer.getUID() + " KICK "+IRCd.channelName +" "+ kickedBukkitPlayer.nick + ingameSuffix + convertColors(kickReason,false));
 				}
 				bukkitPlayers.remove(kickedID);
 				return true;
