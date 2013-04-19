@@ -19,12 +19,12 @@ irc-ban-dynmap: "%BANNEDUSER% was banned by %BANNEDBY%"  # Displays on dynmap wh
 irc-unban-dynmap: "%BANNEDUSER% was unbanned by %BANNEDBY%"  # Displays on dynmap when someone is unbanned from IRC.
 irc-nick-change: "&3[IRC] &e%OLDNICK% is now known as %NEWNICK%&f"  # Displays ingame when someone changes their nick on IRC.
 irc-nick-change-dynmap: "%OLDNICK% is now known as %NEWNICK%"  # Displays on dynmap when someone changes their nick on IRC.
-irc-action: "[IRC] * &7%USER%&f %MESSAGE%"  # Displays ingame when someone sends an action on IRC.
-irc-message: "[IRC] <&7%USER%&f> %MESSAGE%"  # Displays ingame when someone sends a message on IRC.
-irc-notice: "[IRC] -&7%USER%&f- %MESSAGE%"  # Displays ingame when someone sends a notice on IRC.
-irc-private-action: "[IRC] &aTo you&f: * &7%USER%&f %MESSAGE%"  # Displays ingame when someone sends a private action on IRC.
-irc-private-message: "[IRC] &aTo you&f: <&7%USER%&f> %MESSAGE%"  # Displays ingame when someone sends a private message on IRC.
-irc-private-notice: "[IRC] &aTo you&f: -&7%USER%&f- %MESSAGE%"  # Displays ingame when someone sends a private notice on IRC.
+irc-action: "&r[IRC] * &7%USER%&r %MESSAGE%"  # Displays ingame when someone sends an action on IRC.
+irc-message: "&r[IRC] <&7%USER%&r> %MESSAGE%"  # Displays ingame when someone sends a message on IRC.
+irc-notice: "&r[IRC] -&7%USER%&r- %MESSAGE%"  # Displays ingame when someone sends a notice on IRC.
+irc-private-action: "&r[IRC] &aTo you&r: * &7%USER%&r %MESSAGE%"  # Displays ingame when someone sends a private action on IRC.
+irc-private-message: "&r[IRC] &aTo you&r: <&7%USER%&r> %MESSAGE%"  # Displays ingame when someone sends a private message on IRC.
+irc-private-notice: "&r[IRC] &aTo you&r: -&7%USER%&r- %MESSAGE%"  # Displays ingame when someone sends a private notice on IRC.
 irc-action-dynmap: "* %USER% %MESSAGE%"  # Displays on dynmap when someone sends an action on IRC.
 irc-message-dynmap: "<%USER%> %MESSAGE%"  # Displays on dynmap when someone sends a message on IRC.
 irc-notice-dynmap: "-%USER%- %MESSAGE%"  # Displays on dynmap when someone sends a notice on IRC.
