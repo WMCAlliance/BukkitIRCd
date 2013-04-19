@@ -84,7 +84,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 				if (IRCd.linkcompleted) IRCd.println(":" + bp.getUID() + " PRIVMSG " + IRCd.channelName + " :" + IRCd.convertColors(event.getMessage(), false));
 			}
 		}
-		event.setMessage(IRCd.stripFormatting(event.getMessage()));
+		event.setMessage(IRCd.stripIRCFormatting(event.getMessage()));
 	}
 
 	
@@ -107,7 +107,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 						if (IRCd.linkcompleted) IRCd.println(":" + bp.getUID() + " PRIVMSG " + IRCd.channelName + " :" + (char)1 + "ACTION " + IRCd.convertColors(IRCd.join(event.getMessage().split(" ")," ",1), false) + (char)1);
 					}
 				}
-				event.setMessage(IRCd.stripFormatting(event.getMessage()));
+				event.setMessage(IRCd.stripIRCFormatting(event.getMessage()));
 			}
 			
 			
@@ -124,7 +124,8 @@ public class BukkitIRCdPlayerListener implements Listener {
 					if ((bp = IRCd.getBukkitUserObject(event.getPlayer().getName())) != null) {
 						plugin.removeLastReceivedBy(kickedPlayer);
 						IRCd.kickBukkitUser(kickMessage, IRCd.getBukkitUser(kickedPlayer), IRCd.getBukkitUser(event.getPlayer().getName()));
-					}
+						IRCd.removeBukkitUser(IRCd.getBukkitUser(kickedPlayer));
+						}
 					
 					}
 				}
