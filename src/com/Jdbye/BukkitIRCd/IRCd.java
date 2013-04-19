@@ -552,7 +552,7 @@ public class IRCd implements Runnable {
 					modestr += UID + " ";
 				}
 				modestr = modestr.substring(0, modestr.length()-1);
-				println(":" + serverUID + " FMODE " + channelName + " " + channelTS + " + " +textMode + " " + modestr);
+				println(":" + serverUID + " FMODE " + channelName + " " + channelTS + " + " + textMode + " " + modestr);
 			}
 		}
 		
@@ -2120,7 +2120,7 @@ public class IRCd implements Runnable {
 			if ((ircuser = uid2ircuser.get(split[2])) != null) {
 				println(":" + split[2] + " IDLE " + split[0] + " " + ircuser.signonTime + " " + ircuser.getSecondsIdle());
 			}
-			// The error below can/will happen in the event a player is /whois'ed from IRC
+			// The error below can/will happen in the event a player is /whois'ed from IRC - I'd like to know why and how to fix it
 			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[2] + " not found in list. Error code IRCd1999."); // Log as severe because this situation should never occur and points to a bug in the code
 		}
 		else if (split[1].equalsIgnoreCase("NICK")) {
