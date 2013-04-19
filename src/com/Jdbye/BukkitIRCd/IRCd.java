@@ -98,6 +98,7 @@ public class IRCd implements Runnable {
 	public static long channelTopicSetDate = System.currentTimeMillis() / 1000L;
 	public static boolean enableNotices = true;
 	public static boolean convertColorCodes = true;
+	public static boolean handleAmpersandColors = true;
 	public String modestr = "standalone";
 	public static Modes mode;
 	
@@ -1592,7 +1593,11 @@ public class IRCd implements Runnable {
 			if (!convertColorCodes){
 				return ChatColor.stripColor(input);
 			}
+			if (handleAmpersandColors){
+			output = ChatColor.translateAlternateColorCodes('&', input);
+			}else{
 			output = input;
+			}
 			output = output.replace(MC_Color+"n",IRC_Under+"");
 			output = output.replace(MC_Color+"o",IRC_Ital+"");
 			output = output.replace(MC_Color+"l",IRC_Bold+"");
