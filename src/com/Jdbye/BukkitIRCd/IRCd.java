@@ -764,7 +764,7 @@ public class IRCd implements Runnable {
 								BukkitIRCdPlugin.thePlugin.removeLastReceivedFrom(processor.nick);
 								if (reason != null) {
 									if (msgIRCLeave.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCLeaveReason.replace("%USER%", processor.nick).replace("%REASON%", convertColors(reason, IRCToGame)));
-									if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCLeaveDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveReasonDynmap.replace("%USER%", processor.nick).replace("%REASON%", stripFormatting(reason)));
+									if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCLeaveDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveReasonDynmap.replace("%USER%", processor.nick).replace("%REASON%", stripIRCFormatting(reason)));
 								}
 								else {
 									if (msgIRCLeave.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCLeave.replace("%USER%", processor.nick));
@@ -867,7 +867,7 @@ public class IRCd implements Runnable {
 							if ((isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
 								if (reason != null) {
 									if (msgIRCKickReason.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCKickReason.replace("%KICKEDUSER%",processor.nick).replace("%KICKEDBY%",kickedByNick).replace("%REASON%",convertColors(reason,true)));
-									if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCKickReasonDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCKickReasonDynmap.replace("%KICKEDUSER%",processor.nick).replace("%KICKEDBY%",kickedByNick).replace("%REASON%",stripFormatting(reason)));								
+									if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCKickReasonDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCKickReasonDynmap.replace("%KICKEDUSER%",processor.nick).replace("%KICKEDBY%",kickedByNick).replace("%REASON%",stripIRCFormatting(reason)));								
 								}
 								else {
 									if (msgIRCKick.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCKick.replace("%KICKEDUSER%",processor.nick).replace("%KICKEDBY%",kickedByNick));
@@ -929,7 +929,7 @@ public class IRCd implements Runnable {
 						if (reason != null) {
 							println(":" + sourceUID + " KICK " + channelName + " " + uid + " :" + reason);
 							if (msgIRCKickReason.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCKickReason.replace("%KICKEDUSER%",iuser.nick).replace("%KICKEDBY%",kickedByNick).replace("%REASON%",convertColors(reason,true)));
-							if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCKickReasonDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCKickReasonDynmap.replace("%KICKEDUSER%",iuser.nick).replace("%KICKEDBY%",kickedByNick).replace("%REASON%",stripFormatting(reason)));
+							if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCKickReasonDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCKickReasonDynmap.replace("%KICKEDUSER%",iuser.nick).replace("%KICKEDBY%",kickedByNick).replace("%REASON%",stripIRCFormatting(reason)));
 						}
 						else {
 							println(":" + sourceUID + " KICK " + channelName + " " + uid + " :" + kickedByNick);						
@@ -1271,7 +1271,6 @@ public class IRCd implements Runnable {
 					//KICK
 					println(":" + serverUID + " KICK "+IRCd.channelName +" "+ kickedBukkitPlayer.nick + ingameSuffix + kickReason);
 				}
-				bukkitPlayers.remove(kickedID);
 				return true;
 			}
 		}
@@ -1306,8 +1305,7 @@ public class IRCd implements Runnable {
 					
 					//KICK
 					println(":" + kickerBukkitPlayer.getUID() + " KICK "+IRCd.channelName +" "+ kickedBukkitPlayer.nick + ingameSuffix + convertColors(kickReason,false));
-				}
-				bukkitPlayers.remove(kickedID);
+				}				
 				return true;
 			}
 		}
@@ -1323,6 +1321,7 @@ public class IRCd implements Runnable {
 		int IRCUser = getBukkitUser(player.getName());
 		IRCd.kickBukkitUser(kickReason, IRCUser);
 		BukkitTask kickUser = new BukkitKickRunnable(BukkitIRCdPlugin.thePlugin, player, kickReason).runTaskLater(BukkitIRCdPlugin.thePlugin, 1L);
+		IRCd.removeBukkitUser(IRCUser);
 	}
 	
 	public static int getBukkitUser(String nick) {
@@ -1530,79 +1529,120 @@ public class IRCd implements Runnable {
 		return false;
 	}
 
-	public static String convertColors(String input, boolean fromIRCtoGame) {
-		if (!convertColorCodes) {
-			String output = input;
-			int i = 16;
-			if (fromIRCtoGame) {
-				while (i > 0) {
-					i--;
-					if (ircColors[i] < 10) {
-						output = output.replace(((char)3) + "0" + Integer.toString(ircColors[i]), "");
-					}
-					output = output.replace(((char)3)+ Integer.toString(ircColors[i]), "");
-				}
-				output = output.replace((char)3+ "", "").replace((char)2 + "", "").replace((char)29 + "", "").replace((char)15 + "", "").replace((char)31 + "", "");
+	/**
+	 * Converts colors from Minecrat to IRC, or IRC to Minecraft if specified
+	 * @param input
+	 * @param fromIRCtoGame Convert IRC colors to Minecraft colors?
+	 * @return
+	 */
+	public static String convertColors(String input, boolean fromIRCtoGame){
+		
+		String output = null;
+		char IRC_Color = (char) 3; //ETX Control Code (^C)
+		char IRC_Bold = (char) 2; //STX Control Code (^B)
+		char IRC_Ital = (char) 29; //GS Control Code 
+		char IRC_Under = (char) 31; //US Control Code (^_)
+		char IRC_Reset = (char) 15; //SI Control Code (^O)
+		char MC_Color = (char) 167; //Section Sign
+		if(fromIRCtoGame){
+			if (!convertColorCodes){
+				return IRCd.stripIRCFormatting(input);
 			}
-			else {
-				String irccolor;
-				while (i > 0) {
-					i--;
-					if (ircColors[i] < 10) irccolor = "0" + ircColors[i];
-					else irccolor=Integer.toString(ircColors[i]);
-					output = output.replace("\u00a7" + gameColors[i].toLowerCase(), ((char)3)+ irccolor);
-					output = output.replace("&" + gameColors[i].toLowerCase(), ((char)3)+ irccolor);
-					output = output.replace("\u00a7" + gameColors[i].toUpperCase(), ((char)3)+ irccolor);
-					output = output.replace("&" + gameColors[i].toUpperCase(), ((char)3)+ irccolor);
-				}
-				output = output.replace("^K", (char)3+ "").replace("^B", (char)2 + "").replace("^I", (char)29 + "").replace("^O", (char)15 + "").replace("^U", (char)31 + "");
-			}
-			return output;
+			output = input.replaceAll("(\\d),\\d{1,2}", "$1"); //Remove IRC background color code
+			
+			output = output.replace(IRC_Reset+"", MC_Color+"r");
+			output = output.replace(IRC_Ital+"", MC_Color+"o");
+			output = output.replace(IRC_Bold+"", MC_Color+"l");
+			output = output.replace(IRC_Under+"", MC_Color+"n");
+			
+			output = output.replace(IRC_Color+"01", MC_Color+"0"); //IRC Black to MC Black
+			output = output.replace(IRC_Color+"02", MC_Color+"1");//IRC Dark Blue to MC Dark Blue
+			output = output.replace(IRC_Color+"03", MC_Color+"2"); //IRC Dark Green to MC Dark Green
+			output = output.replace(IRC_Color+"04", MC_Color+"c"); //IRC Red to MC Red
+			output = output.replace(IRC_Color+"05", MC_Color+"4"); //IRC Dark Red to MC Dark Red
+			output = output.replace(IRC_Color+"06", MC_Color+"5"); //IRC Purple to MC Purple
+			output = output.replace(IRC_Color+"07", MC_Color+"6"); //IRC Dark Yellow to MC Gold
+			output = output.replace(IRC_Color+"08", MC_Color+"e"); //IRC Yellow to MC Yellow
+			output = output.replace(IRC_Color+"09", MC_Color+"a"); //IRC Light Green to MC Green
+			output = output.replace(IRC_Color+"10", MC_Color+"3"); //IRC Teal to MC Dark Aqua
+			output = output.replace(IRC_Color+"11", MC_Color+"b"); //IRC Cyan to MC Aqua
+			output = output.replace(IRC_Color+"12", MC_Color+"9"); //IRC Light Blue to MC Blue
+			output = output.replace(IRC_Color+"13", MC_Color+"d"); //IRC Light Purple to MC Pink
+			output = output.replace(IRC_Color+"14", MC_Color+"8"); //IRC Grey to MC Dark Grey
+			output = output.replace(IRC_Color+"15", MC_Color+"7"); //IRC Light Grey to MC Grey
+			
+			output = output.replace(IRC_Color+"1", MC_Color+"0"); //IRC Black to MC Black
+			output = output.replace(IRC_Color+"2", MC_Color+"1");//IRC Dark Blue to MC Dark Blue
+			output = output.replace(IRC_Color+"3", MC_Color+"2"); //IRC Dark Green to MC Dark Green
+			output = output.replace(IRC_Color+"4", MC_Color+"c"); //IRC Red to MC Red
+			output = output.replace(IRC_Color+"5", MC_Color+"4"); //IRC Dark Red to MC Dark Red
+			output = output.replace(IRC_Color+"6", MC_Color+"5"); //IRC Purple to MC Purple
+			output = output.replace(IRC_Color+"7", MC_Color+"6"); //IRC Dark Yellow to MC Gold
+			output = output.replace(IRC_Color+"8", MC_Color+"e"); //IRC Yellow to MC Yellow
+			output = output.replace(IRC_Color+"9", MC_Color+"a"); //IRC Light Green to MC Green
+			output = output.replace(IRC_Color+"0", MC_Color+"f"); //IRC White to MC White
+			
+			output = output.replace(IRC_Color+"",""); //Get rid of any remaining ETX Characters
+			output = output.replace(IRC_Ital+"",""); //Get rid of any remaining GS Characters
+			output = output.replace(IRC_Bold+"",""); //Get rid of any remaining STX Characters
+			output = output.replace(IRC_Under+"",""); //Get rid of any remaining US Characters
 
-		}
-		else {
-			String output = input;
-			int i = 16;
-			if (fromIRCtoGame) {
-				while (i > 0) {
-					i--;
-					if (ircColors[i] < 10) {
-						output = output.replace(((char)3) + "0" + Integer.toString(ircColors[i]), "\u00a7" + gameColors[i]);
-					}
-					output = output.replace(((char)3) + Integer.toString(ircColors[i]), "\u00a7" + gameColors[i]);
-				}
-				output = output.replace((char)3 + "", ChatColor.WHITE.toString()).replace((char)2 + "", "").replace((char)29 + "", "").replace((char)15 + "", "").replace((char)31 + "", "");
-			}
-			else {
-				String irccolor;
-				while (i > 0) {
-					i--;
-					if (ircColors[i] < 10) irccolor = "0" + ircColors[i];
-					else irccolor=Integer.toString(ircColors[i]);
-					output = output.replace(ChatColor.COLOR_CHAR+ gameColors[i].toLowerCase(), ((char)3) + irccolor);
-					output = output.replace("&" + gameColors[i].toLowerCase(), ((char)3) + irccolor);
-					output = output.replace(ChatColor.COLOR_CHAR+ gameColors[i].toUpperCase(), ((char)3) + irccolor);
-					output = output.replace("&" + gameColors[i].toUpperCase(), ((char)3) + irccolor);
-				}
-				output = output.replace("^K", (char)3 + "").replace("^B", (char)2 + "").replace("^I", (char)29 + "").replace("^O", (char)15 + "").replace("^U", (char)31 + "");
-			}
-			return output;
-		}
-	}
 
-	public static String stripFormatting(String input)
-	{
-		String output = input;
-		int i = 16;
-		while (i > 0) {
-			i--;
-			if (ircColors[i] < 10) output=output.replace("^K0" + i,"");
-			output = output.replace("^K" + i,"");
+		}else{
+			if (!convertColorCodes){
+				return ChatColor.stripColor(input);
+			}
+			output = input;
+			output = output.replace(MC_Color+"n",IRC_Under+"");
+			output = output.replace(MC_Color+"o",IRC_Ital+"");
+			output = output.replace(MC_Color+"l",IRC_Bold+"");
+			output = output.replace(MC_Color+"r",IRC_Reset+"");
+			output = output.replace(MC_Color+"m",""); //IRC Does not have support for Strikethrough
+			output = output.replace(MC_Color+"k",""); //IRC Does not have support for Garbled Text
+			
+			
+			output = output.replace(MC_Color+"0", IRC_Color+"01"); //Minecraft Black to IRC Black
+			output = output.replace(MC_Color+"1",IRC_Color+"02"); //Minecraft Dark Blue to IRC Dark Blue
+			output = output.replace(MC_Color+"2",IRC_Color+"03"); //Minecraft Dark Green to IRC Dark Green
+			output = output.replace(MC_Color+"3",IRC_Color+"10"); //Minecraft Dark Aqua to IRC Teal
+			output = output.replace(MC_Color+"4",IRC_Color+"05"); //Minecraft Dark Red to IRC Dark Red
+			output = output.replace(MC_Color+"5",IRC_Color+"06"); //Minecraft Purple to IRC Purple
+			output = output.replace(MC_Color+"6",IRC_Color+"07"); //Minecraft Gold to IRC Dark Yellow
+			output = output.replace(MC_Color+"7",IRC_Color+"15"); //Minecraft Grey to IRC Light Grey
+			output = output.replace(MC_Color+"8",IRC_Color+"14"); //Minecraft Dark Grey to IRC Grey
+			output = output.replace(MC_Color+"9",IRC_Color+"12"); //Minecraft Blue to IRC Light Blue
+			output = output.replace(MC_Color+"a",IRC_Color+"09"); //Minecraft Green to IRC Light Green
+			output = output.replace(MC_Color+"b",IRC_Color+"11"); //Minecraft Aqua to IRC Cyan
+			output = output.replace(MC_Color+"c",IRC_Color+"04"); //Minecraft Red to IRC Red
+			output = output.replace(MC_Color+"d",IRC_Color+"13"); //Minecraft Light Purple to IRC Pink
+			output = output.replace(MC_Color+"e",IRC_Color+"08"); //Minecraft Yellow to IRC Yellow
+			output = output.replace(MC_Color+"f",IRC_Color+"00"); //Minecraft White to IRC White
+			
 		}
-		output = output.replace("^K", "").replace("^B", "\u00a7l" ).replace("^I", "\u00a7o" ).replace("^O", "\u00a7r").replace("^U", "\u00a7n");
+	
 		return output;
 	}
 
+	/**
+	 * Strips IRC Formatting
+	 * @param input
+	 * @return
+	 */
+	public static String stripIRCFormatting(String input){
+		char IRC_Color = (char) 3; //ETX Control Code (^C)
+		char IRC_Bold = (char) 2; //STX Control Code (^B)
+		char IRC_Ital = (char) 29; //GS Control Code 
+		char IRC_Under = (char) 31; //US Control Code (^_)
+		char IRC_Reset = (char) 15; //SI Control Code (^O)
+		
+		String output = input.replaceAll("\u0003[0-9]{1,2}(,[0-9]{1,2})?", ""); //Remove IRC background color code
+		output = output.replace(IRC_Reset+"", "");
+		output = output.replace(IRC_Ital+"", "");
+		output = output.replace(IRC_Bold+"", "");
+		output = output.replace(IRC_Under+"", "");
+		output = output.replace(IRC_Color+"","");
+		return output;
+	}
 	// This is where the channel topic is configured
 	public static void setTopic(String topic, String user, String userhost) {
 		channelTopic = topic;
@@ -2156,7 +2196,7 @@ public class IRCd implements Runnable {
 							if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
 								if (reason != null) {
 									if (msgIRCKickReason.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCKickReason.replace("%KICKEDUSER%",kicked).replace("%KICKEDBY%", kicker).replace("%REASON%", convertColors(reason,true)));
-									if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCKickReasonDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCKickReasonDynmap.replace("%KICKEDUSER%",kicked).replace("%KICKEDBY%", kicker).replace("%REASON%", stripFormatting(reason)));
+									if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCKickReasonDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCKickReasonDynmap.replace("%KICKEDUSER%",kicked).replace("%KICKEDBY%", kicker).replace("%REASON%", stripIRCFormatting(reason)));
 								}
 								else {
 									if (msgIRCKick.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCKick.replace("%KICKEDUSER%",kicked).replace("%KICKEDBY%", kicker));
@@ -2197,7 +2237,7 @@ public class IRCd implements Runnable {
 					if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
 						if (reason != null) {
 							if (msgIRCLeaveReason.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCLeaveReason.replace("%USER%", ircuser.nick).replace("%REASON%", convertColors(reason, true)));
-							if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCLeaveReasonDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveReasonDynmap.replace("%USER%", ircuser.nick).replace("%REASON%", stripFormatting(reason)));
+							if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCLeaveReasonDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveReasonDynmap.replace("%USER%", ircuser.nick).replace("%REASON%", stripIRCFormatting(reason)));
 						}
 						else {
 							if (msgIRCLeave.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCLeave.replace("%USER%", ircuser.nick));
@@ -2234,7 +2274,7 @@ public class IRCd implements Runnable {
 					if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
 						if (reason != null) {
 							if (msgIRCLeaveReason.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCLeaveReason.replace("%USER%", ircuser.nick).replace("%REASON%", convertColors(reason, true)));
-							if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCLeaveReasonDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveReasonDynmap.replace("%USER%", ircuser.nick).replace("%REASON%", stripFormatting(reason)));
+							if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCLeaveReasonDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveReasonDynmap.replace("%USER%", ircuser.nick).replace("%REASON%", stripIRCFormatting(reason)));
 						}
 						else {
 							if (msgIRCLeave.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCLeave.replace("%USER%", ircuser.nick));
@@ -2298,7 +2338,7 @@ public class IRCd implements Runnable {
 						if (reason.startsWith(":")) reason = reason.substring(1);
 						if (ircuser2.joined) {
 							if (msgIRCLeaveReason.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCLeaveReason.replace("%USER%", user).replace("%REASON%", convertColors(reason, true)));
-							if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCLeaveReasonDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveReasonDynmap.replace("%USER%", user).replace("%REASON%", stripFormatting(reason)));
+							if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCLeaveReasonDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveReasonDynmap.replace("%USER%", user).replace("%REASON%", stripIRCFormatting(reason)));
 							ircuser2.setConsoleModes("");
 							ircuser2.setModes("");
 							ircuser2.joined = false;
@@ -2358,7 +2398,7 @@ public class IRCd implements Runnable {
 							}
 							else {
 								if (msgtemplate.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgtemplate.replace("%USER%", ircuser.nick).replace("%MESSAGE%", IRCd.convertColors(message,true)));
-								if ((BukkitIRCdPlugin.dynmap != null) && (msgtemplatedynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgtemplatedynmap.replace("%USER%", ircuser.nick).replace("%MESSAGE%", stripFormatting(message)));
+								if ((BukkitIRCdPlugin.dynmap != null) && (msgtemplatedynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgtemplatedynmap.replace("%USER%", ircuser.nick).replace("%MESSAGE%", stripIRCFormatting(message)));
 							}
 						}
 					}
@@ -2760,12 +2800,10 @@ public class IRCd implements Runnable {
 									if (p != null) {
 										if (reason != null) {
 											if (IRCd.msgIRCKickReason.length() > 0) s.broadcastMessage(IRCd.msgIRCKickReason.replace("%KICKEDUSER%", bannick).replace("%KICKEDBY%", nick).replace("%REASON%", IRCd.convertColors(reason, true)));
-											//TODO Make this synchronous
-											IRCd.kickPlayerIngame(p,"Kicked by " + nick + " on IRC: " + IRCd.stripFormatting(reason));
+											IRCd.kickPlayerIngame(p,"Kicked by " + nick + " on IRC: " + IRCd.stripIRCFormatting(reason));
 										}
 										else {
 											if (IRCd.msgIRCKick.length() > 0) s.broadcastMessage(IRCd.msgIRCKick.replace("%KICKEDUSER%", bannick).replace("%KICKEDBY%", nick));
-											//TODO Make this synchronous
 											IRCd.kickPlayerIngame(p,"Kicked by " + nick + " on IRC");
 										}
 									}
@@ -2882,11 +2920,11 @@ public class IRCd implements Runnable {
 									else if (isAction || (!isCTCP)) { 
 										if (isAction) {
 											if (IRCd.msgIRCAction.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(IRCd.msgIRCAction.replace("%USER%", nick).replace("%MESSAGE%", IRCd.convertColors(message2,true)));
-											if ((BukkitIRCdPlugin.dynmap != null) && (IRCd.msgIRCActionDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCActionDynmap.replace("%USER%", nick).replace("%MESSAGE%", IRCd.stripFormatting(message2)));
+											if ((BukkitIRCdPlugin.dynmap != null) && (IRCd.msgIRCActionDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCActionDynmap.replace("%USER%", nick).replace("%MESSAGE%", IRCd.stripIRCFormatting(message2)));
 										}
 										else {
 											if (IRCd.msgIRCMessage.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(IRCd.msgIRCMessage.replace("%USER%", nick).replace("%MESSAGE%", IRCd.convertColors(message2,true)));
-											if ((BukkitIRCdPlugin.dynmap != null) && (IRCd.msgIRCMessageDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCMessageDynmap.replace("%USER%", nick).replace("%MESSAGE%", IRCd.stripFormatting(message2)));
+											if ((BukkitIRCdPlugin.dynmap != null) && (IRCd.msgIRCMessageDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCMessageDynmap.replace("%USER%", nick).replace("%MESSAGE%", IRCd.stripIRCFormatting(message2)));
 										}
 									}
 								}
@@ -2959,7 +2997,7 @@ public class IRCd implements Runnable {
 							if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
 								if ((!isCTCP) && IRCd.enableNotices) {
 									if (IRCd.msgIRCNotice.length() > 0) BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(IRCd.msgIRCNotice.replace("%USER%", nick).replace("%MESSAGE%",IRCd.convertColors(message,true)));
-									if ((BukkitIRCdPlugin.dynmap != null) && (IRCd.msgIRCNoticeDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCNoticeDynmap.replace("%USER%", nick).replace("%MESSAGE%",IRCd.stripFormatting(message)));
+									if ((BukkitIRCdPlugin.dynmap != null) && (IRCd.msgIRCNoticeDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCNoticeDynmap.replace("%USER%", nick).replace("%MESSAGE%",IRCd.stripIRCFormatting(message)));
 								}
 							}
 							IRCd.writeAllExcept(nick,":" + getFullHost() + " NOTICE " + IRCd.channelName + " :" + message);
