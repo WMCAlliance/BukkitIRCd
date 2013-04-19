@@ -1271,7 +1271,6 @@ public class IRCd implements Runnable {
 					//KICK
 					println(":" + serverUID + " KICK "+IRCd.channelName +" "+ kickedBukkitPlayer.nick + ingameSuffix + kickReason);
 				}
-				bukkitPlayers.remove(kickedID);
 				return true;
 			}
 		}
@@ -1306,8 +1305,7 @@ public class IRCd implements Runnable {
 					
 					//KICK
 					println(":" + kickerBukkitPlayer.getUID() + " KICK "+IRCd.channelName +" "+ kickedBukkitPlayer.nick + ingameSuffix + convertColors(kickReason,false));
-				}
-				bukkitPlayers.remove(kickedID);
+				}				
 				return true;
 			}
 		}
@@ -1323,6 +1321,7 @@ public class IRCd implements Runnable {
 		int IRCUser = getBukkitUser(player.getName());
 		IRCd.kickBukkitUser(kickReason, IRCUser);
 		BukkitTask kickUser = new BukkitKickRunnable(BukkitIRCdPlugin.thePlugin, player, kickReason).runTaskLater(BukkitIRCdPlugin.thePlugin, 1L);
+		IRCd.removeBukkitUser(IRCUser);
 	}
 	
 	public static int getBukkitUser(String nick) {

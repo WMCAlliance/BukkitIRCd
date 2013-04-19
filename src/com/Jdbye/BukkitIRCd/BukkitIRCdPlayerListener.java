@@ -124,7 +124,8 @@ public class BukkitIRCdPlayerListener implements Listener {
 					if ((bp = IRCd.getBukkitUserObject(event.getPlayer().getName())) != null) {
 						plugin.removeLastReceivedBy(kickedPlayer);
 						IRCd.kickBukkitUser(kickMessage, IRCd.getBukkitUser(kickedPlayer), IRCd.getBukkitUser(event.getPlayer().getName()));
-					}
+						IRCd.removeBukkitUser(IRCd.getBukkitUser(kickedPlayer));
+						}
 					
 					}
 				}
