@@ -27,7 +27,7 @@ public class IRCCommandSender implements CommandSender {
     public void sendMessage(String message) {
     	if (enabled) {
     			for (String filter : IRCd.consoleFilters){
-    				if (ChatColor.stripColor(message).matches(filter)){
+    				if (message.matches(filter.replace('&', '\u00A7'))){ //Replace ampersands with section sign 
     					return;
     				}
     			}
