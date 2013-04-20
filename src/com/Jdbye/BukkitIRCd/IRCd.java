@@ -1703,7 +1703,7 @@ public class IRCd implements Runnable {
 	public static boolean executeCommand(String command) {
 		try {
 			if ((commandSender != null) && (bukkitServer != null)) {
-				BukkitTask commandTask = new BukkitCommandExecutorRunnable(BukkitIRCdPlugin.thePlugin,convertColors(command,true)).runTaskLater(BukkitIRCdPlugin.thePlugin,1L);
+				BukkitTask commandTask = new BukkitCommandExecutorRunnable(BukkitIRCdPlugin.thePlugin,convertColors(command,true),commandSender).runTaskLater(BukkitIRCdPlugin.thePlugin,1L);
 				return true;
 			}
 			else return false;
