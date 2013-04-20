@@ -477,7 +477,6 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 			IRCd.msgDynmapMessage = colorize(IRCd.msgDynmapMessage);
 			IRCd.msgPlayerList = colorize(IRCd.msgPlayerList);
-			
 
 			log.info("[BukkitIRCd] Loaded messages file. Code BukkitIRCdPlugin464.");
 		}
