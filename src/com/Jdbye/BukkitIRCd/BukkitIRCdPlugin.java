@@ -442,6 +442,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			IRCd.msgDynmapMessage = messages.getString("dynmap-message", IRCd.msgDynmapMessage);
 			IRCd.msgPlayerList = messages.getString("player-list", IRCd.msgPlayerList);
 			
+			IRCd.consoleFilters = messages.getStringList("console-filters");
 			
 			//** RECOLOUR ALL MESSAGES **
 			

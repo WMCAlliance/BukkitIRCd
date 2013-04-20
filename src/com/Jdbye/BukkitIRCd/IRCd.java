@@ -186,6 +186,7 @@ public class IRCd implements Runnable {
 	public static List<BukkitPlayer> bukkitPlayers = new LinkedList<BukkitPlayer>();
 
 	public static List<String> MOTD = new ArrayList<String>();
+	public static List<String> consoleFilters = new ArrayList<String>();
 	public static List<IrcBan> ircBans = new ArrayList<IrcBan>();
 
 	public boolean running = true;
