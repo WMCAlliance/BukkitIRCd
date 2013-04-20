@@ -31,6 +31,8 @@ enable-raw-send: no
 kick-commands:
     - "kick"
 # Commands used to kick people
+handle-ampersand-colors: true
+# Whether to handle color codes with the & prefix
 standalone:
     port: 6667  # Port to use for the standalone IRC server.
     max-connections: 1000  # Max number of simultaneous connections.
