@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -342,6 +343,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			kickCommands = config.getStringList("kick-commands");
 
 			String operpass = "";
+			
 			ircd_port = config.getInt("standalone.port", ircd_port);
 			ircd_maxconn = config.getInt("standalone.max-connections", ircd_maxconn);
 			ircd_pinginterval = config.getInt("standalone.ping-interval", ircd_pinginterval);
@@ -408,6 +410,9 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			IRCd.msgIRCJoin = messages.getString("irc-join", IRCd.msgIRCJoin);
 			IRCd.msgIRCJoinDynmap = messages.getString("irc-join-dynmap", IRCd.msgIRCJoinDynmap);
 
+			IRCd.groupPrefixes = messages.getConfigurationSection("group-prefixes");
+			IRCd.groupSuffixes = messages.getConfigurationSection("group-suffixes");
+			
 			IRCd.msgIRCLeave = messages.getString("irc-leave", IRCd.msgIRCLeave);
 			IRCd.msgIRCLeaveReason = messages.getString("irc-leave-reason", IRCd.msgIRCLeaveReason);
 			IRCd.msgIRCLeaveDynmap = messages.getString("irc-leave-dynmap", IRCd.msgIRCLeaveDynmap);
@@ -443,7 +448,6 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			IRCd.msgPlayerList = messages.getString("player-list", IRCd.msgPlayerList);
 			
 			IRCd.consoleFilters = messages.getStringList("console-filters");
-			
 			//** RECOLOUR ALL MESSAGES **
 			
 			IRCd.msgLinked = colorize(IRCd.msgLinked);
@@ -474,7 +478,6 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			IRCd.msgIRCActionDynmap = colorize(IRCd.msgIRCActionDynmap);
 			IRCd.msgIRCMessageDynmap = colorize(IRCd.msgIRCMessageDynmap);
 			IRCd.msgIRCNoticeDynmap = colorize(IRCd.msgIRCNoticeDynmap);
-
 			IRCd.msgDynmapMessage = colorize(IRCd.msgDynmapMessage);
 			IRCd.msgPlayerList = colorize(IRCd.msgPlayerList);
 
