@@ -38,8 +38,10 @@ group-prefixes: #Prefixes
   o: "&4"
   q: "&9"
   v: "&6"
+  user: ""
 group-suffixes: #Suffixes
   h: "|Mod"
   o: "|Admin"
   q: "|SuperAdmin"
   v: "|VIP"
+  user: "|User"

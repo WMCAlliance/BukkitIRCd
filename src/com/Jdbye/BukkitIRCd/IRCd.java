@@ -2557,7 +2557,8 @@ public class IRCd implements Runnable {
 		// Goes from highest rank to lowest rank
 		String prefix;
 		// Owner
-		if (modes.contains("q") || modes.contains("~")) {
+		
+		if (IRCd.groupPrefixes.contains("q") && (modes.contains("q") || modes.contains("~"))) {
 			try {
 				prefix = IRCd.groupPrefixes.getString("q");
 			} catch (NullPointerException e) {
@@ -2571,7 +2572,7 @@ public class IRCd implements Runnable {
 		// replace("@", "o").replace("%", "h").replace("+", "v");
 
 		// Super Op
-		if (modes.contains("a") || modes.contains("&")) {
+		if (IRCd.groupPrefixes.contains("a") && (modes.contains("a") || modes.contains("&"))) {
 			try {
 				prefix = IRCd.groupPrefixes.getString("a");
 			} catch (NullPointerException e) {
@@ -2583,7 +2584,7 @@ public class IRCd implements Runnable {
 		}
 
 		// Op
-		if (modes.contains("o") || modes.contains("@")) {
+		if (IRCd.groupPrefixes.contains("o") && (modes.contains("o") || modes.contains("@"))) {
 			try {
 				prefix = IRCd.groupPrefixes.getString("o");
 			} catch (NullPointerException e) {
@@ -2595,7 +2596,7 @@ public class IRCd implements Runnable {
 		}
 
 		// Half Op
-		if (modes.contains("h") || modes.contains("%")) {
+		if (IRCd.groupPrefixes.contains("h") && (modes.contains("h") || modes.contains("%"))) {
 			try {
 				prefix = IRCd.groupPrefixes.getString("h");
 			} catch (NullPointerException e) {
@@ -2607,7 +2608,7 @@ public class IRCd implements Runnable {
 		}
 
 		// Voice
-		if (modes.contains("v") || modes.contains("+")) {
+		if (IRCd.groupPrefixes.contains("q") && (modes.contains("v") || modes.contains("+"))) {
 			try {
 				prefix = IRCd.groupPrefixes.getString("v");
 			} catch (NullPointerException e) {
@@ -2619,6 +2620,7 @@ public class IRCd implements Runnable {
 		}
 		
 		// User
+		if (IRCd.groupPrefixes.contains("user")){
 			try {
 				prefix = IRCd.groupPrefixes.getString("user");
 			} catch (NullPointerException e) {
@@ -2628,6 +2630,7 @@ public class IRCd implements Runnable {
 				return ChatColor.translateAlternateColorCodes('&', prefix);
 			}
 			
+		}
 			return "";
 		
 	}
@@ -2642,7 +2645,7 @@ public class IRCd implements Runnable {
 		// Goes from highest rank to lowest rank
 		String suffix;
 		// Owner
-		if (modes.contains("q") || modes.contains("~")) {
+		if (IRCd.groupSuffixes.contains("q") && (modes.contains("q") || modes.contains("~"))) {
 			try {
 				suffix = IRCd.groupSuffixes.getString("q");
 			} catch (NullPointerException e) {
@@ -2656,7 +2659,7 @@ public class IRCd implements Runnable {
 		// replace("@", "o").replace("%", "h").replace("+", "v");
 
 		// Super Op
-		if (modes.contains("a") || modes.contains("&")) {
+		if (IRCd.groupSuffixes.contains("a") &&  (modes.contains("a") || modes.contains("&"))) {
 			try {
 				suffix = IRCd.groupPrefixes.getString("a");
 			} catch (NullPointerException e) {
@@ -2668,7 +2671,7 @@ public class IRCd implements Runnable {
 		}
 
 		// Op
-		if (modes.contains("o") || modes.contains("@")) {
+		if (IRCd.groupSuffixes.contains("o") &&  (modes.contains("o") || modes.contains("@"))) {
 			try {
 				suffix = IRCd.groupPrefixes.getString("o");
 			} catch (NullPointerException e) {
@@ -2680,7 +2683,7 @@ public class IRCd implements Runnable {
 		}
 
 		// Half Op
-		if (modes.contains("h") || modes.contains("%")) {
+		if (IRCd.groupSuffixes.contains("h") &&  (modes.contains("h") || modes.contains("%"))) {
 			try {
 				suffix = IRCd.groupPrefixes.getString("h");
 			} catch (NullPointerException e) {
@@ -2692,7 +2695,7 @@ public class IRCd implements Runnable {
 		}
 
 		// Voice
-		if (modes.contains("v") || modes.contains("+")) {
+		if (IRCd.groupSuffixes.contains("v") && (modes.contains("v") || modes.contains("+"))) {
 			try {
 				suffix = IRCd.groupPrefixes.getString("v");
 			} catch (NullPointerException e) {
@@ -2704,13 +2707,15 @@ public class IRCd implements Runnable {
 		}
 		
 		// User
-		try {
-			suffix = IRCd.groupSuffixes.getString("user");
-		} catch (NullPointerException e) {
-			return "";
-		}
-		if (!suffix.isEmpty() || suffix != null) {
-			return ChatColor.translateAlternateColorCodes('&', suffix);
+		if (IRCd.groupSuffixes.contains("user")) {
+			try {
+				suffix = IRCd.groupSuffixes.getString("user");
+			} catch (NullPointerException e) {
+				return "";
+			}
+			if (!suffix.isEmpty() || suffix != null) {
+				return ChatColor.translateAlternateColorCodes('&', suffix);
+			}
 		}
 		return "";
 		

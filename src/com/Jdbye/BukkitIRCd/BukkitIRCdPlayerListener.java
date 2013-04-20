@@ -1,5 +1,6 @@
 package com.Jdbye.BukkitIRCd;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -28,7 +29,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 		
 		//Console Command Listener
 		String[] split = event.getCommand().split(" ");
-			
+		
 		if (split.length > 1){
 			
 			if (BukkitIRCdPlugin.kickCommands.contains(split[0].toLowerCase())){
@@ -43,7 +44,28 @@ public class BukkitIRCdPlayerListener implements Listener {
 					plugin.removeLastReceivedBy(kickedPlayer);
 					IRCd.kickBukkitUser(kickMessage, IRCd.getBukkitUser(kickedPlayer));
 			}
+			
+			if (split[0].equalsIgnoreCase("say")){
+				StringBuilder s = new StringBuilder(300);
+				for(int i = 1; i < split.length;i++){
+					 s.append(split[i]).append(" ");
+				}
+				
+				String message = s.toString();
+				if(IRCd.mode == Modes.INSPIRCD){
+					if (IRCd.linkcompleted)  {
+						IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.channelName + " :" + ChatColor.stripColor(message));
+						}
+				}else{
+					IRCd.writeAll(ChatColor.stripColor(message));
+				}
+				
+			}
+			
 		}
+		
+		
+		
 	}
 	@EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event)
@@ -129,6 +151,27 @@ public class BukkitIRCdPlayerListener implements Listener {
 					
 					}
 				}
+			
+			if(split[0].equalsIgnoreCase("/say")){
+				if(event.getPlayer().hasPermission("bukkit.command.say")){
+					
+					StringBuilder s = new StringBuilder(300);
+					for(int i = 1; i < split.length;i++){
+						 s.append(split[i]).append(" ");
+					}
+					
+					String message = s.toString();
+					
+					if(IRCd.mode == Modes.INSPIRCD){
+						
+						if (IRCd.linkcompleted) { 
+							IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.channelName + " :" + ChatColor.stripColor(message));
+							}
+					}else{
+						IRCd.writeAll(ChatColor.stripColor(message));
+					}
+				}
+			}
 				
 			}
 		}
