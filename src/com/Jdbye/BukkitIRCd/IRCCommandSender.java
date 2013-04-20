@@ -1,6 +1,8 @@
 package com.Jdbye.BukkitIRCd;
 
 import java.util.Set;
+
+import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissibleBase;
@@ -25,7 +27,7 @@ public class IRCCommandSender implements CommandSender {
     public void sendMessage(String message) {
     	if (enabled) {
     			for (String filter : IRCd.consoleFilters){
-    				if (message.matches(filter)){
+    				if (ChatColor.stripColor(message).matches(filter)){
     					return;
     				}
     			}
