@@ -24,6 +24,11 @@ public class IRCCommandSender implements CommandSender {
 
     public void sendMessage(String message) {
     	if (enabled) {
+    			for (String filter : IRCd.consoleFilters){
+    				if (message.matches(filter)){
+    					return;
+    				}
+    			}
     			if (IRCd.mode == Modes.STANDALONE) IRCd.writeOpers(":" + IRCd.serverName + "!" + IRCd.serverName + "@" + IRCd.serverHostName + " PRIVMSG " + IRCd.consoleChannelName + " :" + IRCd.convertColors(message, false));
     			else if (IRCd.linkcompleted) IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.consoleChannelName + " :" + IRCd.convertColors(message, false));
     		}
