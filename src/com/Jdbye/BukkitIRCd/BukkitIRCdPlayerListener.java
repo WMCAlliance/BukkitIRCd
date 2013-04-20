@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -23,7 +24,23 @@ public class BukkitIRCdPlayerListener implements Listener {
 		plugin = instance;
 	}
 
-	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onPlayerDeath(PlayerDeathEvent event){
+		if (!IRCd.broadcastDeathMessages){
+			return; 
+		}
+		String message = event.getDeathMessage().replace(event.getEntity().getName(),event.getEntity().getName()+IRCd.ingameSuffix);
+		
+		if(IRCd.mode == Modes.INSPIRCD){
+			if (IRCd.linkcompleted)  {
+				
+				IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.channelName + " :" + ChatColor.stripColor(message));
+				}
+		}else{
+			IRCd.writeAll(ChatColor.stripColor(message));
+		}
+		
+	}
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onServerCommand(ServerCommandEvent event){
 		

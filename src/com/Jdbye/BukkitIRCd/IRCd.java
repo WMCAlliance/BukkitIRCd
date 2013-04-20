@@ -173,6 +173,8 @@ public class IRCd implements Runnable {
 	public static boolean burstSent = false, capabSent = false;
 	public static boolean lastconnected = false;
 	public static boolean isIncoming = false;
+	public static boolean broadcastDeathMessages = true;
+
 
 	public static boolean isPlugin = false;
 
