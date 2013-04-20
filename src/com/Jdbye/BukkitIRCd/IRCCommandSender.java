@@ -24,12 +24,11 @@ public class IRCCommandSender implements CommandSender {
 
     public void sendMessage(String message) {
     	if (enabled) {
-    		if (!message.contains("IRC ")) { // Don't show IRC messages - this really needs to be improved
     			if (IRCd.mode == Modes.STANDALONE) IRCd.writeOpers(":" + IRCd.serverName + "!" + IRCd.serverName + "@" + IRCd.serverHostName + " PRIVMSG " + IRCd.consoleChannelName + " :" + IRCd.convertColors(message, false));
     			else if (IRCd.linkcompleted) IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.consoleChannelName + " :" + IRCd.convertColors(message, false));
     		}
     	}
-    }
+    
     
     public void sendMessage(String[] message) {
     	for (String s : message) sendMessage(s);
@@ -45,7 +44,7 @@ public class IRCCommandSender implements CommandSender {
 
     public boolean isOp() {
         //return client.isOper;
-    	return false;
+    	return true;
     }
 
     public void setOp(boolean value) {

@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.logging.Logger;
-import java.util.regex.*;
-
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -74,6 +72,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	public static long ircd_topicsetdate = System.currentTimeMillis() / 1000L;
 	public static String ircd_bantype = "ip";
 	private boolean ircd_convertcolorcodes = true;
+	private static boolean ircd_handleampersandcolors = true;
 	private static String ircd_version;
 	private static boolean ircd_enablenotices = true;
 	private String ircd_operuser = "";
@@ -238,6 +237,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		IRCd.ingameSuffix = ircd_ingamesuffix;
 		IRCd.enableNotices = ircd_enablenotices;
 		IRCd.convertColorCodes = ircd_convertcolorcodes;
+		IRCd.handleAmpersandColors = ircd_handleampersandcolors;
 		IRCd.ircBanType = ircd_bantype;
 		IRCd.version = ircd_version;
 		IRCd.operUser = ircd_operuser;
@@ -327,6 +327,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			ircd_ingamesuffix = config.getString("ingame-suffix", ircd_ingamesuffix);
 			ircd_enablenotices = config.getBoolean("enable-notices", ircd_enablenotices);
 			ircd_convertcolorcodes = config.getBoolean("convert-color-codes", ircd_convertcolorcodes);
+			ircd_handleampersandcolors = config.getBoolean("handle-ampersand-colors",ircd_handleampersandcolors);
 			ircd_irc_colors = config.getString("irc-colors", ircd_irc_colors);
 			ircd_game_colors = config.getString("game-colors", ircd_game_colors);
 			ircd_channel = config.getString("channel-name", ircd_channel);
