@@ -97,18 +97,30 @@ public class BukkitIRCdPlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event)
     {
-            String mode = "";
+            StringBuffer mode = new StringBuffer();
             Player player = event.getPlayer();
-            if (plugin.hasPermission(player, "bukkitircd.mode.owner")) mode += "~";
-            if (plugin.hasPermission(player, "bukkitircd.mode.protect")) mode += "&";
-            //Most IRC networks have support for owner and superop mode. 
-            
-            
-            if (plugin.hasPermission(player, "bukkitircd.mode.op")) mode += "@";
-            if (plugin.hasPermission(player, "bukkitircd.mode.halfop")) mode += "%";
-            if (plugin.hasPermission(player, "bukkitircd.mode.voice")) mode += "+";
+            if (player.hasPermission("bukkitircd.mode.owner")){
+            	BukkitIRCdPlugin.log.info("Add mode +q for "+player.getName());
+            	mode.append("~");
+            }
+            if (player.hasPermission("bukkitircd.mode.protect")){
+            	BukkitIRCdPlugin.log.info("Add mode +a for "+player.getName());
+            	mode.append("&");
+            }
+            if (player.hasPermission("bukkitircd.mode.op")){
+            	BukkitIRCdPlugin.log.info("Add mode +o for "+player.getName());
+            	mode.append("@");
+            }
+            if (player.hasPermission("bukkitircd.mode.halfop")){
+            	BukkitIRCdPlugin.log.info("Add mode +h for "+player.getName());
+            	mode.append("%");
+            }
+            if (player.hasPermission("bukkitircd.mode.voice")){
+            	BukkitIRCdPlugin.log.info("Add mode +v for "+player.getName());
+            	mode.append("+");
+            }
 
-            IRCd.addBukkitUser(mode,player);
+            IRCd.addBukkitUser(mode.toString(),player);
     }
 
 	@EventHandler(priority = EventPriority.MONITOR)
