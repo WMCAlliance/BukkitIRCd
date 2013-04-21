@@ -1,6 +1,7 @@
 package com.Jdbye.BukkitIRCd;
 
 import java.util.Set;
+import java.util.regex.PatternSyntaxException;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -25,16 +26,24 @@ public class IRCCommandSender implements CommandSender {
     }
 
     public void sendMessage(String message) {
-    	if (enabled) {
-    			for (String filter : IRCd.consoleFilters){
-    				if (message.matches(filter.replace('&', '\u00A7'))){ //Replace ampersands with section sign 
-    					return;
-    				}
-    			}
+		if (enabled) {
+			for (String filter : IRCd.consoleFilters) {
+				try {
+					if (message.matches(filter.replace('&', '\u00A7'))) { // Replace Ampersands with section signs
+						return;
+					}
+				} catch (PatternSyntaxException e) {
+					BukkitIRCdPlugin.thePlugin.getLogger().warning("Invalid Regex Found at console-filters");
+					continue;
+				}
+			}
+		}
+    	
+
     			if (IRCd.mode == Modes.STANDALONE) IRCd.writeOpers(":" + IRCd.serverName + "!" + IRCd.serverName + "@" + IRCd.serverHostName + " PRIVMSG " + IRCd.consoleChannelName + " :" + IRCd.convertColors(message, false));
     			else if (IRCd.linkcompleted) IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.consoleChannelName + " :" + IRCd.convertColors(message, false));
     		}
-    	}
+    	
     
     
     public void sendMessage(String[] message) {
