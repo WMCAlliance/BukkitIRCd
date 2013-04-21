@@ -35,7 +35,10 @@ handle-ampersand-colors: true
 # Whether to handle color codes with the & prefix
 broadcast-death-messages: true
 # Whether to broadcast death messages
-
+color-say-messages: false
+# Whether to make say messages colored
+color-death-messages: false
+# Whether to make death messages colored
 standalone:
     port: 6667  # Port to use for the standalone IRC server.
     max-connections: 1000  # Max number of simultaneous connections.
