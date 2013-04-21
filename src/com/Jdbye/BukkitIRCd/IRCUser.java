@@ -71,14 +71,14 @@ public class IRCUser {
 	private String modes="",textModes="";
 	private String consoleModes="", consoleTextModes="";
 	public String customWhois=""; // Not used yet
-	public boolean isIdented = false;
-	public boolean isNickSet = false;
+	//public boolean isIdented = false;
+	//public boolean isNickSet = false;
 	public boolean isRegistered = false;
 	public boolean isOper = false;
 	public boolean joined = false; // Whether the user has joined the plugin channel
 	public boolean consoleJoined = false; // Whether the user has joined the console channel, only used in linking mode
 	public String awayMsg = "";
-	public long lastPingResponse;
+	//public long lastPingResponse;
 	public long signonTime;
 	public long lastActivity;
 	
