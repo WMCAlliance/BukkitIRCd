@@ -174,7 +174,8 @@ public class IRCd implements Runnable {
 	public static boolean lastconnected = false;
 	public static boolean isIncoming = false;
 	public static boolean broadcastDeathMessages = true;
-
+	public static boolean colorDeathMessages = false;
+	public static boolean colorSayMessages = false;
 
 	public static boolean isPlugin = false;
 
@@ -219,6 +220,7 @@ public class IRCd implements Runnable {
 
 	public static BufferedReader in;
 	public static PrintStream out;
+	
 
 	public IRCd() {
 	}
@@ -1718,6 +1720,7 @@ public class IRCd implements Runnable {
 				}
 				if (!mode1.equals("+")) {
 					if (mode == Modes.STANDALONE) {
+						
 						writeAll(":" + serverName + "!" + serverName + "@"
 								+ serverHostName + " MODE " + IRCd.channelName
 								+ " " + mode1 + " "
@@ -1757,7 +1760,7 @@ public class IRCd implements Runnable {
 							modestr = modestr
 									.substring(0, modestr.length() - 1);
 							println(":" + serverUID + " FMODE " + channelName
-									+ " " + channelTS + " + " + textMode + " "
+									+ " " + channelTS + " +" + textMode + " "
 									+ modestr);
 						}
 						if (world != null)
@@ -1851,8 +1854,9 @@ public class IRCd implements Runnable {
 							}
 							modestr = modestr
 									.substring(0, modestr.length() - 1);
+							
 							println(":" + serverUID + " FMODE " + channelName
-									+ " " + channelTS + " + " + textMode + " "
+									+ " " + channelTS + " +" + textMode + " "
 									+ modestr);
 						}
 						if (world != null)
@@ -2565,6 +2569,9 @@ public class IRCd implements Runnable {
 		String prefix;
 		// Owner
 		
+		if(IRCd.groupPrefixes == null){
+			return "";
+		}
 		if (IRCd.groupPrefixes.contains("q") && (modes.contains("q") || modes.contains("~"))) {
 			try {
 				prefix = IRCd.groupPrefixes.getString("q");
@@ -2651,6 +2658,10 @@ public class IRCd implements Runnable {
 	public static String getGroupSuffix(String modes) {
 		// Goes from highest rank to lowest rank
 		String suffix;
+		
+		if (IRCd.groupSuffixes == null){
+			return "";
+		}
 		// Owner
 		if (IRCd.groupSuffixes.contains("q") && (modes.contains("q") || modes.contains("~"))) {
 			try {
