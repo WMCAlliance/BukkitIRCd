@@ -1715,6 +1715,7 @@ public class IRCd implements Runnable {
 				}
 				if (!mode1.equals("+")) {
 					if (mode == Modes.STANDALONE) {
+						
 						writeAll(":" + serverName + "!" + serverName + "@"
 								+ serverHostName + " MODE " + IRCd.channelName
 								+ " " + mode1 + " "
@@ -1754,7 +1755,7 @@ public class IRCd implements Runnable {
 							modestr = modestr
 									.substring(0, modestr.length() - 1);
 							println(":" + serverUID + " FMODE " + channelName
-									+ " " + channelTS + " + " + textMode + " "
+									+ " " + channelTS + " +" + textMode + " "
 									+ modestr);
 						}
 						if (world != null)
@@ -1848,8 +1849,9 @@ public class IRCd implements Runnable {
 							}
 							modestr = modestr
 									.substring(0, modestr.length() - 1);
+							
 							println(":" + serverUID + " FMODE " + channelName
-									+ " " + channelTS + " + " + textMode + " "
+									+ " " + channelTS + " +" + textMode + " "
 									+ modestr);
 						}
 						if (world != null)
