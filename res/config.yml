@@ -33,6 +33,9 @@ kick-commands:
 # Commands used to kick people
 handle-ampersand-colors: true
 # Whether to handle color codes with the & prefix
+broadcast-death-messages: true
+# Whether to broadcast death messages
+
 standalone:
     port: 6667  # Port to use for the standalone IRC server.
     max-connections: 1000  # Max number of simultaneous connections.

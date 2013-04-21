@@ -82,6 +82,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	private String ircd_consolechannel = "#staff";
 	private String ircd_irc_colors = "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15";
 	private String ircd_game_colors = "0,f,1,2,c,4,5,6,e,a,3,b,9,d,8,7";
+	private boolean ircd_broadcast_death_messages = true;
 	public static boolean debugmode = false;
 	public boolean dynmapEventRegistered = false;
 	
@@ -249,6 +250,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		IRCd.debugMode = debugmode;
 		IRCd.gameColors = ircd_game_colors.split(",");
 		IRCd.ircColors = convertStringArrayToIntArray(ircd_irc_colors.split(","), IRCd.ircColors);
+		IRCd.broadcastDeathMessages = ircd_broadcast_death_messages;
 		
 		// Linking specific settings
 		IRCd.remoteHost = link_remotehost;
@@ -354,7 +356,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			ircd_opermodes = config.getString("standalone.oper-modes", ircd_opermodes);
 			ircd_topic = config.getString("standalone.channel-topic", ircd_topic).replace("^K", (char)3 + "").replace("^B", (char)2 + "").replace("^I", (char)29 + "").replace("^O", (char)15 + "").replace("^U", (char)31 + "");
 			ircd_topicsetby = config.getString("standalone.channel-topic-set-by", ircd_topicsetby);
-
+			ircd_broadcast_death_messages = config.getBoolean("broadcast-death-messages",ircd_broadcast_death_messages);
 			try {
 				ircd_topicsetdate = dateFormat.parse(config.getString("standalone.channel-topic-set-date", dateFormat.format(ircd_topicsetdate))).getTime();
 			}
