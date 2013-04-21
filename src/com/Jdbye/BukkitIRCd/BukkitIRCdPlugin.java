@@ -82,6 +82,8 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	private String ircd_consolechannel = "#staff";
 	private String ircd_irc_colors = "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15";
 	private String ircd_game_colors = "0,f,1,2,c,4,5,6,e,a,3,b,9,d,8,7";
+	private boolean ircd_color_death_messages = false;
+	private boolean ircd_color_say_messages = false;
 	private boolean ircd_broadcast_death_messages = true;
 	public static boolean debugmode = false;
 	public boolean dynmapEventRegistered = false;
@@ -133,11 +135,12 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		
 		PluginDescriptionFile pdfFile = getDescription();
 		ircd_version = pdfFile.getName() + " " + pdfFile.getVersion() + " by " + pdfFile.getAuthors().get(0);
-
+		setupMetrics();
 		pluginInit();
 
 		log.info(ircd_version + " is enabled!");
 	}
+	
 	public void onDisable() {
 		if (ircd != null) {
 			ircd.running = false;
@@ -251,7 +254,8 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		IRCd.gameColors = ircd_game_colors.split(",");
 		IRCd.ircColors = convertStringArrayToIntArray(ircd_irc_colors.split(","), IRCd.ircColors);
 		IRCd.broadcastDeathMessages = ircd_broadcast_death_messages;
-		
+		IRCd.colorDeathMessages = ircd_color_death_messages;
+		IRCd.colorSayMessages = ircd_color_say_messages;
 		// Linking specific settings
 		IRCd.remoteHost = link_remotehost;
 		IRCd.remotePort = link_remoteport;
@@ -326,6 +330,8 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 	private void loadSettings() {
 		try {
+			ircd_color_death_messages = config.getBoolean("color-death-messages", ircd_color_death_messages);
+			ircd_color_say_messages = config.getBoolean("color-say-messages", ircd_color_say_messages);
 			mode = config.getString("mode", mode);
 			ircd_ingamesuffix = config.getString("ingame-suffix", ircd_ingamesuffix);
 			ircd_enablenotices = config.getBoolean("enable-notices", ircd_enablenotices);
@@ -1351,6 +1357,18 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			}
 		} catch (Exception e) { log.severe("[BukkitIRCd] Unable to parse string array " + IRCd.join(sarray, " ", 0) + ", invalid number. " + e); }
 		return def;
+	}
+	
+	/**
+	 * Setup PluginMetrics
+	 */
+	private void setupMetrics(){
+		try {
+		    Metrics metrics = new Metrics(this);
+		    metrics.start();
+		} catch (IOException e) {
+		    // Failed to submit metrics
+		}
 	}
 }
 

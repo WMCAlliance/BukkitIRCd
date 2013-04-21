@@ -174,7 +174,8 @@ public class IRCd implements Runnable {
 	public static boolean lastconnected = false;
 	public static boolean isIncoming = false;
 	public static boolean broadcastDeathMessages = true;
-
+	public static boolean colorDeathMessages = false;
+	public static boolean colorSayMessages = false;
 
 	public static boolean isPlugin = false;
 
@@ -219,6 +220,7 @@ public class IRCd implements Runnable {
 
 	public static BufferedReader in;
 	public static PrintStream out;
+	
 
 	public IRCd() {
 	}
