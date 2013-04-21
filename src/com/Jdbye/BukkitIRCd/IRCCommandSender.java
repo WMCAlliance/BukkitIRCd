@@ -1,6 +1,8 @@
 package com.Jdbye.BukkitIRCd;
 
 import java.util.Set;
+
+import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissibleBase;
@@ -24,12 +26,16 @@ public class IRCCommandSender implements CommandSender {
 
     public void sendMessage(String message) {
     	if (enabled) {
-    		if (!message.contains("IRC ")) { // Don't show IRC messages - this really needs to be improved
+    			for (String filter : IRCd.consoleFilters){
+    				if (message.matches(filter.replace('&', '\u00A7'))){ //Replace ampersands with section sign 
+    					return;
+    				}
+    			}
     			if (IRCd.mode == Modes.STANDALONE) IRCd.writeOpers(":" + IRCd.serverName + "!" + IRCd.serverName + "@" + IRCd.serverHostName + " PRIVMSG " + IRCd.consoleChannelName + " :" + IRCd.convertColors(message, false));
     			else if (IRCd.linkcompleted) IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.consoleChannelName + " :" + IRCd.convertColors(message, false));
     		}
     	}
-    }
+    
     
     public void sendMessage(String[] message) {
     	for (String s : message) sendMessage(s);
@@ -45,7 +51,7 @@ public class IRCCommandSender implements CommandSender {
 
     public boolean isOp() {
         //return client.isOper;
-    	return false;
+    	return true;
     }
 
     public void setOp(boolean value) {

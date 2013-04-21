@@ -17,11 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.logging.Logger;
-import java.util.regex.*;
-
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -74,6 +73,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	public static long ircd_topicsetdate = System.currentTimeMillis() / 1000L;
 	public static String ircd_bantype = "ip";
 	private boolean ircd_convertcolorcodes = true;
+	private static boolean ircd_handleampersandcolors = true;
 	private static String ircd_version;
 	private static boolean ircd_enablenotices = true;
 	private String ircd_operuser = "";
@@ -82,6 +82,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	private String ircd_consolechannel = "#staff";
 	private String ircd_irc_colors = "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15";
 	private String ircd_game_colors = "0,f,1,2,c,4,5,6,e,a,3,b,9,d,8,7";
+	private boolean ircd_broadcast_death_messages = true;
 	public static boolean debugmode = false;
 	public boolean dynmapEventRegistered = false;
 	
@@ -238,6 +239,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		IRCd.ingameSuffix = ircd_ingamesuffix;
 		IRCd.enableNotices = ircd_enablenotices;
 		IRCd.convertColorCodes = ircd_convertcolorcodes;
+		IRCd.handleAmpersandColors = ircd_handleampersandcolors;
 		IRCd.ircBanType = ircd_bantype;
 		IRCd.version = ircd_version;
 		IRCd.operUser = ircd_operuser;
@@ -248,6 +250,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		IRCd.debugMode = debugmode;
 		IRCd.gameColors = ircd_game_colors.split(",");
 		IRCd.ircColors = convertStringArrayToIntArray(ircd_irc_colors.split(","), IRCd.ircColors);
+		IRCd.broadcastDeathMessages = ircd_broadcast_death_messages;
 		
 		// Linking specific settings
 		IRCd.remoteHost = link_remotehost;
@@ -327,6 +330,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			ircd_ingamesuffix = config.getString("ingame-suffix", ircd_ingamesuffix);
 			ircd_enablenotices = config.getBoolean("enable-notices", ircd_enablenotices);
 			ircd_convertcolorcodes = config.getBoolean("convert-color-codes", ircd_convertcolorcodes);
+			ircd_handleampersandcolors = config.getBoolean("handle-ampersand-colors",ircd_handleampersandcolors);
 			ircd_irc_colors = config.getString("irc-colors", ircd_irc_colors);
 			ircd_game_colors = config.getString("game-colors", ircd_game_colors);
 			ircd_channel = config.getString("channel-name", ircd_channel);
@@ -341,6 +345,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			kickCommands = config.getStringList("kick-commands");
 
 			String operpass = "";
+			
 			ircd_port = config.getInt("standalone.port", ircd_port);
 			ircd_maxconn = config.getInt("standalone.max-connections", ircd_maxconn);
 			ircd_pinginterval = config.getInt("standalone.ping-interval", ircd_pinginterval);
@@ -351,7 +356,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			ircd_opermodes = config.getString("standalone.oper-modes", ircd_opermodes);
 			ircd_topic = config.getString("standalone.channel-topic", ircd_topic).replace("^K", (char)3 + "").replace("^B", (char)2 + "").replace("^I", (char)29 + "").replace("^O", (char)15 + "").replace("^U", (char)31 + "");
 			ircd_topicsetby = config.getString("standalone.channel-topic-set-by", ircd_topicsetby);
-
+			ircd_broadcast_death_messages = config.getBoolean("broadcast-death-messages",ircd_broadcast_death_messages);
 			try {
 				ircd_topicsetdate = dateFormat.parse(config.getString("standalone.channel-topic-set-date", dateFormat.format(ircd_topicsetdate))).getTime();
 			}
@@ -407,6 +412,9 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			IRCd.msgIRCJoin = messages.getString("irc-join", IRCd.msgIRCJoin);
 			IRCd.msgIRCJoinDynmap = messages.getString("irc-join-dynmap", IRCd.msgIRCJoinDynmap);
 
+			IRCd.groupPrefixes = messages.getConfigurationSection("group-prefixes");
+			IRCd.groupSuffixes = messages.getConfigurationSection("group-suffixes");
+			
 			IRCd.msgIRCLeave = messages.getString("irc-leave", IRCd.msgIRCLeave);
 			IRCd.msgIRCLeaveReason = messages.getString("irc-leave-reason", IRCd.msgIRCLeaveReason);
 			IRCd.msgIRCLeaveDynmap = messages.getString("irc-leave-dynmap", IRCd.msgIRCLeaveDynmap);
@@ -441,7 +449,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			IRCd.msgDynmapMessage = messages.getString("dynmap-message", IRCd.msgDynmapMessage);
 			IRCd.msgPlayerList = messages.getString("player-list", IRCd.msgPlayerList);
 			
-			
+			IRCd.consoleFilters = messages.getStringList("console-filters");
 			//** RECOLOUR ALL MESSAGES **
 			
 			IRCd.msgLinked = colorize(IRCd.msgLinked);
@@ -472,10 +480,8 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			IRCd.msgIRCActionDynmap = colorize(IRCd.msgIRCActionDynmap);
 			IRCd.msgIRCMessageDynmap = colorize(IRCd.msgIRCMessageDynmap);
 			IRCd.msgIRCNoticeDynmap = colorize(IRCd.msgIRCNoticeDynmap);
-
 			IRCd.msgDynmapMessage = colorize(IRCd.msgDynmapMessage);
 			IRCd.msgPlayerList = colorize(IRCd.msgPlayerList);
-			
 
 			log.info("[BukkitIRCd] Loaded messages file. Code BukkitIRCdPlugin464.");
 		}

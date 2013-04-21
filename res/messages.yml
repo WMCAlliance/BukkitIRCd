@@ -3,10 +3,10 @@
 linked: "&3[IRC] &eLinked to server %LINKNAME%"  # Displays when successfully linked to a remote server.
 delinked: "&3[IRC] &eSplit from server %LINKNAME%"  # Displays when delinked from a remote server.
 delinked-reason: "&3[IRC] &eSplit from server %LINKNAME% (%REASON%)"  # Displays when delinked from a remote server with a reason.
-irc-join: "&3[IRC] &e%USER% joined IRC"  # Displays ingame when someone joins IRC.
+irc-join: "&3[IRC] &e%PREFIX%%USER%%SUFFIX%&r joined IRC"  # Displays ingame when someone joins IRC.
 irc-join-dynmap: "%USER% joined IRC"  # Displays on dynmap when someone joins IRC.
-irc-leave: "&3[IRC] &e%USER% left IRC"  # Displays ingame when someone leaves IRC.
-irc-leave-reason: "&3[IRC] &e%USER% left IRC (%REASON%)"  # Displays ingame when someone leaves IRC with a reason.
+irc-leave: "&3[IRC] &e%PREFIX%%USER%%SUFFIX%&r left IRC"  # Displays ingame when someone leaves IRC.
+irc-leave-reason: "&3[IRC] &e%PREFIX%%USER%%SUFFIX%&r left IRC (%REASON%)"  # Displays ingame when someone leaves IRC with a reason.
 irc-leave-dynmap: "%USER% left IRC"  # Displays on dynmap when someone leaves IRC.
 irc-leave-reason-dynmap: "%USER% left IRC (%REASON%)"  # Displays on dynmap when someone leaves IRC with a reason.
 irc-kick: "&3[IRC] &e%KICKEDUSER% was kicked by %KICKEDBY%"  # Displays ingame when someone is kicked from IRC.
@@ -17,16 +17,31 @@ irc-ban: "&3[IRC] &e%BANNEDUSER% was banned by %BANNEDBY%"  # Displays ingame wh
 irc-unban: "&3[IRC] &e%BANNEDUSER% was unbanned by %BANNEDBY%"  # Displays ingame when someone is unbanned from IRC.
 irc-ban-dynmap: "%BANNEDUSER% was banned by %BANNEDBY%"  # Displays on dynmap when someone is banned from IRC.
 irc-unban-dynmap: "%BANNEDUSER% was unbanned by %BANNEDBY%"  # Displays on dynmap when someone is unbanned from IRC.
-irc-nick-change: "&3[IRC] &e%OLDNICK% is now known as %NEWNICK%&f"  # Displays ingame when someone changes their nick on IRC.
+irc-nick-change: "&3[IRC] &e%PREFIX%%OLDNICK%%SUFFIX%&r is now known as %PREFIX%%NEWNICK%%SUFFIX%&r"  # Displays ingame when someone changes their nick on IRC.
 irc-nick-change-dynmap: "%OLDNICK% is now known as %NEWNICK%"  # Displays on dynmap when someone changes their nick on IRC.
-irc-action: "&r[IRC] * &7%USER%&r %MESSAGE%"  # Displays ingame when someone sends an action on IRC.
-irc-message: "&r[IRC] <&7%USER%&r> %MESSAGE%"  # Displays ingame when someone sends a message on IRC.
-irc-notice: "&r[IRC] -&7%USER%&r- %MESSAGE%"  # Displays ingame when someone sends a notice on IRC.
-irc-private-action: "&r[IRC] &aTo you&r: * &7%USER%&r %MESSAGE%"  # Displays ingame when someone sends a private action on IRC.
-irc-private-message: "&r[IRC] &aTo you&r: <&7%USER%&r> %MESSAGE%"  # Displays ingame when someone sends a private message on IRC.
-irc-private-notice: "&r[IRC] &aTo you&r: -&7%USER%&r- %MESSAGE%"  # Displays ingame when someone sends a private notice on IRC.
+irc-action: "&r[IRC] * &7%PREFIX%%USER%%SUFFIX%&r %MESSAGE%"  # Displays ingame when someone sends an action on IRC.
+irc-message: "&r[IRC] <&7%PREFIX%%USER%%SUFFIX%&r> %MESSAGE%"  # Displays ingame when someone sends a message on IRC.
+irc-notice: "&r[IRC] -&7%PREFIX%%USER%%SUFFIX%&r- %MESSAGE%"  # Displays ingame when someone sends a notice on IRC.
+irc-private-action: "&r[IRC] &aTo you&r: * &7%PREFIX%%USER%%SUFFIX%&r %MESSAGE%"  # Displays ingame when someone sends a private action on IRC.
+irc-private-message: "&r[IRC] &aTo you&r: <&7%PREFIX%%USER%%SUFFIX%&r> %MESSAGE%"  # Displays ingame when someone sends a private message on IRC.
+irc-private-notice: "&r[IRC] &aTo you&r: -&7%PREFIX%%USER%%SUFFIX%&r- %MESSAGE%"  # Displays ingame when someone sends a private notice on IRC.
 irc-action-dynmap: "* %USER% %MESSAGE%"  # Displays on dynmap when someone sends an action on IRC.
 irc-message-dynmap: "<%USER%> %MESSAGE%"  # Displays on dynmap when someone sends a message on IRC.
 irc-notice-dynmap: "-%USER%- %MESSAGE%"  # Displays on dynmap when someone sends a notice on IRC.
 dynmap-message: "[Map] %USER%: %MESSAGE%"  # Displays on IRC when someone sends a message on Dynmap.
-player-list: "^BWe have (%COUNT%) players online. They are:^B %USERS%"  # The template used for the !players IRC command. If you make this blank, the command will be disabled.
+player-list: "We have (&l%COUNT%&r) players online. They are: %USERS%"  # The template used for the !players IRC command. If you make this blank, the command will be disabled.
+console-filters: # Filters messages that go into the staff channel. Format is regular expressions.
+    - "^\\[IRC\\].+"
+    - "^&3\\[IRC\\].+"
+group-prefixes: #Prefixes 
+  h: "&2"
+  o: "&4"
+  q: "&9"
+  v: "&6"
+  user: ""
+group-suffixes: #Suffixes
+  h: "|Mod"
+  o: "|Admin"
+  q: "|SuperAdmin"
+  v: "|VIP"
+  user: "|User"
