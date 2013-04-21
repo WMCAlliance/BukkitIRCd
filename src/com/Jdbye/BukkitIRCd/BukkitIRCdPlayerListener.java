@@ -31,13 +31,18 @@ public class BukkitIRCdPlayerListener implements Listener {
 		}
 		String message = event.getDeathMessage().replace(event.getEntity().getName(),event.getEntity().getName()+IRCd.ingameSuffix);
 		
+		if(!IRCd.colorDeathMessages){
+			message = ChatColor.stripColor(message);
+		}else{
+			message = IRCd.convertColors(message,false);
+		}
 		if(IRCd.mode == Modes.INSPIRCD){
 			if (IRCd.linkcompleted)  {
 				
-				IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.channelName + " :" + ChatColor.stripColor(message));
+				IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.channelName + " :" + message);
 				}
 		}else{
-			IRCd.writeAll(ChatColor.stripColor(message));
+			IRCd.writeAll(message);
 		}
 		
 	}
@@ -69,12 +74,17 @@ public class BukkitIRCdPlayerListener implements Listener {
 				}
 				
 				String message = s.toString();
+				
+				message = ChatColor.stripColor(message);
+				if(IRCd.colorSayMessages){
+					message = (char) 3 + "13" + message;
+				}
 				if(IRCd.mode == Modes.INSPIRCD){
 					if (IRCd.linkcompleted)  {
-						IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.channelName + " :" + ChatColor.stripColor(message));
+						IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.channelName + " :" + message);
 						}
 				}else{
-					IRCd.writeAll(ChatColor.stripColor(message));
+					IRCd.writeAll(message);
 				}
 				
 			}
@@ -179,13 +189,18 @@ public class BukkitIRCdPlayerListener implements Listener {
 					
 					String message = s.toString();
 					
+					message = ChatColor.stripColor(message);
+					if(IRCd.colorSayMessages){
+						message = (char) 3 + "13" + message;
+					}
+					
 					if(IRCd.mode == Modes.INSPIRCD){
 						
 						if (IRCd.linkcompleted) { 
-							IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.channelName + " :" + ChatColor.stripColor(message));
+							IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.channelName + " :" + message);
 							}
 					}else{
-						IRCd.writeAll(ChatColor.stripColor(message));
+						IRCd.writeAll(message);
 					}
 				}
 			}

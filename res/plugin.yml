@@ -11,42 +11,52 @@ commands:
     description: Lists the online users on IRC
     usage: /<command>
     aliases: [ilist]
+    permission: bukkitircd.list
   irckick:
     description: Kicks someone from IRC
     usage: /<command> nick (reason)
     aliases: [ikick]
+    permission: bukkitircd.kick
   ircban:
     description: Bans a user from IRC by their host, ip, ident, nick or a full hostmask 
     usage: /<command> (host/ip/ident/nick) nick/ip/fullhost (reason)
     aliases: [iban]
+    permission: bukkitircd.ban
   ircunban:
     description: Unbans someone from IRC by their IP or full hostmask
     usage: /<command> ip/fullhost
     aliases: [iunban]
+    permission: bukkitircd.unban
   ircwhois:
     description: Looks up someone on IRC
     usage: /<command> nick
     aliases: [iwhois]
+    permission: bukkitircd.whois
   ircmsg:
     description: Messages someone on IRC
     usage: /<command> nick message
     aliases: [imsg, im]
+    permission: bukkitircd.msg
   ircreply:
     description: Replies to the last IRC private message you received.
     usage: /<command> message
     aliases: [ireply, ir]
+    permission: bukkitircd.reply
   irctopic:
     description: Changes the IRC topic
     usage: /<command> newtopic
     aliases: [itopic]
+    permission: bukkitircd.topic
   irclink:
     description: Attempts to link to the remote server if in linking mode.
     usage: /<command>
     aliases: [ilink]
+    permission: bukkitircd.link
   ircreload:
     description: Reloads the configuration and MOTD.
     usage: /<command>
     aliases: [ireload]
+    permission: bukkitircd.reload
   rawsend:
     description: Sends a raw server command to the linked server, if enabled. Only usable from console.
     usage: /<command> command
