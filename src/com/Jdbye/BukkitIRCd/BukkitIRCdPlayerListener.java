@@ -75,7 +75,8 @@ public class BukkitIRCdPlayerListener implements Listener {
 				
 				String message = s.toString();
 				
-				message = ChatColor.stripColor(message);
+				
+				message = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',message));
 				if(IRCd.colorSayMessages){
 					message = (char) 3 + "13" + message;
 				}
@@ -201,7 +202,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 					
 					String message = s.toString();
 					
-					message = ChatColor.stripColor(message);
+					message = ChatColor.translateAlternateColorCodes('&',ChatColor.stripColor(message));
 					if(IRCd.colorSayMessages){
 						message = (char) 3 + "13" + message;
 					}
