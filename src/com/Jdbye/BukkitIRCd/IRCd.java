@@ -2560,6 +2560,9 @@ public class IRCd implements Runnable {
 		String prefix;
 		// Owner
 		
+		if(IRCd.groupPrefixes == null){
+			return "";
+		}
 		if (IRCd.groupPrefixes.contains("q") && (modes.contains("q") || modes.contains("~"))) {
 			try {
 				prefix = IRCd.groupPrefixes.getString("q");
@@ -2646,6 +2649,10 @@ public class IRCd implements Runnable {
 	public static String getGroupSuffix(String modes) {
 		// Goes from highest rank to lowest rank
 		String suffix;
+		
+		if (IRCd.groupSuffixes == null){
+			return "";
+		}
 		// Owner
 		if (IRCd.groupSuffixes.contains("q") && (modes.contains("q") || modes.contains("~"))) {
 			try {
