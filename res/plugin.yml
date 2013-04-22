@@ -1,59 +1,59 @@
 name: BukkitIRCd
 main: com.Jdbye.BukkitIRCd.BukkitIRCdPlugin
 version: 1.1
-dev-url: http://ci.wma.im/job/BukkitIRCd-dev
+dev-url: http://home.wizardcm.com:8080/job/BukkitIRCd
 website: http://wma.im
 authors: [Jdbye, WizardCM, Mu5tank05]
-description: Powerful IRC plugin for Bukkit
+description: Powerful IRC plugin for Bukkit. Can be used on its own or alongside an InspIRCd server.
 softdepend: [dynmap]
 commands:
   irclist:
-    description: Lists the online users on IRC
+    description: Lists the online users on IRC.
     usage: /<command>
     aliases: [ilist]
     permission: bukkitircd.list
   irckick:
-    description: Kicks someone from IRC
+    description: Kick a user from IRC.
     usage: /<command> nick (reason)
     aliases: [ikick]
     permission: bukkitircd.kick
   ircban:
-    description: Bans a user from IRC by their host, ip, ident, nick or a full hostmask 
+    description: Ban a user from IRC via their host, ip, ident, nick or a full hostmask.
     usage: /<command> (host/ip/ident/nick) nick/ip/fullhost (reason)
     aliases: [iban]
     permission: bukkitircd.ban
   ircunban:
-    description: Unbans someone from IRC by their IP or full hostmask
+    description: Unban a user from IRC by their IP or full hostmask.
     usage: /<command> ip/fullhost
     aliases: [iunban]
     permission: bukkitircd.unban
   ircwhois:
-    description: Looks up someone on IRC
+    description: Perform a lookup on an IRC user.
     usage: /<command> nick
     aliases: [iwhois]
     permission: bukkitircd.whois
   ircmsg:
-    description: Messages someone on IRC
+    description: Private message a user on IRC.
     usage: /<command> nick message
-    aliases: [imsg, im]
+    aliases: [imsg, im, itell]
     permission: bukkitircd.msg
   ircreply:
-    description: Replies to the last IRC private message you received.
+    description: Reply to the last IRC private message you received.
     usage: /<command> message
     aliases: [ireply, ir]
     permission: bukkitircd.reply
   irctopic:
-    description: Changes the IRC topic
+    description: Change the IRC topic for the main channel
     usage: /<command> newtopic
     aliases: [itopic]
     permission: bukkitircd.topic
   irclink:
-    description: Attempts to link to the remote server if in linking mode.
+    description: Attempt to link to the remote server if in linking mode but not currently linked.
     usage: /<command>
     aliases: [ilink]
     permission: bukkitircd.link
   ircreload:
-    description: Reloads the configuration and MOTD.
+    description: Reload the plugin configuration and MOTD, and restart the IRC server/link.
     usage: /<command>
     aliases: [ireload]
     permission: bukkitircd.reload
