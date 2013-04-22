@@ -126,6 +126,7 @@ public class IRCd implements Runnable {
 	public static int SID = 111;
 
 	// Custom messages
+	public static String msgSendQueryFromIngame = "&r[IRC] [me -> &7%PREFIX%%USER%%SUFFIX%&r] %MESSAGE%";
 	public static String msgLinked = "&e[IRC] Linked to server %LINKNAME%";
 	public static String msgDelinked = "&e[IRC] Split from server %LINKNAME%";
 	public static String msgDelinkedReason = "&e[IRC] Split from server %LINKNAME% (%REASON%)";
