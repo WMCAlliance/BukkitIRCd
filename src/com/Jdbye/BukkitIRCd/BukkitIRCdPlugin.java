@@ -425,6 +425,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		try {
 			IRCd.msgLinked = messages.getString("linked", IRCd.msgLinked);
 			
+			IRCd.msgSendQueryFromIngame = messages.getString("irc-send-pm", IRCd.msgSendQueryFromIngame);
 			IRCd.msgDelinked = messages.getString("delinked", IRCd.msgDelinked);
 			IRCd.msgDelinkedReason = messages.getString("delinked-reason", IRCd.msgDelinkedReason);
 			
@@ -471,6 +472,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			IRCd.consoleFilters = messages.getStringList("console-filters");
 			//** RECOLOUR ALL MESSAGES **
 			
+			IRCd.msgSendQueryFromIngame = colorize(IRCd.msgSendQueryFromIngame);
 			IRCd.msgLinked = colorize(IRCd.msgLinked);
 			IRCd.msgDelinked = colorize(IRCd.msgDelinked);
 			IRCd.msgDelinkedReason = colorize(IRCd.msgDelinked);

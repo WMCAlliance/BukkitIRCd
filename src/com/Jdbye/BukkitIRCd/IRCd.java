@@ -126,6 +126,7 @@ public class IRCd implements Runnable {
 	public static int SID = 111;
 
 	// Custom messages
+	public static String msgSendQueryFromIngame = "&r[IRC] [me -> &7%PREFIX%%USER%%SUFFIX%&r] %MESSAGE%";
 	public static String msgLinked = "&e[IRC] Linked to server %LINKNAME%";
 	public static String msgDelinked = "&e[IRC] Split from server %LINKNAME%";
 	public static String msgDelinkedReason = "&e[IRC] Split from server %LINKNAME% (%REASON%)";
@@ -220,7 +221,6 @@ public class IRCd implements Runnable {
 
 	public static BufferedReader in;
 	public static PrintStream out;
-	
 
 	public IRCd() {
 	}
@@ -1254,7 +1254,25 @@ public class IRCd implements Runnable {
 																		"%REASON%",
 																		convertColors(
 																				reason,
-																				true)));
+																				true))
+																.replace(
+																		"%KICKEDPREFIX%",
+																		IRCd.getGroupPrefix(processor.modes))
+																.replace(
+																		"%KICKEDSUFFIX%",
+																		IRCd.getGroupSuffix(processor.modes))
+																.replace(
+																		"%KICKERPREFIX%",
+																		IRCd.getGroupPrefix(IRCd
+																				.getIRCUser(
+																						kickedByNick)
+																				.getTextModes()))
+																.replace(
+																		"%KICKERSUFFIX%",
+																		IRCd.getGroupSuffix(IRCd
+																				.getIRCUser(
+																						kickedByNick)
+																				.getTextModes())));
 									if ((BukkitIRCdPlugin.dynmap != null)
 											&& (msgIRCKickReasonDynmap.length() > 0))
 										BukkitIRCdPlugin.dynmap
@@ -1281,7 +1299,25 @@ public class IRCd implements Runnable {
 																		processor.nick)
 																.replace(
 																		"%KICKEDBY%",
-																		kickedByNick));
+																		kickedByNick)
+																.replace(
+																		"%KICKEDPREFIX%",
+																		IRCd.getGroupPrefix(processor.modes))
+																.replace(
+																		"%KICKEDSUFFIX%",
+																		IRCd.getGroupSuffix(processor.modes))
+																.replace(
+																		"%KICKERPREFIX%",
+																		IRCd.getGroupPrefix(IRCd
+																				.getIRCUser(
+																						kickedByNick)
+																				.getTextModes()))
+																.replace(
+																		"%KICKERSUFFIX%",
+																		IRCd.getGroupSuffix(IRCd
+																				.getIRCUser(
+																						kickedByNick)
+																				.getTextModes())));
 									if ((BukkitIRCdPlugin.dynmap != null)
 											&& (msgIRCKickDynmap.length() > 0))
 										BukkitIRCdPlugin.dynmap
@@ -1373,7 +1409,8 @@ public class IRCd implements Runnable {
 							println(":" + sourceUID + " KICK " + channelName
 									+ " " + uid + " :" + reason);
 							if (msgIRCKickReason.length() > 0)
-								BukkitIRCdPlugin.thePlugin.getServer()
+								BukkitIRCdPlugin.thePlugin
+										.getServer()
 										.broadcastMessage(
 												msgIRCKickReason
 														.replace(
@@ -1385,7 +1422,27 @@ public class IRCd implements Runnable {
 																"%REASON%",
 																convertColors(
 																		reason,
-																		true)));
+																		true))
+														.replace(
+																"%KICKEDPREFIX%",
+																IRCd.getGroupPrefix(iuser
+																		.getTextModes()))
+														.replace(
+																"%KICKEDSUFFIX%",
+																IRCd.getGroupSuffix(iuser
+																		.getTextModes()))
+														.replace(
+																"%KICKERPREFIX%",
+																IRCd.getGroupPrefix(IRCd
+																		.getIRCUser(
+																				kickedByNick)
+																		.getTextModes()))
+														.replace(
+																"%KICKERSUFFIX%",
+																IRCd.getGroupSuffix(IRCd
+																		.getIRCUser(
+																				kickedByNick)
+																		.getTextModes())));
 							if ((BukkitIRCdPlugin.dynmap != null)
 									&& (msgIRCKickReasonDynmap.length() > 0))
 								BukkitIRCdPlugin.dynmap
@@ -1404,13 +1461,35 @@ public class IRCd implements Runnable {
 							println(":" + sourceUID + " KICK " + channelName
 									+ " " + uid + " :" + kickedByNick);
 							if (msgIRCKick.length() > 0)
-								BukkitIRCdPlugin.thePlugin.getServer()
+								BukkitIRCdPlugin.thePlugin
+										.getServer()
 										.broadcastMessage(
-												msgIRCKick.replace(
-														"%KICKEDUSER%",
-														iuser.nick).replace(
-														"%KICKEDBY%",
-														kickedByNick));
+												msgIRCKick
+														.replace(
+																"%KICKEDUSER%",
+																iuser.nick)
+														.replace("%KICKEDBY%",
+																kickedByNick)
+														.replace(
+																"%KICKEDPREFIX%",
+																IRCd.getGroupPrefix(iuser
+																		.getTextModes()))
+														.replace(
+																"%KICKEDSUFFIX%",
+																IRCd.getGroupSuffix(iuser
+																		.getTextModes()))
+														.replace(
+																"%KICKERPREFIX%",
+																IRCd.getGroupPrefix(IRCd
+																		.getIRCUser(
+																				kickedByNick)
+																		.getTextModes()))
+														.replace(
+																"%KICKERSUFFIX%",
+																IRCd.getGroupSuffix(IRCd
+																		.getIRCUser(
+																				kickedByNick)
+																		.getTextModes())));
 							if ((BukkitIRCdPlugin.dynmap != null)
 									&& (msgIRCKickDynmap.length() > 0))
 								BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
@@ -1718,7 +1797,7 @@ public class IRCd implements Runnable {
 				}
 				if (!mode1.equals("+")) {
 					if (mode == Modes.STANDALONE) {
-						
+
 						writeAll(":" + serverName + "!" + serverName + "@"
 								+ serverHostName + " MODE " + IRCd.channelName
 								+ " " + mode1 + " "
@@ -1852,7 +1931,7 @@ public class IRCd implements Runnable {
 							}
 							modestr = modestr
 									.substring(0, modestr.length() - 1);
-							
+
 							println(":" + serverUID + " FMODE " + channelName
 									+ " " + channelTS + " +" + textMode + " "
 									+ modestr);
@@ -2566,11 +2645,12 @@ public class IRCd implements Runnable {
 		// Goes from highest rank to lowest rank
 		String prefix;
 		// Owner
-		
-		if(IRCd.groupPrefixes == null){
+
+		if (IRCd.groupPrefixes == null) {
 			return "";
 		}
-		if (IRCd.groupPrefixes.contains("q") && (modes.contains("q") || modes.contains("~"))) {
+		if (IRCd.groupPrefixes.contains("q")
+				&& (modes.contains("q") || modes.contains("~"))) {
 			try {
 				prefix = IRCd.groupPrefixes.getString("q");
 			} catch (NullPointerException e) {
@@ -2584,7 +2664,8 @@ public class IRCd implements Runnable {
 		// replace("@", "o").replace("%", "h").replace("+", "v");
 
 		// Super Op
-		if (IRCd.groupPrefixes.contains("a") && (modes.contains("a") || modes.contains("&"))) {
+		if (IRCd.groupPrefixes.contains("a")
+				&& (modes.contains("a") || modes.contains("&"))) {
 			try {
 				prefix = IRCd.groupPrefixes.getString("a");
 			} catch (NullPointerException e) {
@@ -2596,7 +2677,8 @@ public class IRCd implements Runnable {
 		}
 
 		// Op
-		if (IRCd.groupPrefixes.contains("o") && (modes.contains("o") || modes.contains("@"))) {
+		if (IRCd.groupPrefixes.contains("o")
+				&& (modes.contains("o") || modes.contains("@"))) {
 			try {
 				prefix = IRCd.groupPrefixes.getString("o");
 			} catch (NullPointerException e) {
@@ -2608,7 +2690,8 @@ public class IRCd implements Runnable {
 		}
 
 		// Half Op
-		if (IRCd.groupPrefixes.contains("h") && (modes.contains("h") || modes.contains("%"))) {
+		if (IRCd.groupPrefixes.contains("h")
+				&& (modes.contains("h") || modes.contains("%"))) {
 			try {
 				prefix = IRCd.groupPrefixes.getString("h");
 			} catch (NullPointerException e) {
@@ -2620,7 +2703,8 @@ public class IRCd implements Runnable {
 		}
 
 		// Voice
-		if (IRCd.groupPrefixes.contains("q") && (modes.contains("v") || modes.contains("+"))) {
+		if (IRCd.groupPrefixes.contains("q")
+				&& (modes.contains("v") || modes.contains("+"))) {
 			try {
 				prefix = IRCd.groupPrefixes.getString("v");
 			} catch (NullPointerException e) {
@@ -2630,9 +2714,9 @@ public class IRCd implements Runnable {
 				return ChatColor.translateAlternateColorCodes('&', prefix);
 			}
 		}
-		
+
 		// User
-		if (IRCd.groupPrefixes.contains("user")){
+		if (IRCd.groupPrefixes.contains("user")) {
 			try {
 				prefix = IRCd.groupPrefixes.getString("user");
 			} catch (NullPointerException e) {
@@ -2641,10 +2725,10 @@ public class IRCd implements Runnable {
 			if (!prefix.isEmpty() || prefix != null) {
 				return ChatColor.translateAlternateColorCodes('&', prefix);
 			}
-			
+
 		}
-			return "";
-		
+		return "";
+
 	}
 
 	/**
@@ -2656,12 +2740,13 @@ public class IRCd implements Runnable {
 	public static String getGroupSuffix(String modes) {
 		// Goes from highest rank to lowest rank
 		String suffix;
-		
-		if (IRCd.groupSuffixes == null){
+
+		if (IRCd.groupSuffixes == null) {
 			return "";
 		}
 		// Owner
-		if (IRCd.groupSuffixes.contains("q") && (modes.contains("q") || modes.contains("~"))) {
+		if (IRCd.groupSuffixes.contains("q")
+				&& (modes.contains("q") || modes.contains("~"))) {
 			try {
 				suffix = IRCd.groupSuffixes.getString("q");
 			} catch (NullPointerException e) {
@@ -2675,7 +2760,8 @@ public class IRCd implements Runnable {
 		// replace("@", "o").replace("%", "h").replace("+", "v");
 
 		// Super Op
-		if (IRCd.groupSuffixes.contains("a") &&  (modes.contains("a") || modes.contains("&"))) {
+		if (IRCd.groupSuffixes.contains("a")
+				&& (modes.contains("a") || modes.contains("&"))) {
 			try {
 				suffix = IRCd.groupPrefixes.getString("a");
 			} catch (NullPointerException e) {
@@ -2687,7 +2773,8 @@ public class IRCd implements Runnable {
 		}
 
 		// Op
-		if (IRCd.groupSuffixes.contains("o") &&  (modes.contains("o") || modes.contains("@"))) {
+		if (IRCd.groupSuffixes.contains("o")
+				&& (modes.contains("o") || modes.contains("@"))) {
 			try {
 				suffix = IRCd.groupPrefixes.getString("o");
 			} catch (NullPointerException e) {
@@ -2699,7 +2786,8 @@ public class IRCd implements Runnable {
 		}
 
 		// Half Op
-		if (IRCd.groupSuffixes.contains("h") &&  (modes.contains("h") || modes.contains("%"))) {
+		if (IRCd.groupSuffixes.contains("h")
+				&& (modes.contains("h") || modes.contains("%"))) {
 			try {
 				suffix = IRCd.groupPrefixes.getString("h");
 			} catch (NullPointerException e) {
@@ -2711,7 +2799,8 @@ public class IRCd implements Runnable {
 		}
 
 		// Voice
-		if (IRCd.groupSuffixes.contains("v") && (modes.contains("v") || modes.contains("+"))) {
+		if (IRCd.groupSuffixes.contains("v")
+				&& (modes.contains("v") || modes.contains("+"))) {
 			try {
 				suffix = IRCd.groupPrefixes.getString("v");
 			} catch (NullPointerException e) {
@@ -2721,7 +2810,7 @@ public class IRCd implements Runnable {
 				return ChatColor.translateAlternateColorCodes('&', suffix);
 			}
 		}
-		
+
 		// User
 		if (IRCd.groupSuffixes.contains("user")) {
 			try {
@@ -2734,7 +2823,7 @@ public class IRCd implements Runnable {
 			}
 		}
 		return "";
-		
+
 	}
 
 	// This is where the channel topic is configured
@@ -3663,8 +3752,12 @@ public class IRCd implements Runnable {
 							|| ((server = servers.get(split[0])) != null)) {
 						if (ircuser != null)
 							kicker = ircuser.nick;
+
 						else
 							kicker = server.host;
+						String modes = "q";
+						if (ircuser != null)
+							modes = ircuser.getTextModes();
 						if ((ircvictim = uid2ircuser.get(split[3])) != null) {
 							kicked = ircvictim.nick;
 							if ((IRCd.isPlugin)
@@ -3685,7 +3778,21 @@ public class IRCd implements Runnable {
 																		"%REASON%",
 																		convertColors(
 																				reason,
-																				true)));
+																				true))
+																.replace(
+																		"%KICKEDPREFIX%",
+																		IRCd.getGroupPrefix(ircvictim
+																				.getTextModes()))
+																.replace(
+																		"%KICKEDSUFFIX%",
+																		IRCd.getGroupSuffix(ircvictim
+																				.getTextModes()))
+																.replace(
+																		"%KICKERPREFIX%",
+																		IRCd.getGroupPrefix(modes))
+																.replace(
+																		"%KICKERSUFFIX%",
+																		IRCd.getGroupSuffix(modes)));
 									if ((BukkitIRCdPlugin.dynmap != null)
 											&& (msgIRCKickReasonDynmap.length() > 0))
 										BukkitIRCdPlugin.dynmap
@@ -3700,7 +3807,21 @@ public class IRCd implements Runnable {
 																		kicker)
 																.replace(
 																		"%REASON%",
-																		stripIRCFormatting(reason)));
+																		stripIRCFormatting(reason))
+																.replace(
+																		"%KICKEDPREFIX%",
+																		IRCd.getGroupPrefix(ircvictim
+																				.getTextModes()))
+																.replace(
+																		"%KICKEDSUFFIX%",
+																		IRCd.getGroupSuffix(ircvictim
+																				.getTextModes()))
+																.replace(
+																		"%KICKERPREFIX%",
+																		IRCd.getGroupPrefix(modes))
+																.replace(
+																		"%KICKERSUFFIX%",
+																		IRCd.getGroupSuffix(modes)));
 								} else {
 									if (msgIRCKick.length() > 0)
 										BukkitIRCdPlugin.thePlugin
@@ -3712,7 +3833,21 @@ public class IRCd implements Runnable {
 																		kicked)
 																.replace(
 																		"%KICKEDBY%",
-																		kicker));
+																		kicker)
+																.replace(
+																		"%KICKEDPREFIX%",
+																		IRCd.getGroupPrefix(ircvictim
+																				.getTextModes()))
+																.replace(
+																		"%KICKEDSUFFIX%",
+																		IRCd.getGroupSuffix(ircvictim
+																				.getTextModes()))
+																.replace(
+																		"%KICKERPREFIX%",
+																		IRCd.getGroupPrefix(modes))
+																.replace(
+																		"%KICKERSUFFIX%",
+																		IRCd.getGroupSuffix(modes)));
 									if ((BukkitIRCdPlugin.dynmap != null)
 											&& (msgIRCKickDynmap.length() > 0))
 										BukkitIRCdPlugin.dynmap
