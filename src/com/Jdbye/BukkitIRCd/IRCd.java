@@ -744,14 +744,12 @@ public class IRCd implements Runnable {
 				for (int i = 0; i < textMode.length(); i++) {
 					modestr += UID + " ";
 				}
-<<<<<<< HEAD
 				modestr = modestr.substring(0, modestr.length()-1);
 				println(":" + serverUID + " FMODE " + channelName + " " + channelTS + " + " + textMode + " " + modestr);
-=======
+
 				modestr = modestr.substring(0, modestr.length() - 1);
 				println(":" + serverUID + " FMODE " + channelName + " "
 						+ channelTS + " + " + textMode + " " + modestr);
->>>>>>> 4f80fad0009327c46df2cf2d6cf263c5c25ccadc
 			}
 		}
 
@@ -3502,18 +3500,14 @@ public class IRCd implements Runnable {
 				println(":" + split[2] + " IDLE " + split[0] + " "
 						+ ircuser.signonTime + " " + ircuser.getSecondsIdle());
 			}
-<<<<<<< HEAD
 			// The error below can/will happen in the event a player is /whois'ed from IRC - I'd like to know why and how to fix it
 			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[2] + " not found in list. Error code IRCd1999."); // Log as severe because this situation should never occur and points to a bug in the code
 		}
 		else if (split[1].equalsIgnoreCase("NICK")) {
-=======
-			// The error below can/will happen in the event a player is
-			// /whois'ed from IRC
+			// The error below can/will happen in the event a player is whois'ed from IRC and something goes wrong
 			else
 				BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[2]
-						+ " not found in list. Error code IRCd1999."); // Log as
-			// severe
+						+ " not found in list. Error code IRCd1999."); // Log as severe
 			// because
 			// this
 			// situation
@@ -3528,7 +3522,6 @@ public class IRCd implements Runnable {
 			// the
 			// code
 		} else if (split[1].equalsIgnoreCase("NICK")) {
->>>>>>> 4f80fad0009327c46df2cf2d6cf263c5c25ccadc
 			// :280AAAAAA NICK test 1321981244
 			IRCUser ircuser;
 			if (split[2].startsWith(":"))
