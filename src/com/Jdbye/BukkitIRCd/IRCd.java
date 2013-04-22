@@ -3502,10 +3502,10 @@ public class IRCd implements Runnable {
 			}
 			// The error below can/will happen in the event a player is /whois'ed from IRC - I'd like to know why and how to fix it
 			else BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[2] + " not found in list. Error code IRCd1999."); // Log as severe because this situation should never occur and points to a bug in the code
-		}
-		else if (split[1].equalsIgnoreCase("NICK")) {
+
 			// The error below can/will happen in the event a player is whois'ed from IRC and something goes wrong
-			else
+		}
+		else
 				BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[2]
 						+ " not found in list. Error code IRCd1999."); // Log as severe
 			// because
