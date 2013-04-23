@@ -2,6 +2,7 @@ BukkitIRCd
 =============
 
 ### Description 
+BukkitIRCd is a comprehensive IRC plugin for Bukkit. It allows ingame server chat to be accessed in a standalone IRC channel, or to be linked to a InspIRCd network. Each Bukkit user is represented as his/her own IRC user and can have access to certain IRC privileges. As well, the plugin allows for server control through a IRC channel.
 
 
 This plugin was [originally](http://dev.bukkit.org/server-mods/bukkitircd) by Jdbye. As he hasn't touched it in months, we decided to make some edits of our own.
