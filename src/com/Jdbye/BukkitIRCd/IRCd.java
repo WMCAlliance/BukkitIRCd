@@ -4204,11 +4204,20 @@ public class IRCd implements Runnable {
 																	"%PREFIX%",
 																	IRCd.getGroupPrefix(ircuser
 																			.getTextModes()))
+															// Soon-to-be name highligher: &bPlayername&r
+															// No idea how to do it though, yet
+															//.replace(
+															//		,
+															//		"&b" + "&r")
 															.replace(
 																	"%MESSAGE%",
 																	IRCd.convertColors(
 																			message,
-																			true)));
+																			true))
+															// Basic suffix removal - may need improving
+															.replace(
+																	IRCd.ingameSuffix,
+																	""));
 								if ((BukkitIRCdPlugin.dynmap != null)
 										&& (msgtemplatedynmap.length() > 0))
 									BukkitIRCdPlugin.dynmap
