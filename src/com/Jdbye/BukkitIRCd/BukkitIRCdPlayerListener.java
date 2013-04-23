@@ -33,7 +33,8 @@ public class BukkitIRCdPlayerListener implements Listener {
 		
 		if(!IRCd.colorDeathMessages){
 			message = ChatColor.stripColor(message);
-		}else{
+		}
+		else {
 			message = IRCd.convertColors(message,false);
 		}
 		if(IRCd.mode == Modes.INSPIRCD){
@@ -41,7 +42,8 @@ public class BukkitIRCdPlayerListener implements Listener {
 				
 				IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.channelName + " :" + message);
 				}
-		}else{
+		}
+		else {
 			IRCd.writeAll(message);
 		}
 		
