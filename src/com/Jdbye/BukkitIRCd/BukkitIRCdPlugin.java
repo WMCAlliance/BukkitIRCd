@@ -566,7 +566,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			}
 			finally {
 				input.close();
-				log.info("[BukkitIRCd] Loaded MOTD file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin516." : "");
+				log.info("[BukkitIRCd] Loaded MOTD file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin516." : ""));
 			}
 		}
 		catch (Exception e) {
@@ -780,7 +780,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		try
 		{
 			messages.save(messagesFile);
-			log.info("[BukkitIRCd] Saved messages file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin728." : "");
+			log.info("[BukkitIRCd] Saved messages file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin728." : ""));
 		}
 		catch(Exception e)
 		{

@@ -101,23 +101,33 @@ public class BukkitIRCdPlayerListener implements Listener {
             StringBuffer mode = new StringBuffer();
             Player player = event.getPlayer();
             if (player.hasPermission("bukkitircd.mode.owner")){
-            	BukkitIRCdPlugin.log.info("Add mode +q for "+player.getName());
+            	if (IRCd.debugMode) {
+            		BukkitIRCdPlugin.log.info("Add mode +q for " + player.getName());
+            	}
             	mode.append("~");
             }
-            if (player.hasPermission("bukkitircd.mode.protect")){
-            	BukkitIRCdPlugin.log.info("Add mode +a for "+player.getName());
+            else if (player.hasPermission("bukkitircd.mode.protect")){
+            	if (IRCd.debugMode) {
+            		BukkitIRCdPlugin.log.info("Add mode +a for " + player.getName());
+            	}
             	mode.append("&");
             }
-            if (player.hasPermission("bukkitircd.mode.op")){
-            	BukkitIRCdPlugin.log.info("Add mode +o for "+player.getName());
+            else if (player.hasPermission("bukkitircd.mode.op")){
+            	if (IRCd.debugMode) {
+            		BukkitIRCdPlugin.log.info("Add mode +o for " + player.getName());
+            	}
             	mode.append("@");
             }
-            if (player.hasPermission("bukkitircd.mode.halfop")){
-            	BukkitIRCdPlugin.log.info("Add mode +h for "+player.getName());
+            else if (player.hasPermission("bukkitircd.mode.halfop")){
+            	if (IRCd.debugMode) {
+            		BukkitIRCdPlugin.log.info("Add mode +h for " + player.getName());
+            	}
             	mode.append("%");
             }
-            if (player.hasPermission("bukkitircd.mode.voice")){
-            	BukkitIRCdPlugin.log.info("Add mode +v for "+player.getName());
+            else if (player.hasPermission("bukkitircd.mode.voice")){
+            	if (IRCd.debugMode) {
+            		BukkitIRCdPlugin.log.info("Add mode +v for " + player.getName());
+            	}
             	mode.append("+");
             }
 
