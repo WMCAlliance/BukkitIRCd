@@ -720,7 +720,7 @@ public class IRCd implements Runnable {
 						+ world);
 			else
 				println(pre + "METADATA " + UID
-						+ " swhois :is currently in an unknown world.");
+						+ " swhois :is currently in an unknown world");
 		}
 
 		println(pre + "FJOIN " + consoleChannelName + " " + consoleChannelTS
@@ -1824,7 +1824,7 @@ public class IRCd implements Runnable {
 							println(pre
 									+ "METADATA "
 									+ UID
-									+ " swhois :is currently in an unknown world.");
+									+ " swhois :is currently in an unknown world");
 					}
 				}
 			}
@@ -1920,7 +1920,7 @@ public class IRCd implements Runnable {
 							println(pre
 									+ "METADATA "
 									+ UID
-									+ " swhois :is currently in an unknown world.");
+									+ " swhois :is currently in an unknown world");
 					}
 				}
 				return true;
@@ -4052,7 +4052,7 @@ public class IRCd implements Runnable {
 							println(pre
 									+ "METADATA "
 									+ UID
-									+ " swhois :is currently in an unknown world.");
+									+ " swhois :is currently in an unknown world");
 					} else if ((ircuser2 = uid2ircuser.get(split[2])) != null) {
 						String reason;
 						reason = join(split, " ", 3);
