@@ -192,7 +192,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		config = getConfig();
 		// Create default config.yml if it doesn't exist.
 		if (!(new File(getDataFolder(), "config.yml")).exists()) {
-			log.info("[BukkitIRCd] Creating default configuration file. Code BukkitIRCdPlugin183.");
+			log.info("[BukkitIRCd] Creating default configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin183." : ""));
 		}
 		config.options().copyDefaults(true);
 		loadSettings();
@@ -201,10 +201,10 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		File messagesFile = new File(getDataFolder(), "messages.yml");
 		messages = YamlConfiguration.loadConfiguration(messagesFile);
 		if (!(messagesFile.exists())) {
-			log.info("[BukkitIRCd] Creating default messages file. Code BukkitIRCdPlugin192.");
+			log.info("[BukkitIRCd] Creating default messages file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin192." : ""));
 			messages.options().copyDefaults(true);
 			saveDefaultMessages(getDataFolder(),"messages.yml");
-			log.info("[BukkitIRCd] Saving initial messages file. Code BukkitIRCdPlugin194.");
+			log.info("[BukkitIRCd] Saving initial messages file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin194." : ""));
 			
 		}
 		messages.options().copyDefaults(true);
@@ -212,13 +212,13 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 		if (!(new File(getDataFolder(), "motd.txt")).exists()) {
 			saveDefaultMOTD(getDataFolder(),"motd.txt");
-			log.info("[BukkitIRCd] Default MOTD file created. Code BukkitIRCdPlugin199.");
+			log.info("[BukkitIRCd] Default MOTD file created." + (IRCd.debugMode ? " Code BukkitIRCdPlugin199." : ""));
 		}
 		loadMOTD();
 
 		if (!(new File(getDataFolder(), "bans.txt")).exists()) {
-			if (writeBans()) log.info("[BukkitIRCd] Blank bans file created. Code BukkitIRCdPlugin204.");
-			else log.warning("[BukkitIRCd] Failed to create bans file. Error Code BukkitIRCdPlugin205.");
+			if (writeBans()) log.info("[BukkitIRCd] Blank bans file created." + (IRCd.debugMode ? " Code BukkitIRCdPlugin204." : ""));
+			else log.warning("[BukkitIRCd] Failed to create bans file." + (IRCd.debugMode ? " Error Code BukkitIRCdPlugin205." : ""));
 		}
 
 		setupDynmap();
@@ -279,23 +279,33 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		for (Player player : getServer().getOnlinePlayers()) {
 			StringBuffer mode = new StringBuffer();
             if (player.hasPermission("bukkitircd.mode.owner")){
-            	BukkitIRCdPlugin.log.info("Add mode +q for "+player.getName());
+            	if (IRCd.debugMode) {
+            		log.info("Add mode +q for " + player.getName());
+            	}
             	mode.append("~");
             }
-            if (player.hasPermission("bukkitircd.mode.protect")){
-            	BukkitIRCdPlugin.log.info("Add mode +a for "+player.getName());
+            else if (player.hasPermission("bukkitircd.mode.protect")){
+            	if (IRCd.debugMode) {
+            		log.info("Add mode +a for " + player.getName());
+            	}
             	mode.append("&");
             }
-            if (player.hasPermission("bukkitircd.mode.op")){
-            	BukkitIRCdPlugin.log.info("Add mode +o for "+player.getName());
+            else if (player.hasPermission("bukkitircd.mode.op")){
+            	if (IRCd.debugMode) {
+            		log.info("Add mode +o for " + player.getName());
+            	}
             	mode.append("@");
             }
-            if (player.hasPermission("bukkitircd.mode.halfop")){
-            	BukkitIRCdPlugin.log.info("Add mode +h for "+player.getName());
+            else if (player.hasPermission("bukkitircd.mode.halfop")){
+            	if (IRCd.debugMode) {
+            		log.info("Add mode +h for " + player.getName());
+            	}
             	mode.append("%");
             }
-            if (player.hasPermission("bukkitircd.mode.voice")){
-            	BukkitIRCdPlugin.log.info("Add mode +v for "+player.getName());
+            else if (player.hasPermission("bukkitircd.mode.voice")){
+            	if (IRCd.debugMode) {
+            		log.info("Add mode +v for " + player.getName());
+            	}
             	mode.append("+");
             }
 
@@ -330,14 +340,14 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	public void setupDynmap(DynmapAPI plugin) {
 		if (plugin != null) {
 			dynmap = plugin;
-			log.info("[BukkitIRCd] Hooked into Dynmap. Code BukkitIRCdPlugin301.");
+			log.info("[BukkitIRCd] Hooked into Dynmap." + (IRCd.debugMode ? " Code BukkitIRCdPlugin301." : ""));
 		}
 	}
 
 	public void unloadDynmap() {
 		if (BukkitIRCdPlugin.dynmap != null) {
 			BukkitIRCdPlugin.dynmap = null;
-			log.info("[BukkitIRCd] Dynmap plugin lost. Error Code BukkitIRCdPlugin308.");
+			log.info("[BukkitIRCd] Dynmap plugin lost." + (IRCd.debugMode ? " Error Code BukkitIRCdPlugin308." : ""));
 		}
 	}
 

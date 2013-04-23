@@ -9,7 +9,7 @@ package com.Jdbye.BukkitIRCd;
 // - Removed unused includes
 // - Check our github
 
-/* TODO: (this list was made by Jdbye, we may or may not do this
+/* TODO: (this list was made by Jdbye, we may or may not do this)
  * HeroChat/Towny compatibility.
  * UnrealIRCd/TS5 links
  */
@@ -720,7 +720,7 @@ public class IRCd implements Runnable {
 						+ world);
 			else
 				println(pre + "METADATA " + UID
-						+ " swhois :is currently in an unknown world");
+						+ " swhois :is currently in an unknown world.");
 		}
 
 		println(pre + "FJOIN " + consoleChannelName + " " + consoleChannelTS
@@ -1824,7 +1824,7 @@ public class IRCd implements Runnable {
 							println(pre
 									+ "METADATA "
 									+ UID
-									+ " swhois :is currently in an unknown world");
+									+ " swhois :is currently in an unknown world.");
 					}
 				}
 			}
@@ -1920,7 +1920,7 @@ public class IRCd implements Runnable {
 							println(pre
 									+ "METADATA "
 									+ UID
-									+ " swhois :is currently in an unknown world");
+									+ " swhois :is currently in an unknown world.");
 					}
 				}
 				return true;
@@ -4052,7 +4052,7 @@ public class IRCd implements Runnable {
 							println(pre
 									+ "METADATA "
 									+ UID
-									+ " swhois :is currently in an unknown world");
+									+ " swhois :is currently in an unknown world.");
 					} else if ((ircuser2 = uid2ircuser.get(split[2])) != null) {
 						String reason;
 						reason = join(split, " ", 3);
@@ -5541,7 +5541,6 @@ class ClientConnection implements Runnable {
 				+ " :End of /MOTD command.");
 	}
 
-	// A whois currently fails. Someone please find out why.
 	public void sendWhois(String whoisUser) {
 		IRCUser ircuser;
 		BukkitPlayer bp;
