@@ -107,32 +107,35 @@ public class BukkitIRCdPlayerListener implements Listener {
             		BukkitIRCdPlugin.log.info("Add mode +q for " + player.getName());
             	}
             	mode.append("~");
+            	
             }
-            else if (player.hasPermission("bukkitircd.mode.protect")){
+            if (player.hasPermission("bukkitircd.mode.protect")){
             	if (IRCd.debugMode) {
             		BukkitIRCdPlugin.log.info("Add mode +a for " + player.getName());
             	}
             	mode.append("&");
             }
-            else if (player.hasPermission("bukkitircd.mode.op")){
+            if (player.hasPermission("bukkitircd.mode.op")){
             	if (IRCd.debugMode) {
             		BukkitIRCdPlugin.log.info("Add mode +o for " + player.getName());
             	}
             	mode.append("@");
             }
-            else if (player.hasPermission("bukkitircd.mode.halfop")){
+            if (player.hasPermission("bukkitircd.mode.halfop")){
             	if (IRCd.debugMode) {
             		BukkitIRCdPlugin.log.info("Add mode +h for " + player.getName());
             	}
             	mode.append("%");
             }
-            else if (player.hasPermission("bukkitircd.mode.voice")){
+            if (player.hasPermission("bukkitircd.mode.voice")){
             	if (IRCd.debugMode) {
             		BukkitIRCdPlugin.log.info("Add mode +v for " + player.getName());
             	}
             	mode.append("+");
             }
-
+            if (!IRCd.redundantModes){
+            	mode.delete(1, mode.length()); //Remove all but the mode powerful mode if redundant modes are not allowed
+            }
             IRCd.addBukkitUser(mode.toString(),player);
     }
 

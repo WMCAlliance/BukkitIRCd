@@ -59,6 +59,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 	public Map<String, String> lastReceived = new HashMap<String, String>();
 
+	boolean ircd_redundant_modes = false;
 	private int ircd_port = 6667;
 	private int ircd_maxconn = 1000;
 	private int ircd_pinginterval = 45;
@@ -88,6 +89,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	private boolean ircd_broadcast_death_messages = true;
 	public static boolean debugmode = false;
 	public boolean dynmapEventRegistered = false;
+	private boolean ircd_strip_ingame_suffix = true;
 	
 	public static String link_remotehost = "localhost";
 	public static int link_remoteport = 7000;
@@ -226,7 +228,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		ircd = new IRCd();
 		
 		loadMessages(ircd);
-		
+		IRCd.redundantModes = ircd_redundant_modes;
 		IRCd.port = ircd_port;
 		IRCd.maxConnections = ircd_maxconn;
 		IRCd.pingInterval = ircd_pinginterval;
@@ -238,6 +240,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			IRCd.channelTopicSet = ircd_topicsetby;
 			IRCd.channelTopicSetDate = ircd_topicsetdate / 1000L;
 		}
+		IRCd.stripIngameSuffix = ircd_strip_ingame_suffix;
 		IRCd.serverName = ircd_servername;
 		IRCd.serverDescription = ircd_serverdescription;
 		IRCd.serverHostName = ircd_serverhostname;
@@ -353,6 +356,8 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 	private void loadSettings() {
 		try {
+			ircd_redundant_modes = config.getBoolean("redundant-modes",ircd_redundant_modes);
+			ircd_strip_ingame_suffix = config.getBoolean("strip-ingame-suffix",ircd_strip_ingame_suffix);
 			ircd_color_death_messages = config.getBoolean("color-death-messages", ircd_color_death_messages);
 			ircd_color_say_messages = config.getBoolean("color-say-messages", ircd_color_say_messages);
 			mode = config.getString("mode", mode);

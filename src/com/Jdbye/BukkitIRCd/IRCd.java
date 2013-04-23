@@ -101,6 +101,8 @@ public class IRCd implements Runnable {
 	public static boolean convertColorCodes = true;
 	public static boolean handleAmpersandColors = true;
 	public String modestr = "standalone";
+	public static boolean stripIngameSuffix = true;
+	public static boolean redundantModes = false;
 	public static Modes mode;
 
 	// Standalone server settings
@@ -4188,36 +4190,36 @@ public class IRCd implements Runnable {
 								}
 							} else {
 
-								if (msgtemplate.length() > 0)
+								if (msgtemplate.length() > 0){
+									String msg = msgtemplate
+											.replace(
+													"%USER%",
+													ircuser.nick)
+											.replace(
+													"%SUFFIX%",
+													IRCd.getGroupSuffix(ircuser
+															.getTextModes()))
+											.replace(
+													"%PREFIX%",
+													IRCd.getGroupPrefix(ircuser
+															.getTextModes()))
+											// TODO Player Highlight
+											// .replace(
+											// ,
+											// "&b" + "&r")
+											.replace(
+													"%MESSAGE%",
+													IRCd.convertColors(
+															message,
+															true));
+							if(stripIngameSuffix){
+								msg = msg.replace(IRCd.ingameSuffix,"");
+							}
+							
 									BukkitIRCdPlugin.thePlugin
 											.getServer()
-											.broadcastMessage(
-													msgtemplate
-															.replace(
-																	"%USER%",
-																	ircuser.nick)
-															.replace(
-																	"%SUFFIX%",
-																	IRCd.getGroupSuffix(ircuser
-																			.getTextModes()))
-															.replace(
-																	"%PREFIX%",
-																	IRCd.getGroupPrefix(ircuser
-																			.getTextModes()))
-															// Soon-to-be name highligher: &bPlayername&r
-															// No idea how to do it though, yet
-															//.replace(
-															//		,
-															//		"&b" + "&r")
-															.replace(
-																	"%MESSAGE%",
-																	IRCd.convertColors(
-																			message,
-																			true))
-															// Basic suffix removal - may need improving
-															.replace(
-																	IRCd.ingameSuffix,
-																	""));
+											.broadcastMessage(msg
+													);}
 								if ((BukkitIRCdPlugin.dynmap != null)
 										&& (msgtemplatedynmap.length() > 0))
 									BukkitIRCdPlugin.dynmap
