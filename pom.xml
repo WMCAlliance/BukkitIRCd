@@ -65,4 +65,8 @@
   </scm>
   <description>BukkitIRCd is a comprehensive IRC plugin for Bukkit. It allows ingame server chat to be accessed in a standalone IRC channel, or to be linked to a InspIRCd network. Each Bukkit user is represented as his/her own IRC user and can have access to certain IRC privileges. As well, the plugin allows for server control through a IRC channel.
 </description>
+  <ciManagement>
+  	<system>Jenkins</system>
+  	<url>http://netbook.home.wizardcm.com:8080/job/BukkitIRCd/</url>
+  </ciManagement>
 </project>
