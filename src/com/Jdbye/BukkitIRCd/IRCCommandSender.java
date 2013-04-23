@@ -3,7 +3,7 @@ package com.Jdbye.BukkitIRCd;
 import java.util.Set;
 import java.util.regex.PatternSyntaxException;
 
-import org.bukkit.ChatColor;
+// import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissibleBase;
