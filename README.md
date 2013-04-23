@@ -40,3 +40,7 @@ Although we love your input we do have a few simple rules.
  
 ### Licensing
 BukkitIRCd is licensed under the GNU General Public License Version 3. A copy of this license is available in this repository with the filename LICENSE.md
+
+### Plugin Statistics
+![PluginMetrics](http://api.mcstats.org/signature/BukkitIRCd.png)
+More staticstics available at [MCStats.org](http://mcstats.org/plugin/BukkitIRCd)
