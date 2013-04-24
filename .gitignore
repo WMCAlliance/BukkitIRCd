@@ -1,6 +1,7 @@
 *.class
 .classpath
 .project
+*.iml
 
 # Package Files #
 *.jar
@@ -9,3 +10,4 @@
 
 target/
 .settings/
+bin/
