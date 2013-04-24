@@ -19,8 +19,8 @@ Changes
 <li>Sometimes running commands in the staff channel or kicking a player from IRC would freeze the server - this will no longer happen</li>
 <li>The staff channel now has full console permissions</li>
 <li>The player list now uses Minecraft colour codes</li>
-<li>The 'ingame suffix' is no longer shown to players when you mention them</li>
-<li>Players are no longer given multiple IRC modes - it was unnecessary</li>
+<li>The 'ingame suffix' is no longer shown to players when you mention them - this can be disabled in the config</li>
+<li>Players are no longer given multiple IRC modes - it was unnecessary, but if you prefer the old functionality edit the config</li>
 </ul>
 
 <strong>Note:</strong> If this is the first time you are trying this plugin, be sure to copy over the provided config.yml and messages.yml, as they do not correctly generate yet.
