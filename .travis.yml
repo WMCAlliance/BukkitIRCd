@@ -5,7 +5,7 @@ jdk:
 notifications:
     email: false
     irc: "irc.wma.im#minecraft-dev"
-before_script: "mvn clean install"
+install: "mvn clean install"
 script: "mvn package"
 branches:
   only:
