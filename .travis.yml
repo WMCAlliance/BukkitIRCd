@@ -1,0 +1,11 @@
+language: java
+jdk:
+  - openjdk6
+  - oraclejdk7
+notifications:
+    email: false
+    irc: "irc.wma.im#minecraft-dev"
+install: "mvn install"
+branches:
+  only:
+    - development

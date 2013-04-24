@@ -33,7 +33,8 @@ public class BukkitIRCdPlayerListener implements Listener {
 		
 		if(!IRCd.colorDeathMessages){
 			message = ChatColor.stripColor(message);
-		}else{
+		}
+		else {
 			message = IRCd.convertColors(message,false);
 		}
 		if(IRCd.mode == Modes.INSPIRCD){
@@ -41,7 +42,8 @@ public class BukkitIRCdPlayerListener implements Listener {
 				
 				IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.channelName + " :" + message);
 				}
-		}else{
+		}
+		else {
 			IRCd.writeAll(message);
 		}
 		
@@ -75,7 +77,8 @@ public class BukkitIRCdPlayerListener implements Listener {
 				
 				String message = s.toString();
 				
-				message = ChatColor.stripColor(message);
+				
+				message = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',message));
 				if(IRCd.colorSayMessages){
 					message = (char) 3 + "13" + message;
 				}
@@ -100,26 +103,39 @@ public class BukkitIRCdPlayerListener implements Listener {
             StringBuffer mode = new StringBuffer();
             Player player = event.getPlayer();
             if (player.hasPermission("bukkitircd.mode.owner")){
-            	BukkitIRCdPlugin.log.info("Add mode +q for "+player.getName());
+            	if (IRCd.debugMode) {
+            		BukkitIRCdPlugin.log.info("Add mode +q for " + player.getName());
+            	}
             	mode.append("~");
+            	
             }
             if (player.hasPermission("bukkitircd.mode.protect")){
-            	BukkitIRCdPlugin.log.info("Add mode +a for "+player.getName());
+            	if (IRCd.debugMode) {
+            		BukkitIRCdPlugin.log.info("Add mode +a for " + player.getName());
+            	}
             	mode.append("&");
             }
             if (player.hasPermission("bukkitircd.mode.op")){
-            	BukkitIRCdPlugin.log.info("Add mode +o for "+player.getName());
+            	if (IRCd.debugMode) {
+            		BukkitIRCdPlugin.log.info("Add mode +o for " + player.getName());
+            	}
             	mode.append("@");
             }
             if (player.hasPermission("bukkitircd.mode.halfop")){
-            	BukkitIRCdPlugin.log.info("Add mode +h for "+player.getName());
+            	if (IRCd.debugMode) {
+            		BukkitIRCdPlugin.log.info("Add mode +h for " + player.getName());
+            	}
             	mode.append("%");
             }
             if (player.hasPermission("bukkitircd.mode.voice")){
-            	BukkitIRCdPlugin.log.info("Add mode +v for "+player.getName());
+            	if (IRCd.debugMode) {
+            		BukkitIRCdPlugin.log.info("Add mode +v for " + player.getName());
+            	}
             	mode.append("+");
             }
-
+            if (!IRCd.redundantModes){
+            	mode.delete(1, mode.length()); //Remove all but the mode powerful mode if redundant modes are not allowed
+            }
             IRCd.addBukkitUser(mode.toString(),player);
     }
 
@@ -201,7 +217,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 					
 					String message = s.toString();
 					
-					message = ChatColor.stripColor(message);
+					message = ChatColor.translateAlternateColorCodes('&',ChatColor.stripColor(message));
 					if(IRCd.colorSayMessages){
 						message = (char) 3 + "13" + message;
 					}

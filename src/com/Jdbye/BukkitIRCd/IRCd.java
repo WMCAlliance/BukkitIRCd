@@ -9,7 +9,7 @@ package com.Jdbye.BukkitIRCd;
 // - Removed unused includes
 // - Check our github
 
-/* TODO: (this list was made by Jdbye, we may or may not do this
+/* TODO: (this list was made by Jdbye, we may or may not do this)
  * HeroChat/Towny compatibility.
  * UnrealIRCd/TS5 links
  */
@@ -101,6 +101,8 @@ public class IRCd implements Runnable {
 	public static boolean convertColorCodes = true;
 	public static boolean handleAmpersandColors = true;
 	public String modestr = "standalone";
+	public static boolean stripIngameSuffix = true;
+	public static boolean redundantModes = false;
 	public static Modes mode;
 
 	// Standalone server settings
@@ -126,6 +128,7 @@ public class IRCd implements Runnable {
 	public static int SID = 111;
 
 	// Custom messages
+	public static String msgSendQueryFromIngame = "&r[IRC] [me -> &7%PREFIX%%USER%%SUFFIX%&r] %MESSAGE%";
 	public static String msgLinked = "&e[IRC] Linked to server %LINKNAME%";
 	public static String msgDelinked = "&e[IRC] Split from server %LINKNAME%";
 	public static String msgDelinkedReason = "&e[IRC] Split from server %LINKNAME% (%REASON%)";
@@ -220,7 +223,6 @@ public class IRCd implements Runnable {
 
 	public static BufferedReader in;
 	public static PrintStream out;
-	
 
 	public IRCd() {
 	}
@@ -744,6 +746,9 @@ public class IRCd implements Runnable {
 				for (int i = 0; i < textMode.length(); i++) {
 					modestr += UID + " ";
 				}
+				modestr = modestr.substring(0, modestr.length()-1);
+				println(":" + serverUID + " FMODE " + channelName + " " + channelTS + " + " + textMode + " " + modestr);
+
 				modestr = modestr.substring(0, modestr.length() - 1);
 				println(":" + serverUID + " FMODE " + channelName + " "
 						+ channelTS + " + " + textMode + " " + modestr);
@@ -1251,7 +1256,25 @@ public class IRCd implements Runnable {
 																		"%REASON%",
 																		convertColors(
 																				reason,
-																				true)));
+																				true))
+																.replace(
+																		"%KICKEDPREFIX%",
+																		IRCd.getGroupPrefix(processor.modes))
+																.replace(
+																		"%KICKEDSUFFIX%",
+																		IRCd.getGroupSuffix(processor.modes))
+																.replace(
+																		"%KICKERPREFIX%",
+																		IRCd.getGroupPrefix(IRCd
+																				.getIRCUser(
+																						kickedByNick)
+																				.getTextModes()))
+																.replace(
+																		"%KICKERSUFFIX%",
+																		IRCd.getGroupSuffix(IRCd
+																				.getIRCUser(
+																						kickedByNick)
+																				.getTextModes())));
 									if ((BukkitIRCdPlugin.dynmap != null)
 											&& (msgIRCKickReasonDynmap.length() > 0))
 										BukkitIRCdPlugin.dynmap
@@ -1278,7 +1301,25 @@ public class IRCd implements Runnable {
 																		processor.nick)
 																.replace(
 																		"%KICKEDBY%",
-																		kickedByNick));
+																		kickedByNick)
+																.replace(
+																		"%KICKEDPREFIX%",
+																		IRCd.getGroupPrefix(processor.modes))
+																.replace(
+																		"%KICKEDSUFFIX%",
+																		IRCd.getGroupSuffix(processor.modes))
+																.replace(
+																		"%KICKERPREFIX%",
+																		IRCd.getGroupPrefix(IRCd
+																				.getIRCUser(
+																						kickedByNick)
+																				.getTextModes()))
+																.replace(
+																		"%KICKERSUFFIX%",
+																		IRCd.getGroupSuffix(IRCd
+																				.getIRCUser(
+																						kickedByNick)
+																				.getTextModes())));
 									if ((BukkitIRCdPlugin.dynmap != null)
 											&& (msgIRCKickDynmap.length() > 0))
 										BukkitIRCdPlugin.dynmap
@@ -1370,7 +1411,8 @@ public class IRCd implements Runnable {
 							println(":" + sourceUID + " KICK " + channelName
 									+ " " + uid + " :" + reason);
 							if (msgIRCKickReason.length() > 0)
-								BukkitIRCdPlugin.thePlugin.getServer()
+								BukkitIRCdPlugin.thePlugin
+										.getServer()
 										.broadcastMessage(
 												msgIRCKickReason
 														.replace(
@@ -1382,7 +1424,27 @@ public class IRCd implements Runnable {
 																"%REASON%",
 																convertColors(
 																		reason,
-																		true)));
+																		true))
+														.replace(
+																"%KICKEDPREFIX%",
+																IRCd.getGroupPrefix(iuser
+																		.getTextModes()))
+														.replace(
+																"%KICKEDSUFFIX%",
+																IRCd.getGroupSuffix(iuser
+																		.getTextModes()))
+														.replace(
+																"%KICKERPREFIX%",
+																IRCd.getGroupPrefix(IRCd
+																		.getIRCUser(
+																				kickedByNick)
+																		.getTextModes()))
+														.replace(
+																"%KICKERSUFFIX%",
+																IRCd.getGroupSuffix(IRCd
+																		.getIRCUser(
+																				kickedByNick)
+																		.getTextModes())));
 							if ((BukkitIRCdPlugin.dynmap != null)
 									&& (msgIRCKickReasonDynmap.length() > 0))
 								BukkitIRCdPlugin.dynmap
@@ -1401,13 +1463,35 @@ public class IRCd implements Runnable {
 							println(":" + sourceUID + " KICK " + channelName
 									+ " " + uid + " :" + kickedByNick);
 							if (msgIRCKick.length() > 0)
-								BukkitIRCdPlugin.thePlugin.getServer()
+								BukkitIRCdPlugin.thePlugin
+										.getServer()
 										.broadcastMessage(
-												msgIRCKick.replace(
-														"%KICKEDUSER%",
-														iuser.nick).replace(
-														"%KICKEDBY%",
-														kickedByNick));
+												msgIRCKick
+														.replace(
+																"%KICKEDUSER%",
+																iuser.nick)
+														.replace("%KICKEDBY%",
+																kickedByNick)
+														.replace(
+																"%KICKEDPREFIX%",
+																IRCd.getGroupPrefix(iuser
+																		.getTextModes()))
+														.replace(
+																"%KICKEDSUFFIX%",
+																IRCd.getGroupSuffix(iuser
+																		.getTextModes()))
+														.replace(
+																"%KICKERPREFIX%",
+																IRCd.getGroupPrefix(IRCd
+																		.getIRCUser(
+																				kickedByNick)
+																		.getTextModes()))
+														.replace(
+																"%KICKERSUFFIX%",
+																IRCd.getGroupSuffix(IRCd
+																		.getIRCUser(
+																				kickedByNick)
+																		.getTextModes())));
 							if ((BukkitIRCdPlugin.dynmap != null)
 									&& (msgIRCKickDynmap.length() > 0))
 								BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
@@ -1543,25 +1627,13 @@ public class IRCd implements Runnable {
 								+ channelTS + " + b :" + banHost);
 						return true;
 					} else {
-						BukkitIRCdPlugin.log
-								.severe("[BukkitIRCd] User "
-										+ user
-										+ " not found in UID list. Error code IRCd1004."); // Log
-						// this
-						// as
-						// severe
-						// since
-						// it
-						// should
-						// never
-						// occur
-						// unless
-						// something
-						// is
-						// wrong
-						// with
-						// the
-						// code
+						if (debugMode) {
+							BukkitIRCdPlugin.log
+							.severe("[BukkitIRCd] User "
+									+ user
+									+ " not found in UID list. Error code IRCd1004."); // Log							
+						}
+
 						return false;
 					}
 				}
@@ -1598,23 +1670,12 @@ public class IRCd implements Runnable {
 							+ channelTS + " -b :" + banHost);
 					return true;
 				} else {
-					BukkitIRCdPlugin.log.severe("[BukkitIRCd] User " + user
-							+ " not found in UID list. Error code IRCd1034."); // Log
-					// this
-					// as
-					// severe
-					// since
-					// it
-					// should
-					// never
-					// occur
-					// unless
-					// something
-					// is
-					// wrong
-					// with
-					// the
-					// code
+					if (debugMode) {
+						BukkitIRCdPlugin.log.severe("[BukkitIRCd] User " + user
+								+ " not found in UID list. Error code IRCd1034."); // Log						
+					}
+
+
 					return false;
 				}
 			}
@@ -1715,7 +1776,7 @@ public class IRCd implements Runnable {
 				}
 				if (!mode1.equals("+")) {
 					if (mode == Modes.STANDALONE) {
-						
+
 						writeAll(":" + serverName + "!" + serverName + "@"
 								+ serverHostName + " MODE " + IRCd.channelName
 								+ " " + mode1 + " "
@@ -1849,7 +1910,7 @@ public class IRCd implements Runnable {
 							}
 							modestr = modestr
 									.substring(0, modestr.length() - 1);
-							
+
 							println(":" + serverUID + " FMODE " + channelName
 									+ " " + channelTS + " +" + textMode + " "
 									+ modestr);
@@ -2563,11 +2624,12 @@ public class IRCd implements Runnable {
 		// Goes from highest rank to lowest rank
 		String prefix;
 		// Owner
-		
-		if(IRCd.groupPrefixes == null){
+
+		if (IRCd.groupPrefixes == null) {
 			return "";
 		}
-		if (IRCd.groupPrefixes.contains("q") && (modes.contains("q") || modes.contains("~"))) {
+		if (IRCd.groupPrefixes.contains("q")
+				&& (modes.contains("q") || modes.contains("~"))) {
 			try {
 				prefix = IRCd.groupPrefixes.getString("q");
 			} catch (NullPointerException e) {
@@ -2581,7 +2643,8 @@ public class IRCd implements Runnable {
 		// replace("@", "o").replace("%", "h").replace("+", "v");
 
 		// Super Op
-		if (IRCd.groupPrefixes.contains("a") && (modes.contains("a") || modes.contains("&"))) {
+		if (IRCd.groupPrefixes.contains("a")
+				&& (modes.contains("a") || modes.contains("&"))) {
 			try {
 				prefix = IRCd.groupPrefixes.getString("a");
 			} catch (NullPointerException e) {
@@ -2593,7 +2656,8 @@ public class IRCd implements Runnable {
 		}
 
 		// Op
-		if (IRCd.groupPrefixes.contains("o") && (modes.contains("o") || modes.contains("@"))) {
+		if (IRCd.groupPrefixes.contains("o")
+				&& (modes.contains("o") || modes.contains("@"))) {
 			try {
 				prefix = IRCd.groupPrefixes.getString("o");
 			} catch (NullPointerException e) {
@@ -2605,7 +2669,8 @@ public class IRCd implements Runnable {
 		}
 
 		// Half Op
-		if (IRCd.groupPrefixes.contains("h") && (modes.contains("h") || modes.contains("%"))) {
+		if (IRCd.groupPrefixes.contains("h")
+				&& (modes.contains("h") || modes.contains("%"))) {
 			try {
 				prefix = IRCd.groupPrefixes.getString("h");
 			} catch (NullPointerException e) {
@@ -2617,7 +2682,8 @@ public class IRCd implements Runnable {
 		}
 
 		// Voice
-		if (IRCd.groupPrefixes.contains("q") && (modes.contains("v") || modes.contains("+"))) {
+		if (IRCd.groupPrefixes.contains("q")
+				&& (modes.contains("v") || modes.contains("+"))) {
 			try {
 				prefix = IRCd.groupPrefixes.getString("v");
 			} catch (NullPointerException e) {
@@ -2627,9 +2693,9 @@ public class IRCd implements Runnable {
 				return ChatColor.translateAlternateColorCodes('&', prefix);
 			}
 		}
-		
+
 		// User
-		if (IRCd.groupPrefixes.contains("user")){
+		if (IRCd.groupPrefixes.contains("user")) {
 			try {
 				prefix = IRCd.groupPrefixes.getString("user");
 			} catch (NullPointerException e) {
@@ -2638,10 +2704,10 @@ public class IRCd implements Runnable {
 			if (!prefix.isEmpty() || prefix != null) {
 				return ChatColor.translateAlternateColorCodes('&', prefix);
 			}
-			
+
 		}
-			return "";
-		
+		return "";
+
 	}
 
 	/**
@@ -2653,12 +2719,13 @@ public class IRCd implements Runnable {
 	public static String getGroupSuffix(String modes) {
 		// Goes from highest rank to lowest rank
 		String suffix;
-		
-		if (IRCd.groupSuffixes == null){
+
+		if (IRCd.groupSuffixes == null) {
 			return "";
 		}
 		// Owner
-		if (IRCd.groupSuffixes.contains("q") && (modes.contains("q") || modes.contains("~"))) {
+		if (IRCd.groupSuffixes.contains("q")
+				&& (modes.contains("q") || modes.contains("~"))) {
 			try {
 				suffix = IRCd.groupSuffixes.getString("q");
 			} catch (NullPointerException e) {
@@ -2672,7 +2739,8 @@ public class IRCd implements Runnable {
 		// replace("@", "o").replace("%", "h").replace("+", "v");
 
 		// Super Op
-		if (IRCd.groupSuffixes.contains("a") &&  (modes.contains("a") || modes.contains("&"))) {
+		if (IRCd.groupSuffixes.contains("a")
+				&& (modes.contains("a") || modes.contains("&"))) {
 			try {
 				suffix = IRCd.groupPrefixes.getString("a");
 			} catch (NullPointerException e) {
@@ -2684,7 +2752,8 @@ public class IRCd implements Runnable {
 		}
 
 		// Op
-		if (IRCd.groupSuffixes.contains("o") &&  (modes.contains("o") || modes.contains("@"))) {
+		if (IRCd.groupSuffixes.contains("o")
+				&& (modes.contains("o") || modes.contains("@"))) {
 			try {
 				suffix = IRCd.groupPrefixes.getString("o");
 			} catch (NullPointerException e) {
@@ -2696,7 +2765,8 @@ public class IRCd implements Runnable {
 		}
 
 		// Half Op
-		if (IRCd.groupSuffixes.contains("h") &&  (modes.contains("h") || modes.contains("%"))) {
+		if (IRCd.groupSuffixes.contains("h")
+				&& (modes.contains("h") || modes.contains("%"))) {
 			try {
 				suffix = IRCd.groupPrefixes.getString("h");
 			} catch (NullPointerException e) {
@@ -2708,7 +2778,8 @@ public class IRCd implements Runnable {
 		}
 
 		// Voice
-		if (IRCd.groupSuffixes.contains("v") && (modes.contains("v") || modes.contains("+"))) {
+		if (IRCd.groupSuffixes.contains("v")
+				&& (modes.contains("v") || modes.contains("+"))) {
 			try {
 				suffix = IRCd.groupPrefixes.getString("v");
 			} catch (NullPointerException e) {
@@ -2718,7 +2789,7 @@ public class IRCd implements Runnable {
 				return ChatColor.translateAlternateColorCodes('&', suffix);
 			}
 		}
-		
+
 		// User
 		if (IRCd.groupSuffixes.contains("user")) {
 			try {
@@ -2731,7 +2802,7 @@ public class IRCd implements Runnable {
 			}
 		}
 		return "";
-		
+
 	}
 
 	// This is where the channel topic is configured
@@ -2960,24 +3031,14 @@ public class IRCd implements Runnable {
 					// Remove away status
 					iuser.awayMsg = "";
 				}
-			} else
-				BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + UID
-						+ " not found in list. Error code IRCd1707."); // Log
-			// this
-			// as
-			// severe
-			// since
-			// it
-			// should
-			// never
-			// occur
-			// unless
-			// something
-			// is
-			// wrong
-			// with
-			// the
-			// code
+			} else {
+				if (debugMode) {
+					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + UID
+							+ " not found in list. Error code IRCd1707."); // Log				
+				}
+			}
+
+
 		} else if (split[1].equalsIgnoreCase("TIME")) {
 			// TIME request from user
 			// :123AAAAAA TIME :test.tempcraft.net
@@ -3066,23 +3127,14 @@ public class IRCd implements Runnable {
 				split[2] = split[2].substring(1);
 			if ((ircuser = uid2ircuser.get(split[0])) != null) {
 				ircuser.isOper = true;
-			} else
-				BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
-						+ " not found in list. Error code IRCd1779."); // Log as
-			// severe
-			// because
-			// this
-			// situation
-			// should
-			// never
-			// occur
-			// and
-			// points
-			// to a
-			// bug
-			// in
-			// the
-			// code
+			} else {
+				if (debugMode) {
+					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
+							+ " not found in list. Error code IRCd1779."); // Log as					
+				}
+			}
+
+
 		}
 
 		else if (split[1].equalsIgnoreCase("MODE")) {
@@ -3113,10 +3165,13 @@ public class IRCd implements Runnable {
 					}
 				}
 			} else {
-				// Log as severe because this situation should never occur and
-				// points to a bug in the code
-				BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID " + split[0]
-						+ " not found in list. Error code IRCd1806.");
+				if (debugMode) {
+					// Log as severe because this situation should never occur and
+					// points to a bug in the code
+					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID " + split[0]
+							+ " not found in list. Error code IRCd1806.");			
+				}
+
 			}
 		} else if (split[1].equalsIgnoreCase("FJOIN")) {
 			// :dev.tempcraft.net FJOIN #tempcraft.staff 1321829730 +tnsk
@@ -3165,26 +3220,14 @@ public class IRCd implements Runnable {
 							}
 						}
 						ircuser.joined = true;
-					} else
-						BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "
-								+ usersplit[1]
-								+ " not found in list. Error code IRCd1831."); // Log
-					// as
-					// severe
-					// because
-					// this
-					// situation
-					// should
-					// never
-					// occur
-					// and
-					// points
-					// to
-					// a
-					// bug
-					// in
-					// the
-					// code
+					} else {
+						if (debugMode) {
+							BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "
+									+ usersplit[1]
+									+ " not found in list. Error code IRCd1831."); // Log			
+						}
+					}
+
 				}
 			} else if (split[2].equalsIgnoreCase(consoleChannelName)) {
 				try {
@@ -3203,26 +3246,14 @@ public class IRCd implements Runnable {
 					if ((ircuser = uid2ircuser.get(usersplit[1])) != null) {
 						ircuser.setConsoleModes(usersplit[0]);
 						ircuser.consoleJoined = true;
-					} else
-						BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "
-								+ usersplit[1]
-								+ " not found in list. Error code IRCd1849."); // Log
-					// as
-					// severe
-					// because
-					// this
-					// situation
-					// should
-					// never
-					// occur
-					// and
-					// points
-					// to
-					// a
-					// bug
-					// in
-					// the
-					// code
+					} else {
+						if (debugMode) {
+							BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "
+									+ usersplit[1]
+									+ " not found in list. Error code IRCd1849."); // Log					
+						}
+					}
+
 				}
 			}
 			// Ignore other channels, since this plugin only cares about the
@@ -3234,23 +3265,14 @@ public class IRCd implements Runnable {
 				split[2] = split[2].substring(1);
 			if ((ircuser = uid2ircuser.get(split[0])) != null) {
 				ircuser.hostmask = split[2];
-			} else
-				BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
-						+ " not found in list. Error code IRCd1861."); // Log as
-			// severe
-			// because
-			// this
-			// situation
-			// should
-			// never
-			// occur
-			// and
-			// points
-			// to a
-			// bug
-			// in
-			// the
-			// code
+			} else {
+				if (debugMode) {
+					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
+							+ " not found in list. Error code IRCd1861."); // Log as					
+				}
+			}
+
+
 		} else if (split[1].equalsIgnoreCase("FNAME")) {
 			// :0KJAAAAAA FNAME TEST
 			IRCUser ircuser;
@@ -3258,23 +3280,14 @@ public class IRCd implements Runnable {
 				split[2] = split[2].substring(1);
 			if ((ircuser = uid2ircuser.get(split[0])) != null) {
 				ircuser.realname = join(split, " ", 2);
-			} else
-				BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
-						+ " not found in list. Error code IRCd1870."); // Log as
-			// severe
-			// because
-			// this
-			// situation
-			// should
-			// never
-			// occur
-			// and
-			// points
-			// to a
-			// bug
-			// in
-			// the
-			// code
+			} else {
+				if (debugMode) {
+					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
+							+ " not found in list. Error code IRCd1870."); // Log as		
+				}
+			}
+
+
 		} else if (split[1].equalsIgnoreCase("FMODE")) {
 			// :0KJAAAAAA FMODE #tempcraft.staff 1320330110 +o 0KJAAAAAB
 			IRCUser ircuser, ircusertarget;
@@ -3465,9 +3478,12 @@ public class IRCd implements Runnable {
 						BukkitIRCdPlugin.ircd_topicsetdate = channelTopicSetDate * 1000;
 						BukkitIRCdPlugin.ircd_topicsetby = user;
 					}
-				} else
+				} else {
+					if (debugMode) {
 					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID " + UID
 							+ " not found in list. Error code IRCd1985."); // Log
+					}
+				}
 				// as
 				// severe
 				// because
@@ -3497,25 +3513,13 @@ public class IRCd implements Runnable {
 				println(":" + split[2] + " IDLE " + split[0] + " "
 						+ ircuser.signonTime + " " + ircuser.getSecondsIdle());
 			}
-			// The error below can/will happen in the event a player is
-			// /whois'ed from IRC
-			else
-				BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[2]
-						+ " not found in list. Error code IRCd1999."); // Log as
-			// severe
-			// because
-			// this
-			// situation
-			// should
-			// never
-			// occur
-			// and
-			// points
-			// to a
-			// bug
-			// in
-			// the
-			// code
+			// The error below can/will happen in the event a player is /whois'ed from IRC - I'd like to know why and how to fix it
+			else {
+				if (debugMode) {
+					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[2] + " not found in list. Error code IRCd1999."); // Log as severe because this situation should never occur and points to a bug in the code
+				}
+			}
+
 		} else if (split[1].equalsIgnoreCase("NICK")) {
 			// :280AAAAAA NICK test 1321981244
 			IRCUser ircuser;
@@ -3551,23 +3555,13 @@ public class IRCd implements Runnable {
 										split[2]));
 				}
 				ircuser.nick = split[2];
-			} else
-				BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[2]
-						+ " not found in list. Error code IRCd2013."); // Log as
-			// severe
-			// because
-			// this
-			// situation
-			// should
-			// never
-			// occur
-			// and
-			// points
-			// to a
-			// bug
-			// in
-			// the
-			// code
+			} else {
+				if (debugMode) {
+					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[2]
+							+ " not found in list. Error code IRCd2013."); // Log as severe, points to a bug in the code					
+				}
+			}
+
 		} else if (split[1].equalsIgnoreCase("KICK")) {
 			// :280AAAAAA KICK #tempcraft.survival 280AAAAAB :reason
 			IRCUser ircuser;
@@ -3616,47 +3610,23 @@ public class IRCd implements Runnable {
 								}
 								removeBukkitUserByUID(split[3]);
 							}
-						} else
-							BukkitIRCdPlugin.log
-									.severe("[BukkitIRCd] Bukkit Player UID "
-											+ split[3]
-											+ " not found in list. Error code IRCd2051."); // Log
-						// as
-						// severe
-						// because
-						// this
-						// situation
-						// should
-						// never
-						// occur
-						// and
-						// points
-						// to
-						// a
-						// bug
-						// in
-						// the
-						// code
-					} else
-						BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID "
-								+ split[0]
-								+ " not found in list. Error code IRCd2053."); // Log
-					// as
-					// severe
-					// because
-					// this
-					// situation
-					// should
-					// never
-					// occur
-					// and
-					// points
-					// to
-					// a
-					// bug
-					// in
-					// the
-					// code
+						} else {
+							if (debugMode) {
+								BukkitIRCdPlugin.log
+								.severe("[BukkitIRCd] Bukkit Player UID "
+										+ split[3]
+										+ " not found in list. Error code IRCd2051."); // Log								
+							}
+						}
+
+					} else {
+						if (debugMode) {
+							BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID "
+									+ split[0]
+									+ " not found in list. Error code IRCd2053."); // Log							
+						}
+					}
+
 				} else if (split[2].equalsIgnoreCase(consoleChannelName)) {
 					if (split[3].equalsIgnoreCase(serverUID)) {
 						println(pre + "FJOIN " + consoleChannelName + " "
@@ -3676,8 +3646,12 @@ public class IRCd implements Runnable {
 							|| ((server = servers.get(split[0])) != null)) {
 						if (ircuser != null)
 							kicker = ircuser.nick;
+
 						else
 							kicker = server.host;
+						String modes = "q";
+						if (ircuser != null)
+							modes = ircuser.getTextModes();
 						if ((ircvictim = uid2ircuser.get(split[3])) != null) {
 							kicked = ircvictim.nick;
 							if ((IRCd.isPlugin)
@@ -3698,7 +3672,21 @@ public class IRCd implements Runnable {
 																		"%REASON%",
 																		convertColors(
 																				reason,
-																				true)));
+																				true))
+																.replace(
+																		"%KICKEDPREFIX%",
+																		IRCd.getGroupPrefix(ircvictim
+																				.getTextModes()))
+																.replace(
+																		"%KICKEDSUFFIX%",
+																		IRCd.getGroupSuffix(ircvictim
+																				.getTextModes()))
+																.replace(
+																		"%KICKERPREFIX%",
+																		IRCd.getGroupPrefix(modes))
+																.replace(
+																		"%KICKERSUFFIX%",
+																		IRCd.getGroupSuffix(modes)));
 									if ((BukkitIRCdPlugin.dynmap != null)
 											&& (msgIRCKickReasonDynmap.length() > 0))
 										BukkitIRCdPlugin.dynmap
@@ -3713,7 +3701,21 @@ public class IRCd implements Runnable {
 																		kicker)
 																.replace(
 																		"%REASON%",
-																		stripIRCFormatting(reason)));
+																		stripIRCFormatting(reason))
+																.replace(
+																		"%KICKEDPREFIX%",
+																		IRCd.getGroupPrefix(ircvictim
+																				.getTextModes()))
+																.replace(
+																		"%KICKEDSUFFIX%",
+																		IRCd.getGroupSuffix(ircvictim
+																				.getTextModes()))
+																.replace(
+																		"%KICKERPREFIX%",
+																		IRCd.getGroupPrefix(modes))
+																.replace(
+																		"%KICKERSUFFIX%",
+																		IRCd.getGroupSuffix(modes)));
 								} else {
 									if (msgIRCKick.length() > 0)
 										BukkitIRCdPlugin.thePlugin
@@ -3725,7 +3727,21 @@ public class IRCd implements Runnable {
 																		kicked)
 																.replace(
 																		"%KICKEDBY%",
-																		kicker));
+																		kicker)
+																.replace(
+																		"%KICKEDPREFIX%",
+																		IRCd.getGroupPrefix(ircvictim
+																				.getTextModes()))
+																.replace(
+																		"%KICKEDSUFFIX%",
+																		IRCd.getGroupSuffix(ircvictim
+																				.getTextModes()))
+																.replace(
+																		"%KICKERPREFIX%",
+																		IRCd.getGroupPrefix(modes))
+																.replace(
+																		"%KICKERSUFFIX%",
+																		IRCd.getGroupSuffix(modes)));
 									if ((BukkitIRCdPlugin.dynmap != null)
 											&& (msgIRCKickDynmap.length() > 0))
 										BukkitIRCdPlugin.dynmap
@@ -3741,47 +3757,24 @@ public class IRCd implements Runnable {
 								}
 								ircvictim.joined = false;
 							}
-						} else
-							BukkitIRCdPlugin.log
-									.severe("[BukkitIRCd] UID "
-											+ split[3]
-											+ " not found in list. Error code IRCd2083."); // Log
-						// as
-						// severe
-						// because
-						// this
-						// situation
-						// should
-						// never
-						// occur
-						// and
-						// points
-						// to
-						// a
-						// bug
-						// in
-						// the
-						// code
-					} else
-						BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID "
-								+ split[0]
-								+ " not found in list. Error code IRCd2085."); // Log
-					// as
-					// severe
-					// because
-					// this
-					// situation
-					// should
-					// never
-					// occur
-					// and
-					// points
-					// to
-					// a
-					// bug
-					// in
-					// the
-					// code
+						} else {
+							if (debugMode) {
+								BukkitIRCdPlugin.log
+								.severe("[BukkitIRCd] UID "
+										+ split[3]
+										+ " not found in list. Error code IRCd2083."); // Log								
+							}
+						}
+
+					} else {
+						if (debugMode) {
+							BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID "
+									+ split[0]
+									+ " not found in list. Error code IRCd2085."); // Log							
+						}
+					}
+
+
 				} else if (split[2].equalsIgnoreCase(consoleChannelName)) {
 					// Console channel
 					// Only thing important here is to set consolemodes to blank
@@ -3790,26 +3783,14 @@ public class IRCd implements Runnable {
 					if ((ircvictim = uid2ircuser.get(split[3])) != null) {
 						ircvictim.setConsoleModes("");
 						ircvictim.consoleJoined = false;
-					} else
-						BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "
-								+ split[3]
-								+ " not found in list. Error code IRCd2094."); // Log
-					// as
-					// severe
-					// because
-					// this
-					// situation
-					// should
-					// never
-					// occur
-					// and
-					// points
-					// to
-					// a
-					// bug
-					// in
-					// the
-					// code
+					} else {
+						if (debugMode) {
+							BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "
+									+ split[3]
+									+ " not found in list. Error code IRCd2094."); // Log							
+						}
+					}
+
 				}
 			}
 		} else if (split[1].equalsIgnoreCase("PART")) {
@@ -3888,25 +3869,13 @@ public class IRCd implements Runnable {
 						ircuser.joined = false;
 						ircuser.setModes("");
 					}
-				} else
-					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
-							+ " not found in list. Error code IRCd2125."); // Log
-				// as
-				// severe
-				// because
-				// this
-				// situation
-				// should
-				// never
-				// occur
-				// and
-				// points
-				// to
-				// a
-				// bug
-				// in
-				// the
-				// code
+				} else {
+					if (debugMode) {
+						BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
+								+ " not found in list. Error code IRCd2125."); // Log						
+					}
+				}
+
 			} else if (split[2].equalsIgnoreCase(consoleChannelName)) {
 				// Console channel
 				// Only thing important here is to set oper to false so they
@@ -3915,25 +3884,14 @@ public class IRCd implements Runnable {
 				if ((ircuser = uid2ircuser.get(split[0])) != null) {
 					ircuser.setConsoleModes("");
 					ircuser.consoleJoined = false;
-				} else
-					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
-							+ " not found in list. Error code IRCd2134."); // Log
-				// as
-				// severe
-				// because
-				// this
-				// situation
-				// should
-				// never
-				// occur
-				// and
-				// points
-				// to
-				// a
-				// bug
-				// in
-				// the
-				// code
+				} else {
+					if (debugMode) {
+						BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
+								+ " not found in list. Error code IRCd2134."); // Log						
+					}
+				}
+
+
 			}
 		} else if (split[1].equalsIgnoreCase("QUIT")) {
 			// :280AAAAAB QUIT :Quit: Connection reset by beer
@@ -4013,23 +3971,14 @@ public class IRCd implements Runnable {
 					ircuser.consoleJoined = false;
 				}
 				uid2ircuser.remove(split[0]);
-			} else
-				BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
-						+ " not found in list. Error code IRCd2166."); // Log as
-			// severe
-			// because
-			// this
-			// situation
-			// should
-			// never
-			// occur
-			// and
-			// points
-			// to a
-			// bug
-			// in
-			// the
-			// code
+			} else {
+				if (debugMode) {
+					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
+							+ " not found in list. Error code IRCd2166."); // Log					
+				}
+			}
+
+
 		} else if (split[1].equalsIgnoreCase("KILL")) {
 			// :280AAAAAA KILL 123AAAAAA :Killed (test (testng))
 
@@ -4146,45 +4095,24 @@ public class IRCd implements Runnable {
 							ircuser2.consoleJoined = false;
 						}
 						uid2ircuser.remove(split[2]);
-					} else
-						BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "
-								+ split[2]
-								+ " not found in list. Error code IRCd2224."); // Log
-					// as
-					// severe
-					// because
-					// this
-					// situation
-					// should
-					// never
-					// occur
-					// and
-					// points
-					// to
-					// a
-					// bug
-					// in
-					// the
-					// code
+					} else {
+						if (debugMode) {
+							BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "
+									+ split[2]
+									+ " not found in list. Error code IRCd2224."); // Log							
+						}
+					}
+
 				}
 
-			} else
-				BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID " + split[0]
-						+ " not found in list. Error code IRCd2228."); // Log as
-			// severe
-			// because
-			// this
-			// situation
-			// should
-			// never
-			// occur
-			// and
-			// points
-			// to a
-			// bug
-			// in
-			// the
-			// code
+			} else {
+				if (debugMode) {
+					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID " + split[0]
+							+ " not found in list. Error code IRCd2228."); // Log					
+				}
+			}
+
+
 		} else if (split[1].equalsIgnoreCase("PRIVMSG")
 				|| split[1].equalsIgnoreCase("NOTICE")) {
 			// :280AAAAAA PRIVMSG 123AAAAAA :test
@@ -4262,27 +4190,36 @@ public class IRCd implements Runnable {
 								}
 							} else {
 
-								if (msgtemplate.length() > 0)
+								if (msgtemplate.length() > 0){
+									String msg = msgtemplate
+											.replace(
+													"%USER%",
+													ircuser.nick)
+											.replace(
+													"%SUFFIX%",
+													IRCd.getGroupSuffix(ircuser
+															.getTextModes()))
+											.replace(
+													"%PREFIX%",
+													IRCd.getGroupPrefix(ircuser
+															.getTextModes()))
+											// TODO Player Highlight
+											// .replace(
+											// ,
+											// "&b" + "&r")
+											.replace(
+													"%MESSAGE%",
+													IRCd.convertColors(
+															message,
+															true));
+							if(stripIngameSuffix){
+								msg = msg.replace(IRCd.ingameSuffix,"");
+							}
+							
 									BukkitIRCdPlugin.thePlugin
 											.getServer()
-											.broadcastMessage(
-													msgtemplate
-															.replace(
-																	"%USER%",
-																	ircuser.nick)
-															.replace(
-																	"%SUFFIX%",
-																	IRCd.getGroupSuffix(ircuser
-																			.getTextModes()))
-															.replace(
-																	"%PREFIX%",
-																	IRCd.getGroupPrefix(ircuser
-																			.getTextModes()))
-															.replace(
-																	"%MESSAGE%",
-																	IRCd.convertColors(
-																			message,
-																			true)));
+											.broadcastMessage(msg
+													);}
 								if ((BukkitIRCdPlugin.dynmap != null)
 										&& (msgtemplatedynmap.length() > 0))
 									BukkitIRCdPlugin.dynmap
@@ -4411,23 +4348,14 @@ public class IRCd implements Runnable {
 					// Ignore messages from other channels
 				}
 
-			} else
-				BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
-						+ " not found in list. Error code IRCd2336."); // Log as
-			// severe
-			// because
-			// this
-			// situation
-			// should
-			// never
-			// occur
-			// and
-			// points
-			// to a
-			// bug
-			// in
-			// the
-			// code
+			} else {
+				if (debugMode) {
+					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
+							+ " not found in list. Error code IRCd2336."); // Log					
+				}
+			}
+
+
 		}
 		// End of IF command check
 	}
@@ -5624,7 +5552,6 @@ class ClientConnection implements Runnable {
 				+ " :End of /MOTD command.");
 	}
 
-	// A whois currently fails. Someone please find out why.
 	public void sendWhois(String whoisUser) {
 		IRCUser ircuser;
 		BukkitPlayer bp;

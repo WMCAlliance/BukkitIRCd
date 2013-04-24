@@ -18,9 +18,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.logging.Logger;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -29,7 +26,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.dynmap.DynmapAPI;
-import org.bukkit.ChatColor;
 
 import com.Jdbye.BukkitIRCd.commands.*;
 /**
@@ -59,6 +55,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 	public Map<String, String> lastReceived = new HashMap<String, String>();
 
+	boolean ircd_redundant_modes = false;
 	private int ircd_port = 6667;
 	private int ircd_maxconn = 1000;
 	private int ircd_pinginterval = 45;
@@ -88,6 +85,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	private boolean ircd_broadcast_death_messages = true;
 	public static boolean debugmode = false;
 	public boolean dynmapEventRegistered = false;
+	private boolean ircd_strip_ingame_suffix = true;
 	
 	public static String link_remotehost = "localhost";
 	public static int link_remoteport = 7000;
@@ -192,7 +190,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		config = getConfig();
 		// Create default config.yml if it doesn't exist.
 		if (!(new File(getDataFolder(), "config.yml")).exists()) {
-			log.info("[BukkitIRCd] Creating default configuration file. Code BukkitIRCdPlugin183.");
+			log.info("[BukkitIRCd] Creating default configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin183." : ""));
 		}
 		config.options().copyDefaults(true);
 		loadSettings();
@@ -201,10 +199,10 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		File messagesFile = new File(getDataFolder(), "messages.yml");
 		messages = YamlConfiguration.loadConfiguration(messagesFile);
 		if (!(messagesFile.exists())) {
-			log.info("[BukkitIRCd] Creating default messages file. Code BukkitIRCdPlugin192.");
+			log.info("[BukkitIRCd] Creating default messages file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin192." : ""));
 			messages.options().copyDefaults(true);
 			saveDefaultMessages(getDataFolder(),"messages.yml");
-			log.info("[BukkitIRCd] Saving initial messages file. Code BukkitIRCdPlugin194.");
+			log.info("[BukkitIRCd] Saving initial messages file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin194." : ""));
 			
 		}
 		messages.options().copyDefaults(true);
@@ -212,13 +210,13 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 		if (!(new File(getDataFolder(), "motd.txt")).exists()) {
 			saveDefaultMOTD(getDataFolder(),"motd.txt");
-			log.info("[BukkitIRCd] Default MOTD file created. Code BukkitIRCdPlugin199.");
+			log.info("[BukkitIRCd] Default MOTD file created." + (IRCd.debugMode ? " Code BukkitIRCdPlugin199." : ""));
 		}
 		loadMOTD();
 
 		if (!(new File(getDataFolder(), "bans.txt")).exists()) {
-			if (writeBans()) log.info("[BukkitIRCd] Blank bans file created. Code BukkitIRCdPlugin204.");
-			else log.warning("[BukkitIRCd] Failed to create bans file. Error Code BukkitIRCdPlugin205.");
+			if (writeBans()) log.info("[BukkitIRCd] Blank bans file created." + (IRCd.debugMode ? " Code BukkitIRCdPlugin204." : ""));
+			else log.warning("[BukkitIRCd] Failed to create bans file." + (IRCd.debugMode ? " Error Code BukkitIRCdPlugin205." : ""));
 		}
 
 		setupDynmap();
@@ -226,7 +224,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		ircd = new IRCd();
 		
 		loadMessages(ircd);
-		
+		IRCd.redundantModes = ircd_redundant_modes;
 		IRCd.port = ircd_port;
 		IRCd.maxConnections = ircd_maxconn;
 		IRCd.pingInterval = ircd_pinginterval;
@@ -238,6 +236,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			IRCd.channelTopicSet = ircd_topicsetby;
 			IRCd.channelTopicSetDate = ircd_topicsetdate / 1000L;
 		}
+		IRCd.stripIngameSuffix = ircd_strip_ingame_suffix;
 		IRCd.serverName = ircd_servername;
 		IRCd.serverDescription = ircd_serverdescription;
 		IRCd.serverHostName = ircd_serverhostname;
@@ -279,23 +278,33 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		for (Player player : getServer().getOnlinePlayers()) {
 			StringBuffer mode = new StringBuffer();
             if (player.hasPermission("bukkitircd.mode.owner")){
-            	BukkitIRCdPlugin.log.info("Add mode +q for "+player.getName());
+            	if (IRCd.debugMode) {
+            		log.info("Add mode +q for " + player.getName());
+            	}
             	mode.append("~");
             }
-            if (player.hasPermission("bukkitircd.mode.protect")){
-            	BukkitIRCdPlugin.log.info("Add mode +a for "+player.getName());
+            else if (player.hasPermission("bukkitircd.mode.protect")){
+            	if (IRCd.debugMode) {
+            		log.info("Add mode +a for " + player.getName());
+            	}
             	mode.append("&");
             }
-            if (player.hasPermission("bukkitircd.mode.op")){
-            	BukkitIRCdPlugin.log.info("Add mode +o for "+player.getName());
+            else if (player.hasPermission("bukkitircd.mode.op")){
+            	if (IRCd.debugMode) {
+            		log.info("Add mode +o for " + player.getName());
+            	}
             	mode.append("@");
             }
-            if (player.hasPermission("bukkitircd.mode.halfop")){
-            	BukkitIRCdPlugin.log.info("Add mode +h for "+player.getName());
+            else if (player.hasPermission("bukkitircd.mode.halfop")){
+            	if (IRCd.debugMode) {
+            		log.info("Add mode +h for " + player.getName());
+            	}
             	mode.append("%");
             }
-            if (player.hasPermission("bukkitircd.mode.voice")){
-            	BukkitIRCdPlugin.log.info("Add mode +v for "+player.getName());
+            else if (player.hasPermission("bukkitircd.mode.voice")){
+            	if (IRCd.debugMode) {
+            		log.info("Add mode +v for " + player.getName());
+            	}
             	mode.append("+");
             }
 
@@ -330,19 +339,21 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	public void setupDynmap(DynmapAPI plugin) {
 		if (plugin != null) {
 			dynmap = plugin;
-			log.info("[BukkitIRCd] Hooked into Dynmap. Code BukkitIRCdPlugin301.");
+			log.info("[BukkitIRCd] Hooked into Dynmap." + (IRCd.debugMode ? " Code BukkitIRCdPlugin301." : ""));
 		}
 	}
 
 	public void unloadDynmap() {
 		if (BukkitIRCdPlugin.dynmap != null) {
 			BukkitIRCdPlugin.dynmap = null;
-			log.info("[BukkitIRCd] Dynmap plugin lost. Error Code BukkitIRCdPlugin308.");
+			log.info("[BukkitIRCd] Dynmap plugin lost." + (IRCd.debugMode ? " Error Code BukkitIRCdPlugin308." : ""));
 		}
 	}
 
 	private void loadSettings() {
 		try {
+			ircd_redundant_modes = config.getBoolean("redundant-modes",ircd_redundant_modes);
+			ircd_strip_ingame_suffix = config.getBoolean("strip-ingame-suffix",ircd_strip_ingame_suffix);
 			ircd_color_death_messages = config.getBoolean("color-death-messages", ircd_color_death_messages);
 			ircd_color_say_messages = config.getBoolean("color-say-messages", ircd_color_say_messages);
 			mode = config.getString("mode", mode);
@@ -397,10 +408,10 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			else if (operpass.startsWith("~")) { ircd_operpass = operpass.substring(1); }
 			else { ircd_operpass = Hash.compute(operpass, HashType.SHA_512); }
 
-			log.info("[BukkitIRCd] Loaded configuration file. Code BukkitIRCdPlugin363.");
+			log.info("[BukkitIRCd] Loaded configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin363." : ""));
 			
 			saveConfig();
-			log.info("[BukkitIRCd] Saved initial configuration file. Code BukkitIRCdPlugin365.");
+			log.info("[BukkitIRCd] Saved initial configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin365." : ""));
 		}
 		catch (Exception e) {
 			log.info("[BukkitIRCd] Failed to load configuration file: " + e.toString());
@@ -425,6 +436,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		try {
 			IRCd.msgLinked = messages.getString("linked", IRCd.msgLinked);
 			
+			IRCd.msgSendQueryFromIngame = messages.getString("irc-send-pm", IRCd.msgSendQueryFromIngame);
 			IRCd.msgDelinked = messages.getString("delinked", IRCd.msgDelinked);
 			IRCd.msgDelinkedReason = messages.getString("delinked-reason", IRCd.msgDelinkedReason);
 			
@@ -471,6 +483,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			IRCd.consoleFilters = messages.getStringList("console-filters");
 			//** RECOLOUR ALL MESSAGES **
 			
+			IRCd.msgSendQueryFromIngame = colorize(IRCd.msgSendQueryFromIngame);
 			IRCd.msgLinked = colorize(IRCd.msgLinked);
 			IRCd.msgDelinked = colorize(IRCd.msgDelinked);
 			IRCd.msgDelinkedReason = colorize(IRCd.msgDelinked);
@@ -502,7 +515,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			IRCd.msgDynmapMessage = colorize(IRCd.msgDynmapMessage);
 			IRCd.msgPlayerList = colorize(IRCd.msgPlayerList);
 
-			log.info("[BukkitIRCd] Loaded messages file. Code BukkitIRCdPlugin464.");
+			log.info("[BukkitIRCd] Loaded messages file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin464." : ""));
 		}
 		catch (Exception e) {
 			log.info("[BukkitIRCd] Failed to load messages file: " + e.toString());
@@ -513,7 +526,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	@SuppressWarnings("unused")
 	private void firstRunSettings(File dataFolder)
 	{
-		log.info("[BukkitIRCd] Configuration file not found, creating new one. Code BukkitIRCdPlugin475.");
+		log.info("[BukkitIRCd] Configuration file not found, creating new one." + (IRCd.debugMode ? " Code BukkitIRCdPlugin475." : ""));
 		dataFolder.mkdirs();
 
 		File configFile = new File(dataFolder, "config.yml");
@@ -524,7 +537,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 		catch(IOException e)
 		{
-			log.warning("[BukkitIRCd] Could not create config file! Error Code BukkitIRCdPlugin486.");
+			log.warning("[BukkitIRCd] Could not create config file!" + (IRCd.debugMode ? " Error Code BukkitIRCdPlugin486." : ""));
 		}
 
 		writeSettings(configFile);
@@ -554,7 +567,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			}
 			finally {
 				input.close();
-				log.info("[BukkitIRCd] Loaded MOTD file. Code BukkitIRCdPlugin516.");
+				log.info("[BukkitIRCd] Loaded MOTD file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin516." : ""));
 			}
 		}
 		catch (Exception e) {
@@ -590,7 +603,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			}
 			finally {
 				input.close();
-				log.info("[BukkitIRCd] Loaded bans file. Code BukkitIRCdPlugin551.");
+				log.info("[BukkitIRCd] Loaded bans file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin551." : ""));
 			}
 		}
 		catch (Exception e) {
@@ -625,7 +638,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			}
 
 			bufferWriter.flush();
-			log.info("[BukkitIRCd] Saved bans file. Code BukkitIRCdPlugin585.");
+			log.info("[BukkitIRCd] Saved bans file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin585." : ""));
 			result = true;
 		}
 		catch(IOException e)
@@ -657,7 +670,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	// If a motd is not found, save it
 	private void saveDefaultMOTD(File dataFolder, String fileName)
 	{
-		log.info("[BukkitIRCd] MOTD file not found, creating new one. Code BukkitIRCdPlugin616.");
+		log.info("[BukkitIRCd] MOTD file not found, creating new one." + (IRCd.debugMode ? " Code BukkitIRCdPlugin616." : ""));
 		dataFolder.mkdirs();
 
 		File motdFile = new File(dataFolder, fileName);
@@ -668,7 +681,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 		catch(IOException e)
 		{
-			log.warning("[BukkitIRCd] Could not create MOTD file! Code BukkitIRCdPlugin627.");
+			log.warning("[BukkitIRCd] Could not create MOTD file!" + (IRCd.debugMode ? " Code BukkitIRCdPlugin627." : ""));
 		}
 
 		writeMOTD(motdFile);
@@ -715,7 +728,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			bufferWriter.newLine();
 
 			bufferWriter.flush();
-			log.info("[BukkitIRCd] Saved MOTD file. Code BukkitIRCdPlugin674");
+			log.info("[BukkitIRCd] Saved MOTD file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin674" : ""));
 		}
 		catch(IOException e)
 		{
@@ -743,10 +756,9 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	}
 	
 	// Was also disabled, I'd like to know why
-	@SuppressWarnings("unused")
 	private void saveDefaultMessages(File dataFolder, String fileName)
 	{
-		log.info("[BukkitIRCd] Messages file not found, creating new one. Code BukkitIRCdPlugin705");
+		log.info("[BukkitIRCd] Messages file not found, creating new one." + (IRCd.debugMode ? " Code BukkitIRCdPlugin705" : ""));
 		dataFolder.mkdirs();
 
 		File msgFile = new File(dataFolder, fileName);
@@ -757,7 +769,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 		catch(IOException e)
 		{
-			log.warning("[BukkitIRCd] Could not create messages file! Error code BukkitIRCdPlugin716.");
+			log.warning("[BukkitIRCd] Could not create messages file!" + (IRCd.debugMode ? " Error code BukkitIRCdPlugin716." : ""));
 		}
 
 		writeMessages(msgFile);
@@ -769,7 +781,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		try
 		{
 			messages.save(messagesFile);
-			log.info("[BukkitIRCd] Saved messages file. Code BukkitIRCdPlugin728.");
+			log.info("[BukkitIRCd] Saved messages file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin728." : ""));
 		}
 		catch(Exception e)
 		{
@@ -783,7 +795,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		try
 		{
 			saveConfig();
-			log.info("[BukkitIRCd] Saved configuration file. Code BukkitIRCdPlugin742.");
+			log.info("[BukkitIRCd] Saved configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin742." : ""));
 		}
 		catch(Exception e)
 		{
