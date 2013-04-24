@@ -39,7 +39,7 @@ color-say-messages: false
 # Whether to make say messages colored
 color-death-messages: false
 # Whether to make death messages colored
-strip-suffix: true
+strip-ingame-suffix: true
 # Whether to strip suffixes or not
 redundant-modes: false
 # Add all applicable IRC modes or just one?
