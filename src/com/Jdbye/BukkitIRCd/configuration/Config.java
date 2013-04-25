@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
@@ -23,8 +26,16 @@ import com.Jdbye.BukkitIRCd.HashType;
 import com.Jdbye.BukkitIRCd.IRCUser;
 import com.Jdbye.BukkitIRCd.IRCd;
 
-public class Config {
-	
+import com.Jdbye.BukkitIRCd.commands.*;
+
+
+public class Config extends JavaPlugin{
+
+	private String mode = "standalone";
+
+	private static Date curDate = new Date();
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
+	public static String ircd_creationdate = dateFormat.format(curDate);
 	
 	public static boolean ircd_redundant_modes = false;
 	public static int ircd_port = 6667;
@@ -77,8 +88,84 @@ public class Config {
 	
 	public static FileConfiguration config;
 	
-	File configFile = new File(getDataFolder(), "config.yml");
-
+	public void saveSettings() {
+		File configFile = new File(getDataFolder(), "config.yml");
+		writeSettings(configFile);
+	}
+	
+	public void reloadingConfig() {
+		reloadConfig();
+		config = getConfig();
+		// IF config file doesn't exist, create it
+		if (!(new File(getDataFolder(), "config.yml")).exists()) {
+			BukkitIRCdPlugin.log.info("[BukkitIRCd] Creating default configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin183." : ""));
+			config.options().copyDefaults(true);
+		}
+		loadSettings();
+	}
+	
+	public void initConfig() {
+		IRCd.redundantModes = ircd_redundant_modes;
+		IRCd.port = ircd_port;
+		IRCd.maxConnections = ircd_maxconn;
+		IRCd.pingInterval = ircd_pinginterval;
+		IRCd.timeoutInterval = ircd_timeout;
+		IRCd.nickLen = ircd_maxnicklen;
+		IRCd.channelName = ircd_channel;
+		//if (!reload) {
+		//	IRCd.channelTopic = ircd_topic;
+		//	IRCd.channelTopicSet = ircd_topicsetby;
+		//	IRCd.channelTopicSetDate = ircd_topicsetdate / 1000L;
+		//}
+		IRCd.stripIngameSuffix = ircd_strip_ingame_suffix;
+		IRCd.serverName = ircd_servername;
+		IRCd.serverDescription = ircd_serverdescription;
+		IRCd.serverHostName = ircd_serverhostname;
+		IRCd.serverCreationDate = ircd_creationdate;
+		IRCd.ingameSuffix = ircd_ingamesuffix;
+		IRCd.enableNotices = ircd_enablenotices;
+		IRCd.convertColorCodes = ircd_convertcolorcodes;
+		IRCd.handleAmpersandColors = ircd_handleampersandcolors;
+		IRCd.ircBanType = ircd_bantype;
+		IRCd.version = ircd_version;
+		IRCd.operUser = ircd_operuser;
+		IRCd.operPass = ircd_operpass;
+		IRCd.operModes = ircd_opermodes;
+		IRCd.consoleChannelName = ircd_consolechannel;
+		ircd.modestr = mode;
+		IRCd.debugMode = debugmode;
+		IRCd.gameColors = ircd_game_colors.split(",");
+		IRCd.ircColors = BukkitIRCdPlugin.convertStringArrayToIntArray(ircd_irc_colors.split(","), IRCd.ircColors);
+		IRCd.broadcastDeathMessages = ircd_broadcast_death_messages;
+		IRCd.colorDeathMessages = ircd_color_death_messages;
+		IRCd.colorSayMessages = ircd_color_say_messages;
+		// Linking specific settings
+		IRCd.remoteHost = link_remotehost;
+		IRCd.remotePort = link_remoteport;
+		IRCd.localPort = link_localport;
+		IRCd.autoConnect = link_autoconnect;
+		IRCd.linkName = link_name;
+		IRCd.connectPassword = link_connectpassword;
+		IRCd.receivePassword = link_receivepassword;
+		IRCd.linkPingInterval = link_pinginterval;
+		IRCd.linkTimeoutInterval = link_timeout;
+		IRCd.linkDelay = link_delay;
+		IRCd.SID = link_serverid;
+	}
+	private void writeSettings(File configFile)
+	{
+		try
+		{
+			saveConfig();
+			BukkitIRCdPlugin.log.info("[BukkitIRCd] Saved configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin742." : ""));
+		}
+		catch(Exception e)
+		{
+			BukkitIRCdPlugin.log.warning("[BukkitIRCd] Caught exception while writing settings to file: ");
+			e.printStackTrace();
+		}
+	}
+	
 	public static void loadSettings() {
 		try {
 			ircd_redundant_modes = config.getBoolean("redundant-modes",ircd_redundant_modes);
@@ -139,11 +226,12 @@ public class Config {
 
 			BukkitIRCdPlugin.log.info("[BukkitIRCd] Loaded configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin363." : ""));
 			
-			saveConfig();
+			//saveConfig();
 			BukkitIRCdPlugin.log.info("[BukkitIRCd] Saved initial configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin365." : ""));
 		}
 		catch (Exception e) {
 			BukkitIRCdPlugin.log.info("[BukkitIRCd] Failed to load configuration file: " + e.toString());
 		}
+		
 	}
 }

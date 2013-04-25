@@ -45,7 +45,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	private final BukkitIRCdServerListener serverListener = new BukkitIRCdServerListener(this);
 	private BukkitIRCdDynmapListener dynmapListener = null;
 	
-	private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
+	public final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
 
 	public static String mode = "standalone";
 
@@ -57,58 +57,14 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 	public Map<String, String> lastReceived = new HashMap<String, String>();
 
-//	boolean ircd_redundant_modes = false;
-//	private int ircd_port = 6667;
-//	private int ircd_maxconn = 1000;
-//	private int ircd_pinginterval = 45;
-//	private int ircd_timeout = 180;
-//	private int ircd_maxnicklen = 32;
-//	private String ircd_channel = "#minecraft";
-//	private static String ircd_servername = "BukkitIRCd";
-//	private String ircd_serverdescription = "Minecraft BukkitIRCd Server";
-//	private String ircd_serverhostname = "bukkitircd.localhost";
-//	private String ircd_ingamesuffix = "/minecraft";
-//	public static String ircd_topic = "Welcome to a Bukkit server!";
-//	public static String ircd_topicsetby = ircd_servername;
-//	public static long ircd_topicsetdate = System.currentTimeMillis() / 1000L;
-//	public static String ircd_bantype = "ip";
-//	private boolean ircd_convertcolorcodes = true;
-//	private static boolean ircd_handleampersandcolors = true;
-	private static String ircd_version;
-//	private static boolean ircd_enablenotices = true;
-//	private String ircd_operuser = "";
-//	private String ircd_operpass = "";
-//	private String ircd_opermodes = "~&@%+";
-//	private String ircd_consolechannel = "#staff";
-//	private String ircd_irc_colors = "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15";
-//	private String ircd_game_colors = "0,f,1,2,c,4,5,6,e,a,3,b,9,d,8,7";
-//	private boolean ircd_color_death_messages = false;
-//	private boolean ircd_color_say_messages = false;
-//	private boolean ircd_broadcast_death_messages = true;
-//	public static boolean debugmode = false;
-	public boolean dynmapEventRegistered = false;
-//	private boolean ircd_strip_ingame_suffix = true;
-//	
-//	public static String link_remotehost = "localhost";
-//	public static int link_remoteport = 7000;
-//	public static int link_localport = 7000;
-//	public static boolean link_autoconnect = true;
-//	public static String link_name = "irc.localhost";
-//	public static String link_connectpassword = "test";
-//	public static String link_receivepassword = "test";
-//	public static int link_pinginterval = 60;
-//	public static int link_timeout = 180;
-//	public static int link_delay = 60;
-//	public static int link_serverid = new Random().nextInt(900) + 100;
-//
-//	public static List<String> kickCommands = Arrays.asList("/kick");
-	public static final Logger log = Logger.getLogger("Minecraft");
-//	
-//	public boolean enableRawSend = false;
 
-//	public static PermissionHandler permissionHandler = null;
+	private static String ircd_version;
+
+	public boolean dynmapEventRegistered = false;
+
+	public static final Logger log = Logger.getLogger("Minecraft");
+
 	public static DynmapAPI dynmap = null;
-//	FileConfiguration config,messages;
 
 	static IRCd ircd = null;
 	private Thread thr = null;
@@ -116,7 +72,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	public BukkitIRCdPlugin() {
 		thePlugin = this;
 	}
-
+	
 	public void onEnable() {
 		// Register our events
 		PluginManager pm = getServer().getPluginManager();
@@ -157,7 +113,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		dynmapEventRegistered = false;
 
 		//File configFile = new File(getDataFolder(), "config.yml");
-		writeSettings(configFile);
+		Config.saveSettings();
 
 		writeBans();
 
@@ -188,14 +144,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			}
 		}
 		
-		reConfig();
-		Config.config = getConfig();
-		// Create default config.yml if it doesn't exist.
-		if (!(new File(getDataFolder(), "config.yml")).exists()) {
-			log.info("[BukkitIRCd] Creating default configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin183." : ""));
-		}
-		Config.config.options().copyDefaults(true);
-		Config.loadSettings();
+		Config.reloadingConfig();
 		
 		// Create default messages.yml if it doesn't exist.
 		File messagesFile = new File(getDataFolder(), "messages.yml");
@@ -226,53 +175,9 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		ircd = new IRCd();
 		
 		Messages.loadMessages(ircd);
-		IRCd.redundantModes = Config.ircd_redundant_modes;
-		IRCd.port = Config.ircd_port;
-		IRCd.maxConnections = Config.ircd_maxconn;
-		IRCd.pingInterval = Config.ircd_pinginterval;
-		IRCd.timeoutInterval = Config.ircd_timeout;
-		IRCd.nickLen = Config.ircd_maxnicklen;
-		IRCd.channelName = Config.ircd_channel;
-		if (!reload) {
-			IRCd.channelTopic = Config.ircd_topic;
-			IRCd.channelTopicSet = Config.ircd_topicsetby;
-			IRCd.channelTopicSetDate = Config.ircd_topicsetdate / 1000L;
-		}
-		IRCd.stripIngameSuffix = Config.ircd_strip_ingame_suffix;
-		IRCd.serverName = Config.ircd_servername;
-		IRCd.serverDescription = Config.ircd_serverdescription;
-		IRCd.serverHostName = Config.ircd_serverhostname;
-		IRCd.serverCreationDate = ircd_creationdate;
-		IRCd.ingameSuffix = Config.ircd_ingamesuffix;
-		IRCd.enableNotices = Config.ircd_enablenotices;
-		IRCd.convertColorCodes = Config.ircd_convertcolorcodes;
-		IRCd.handleAmpersandColors = Config.ircd_handleampersandcolors;
-		IRCd.ircBanType = Config.ircd_bantype;
-		IRCd.version = ircd_version;
-		IRCd.operUser = Config.ircd_operuser;
-		IRCd.operPass = Config.ircd_operpass;
-		IRCd.operModes = Config.ircd_opermodes;
-		IRCd.consoleChannelName = Config.ircd_consolechannel;
-		ircd.modestr = mode;
-		IRCd.debugMode = Config.debugmode;
-		IRCd.gameColors = Config.ircd_game_colors.split(",");
-		IRCd.ircColors = convertStringArrayToIntArray(Config.ircd_irc_colors.split(","), IRCd.ircColors);
-		IRCd.broadcastDeathMessages = Config.ircd_broadcast_death_messages;
-		IRCd.colorDeathMessages = Config.ircd_color_death_messages;
-		IRCd.colorSayMessages = Config.ircd_color_say_messages;
-		// Linking specific settings
-		IRCd.remoteHost = Config.link_remotehost;
-		IRCd.remotePort = Config.link_remoteport;
-		IRCd.localPort = Config.link_localport;
-		IRCd.autoConnect = Config.link_autoconnect;
-		IRCd.linkName = Config.link_name;
-		IRCd.connectPassword = Config.link_connectpassword;
-		IRCd.receivePassword = Config.link_receivepassword;
-		IRCd.linkPingInterval = Config.link_pinginterval;
-		IRCd.linkTimeoutInterval = Config.link_timeout;
-		IRCd.linkDelay = Config.link_delay;
-		IRCd.SID = Config.link_serverid;
 
+		Config.initConfig();
+		
 		loadBans();
 		IRCd.bukkitPlayers.clear();
 		
@@ -792,20 +697,6 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 	}
 
-	private void writeSettings(File configFile)
-	{
-		try
-		{
-			saveConfig();
-			log.info("[BukkitIRCd] Saved configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin742." : ""));
-		}
-		catch(Exception e)
-		{
-			log.warning("[BukkitIRCd] Caught exception while writing settings to file: ");
-			e.printStackTrace();
-		}
-	}
-
 
 	public boolean hasPermission(Player player, String permission)
 	{
@@ -868,7 +759,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		return count - 1;
 	}
 	
-	public int[] convertStringArrayToIntArray(String[] sarray, int[] def) {
+	public static int[] convertStringArrayToIntArray(String[] sarray, int[] def) {
 		try {
 			if (sarray != null) {
 				int intarray[] = new int[sarray.length];
