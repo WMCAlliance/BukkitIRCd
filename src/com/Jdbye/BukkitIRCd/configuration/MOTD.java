@@ -35,7 +35,7 @@ import com.Jdbye.BukkitIRCd.commands.*;
 
 public class MOTD extends JavaPlugin{
 	
-	public void enableBans() {
+	public void enableMOTD() {
 		if (!(new File(getDataFolder(), "motd.txt")).exists()) {
 			saveDefaultMOTD(getDataFolder(),"motd.txt");
 			BukkitIRCdPlugin.log.info("[BukkitIRCd] Default MOTD file created." + (IRCd.debugMode ? " Code BukkitIRCdPlugin199." : ""));
@@ -131,7 +131,7 @@ public class MOTD extends JavaPlugin{
 			bufferWriter.newLine();
 			bufferWriter.append("");
 			bufferWriter.newLine();
-			bufferWriter.append("Welcome to " + Config.ircd_servername + ", running " + ircd_version + ".");
+			bufferWriter.append("Welcome to " + Config.ircd_servername + ", running " + BukkitIRCdPlugin.ircd_version + ".");
 			bufferWriter.newLine();
 			bufferWriter.append("Enjoy your stay!");
 			bufferWriter.newLine();

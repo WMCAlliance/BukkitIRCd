@@ -234,7 +234,7 @@ public class Config extends JavaPlugin{
 		}
 		
 	}
-	
+	/*
 	private void firstRunSettings(File dataFolder)
 	{
 		BukkitIRCdPlugin.log.info("[BukkitIRCd] Configuration file not found, creating new one." + (IRCd.debugMode ? " Code BukkitIRCdPlugin475." : ""));
@@ -253,7 +253,7 @@ public class Config extends JavaPlugin{
 
 		writeSettings(configFile);
 	}
-	
+	*/
 	
 	
 	
