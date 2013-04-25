@@ -47,12 +47,12 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	
 	private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
 
-	private String mode = "standalone";
+	public static String mode = "standalone";
 
 	public static BukkitIRCdPlugin thePlugin = null;
 
 	private static Date curDate = new Date();
-	private static SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
+	public static SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
 	public static String ircd_creationdate = dateFormat.format(curDate);
 
 	public Map<String, String> lastReceived = new HashMap<String, String>();
@@ -189,17 +189,17 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 		
 		reloadConfig();
-		config = getConfig();
+		LoadConfig.config = getConfig();
 		// Create default config.yml if it doesn't exist.
 		if (!(new File(getDataFolder(), "config.yml")).exists()) {
 			log.info("[BukkitIRCd] Creating default configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin183." : ""));
 		}
-		config.options().copyDefaults(true);
-		loadSettings();
+		LoadConfig.config.options().copyDefaults(true);
+		LoadConfig.loadSettings();
 		
 		// Create default messages.yml if it doesn't exist.
 		File messagesFile = new File(getDataFolder(), "messages.yml");
-		messages = YamlConfiguration.loadConfiguration(messagesFile);
+		LoadMessages.messages = YamlConfiguration.loadConfiguration(messagesFile);
 		if (!(messagesFile.exists())) {
 			log.info("[BukkitIRCd] Creating default messages file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin192." : ""));
 			messages.options().copyDefaults(true);
@@ -225,53 +225,53 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		
 		ircd = new IRCd();
 		
-		loadMessages(ircd);
-		IRCd.redundantModes = ircd_redundant_modes;
-		IRCd.port = ircd_port;
-		IRCd.maxConnections = ircd_maxconn;
-		IRCd.pingInterval = ircd_pinginterval;
-		IRCd.timeoutInterval = ircd_timeout;
-		IRCd.nickLen = ircd_maxnicklen;
-		IRCd.channelName = ircd_channel;
+		LoadMessages.loadMessages(ircd);
+		IRCd.redundantModes = LoadConfig.ircd_redundant_modes;
+		IRCd.port = LoadConfig.ircd_port;
+		IRCd.maxConnections = LoadConfig.ircd_maxconn;
+		IRCd.pingInterval = LoadConfig.ircd_pinginterval;
+		IRCd.timeoutInterval = LoadConfig.ircd_timeout;
+		IRCd.nickLen = LoadConfig.ircd_maxnicklen;
+		IRCd.channelName = LoadConfig.ircd_channel;
 		if (!reload) {
-			IRCd.channelTopic = ircd_topic;
-			IRCd.channelTopicSet = ircd_topicsetby;
-			IRCd.channelTopicSetDate = ircd_topicsetdate / 1000L;
+			IRCd.channelTopic = LoadConfig.ircd_topic;
+			IRCd.channelTopicSet = LoadConfig.ircd_topicsetby;
+			IRCd.channelTopicSetDate = LoadConfig.ircd_topicsetdate / 1000L;
 		}
-		IRCd.stripIngameSuffix = ircd_strip_ingame_suffix;
-		IRCd.serverName = ircd_servername;
-		IRCd.serverDescription = ircd_serverdescription;
-		IRCd.serverHostName = ircd_serverhostname;
+		IRCd.stripIngameSuffix = LoadConfig.ircd_strip_ingame_suffix;
+		IRCd.serverName = LoadConfig.ircd_servername;
+		IRCd.serverDescription = LoadConfig.ircd_serverdescription;
+		IRCd.serverHostName = LoadConfig.ircd_serverhostname;
 		IRCd.serverCreationDate = ircd_creationdate;
-		IRCd.ingameSuffix = ircd_ingamesuffix;
-		IRCd.enableNotices = ircd_enablenotices;
-		IRCd.convertColorCodes = ircd_convertcolorcodes;
-		IRCd.handleAmpersandColors = ircd_handleampersandcolors;
-		IRCd.ircBanType = ircd_bantype;
+		IRCd.ingameSuffix = LoadConfig.ircd_ingamesuffix;
+		IRCd.enableNotices = LoadConfig.ircd_enablenotices;
+		IRCd.convertColorCodes = LoadConfig.ircd_convertcolorcodes;
+		IRCd.handleAmpersandColors = LoadConfig.ircd_handleampersandcolors;
+		IRCd.ircBanType = LoadConfig.ircd_bantype;
 		IRCd.version = ircd_version;
-		IRCd.operUser = ircd_operuser;
-		IRCd.operPass = ircd_operpass;
-		IRCd.operModes = ircd_opermodes;
-		IRCd.consoleChannelName = ircd_consolechannel;
+		IRCd.operUser = LoadConfig.ircd_operuser;
+		IRCd.operPass = LoadConfig.ircd_operpass;
+		IRCd.operModes = LoadConfig.ircd_opermodes;
+		IRCd.consoleChannelName = LoadConfig.ircd_consolechannel;
 		ircd.modestr = mode;
-		IRCd.debugMode = debugmode;
-		IRCd.gameColors = ircd_game_colors.split(",");
-		IRCd.ircColors = convertStringArrayToIntArray(ircd_irc_colors.split(","), IRCd.ircColors);
-		IRCd.broadcastDeathMessages = ircd_broadcast_death_messages;
-		IRCd.colorDeathMessages = ircd_color_death_messages;
-		IRCd.colorSayMessages = ircd_color_say_messages;
+		IRCd.debugMode = LoadConfig.debugmode;
+		IRCd.gameColors = LoadConfig.ircd_game_colors.split(",");
+		IRCd.ircColors = convertStringArrayToIntArray(LoadConfig.ircd_irc_colors.split(","), IRCd.ircColors);
+		IRCd.broadcastDeathMessages = LoadConfig.ircd_broadcast_death_messages;
+		IRCd.colorDeathMessages = LoadConfig.ircd_color_death_messages;
+		IRCd.colorSayMessages = LoadConfig.ircd_color_say_messages;
 		// Linking specific settings
-		IRCd.remoteHost = link_remotehost;
-		IRCd.remotePort = link_remoteport;
-		IRCd.localPort = link_localport;
-		IRCd.autoConnect = link_autoconnect;
-		IRCd.linkName = link_name;
-		IRCd.connectPassword = link_connectpassword;
-		IRCd.receivePassword = link_receivepassword;
-		IRCd.linkPingInterval = link_pinginterval;
-		IRCd.linkTimeoutInterval = link_timeout;
-		IRCd.linkDelay = link_delay;
-		IRCd.SID = link_serverid;
+		IRCd.remoteHost = LoadConfig.link_remotehost;
+		IRCd.remotePort = LoadConfig.link_remoteport;
+		IRCd.localPort = LoadConfig.link_localport;
+		IRCd.autoConnect = LoadConfig.link_autoconnect;
+		IRCd.linkName = LoadConfig.link_name;
+		IRCd.connectPassword = LoadConfig.link_connectpassword;
+		IRCd.receivePassword = LoadConfig.link_receivepassword;
+		IRCd.linkPingInterval = LoadConfig.link_pinginterval;
+		IRCd.linkTimeoutInterval = LoadConfig.link_timeout;
+		IRCd.linkDelay = LoadConfig.link_delay;
+		IRCd.SID = LoadConfig.link_serverid;
 
 		loadBans();
 		IRCd.bukkitPlayers.clear();
@@ -352,73 +352,73 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 	}
 
-	private void loadSettings() {
-		try {
-			ircd_redundant_modes = config.getBoolean("redundant-modes",ircd_redundant_modes);
-			ircd_strip_ingame_suffix = config.getBoolean("strip-ingame-suffix",ircd_strip_ingame_suffix);
-			ircd_color_death_messages = config.getBoolean("color-death-messages", ircd_color_death_messages);
-			ircd_color_say_messages = config.getBoolean("color-say-messages", ircd_color_say_messages);
-			mode = config.getString("mode", mode);
-			ircd_ingamesuffix = config.getString("ingame-suffix", ircd_ingamesuffix);
-			ircd_enablenotices = config.getBoolean("enable-notices", ircd_enablenotices);
-			ircd_convertcolorcodes = config.getBoolean("convert-color-codes", ircd_convertcolorcodes);
-			ircd_handleampersandcolors = config.getBoolean("handle-ampersand-colors",ircd_handleampersandcolors);
-			ircd_irc_colors = config.getString("irc-colors", ircd_irc_colors);
-			ircd_game_colors = config.getString("game-colors", ircd_game_colors);
-			ircd_channel = config.getString("channel-name", ircd_channel);
-			ircd_consolechannel = config.getString("console-channel-name", ircd_consolechannel);
-			ircd_creationdate = config.getString("server-creation-date", ircd_creationdate);
-			ircd_servername = config.getString("server-name", ircd_servername);
-			ircd_serverdescription = config.getString("server-description", ircd_serverdescription);
-			ircd_serverhostname = config.getString("server-host", ircd_serverhostname);
-			ircd_bantype = config.getString("ban-type", ircd_bantype);
-			debugmode = config.getBoolean("debug-mode", debugmode);
-			enableRawSend = config.getBoolean("enable-raw-send", enableRawSend);
-			kickCommands = config.getStringList("kick-commands");
-
-			String operpass = "";
-			
-			ircd_port = config.getInt("standalone.port", ircd_port);
-			ircd_maxconn = config.getInt("standalone.max-connections", ircd_maxconn);
-			ircd_pinginterval = config.getInt("standalone.ping-interval", ircd_pinginterval);
-			ircd_timeout = config.getInt("standalone.timeout", ircd_timeout);
-			ircd_maxnicklen = config.getInt("standalone.max-nick-length", ircd_maxnicklen);
-			ircd_operuser = config.getString("standalone.oper-username", ircd_operuser);
-			operpass = config.getString("standalone.oper-password", ircd_operpass);
-			ircd_opermodes = config.getString("standalone.oper-modes", ircd_opermodes);
-			ircd_topic = config.getString("standalone.channel-topic", ircd_topic).replace("^K", (char)3 + "").replace("^B", (char)2 + "").replace("^I", (char)29 + "").replace("^O", (char)15 + "").replace("^U", (char)31 + "");
-			ircd_topicsetby = config.getString("standalone.channel-topic-set-by", ircd_topicsetby);
-			ircd_broadcast_death_messages = config.getBoolean("broadcast-death-messages",ircd_broadcast_death_messages);
-			try {
-				ircd_topicsetdate = dateFormat.parse(config.getString("standalone.channel-topic-set-date", dateFormat.format(ircd_topicsetdate))).getTime();
-			}
-			catch (ParseException e) { }
-
-			link_remotehost = config.getString("inspircd.remote-host", link_remotehost);
-			link_remoteport = config.getInt("inspircd.remote-port", link_remoteport);
-			link_localport = config.getInt("inspircd.local-port", link_localport);
-			link_autoconnect = config.getBoolean("inspircd.auto-connect", link_autoconnect);
-			link_name = config.getString("inspircd.link-name", link_name);
-			link_connectpassword = config.getString("inspircd.connect-password", link_connectpassword);
-			link_receivepassword = config.getString("inspircd.receive-password", link_receivepassword);
-			link_pinginterval = config.getInt("inspircd.ping-interval", link_pinginterval);
-			link_timeout = config.getInt("inspircd.timeout", link_timeout);
-			link_delay = config.getInt("inspircd.connect-delay", link_delay);
-			link_serverid = config.getInt("inspircd.server-id", link_serverid);
-
-			if (operpass.length() == 0) ircd_operpass = "";
-			else if (operpass.startsWith("~")) { ircd_operpass = operpass.substring(1); }
-			else { ircd_operpass = Hash.compute(operpass, HashType.SHA_512); }
-
-			log.info("[BukkitIRCd] Loaded configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin363." : ""));
-			
-			saveConfig();
-			log.info("[BukkitIRCd] Saved initial configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin365." : ""));
-		}
-		catch (Exception e) {
-			log.info("[BukkitIRCd] Failed to load configuration file: " + e.toString());
-		}
-	}
+	//rivate void loadSettings() {
+	//	try {
+	//		ircd_redundant_modes = config.getBoolean("redundant-modes",ircd_redundant_modes);
+	//		ircd_strip_ingame_suffix = config.getBoolean("strip-ingame-suffix",ircd_strip_ingame_suffix);
+	//		ircd_color_death_messages = config.getBoolean("color-death-messages", ircd_color_death_messages);
+	//		ircd_color_say_messages = config.getBoolean("color-say-messages", ircd_color_say_messages);
+	//		mode = config.getString("mode", mode);
+	//		ircd_ingamesuffix = config.getString("ingame-suffix", ircd_ingamesuffix);
+	//		ircd_enablenotices = config.getBoolean("enable-notices", ircd_enablenotices);
+	//		ircd_convertcolorcodes = config.getBoolean("convert-color-codes", ircd_convertcolorcodes);
+	//		ircd_handleampersandcolors = config.getBoolean("handle-ampersand-colors",ircd_handleampersandcolors);
+	//		ircd_irc_colors = config.getString("irc-colors", ircd_irc_colors);
+	//		ircd_game_colors = config.getString("game-colors", ircd_game_colors);
+	//		ircd_channel = config.getString("channel-name", ircd_channel);
+	//		ircd_consolechannel = config.getString("console-channel-name", ircd_consolechannel);
+	//		ircd_creationdate = config.getString("server-creation-date", ircd_creationdate);
+	//		ircd_servername = config.getString("server-name", ircd_servername);
+	//		ircd_serverdescription = config.getString("server-description", ircd_serverdescription);
+	//		ircd_serverhostname = config.getString("server-host", ircd_serverhostname);
+	//		ircd_bantype = config.getString("ban-type", ircd_bantype);
+	//		debugmode = config.getBoolean("debug-mode", debugmode);
+	//		enableRawSend = config.getBoolean("enable-raw-send", enableRawSend);
+	//		kickCommands = config.getStringList("kick-commands");
+    //
+	//		String operpass = "";
+	//		
+	//		ircd_port = config.getInt("standalone.port", ircd_port);
+	//		ircd_maxconn = config.getInt("standalone.max-connections", ircd_maxconn);
+	//		ircd_pinginterval = config.getInt("standalone.ping-interval", ircd_pinginterval);
+	//		ircd_timeout = config.getInt("standalone.timeout", ircd_timeout);
+	//		ircd_maxnicklen = config.getInt("standalone.max-nick-length", ircd_maxnicklen);
+	//		ircd_operuser = config.getString("standalone.oper-username", ircd_operuser);
+	//		operpass = config.getString("standalone.oper-password", ircd_operpass);
+	//		ircd_opermodes = config.getString("standalone.oper-modes", ircd_opermodes);
+	//		ircd_topic = config.getString("standalone.channel-topic", ircd_topic).replace("^K", (char)3 + "").replace("^B", (char)2 + "").replace("^I", (char)29 + "").replace("^O", (char)15 + "").replace("^U", (char)31 + "");
+	//		ircd_topicsetby = config.getString("standalone.channel-topic-set-by", ircd_topicsetby);
+	//		ircd_broadcast_death_messages = config.getBoolean("broadcast-death-messages",ircd_broadcast_death_messages);
+	//		try {
+	//			ircd_topicsetdate = dateFormat.parse(config.getString("standalone.channel-topic-set-date", dateFormat.format(ircd_topicsetdate))).getTime();
+	//		}
+	//		catch (ParseException e) { }
+    //
+	//		link_remotehost = config.getString("inspircd.remote-host", link_remotehost);
+	//		link_remoteport = config.getInt("inspircd.remote-port", link_remoteport);
+	//		link_localport = config.getInt("inspircd.local-port", link_localport);
+	//		link_autoconnect = config.getBoolean("inspircd.auto-connect", link_autoconnect);
+	//		link_name = config.getString("inspircd.link-name", link_name);
+	//		link_connectpassword = config.getString("inspircd.connect-password", link_connectpassword);
+	//		link_receivepassword = config.getString("inspircd.receive-password", link_receivepassword);
+	//		link_pinginterval = config.getInt("inspircd.ping-interval", link_pinginterval);
+	//		link_timeout = config.getInt("inspircd.timeout", link_timeout);
+	//		link_delay = config.getInt("inspircd.connect-delay", link_delay);
+	//		link_serverid = config.getInt("inspircd.server-id", link_serverid);
+    //
+	//		if (operpass.length() == 0) ircd_operpass = "";
+	//		else if (operpass.startsWith("~")) { ircd_operpass = operpass.substring(1); }
+	//		else { ircd_operpass = Hash.compute(operpass, HashType.SHA_512); }
+    //
+	//		log.info("[BukkitIRCd] Loaded configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin363." : ""));
+	//		
+	//		saveConfig();
+	//		log.info("[BukkitIRCd] Saved initial configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin365." : ""));
+	//	}
+	//	catch (Exception e) {
+	//		log.info("[BukkitIRCd] Failed to load configuration file: " + e.toString());
+	//	}
+	//}
 
 	
 	/**
@@ -428,101 +428,101 @@ public class BukkitIRCdPlugin extends JavaPlugin {
      * @return String with processed colors
 	 * Thanks to Jkcclemens (of RoyalDev) for this code
      */
-    public String colorize(final String message) {
+    public static String colorize(final String message) {
         if (message == null) return null;
         return message.replaceAll("&([a-f0-9k-or])", "\u00a7$1");
     }
 	
 	// Load the messages from messages.yml
-	private void loadMessages(IRCd ircd) {
-		try {
-			IRCd.msgLinked = messages.getString("linked", IRCd.msgLinked);
-			
-			IRCd.msgSendQueryFromIngame = messages.getString("irc-send-pm", IRCd.msgSendQueryFromIngame);
-			IRCd.msgDelinked = messages.getString("delinked", IRCd.msgDelinked);
-			IRCd.msgDelinkedReason = messages.getString("delinked-reason", IRCd.msgDelinkedReason);
-			
-			IRCd.msgIRCJoin = messages.getString("irc-join", IRCd.msgIRCJoin);
-			IRCd.msgIRCJoinDynmap = messages.getString("irc-join-dynmap", IRCd.msgIRCJoinDynmap);
-
-			IRCd.groupPrefixes = messages.getConfigurationSection("group-prefixes");
-			IRCd.groupSuffixes = messages.getConfigurationSection("group-suffixes");
-			
-			IRCd.msgIRCLeave = messages.getString("irc-leave", IRCd.msgIRCLeave);
-			IRCd.msgIRCLeaveReason = messages.getString("irc-leave-reason", IRCd.msgIRCLeaveReason);
-			IRCd.msgIRCLeaveDynmap = messages.getString("irc-leave-dynmap", IRCd.msgIRCLeaveDynmap);
-			IRCd.msgIRCLeaveReasonDynmap = messages.getString("irc-leave-reason-dynmap", IRCd.msgIRCLeaveReasonDynmap);
-
-			IRCd.msgIRCKick = messages.getString("irc-kick", IRCd.msgIRCKick);
-			IRCd.msgIRCKickReason = messages.getString("irc-kick-reason", IRCd.msgIRCKickReason);
-			IRCd.msgIRCKickDynmap = messages.getString("irc-kick-dynmap", IRCd.msgIRCKickDynmap);
-			IRCd.msgIRCKickReasonDynmap = messages.getString("irc-kick-reason-dynmap", IRCd.msgIRCKickReasonDynmap);
-
-			IRCd.msgIRCBan = messages.getString("irc-ban", IRCd.msgIRCBan);
-			IRCd.msgIRCBanDynmap = messages.getString("irc-ban-dynmap", IRCd.msgIRCBanDynmap);
-
-			IRCd.msgIRCUnban = messages.getString("irc-unban", IRCd.msgIRCUnban);
-			IRCd.msgIRCUnbanDynmap = messages.getString("irc-unban-dynmap", IRCd.msgIRCUnbanDynmap);
-
-			IRCd.msgIRCNickChange = messages.getString("irc-nick-change", IRCd.msgIRCNickChange);
-			IRCd.msgIRCNickChangeDynmap = messages.getString("irc-nick-change-dynmap", IRCd.msgIRCNickChangeDynmap);
-
-			IRCd.msgIRCAction = messages.getString("irc-action", IRCd.msgIRCAction);
-			IRCd.msgIRCMessage = messages.getString("irc-message", IRCd.msgIRCMessage);
-			IRCd.msgIRCNotice = messages.getString("irc-notice", IRCd.msgIRCNotice);
-
-			IRCd.msgIRCPrivateAction = messages.getString("irc-private-action", IRCd.msgIRCPrivateAction);
-			IRCd.msgIRCPrivateMessage = messages.getString("irc-private-message", IRCd.msgIRCPrivateMessage);
-			IRCd.msgIRCPrivateNotice = messages.getString("irc-private-notice", IRCd.msgIRCPrivateNotice);
-
-			IRCd.msgIRCActionDynmap = messages.getString("irc-action-dynmap", IRCd.msgIRCActionDynmap);
-			IRCd.msgIRCMessageDynmap = messages.getString("irc-message-dynmap", IRCd.msgIRCMessageDynmap);
-			IRCd.msgIRCNoticeDynmap = messages.getString("irc-notice-dynmap", IRCd.msgIRCNoticeDynmap);
-
-			IRCd.msgDynmapMessage = messages.getString("dynmap-message", IRCd.msgDynmapMessage);
-			IRCd.msgPlayerList = messages.getString("player-list", IRCd.msgPlayerList);
-			
-			IRCd.consoleFilters = messages.getStringList("console-filters");
-			//** RECOLOUR ALL MESSAGES **
-			
-			IRCd.msgSendQueryFromIngame = colorize(IRCd.msgSendQueryFromIngame);
-			IRCd.msgLinked = colorize(IRCd.msgLinked);
-			IRCd.msgDelinked = colorize(IRCd.msgDelinked);
-			IRCd.msgDelinkedReason = colorize(IRCd.msgDelinked);
-			IRCd.msgIRCJoin = colorize(IRCd.msgIRCJoin);
-			IRCd.msgIRCJoinDynmap = colorize(IRCd.msgIRCJoinDynmap);
-			IRCd.msgIRCLeave = colorize(IRCd.msgIRCLeave);
-			IRCd.msgIRCLeaveReason = colorize(IRCd.msgIRCLeaveReason);
-			IRCd.msgIRCLeaveDynmap = colorize(IRCd.msgIRCLeaveDynmap);
-			IRCd.msgIRCLeaveReasonDynmap = colorize(IRCd.msgIRCLeaveReasonDynmap);
-			IRCd.msgIRCKick = colorize(IRCd.msgIRCKick);
-			IRCd.msgIRCKickReason = colorize(IRCd.msgIRCKickReason);
-			IRCd.msgIRCKickDynmap = colorize(IRCd.msgIRCKickDynmap);
-			IRCd.msgIRCKickReasonDynmap = colorize(IRCd.msgIRCKickReasonDynmap);
-			IRCd.msgIRCBan = colorize(IRCd.msgIRCBan);
-			IRCd.msgIRCBanDynmap = colorize(IRCd.msgIRCBanDynmap);
-			IRCd.msgIRCUnban = colorize(IRCd.msgIRCUnban);
-			IRCd.msgIRCUnbanDynmap = colorize(IRCd.msgIRCUnbanDynmap);
-			IRCd.msgIRCNickChange = colorize(IRCd.msgIRCNickChange);
-			IRCd.msgIRCNickChangeDynmap = colorize(IRCd.msgIRCNickChangeDynmap);
-			IRCd.msgIRCAction = colorize(IRCd.msgIRCAction);
-			IRCd.msgIRCMessage = colorize(IRCd.msgIRCMessage);
-			IRCd.msgIRCNotice = colorize(IRCd.msgIRCNotice);
-			IRCd.msgIRCPrivateAction = colorize(IRCd.msgIRCPrivateAction);
-			IRCd.msgIRCPrivateMessage = colorize(IRCd.msgIRCPrivateMessage);
-			IRCd.msgIRCPrivateNotice = colorize(IRCd.msgIRCPrivateNotice);
-			IRCd.msgIRCActionDynmap = colorize(IRCd.msgIRCActionDynmap);
-			IRCd.msgIRCMessageDynmap = colorize(IRCd.msgIRCMessageDynmap);
-			IRCd.msgIRCNoticeDynmap = colorize(IRCd.msgIRCNoticeDynmap);
-			IRCd.msgDynmapMessage = colorize(IRCd.msgDynmapMessage);
-			IRCd.msgPlayerList = colorize(IRCd.msgPlayerList);
-
-			log.info("[BukkitIRCd] Loaded messages file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin464." : ""));
-		}
-		catch (Exception e) {
-			log.info("[BukkitIRCd] Failed to load messages file: " + e.toString());
-		}
-	}
+	//private void loadMessages(IRCd ircd) {
+	//	try {
+	//		IRCd.msgLinked = messages.getString("linked", IRCd.msgLinked);
+	//		
+	//		IRCd.msgSendQueryFromIngame = messages.getString("irc-send-pm", IRCd.msgSendQueryFromIngame);
+	//		IRCd.msgDelinked = messages.getString("delinked", IRCd.msgDelinked);
+	//		IRCd.msgDelinkedReason = messages.getString("delinked-reason", IRCd.msgDelinkedReason);
+	//		
+	//		IRCd.msgIRCJoin = messages.getString("irc-join", IRCd.msgIRCJoin);
+	//		IRCd.msgIRCJoinDynmap = messages.getString("irc-join-dynmap", IRCd.msgIRCJoinDynmap);
+    //
+	//		IRCd.groupPrefixes = messages.getConfigurationSection("group-prefixes");
+	//		IRCd.groupSuffixes = messages.getConfigurationSection("group-suffixes");
+	//		
+	//		IRCd.msgIRCLeave = messages.getString("irc-leave", IRCd.msgIRCLeave);
+	//		IRCd.msgIRCLeaveReason = messages.getString("irc-leave-reason", IRCd.msgIRCLeaveReason);
+	//		IRCd.msgIRCLeaveDynmap = messages.getString("irc-leave-dynmap", IRCd.msgIRCLeaveDynmap);
+	//		IRCd.msgIRCLeaveReasonDynmap = messages.getString("irc-leave-reason-dynmap", IRCd.msgIRCLeaveReasonDynmap);
+    //
+	//		IRCd.msgIRCKick = messages.getString("irc-kick", IRCd.msgIRCKick);
+	//		IRCd.msgIRCKickReason = messages.getString("irc-kick-reason", IRCd.msgIRCKickReason);
+	//		IRCd.msgIRCKickDynmap = messages.getString("irc-kick-dynmap", IRCd.msgIRCKickDynmap);
+	//		IRCd.msgIRCKickReasonDynmap = messages.getString("irc-kick-reason-dynmap", IRCd.msgIRCKickReasonDynmap);
+    //
+	//		IRCd.msgIRCBan = messages.getString("irc-ban", IRCd.msgIRCBan);
+	//		IRCd.msgIRCBanDynmap = messages.getString("irc-ban-dynmap", IRCd.msgIRCBanDynmap);
+    //
+	//		IRCd.msgIRCUnban = messages.getString("irc-unban", IRCd.msgIRCUnban);
+	//		IRCd.msgIRCUnbanDynmap = messages.getString("irc-unban-dynmap", IRCd.msgIRCUnbanDynmap);
+    //
+	//		IRCd.msgIRCNickChange = messages.getString("irc-nick-change", IRCd.msgIRCNickChange);
+	//		IRCd.msgIRCNickChangeDynmap = messages.getString("irc-nick-change-dynmap", IRCd.msgIRCNickChangeDynmap);
+    //
+	//		IRCd.msgIRCAction = messages.getString("irc-action", IRCd.msgIRCAction);
+	//		IRCd.msgIRCMessage = messages.getString("irc-message", IRCd.msgIRCMessage);
+	//		IRCd.msgIRCNotice = messages.getString("irc-notice", IRCd.msgIRCNotice);
+    //
+	//		IRCd.msgIRCPrivateAction = messages.getString("irc-private-action", IRCd.msgIRCPrivateAction);
+	//		IRCd.msgIRCPrivateMessage = messages.getString("irc-private-message", IRCd.msgIRCPrivateMessage);
+	//		IRCd.msgIRCPrivateNotice = messages.getString("irc-private-notice", IRCd.msgIRCPrivateNotice);
+    //
+	//		IRCd.msgIRCActionDynmap = messages.getString("irc-action-dynmap", IRCd.msgIRCActionDynmap);
+	//		IRCd.msgIRCMessageDynmap = messages.getString("irc-message-dynmap", IRCd.msgIRCMessageDynmap);
+	//		IRCd.msgIRCNoticeDynmap = messages.getString("irc-notice-dynmap", IRCd.msgIRCNoticeDynmap);
+    //
+	//		IRCd.msgDynmapMessage = messages.getString("dynmap-message", IRCd.msgDynmapMessage);
+	//		IRCd.msgPlayerList = messages.getString("player-list", IRCd.msgPlayerList);
+	//		
+	//		IRCd.consoleFilters = messages.getStringList("console-filters");
+	//		//** RECOLOUR ALL MESSAGES **
+	//		
+	//		IRCd.msgSendQueryFromIngame = colorize(IRCd.msgSendQueryFromIngame);
+	//		IRCd.msgLinked = colorize(IRCd.msgLinked);
+	//		IRCd.msgDelinked = colorize(IRCd.msgDelinked);
+	//		IRCd.msgDelinkedReason = colorize(IRCd.msgDelinked);
+	//		IRCd.msgIRCJoin = colorize(IRCd.msgIRCJoin);
+	//		IRCd.msgIRCJoinDynmap = colorize(IRCd.msgIRCJoinDynmap);
+	//		IRCd.msgIRCLeave = colorize(IRCd.msgIRCLeave);
+	//		IRCd.msgIRCLeaveReason = colorize(IRCd.msgIRCLeaveReason);
+	//		IRCd.msgIRCLeaveDynmap = colorize(IRCd.msgIRCLeaveDynmap);
+	//		IRCd.msgIRCLeaveReasonDynmap = colorize(IRCd.msgIRCLeaveReasonDynmap);
+	//		IRCd.msgIRCKick = colorize(IRCd.msgIRCKick);
+	//		IRCd.msgIRCKickReason = colorize(IRCd.msgIRCKickReason);
+	//		IRCd.msgIRCKickDynmap = colorize(IRCd.msgIRCKickDynmap);
+	//		IRCd.msgIRCKickReasonDynmap = colorize(IRCd.msgIRCKickReasonDynmap);
+	//		IRCd.msgIRCBan = colorize(IRCd.msgIRCBan);
+	//		IRCd.msgIRCBanDynmap = colorize(IRCd.msgIRCBanDynmap);
+	//		IRCd.msgIRCUnban = colorize(IRCd.msgIRCUnban);
+	//		IRCd.msgIRCUnbanDynmap = colorize(IRCd.msgIRCUnbanDynmap);
+	//		IRCd.msgIRCNickChange = colorize(IRCd.msgIRCNickChange);
+	//		IRCd.msgIRCNickChangeDynmap = colorize(IRCd.msgIRCNickChangeDynmap);
+	//		IRCd.msgIRCAction = colorize(IRCd.msgIRCAction);
+	//		IRCd.msgIRCMessage = colorize(IRCd.msgIRCMessage);
+	//		IRCd.msgIRCNotice = colorize(IRCd.msgIRCNotice);
+	//		IRCd.msgIRCPrivateAction = colorize(IRCd.msgIRCPrivateAction);
+	//		IRCd.msgIRCPrivateMessage = colorize(IRCd.msgIRCPrivateMessage);
+	//		IRCd.msgIRCPrivateNotice = colorize(IRCd.msgIRCPrivateNotice);
+	//		IRCd.msgIRCActionDynmap = colorize(IRCd.msgIRCActionDynmap);
+	//		IRCd.msgIRCMessageDynmap = colorize(IRCd.msgIRCMessageDynmap);
+	//		IRCd.msgIRCNoticeDynmap = colorize(IRCd.msgIRCNoticeDynmap);
+	//		IRCd.msgDynmapMessage = colorize(IRCd.msgDynmapMessage);
+	//		IRCd.msgPlayerList = colorize(IRCd.msgPlayerList);
+    //
+	//		log.info("[BukkitIRCd] Loaded messages file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin464." : ""));
+	//	}
+	//	catch (Exception e) {
+	//		log.info("[BukkitIRCd] Failed to load messages file: " + e.toString());
+	//	}
+	//}
 
 	// It was originally disabled, I'd like to know why.
 	@SuppressWarnings("unused")
@@ -724,7 +724,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			bufferWriter.newLine();
 			bufferWriter.append("");
 			bufferWriter.newLine();
-			bufferWriter.append("Welcome to " + ircd_servername + ", running " + ircd_version + ".");
+			bufferWriter.append("Welcome to " + LoadConfig.ircd_servername + ", running " + ircd_version + ".");
 			bufferWriter.newLine();
 			bufferWriter.append("Enjoy your stay!");
 			bufferWriter.newLine();
