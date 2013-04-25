@@ -22,14 +22,14 @@ public class RawsendCommand implements CommandExecutor{
 			String[] args) {
 		if (sender instanceof Player){
 			sender = (Player) sender;
-			if (LoadConfig.enableRawSend) {
+			if (Config.enableRawSend) {
 				sender.sendMessage(ChatColor.RED + "[BukkitIRCd] Only the console can use this command.");
 			}
 			else { sender.sendMessage(ChatColor.RED + "[BukkitIRCd] Sending raw messages is disabled. Please enable them in the config first."); }
 			return true;
 		
 		}else{
-			if (LoadConfig.enableRawSend) {
+			if (Config.enableRawSend) {
 				if (args.length > 0) {
 					if ((IRCd.mode == Modes.INSPIRCD) || (IRCd.mode == Modes.UNREALIRCD)) {
 						if (IRCd.println(IRCd.join(args, " ", 0))) sender.sendMessage(ChatColor.RED + "Command sent to IRC server link.");

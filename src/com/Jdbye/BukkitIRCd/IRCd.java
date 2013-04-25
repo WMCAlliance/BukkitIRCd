@@ -2815,10 +2815,10 @@ public class IRCd implements Runnable {
 			channelTopicSet = user;
 		}
 		if ((isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
-			LoadConfig.topic = topic;
-			LoadConfig.topicsetdate = System.currentTimeMillis();
+			Config.topic = topic;
+			Config.topicsetdate = System.currentTimeMillis();
 			if (user.length() > 0) {
-				LoadConfig.topicsetby = user;
+				Config.topicsetby = user;
 			}
 		}
 
@@ -3441,9 +3441,9 @@ public class IRCd implements Runnable {
 				}
 				channelTopicSet = user;
 				if ((isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
-					LoadConfig.topic = topic;
-					LoadConfig.topicsetdate = channelTopicSetDate * 1000;
-					LoadConfig.topicsetby = user;
+					Config.topic = topic;
+					Config.topicsetdate = channelTopicSetDate * 1000;
+					Config.topicsetby = user;
 				}
 			} else if (split[2].equalsIgnoreCase(consoleChannelName)) {
 				// This is of no interest to us
@@ -3476,9 +3476,9 @@ public class IRCd implements Runnable {
 					channelTopicSetDate = System.currentTimeMillis() / 1000L;
 					channelTopicSet = user;
 					if ((isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
-						LoadConfig.topic = topic;
-						LoadConfig.topicsetdate = channelTopicSetDate * 1000;
-						LoadConfig.topicsetby = user;
+						Config.topic = topic;
+						Config.topicsetdate = channelTopicSetDate * 1000;
+						Config.topicsetby = user;
 					}
 				} else {
 					if (debugMode) {

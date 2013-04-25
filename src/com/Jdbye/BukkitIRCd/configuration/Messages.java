@@ -22,7 +22,7 @@ import com.Jdbye.BukkitIRCd.Hash;
 import com.Jdbye.BukkitIRCd.IRCUser;
 import com.Jdbye.BukkitIRCd.IRCd;
 
-public class LoadMessages {
+public class Messages {
 	public static FileConfiguration messages;
 	
 	// Load the messages from messages.yml

@@ -188,18 +188,18 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			}
 		}
 		
-		reloadConfig();
-		LoadConfig.config = getConfig();
+		reConfig();
+		Config.config = getConfig();
 		// Create default config.yml if it doesn't exist.
 		if (!(new File(getDataFolder(), "config.yml")).exists()) {
 			log.info("[BukkitIRCd] Creating default configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin183." : ""));
 		}
-		LoadConfig.config.options().copyDefaults(true);
-		LoadConfig.loadSettings();
+		Config.config.options().copyDefaults(true);
+		Config.loadSettings();
 		
 		// Create default messages.yml if it doesn't exist.
 		File messagesFile = new File(getDataFolder(), "messages.yml");
-		LoadMessages.messages = YamlConfiguration.loadConfiguration(messagesFile);
+		Messages.messages = YamlConfiguration.Configuration(messagesFile);
 		if (!(messagesFile.exists())) {
 			log.info("[BukkitIRCd] Creating default messages file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin192." : ""));
 			messages.options().copyDefaults(true);
@@ -225,53 +225,53 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		
 		ircd = new IRCd();
 		
-		LoadMessages.loadMessages(ircd);
-		IRCd.redundantModes = LoadConfig.ircd_redundant_modes;
-		IRCd.port = LoadConfig.ircd_port;
-		IRCd.maxConnections = LoadConfig.ircd_maxconn;
-		IRCd.pingInterval = LoadConfig.ircd_pinginterval;
-		IRCd.timeoutInterval = LoadConfig.ircd_timeout;
-		IRCd.nickLen = LoadConfig.ircd_maxnicklen;
-		IRCd.channelName = LoadConfig.ircd_channel;
+		Messages.loadMessages(ircd);
+		IRCd.redundantModes = Config.ircd_redundant_modes;
+		IRCd.port = Config.ircd_port;
+		IRCd.maxConnections = Config.ircd_maxconn;
+		IRCd.pingInterval = Config.ircd_pinginterval;
+		IRCd.timeoutInterval = Config.ircd_timeout;
+		IRCd.nickLen = Config.ircd_maxnicklen;
+		IRCd.channelName = Config.ircd_channel;
 		if (!reload) {
-			IRCd.channelTopic = LoadConfig.ircd_topic;
-			IRCd.channelTopicSet = LoadConfig.ircd_topicsetby;
-			IRCd.channelTopicSetDate = LoadConfig.ircd_topicsetdate / 1000L;
+			IRCd.channelTopic = Config.ircd_topic;
+			IRCd.channelTopicSet = Config.ircd_topicsetby;
+			IRCd.channelTopicSetDate = Config.ircd_topicsetdate / 1000L;
 		}
-		IRCd.stripIngameSuffix = LoadConfig.ircd_strip_ingame_suffix;
-		IRCd.serverName = LoadConfig.ircd_servername;
-		IRCd.serverDescription = LoadConfig.ircd_serverdescription;
-		IRCd.serverHostName = LoadConfig.ircd_serverhostname;
+		IRCd.stripIngameSuffix = Config.ircd_strip_ingame_suffix;
+		IRCd.serverName = Config.ircd_servername;
+		IRCd.serverDescription = Config.ircd_serverdescription;
+		IRCd.serverHostName = Config.ircd_serverhostname;
 		IRCd.serverCreationDate = ircd_creationdate;
-		IRCd.ingameSuffix = LoadConfig.ircd_ingamesuffix;
-		IRCd.enableNotices = LoadConfig.ircd_enablenotices;
-		IRCd.convertColorCodes = LoadConfig.ircd_convertcolorcodes;
-		IRCd.handleAmpersandColors = LoadConfig.ircd_handleampersandcolors;
-		IRCd.ircBanType = LoadConfig.ircd_bantype;
+		IRCd.ingameSuffix = Config.ircd_ingamesuffix;
+		IRCd.enableNotices = Config.ircd_enablenotices;
+		IRCd.convertColorCodes = Config.ircd_convertcolorcodes;
+		IRCd.handleAmpersandColors = Config.ircd_handleampersandcolors;
+		IRCd.ircBanType = Config.ircd_bantype;
 		IRCd.version = ircd_version;
-		IRCd.operUser = LoadConfig.ircd_operuser;
-		IRCd.operPass = LoadConfig.ircd_operpass;
-		IRCd.operModes = LoadConfig.ircd_opermodes;
-		IRCd.consoleChannelName = LoadConfig.ircd_consolechannel;
+		IRCd.operUser = Config.ircd_operuser;
+		IRCd.operPass = Config.ircd_operpass;
+		IRCd.operModes = Config.ircd_opermodes;
+		IRCd.consoleChannelName = Config.ircd_consolechannel;
 		ircd.modestr = mode;
-		IRCd.debugMode = LoadConfig.debugmode;
-		IRCd.gameColors = LoadConfig.ircd_game_colors.split(",");
-		IRCd.ircColors = convertStringArrayToIntArray(LoadConfig.ircd_irc_colors.split(","), IRCd.ircColors);
-		IRCd.broadcastDeathMessages = LoadConfig.ircd_broadcast_death_messages;
-		IRCd.colorDeathMessages = LoadConfig.ircd_color_death_messages;
-		IRCd.colorSayMessages = LoadConfig.ircd_color_say_messages;
+		IRCd.debugMode = Config.debugmode;
+		IRCd.gameColors = Config.ircd_game_colors.split(",");
+		IRCd.ircColors = convertStringArrayToIntArray(Config.ircd_irc_colors.split(","), IRCd.ircColors);
+		IRCd.broadcastDeathMessages = Config.ircd_broadcast_death_messages;
+		IRCd.colorDeathMessages = Config.ircd_color_death_messages;
+		IRCd.colorSayMessages = Config.ircd_color_say_messages;
 		// Linking specific settings
-		IRCd.remoteHost = LoadConfig.link_remotehost;
-		IRCd.remotePort = LoadConfig.link_remoteport;
-		IRCd.localPort = LoadConfig.link_localport;
-		IRCd.autoConnect = LoadConfig.link_autoconnect;
-		IRCd.linkName = LoadConfig.link_name;
-		IRCd.connectPassword = LoadConfig.link_connectpassword;
-		IRCd.receivePassword = LoadConfig.link_receivepassword;
-		IRCd.linkPingInterval = LoadConfig.link_pinginterval;
-		IRCd.linkTimeoutInterval = LoadConfig.link_timeout;
-		IRCd.linkDelay = LoadConfig.link_delay;
-		IRCd.SID = LoadConfig.link_serverid;
+		IRCd.remoteHost = Config.link_remotehost;
+		IRCd.remotePort = Config.link_remoteport;
+		IRCd.localPort = Config.link_localport;
+		IRCd.autoConnect = Config.link_autoconnect;
+		IRCd.linkName = Config.link_name;
+		IRCd.connectPassword = Config.link_connectpassword;
+		IRCd.receivePassword = Config.link_receivepassword;
+		IRCd.linkPingInterval = Config.link_pinginterval;
+		IRCd.linkTimeoutInterval = Config.link_timeout;
+		IRCd.linkDelay = Config.link_delay;
+		IRCd.SID = Config.link_serverid;
 
 		loadBans();
 		IRCd.bukkitPlayers.clear();
@@ -724,7 +724,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			bufferWriter.newLine();
 			bufferWriter.append("");
 			bufferWriter.newLine();
-			bufferWriter.append("Welcome to " + LoadConfig.ircd_servername + ", running " + ircd_version + ".");
+			bufferWriter.append("Welcome to " + Config.ircd_servername + ", running " + ircd_version + ".");
 			bufferWriter.newLine();
 			bufferWriter.append("Enjoy your stay!");
 			bufferWriter.newLine();

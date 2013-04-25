@@ -23,7 +23,7 @@ import com.Jdbye.BukkitIRCd.HashType;
 import com.Jdbye.BukkitIRCd.IRCUser;
 import com.Jdbye.BukkitIRCd.IRCd;
 
-public class LoadConfig {
+public class Config {
 	
 	
 	public static boolean ircd_redundant_modes = false;
