@@ -58,13 +58,14 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	public Map<String, String> lastReceived = new HashMap<String, String>();
 
 
-	private static String ircd_version;
+	public static String ircd_version;
 
 	public boolean dynmapEventRegistered = false;
 
 	public static final Logger log = Logger.getLogger("Minecraft");
 
 	public static DynmapAPI dynmap = null;
+	
 
 	static IRCd ircd = null;
 	private Thread thr = null;
@@ -110,12 +111,12 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			thr.interrupt();
 			thr = null;
 		}
+	
 		dynmapEventRegistered = false;
-
 		//File configFile = new File(getDataFolder(), "config.yml");
 		Config.saveSettings();
 
-		writeBans();
+		Bans.writeBans();
 
 		log.info(ircd_version + " is disabled!");
 	}
@@ -146,29 +147,12 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		
 		Config.reloadingConfig();
 		
-		// Create default messages.yml if it doesn't exist.
-		File messagesFile = new File(getDataFolder(), "messages.yml");
-		Messages.messages = YamlConfiguration.Configuration(messagesFile);
-		if (!(messagesFile.exists())) {
-			log.info("[BukkitIRCd] Creating default messages file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin192." : ""));
-			messages.options().copyDefaults(true);
-			saveDefaultMessages(getDataFolder(),"messages.yml");
-			log.info("[BukkitIRCd] Saving initial messages file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin194." : ""));
-			
-		}
-		messages.options().copyDefaults(true);
+		Messages.saveMessages();
 		
-
-		if (!(new File(getDataFolder(), "motd.txt")).exists()) {
-			saveDefaultMOTD(getDataFolder(),"motd.txt");
-			log.info("[BukkitIRCd] Default MOTD file created." + (IRCd.debugMode ? " Code BukkitIRCdPlugin199." : ""));
-		}
-		loadMOTD();
-
-		if (!(new File(getDataFolder(), "bans.txt")).exists()) {
-			if (writeBans()) log.info("[BukkitIRCd] Blank bans file created." + (IRCd.debugMode ? " Code BukkitIRCdPlugin204." : ""));
-			else log.warning("[BukkitIRCd] Failed to create bans file." + (IRCd.debugMode ? " Error Code BukkitIRCdPlugin205." : ""));
-		}
+		Bans.enableBans();
+		
+		MOTD.enableMOTD();
+		MOTD.loadMOTD();
 
 		setupDynmap();
 		
@@ -178,7 +162,8 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 		Config.initConfig();
 		
-		loadBans();
+		Bans.loadBans();
+		
 		IRCd.bukkitPlayers.clear();
 		
 		// Set players to different IRC modes based on permission
@@ -257,74 +242,6 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 	}
 
-	//rivate void loadSettings() {
-	//	try {
-	//		ircd_redundant_modes = config.getBoolean("redundant-modes",ircd_redundant_modes);
-	//		ircd_strip_ingame_suffix = config.getBoolean("strip-ingame-suffix",ircd_strip_ingame_suffix);
-	//		ircd_color_death_messages = config.getBoolean("color-death-messages", ircd_color_death_messages);
-	//		ircd_color_say_messages = config.getBoolean("color-say-messages", ircd_color_say_messages);
-	//		mode = config.getString("mode", mode);
-	//		ircd_ingamesuffix = config.getString("ingame-suffix", ircd_ingamesuffix);
-	//		ircd_enablenotices = config.getBoolean("enable-notices", ircd_enablenotices);
-	//		ircd_convertcolorcodes = config.getBoolean("convert-color-codes", ircd_convertcolorcodes);
-	//		ircd_handleampersandcolors = config.getBoolean("handle-ampersand-colors",ircd_handleampersandcolors);
-	//		ircd_irc_colors = config.getString("irc-colors", ircd_irc_colors);
-	//		ircd_game_colors = config.getString("game-colors", ircd_game_colors);
-	//		ircd_channel = config.getString("channel-name", ircd_channel);
-	//		ircd_consolechannel = config.getString("console-channel-name", ircd_consolechannel);
-	//		ircd_creationdate = config.getString("server-creation-date", ircd_creationdate);
-	//		ircd_servername = config.getString("server-name", ircd_servername);
-	//		ircd_serverdescription = config.getString("server-description", ircd_serverdescription);
-	//		ircd_serverhostname = config.getString("server-host", ircd_serverhostname);
-	//		ircd_bantype = config.getString("ban-type", ircd_bantype);
-	//		debugmode = config.getBoolean("debug-mode", debugmode);
-	//		enableRawSend = config.getBoolean("enable-raw-send", enableRawSend);
-	//		kickCommands = config.getStringList("kick-commands");
-    //
-	//		String operpass = "";
-	//		
-	//		ircd_port = config.getInt("standalone.port", ircd_port);
-	//		ircd_maxconn = config.getInt("standalone.max-connections", ircd_maxconn);
-	//		ircd_pinginterval = config.getInt("standalone.ping-interval", ircd_pinginterval);
-	//		ircd_timeout = config.getInt("standalone.timeout", ircd_timeout);
-	//		ircd_maxnicklen = config.getInt("standalone.max-nick-length", ircd_maxnicklen);
-	//		ircd_operuser = config.getString("standalone.oper-username", ircd_operuser);
-	//		operpass = config.getString("standalone.oper-password", ircd_operpass);
-	//		ircd_opermodes = config.getString("standalone.oper-modes", ircd_opermodes);
-	//		ircd_topic = config.getString("standalone.channel-topic", ircd_topic).replace("^K", (char)3 + "").replace("^B", (char)2 + "").replace("^I", (char)29 + "").replace("^O", (char)15 + "").replace("^U", (char)31 + "");
-	//		ircd_topicsetby = config.getString("standalone.channel-topic-set-by", ircd_topicsetby);
-	//		ircd_broadcast_death_messages = config.getBoolean("broadcast-death-messages",ircd_broadcast_death_messages);
-	//		try {
-	//			ircd_topicsetdate = dateFormat.parse(config.getString("standalone.channel-topic-set-date", dateFormat.format(ircd_topicsetdate))).getTime();
-	//		}
-	//		catch (ParseException e) { }
-    //
-	//		link_remotehost = config.getString("inspircd.remote-host", link_remotehost);
-	//		link_remoteport = config.getInt("inspircd.remote-port", link_remoteport);
-	//		link_localport = config.getInt("inspircd.local-port", link_localport);
-	//		link_autoconnect = config.getBoolean("inspircd.auto-connect", link_autoconnect);
-	//		link_name = config.getString("inspircd.link-name", link_name);
-	//		link_connectpassword = config.getString("inspircd.connect-password", link_connectpassword);
-	//		link_receivepassword = config.getString("inspircd.receive-password", link_receivepassword);
-	//		link_pinginterval = config.getInt("inspircd.ping-interval", link_pinginterval);
-	//		link_timeout = config.getInt("inspircd.timeout", link_timeout);
-	//		link_delay = config.getInt("inspircd.connect-delay", link_delay);
-	//		link_serverid = config.getInt("inspircd.server-id", link_serverid);
-    //
-	//		if (operpass.length() == 0) ircd_operpass = "";
-	//		else if (operpass.startsWith("~")) { ircd_operpass = operpass.substring(1); }
-	//		else { ircd_operpass = Hash.compute(operpass, HashType.SHA_512); }
-    //
-	//		log.info("[BukkitIRCd] Loaded configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin363." : ""));
-	//		
-	//		saveConfig();
-	//		log.info("[BukkitIRCd] Saved initial configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin365." : ""));
-	//	}
-	//	catch (Exception e) {
-	//		log.info("[BukkitIRCd] Failed to load configuration file: " + e.toString());
-	//	}
-	//}
-
 	
 	/**
      * Converts color codes to processed codes
@@ -338,364 +255,12 @@ public class BukkitIRCdPlugin extends JavaPlugin {
         return message.replaceAll("&([a-f0-9k-or])", "\u00a7$1");
     }
 	
-	// Load the messages from messages.yml
-	//private void loadMessages(IRCd ircd) {
-	//	try {
-	//		IRCd.msgLinked = messages.getString("linked", IRCd.msgLinked);
-	//		
-	//		IRCd.msgSendQueryFromIngame = messages.getString("irc-send-pm", IRCd.msgSendQueryFromIngame);
-	//		IRCd.msgDelinked = messages.getString("delinked", IRCd.msgDelinked);
-	//		IRCd.msgDelinkedReason = messages.getString("delinked-reason", IRCd.msgDelinkedReason);
-	//		
-	//		IRCd.msgIRCJoin = messages.getString("irc-join", IRCd.msgIRCJoin);
-	//		IRCd.msgIRCJoinDynmap = messages.getString("irc-join-dynmap", IRCd.msgIRCJoinDynmap);
-    //
-	//		IRCd.groupPrefixes = messages.getConfigurationSection("group-prefixes");
-	//		IRCd.groupSuffixes = messages.getConfigurationSection("group-suffixes");
-	//		
-	//		IRCd.msgIRCLeave = messages.getString("irc-leave", IRCd.msgIRCLeave);
-	//		IRCd.msgIRCLeaveReason = messages.getString("irc-leave-reason", IRCd.msgIRCLeaveReason);
-	//		IRCd.msgIRCLeaveDynmap = messages.getString("irc-leave-dynmap", IRCd.msgIRCLeaveDynmap);
-	//		IRCd.msgIRCLeaveReasonDynmap = messages.getString("irc-leave-reason-dynmap", IRCd.msgIRCLeaveReasonDynmap);
-    //
-	//		IRCd.msgIRCKick = messages.getString("irc-kick", IRCd.msgIRCKick);
-	//		IRCd.msgIRCKickReason = messages.getString("irc-kick-reason", IRCd.msgIRCKickReason);
-	//		IRCd.msgIRCKickDynmap = messages.getString("irc-kick-dynmap", IRCd.msgIRCKickDynmap);
-	//		IRCd.msgIRCKickReasonDynmap = messages.getString("irc-kick-reason-dynmap", IRCd.msgIRCKickReasonDynmap);
-    //
-	//		IRCd.msgIRCBan = messages.getString("irc-ban", IRCd.msgIRCBan);
-	//		IRCd.msgIRCBanDynmap = messages.getString("irc-ban-dynmap", IRCd.msgIRCBanDynmap);
-    //
-	//		IRCd.msgIRCUnban = messages.getString("irc-unban", IRCd.msgIRCUnban);
-	//		IRCd.msgIRCUnbanDynmap = messages.getString("irc-unban-dynmap", IRCd.msgIRCUnbanDynmap);
-    //
-	//		IRCd.msgIRCNickChange = messages.getString("irc-nick-change", IRCd.msgIRCNickChange);
-	//		IRCd.msgIRCNickChangeDynmap = messages.getString("irc-nick-change-dynmap", IRCd.msgIRCNickChangeDynmap);
-    //
-	//		IRCd.msgIRCAction = messages.getString("irc-action", IRCd.msgIRCAction);
-	//		IRCd.msgIRCMessage = messages.getString("irc-message", IRCd.msgIRCMessage);
-	//		IRCd.msgIRCNotice = messages.getString("irc-notice", IRCd.msgIRCNotice);
-    //
-	//		IRCd.msgIRCPrivateAction = messages.getString("irc-private-action", IRCd.msgIRCPrivateAction);
-	//		IRCd.msgIRCPrivateMessage = messages.getString("irc-private-message", IRCd.msgIRCPrivateMessage);
-	//		IRCd.msgIRCPrivateNotice = messages.getString("irc-private-notice", IRCd.msgIRCPrivateNotice);
-    //
-	//		IRCd.msgIRCActionDynmap = messages.getString("irc-action-dynmap", IRCd.msgIRCActionDynmap);
-	//		IRCd.msgIRCMessageDynmap = messages.getString("irc-message-dynmap", IRCd.msgIRCMessageDynmap);
-	//		IRCd.msgIRCNoticeDynmap = messages.getString("irc-notice-dynmap", IRCd.msgIRCNoticeDynmap);
-    //
-	//		IRCd.msgDynmapMessage = messages.getString("dynmap-message", IRCd.msgDynmapMessage);
-	//		IRCd.msgPlayerList = messages.getString("player-list", IRCd.msgPlayerList);
-	//		
-	//		IRCd.consoleFilters = messages.getStringList("console-filters");
-	//		//** RECOLOUR ALL MESSAGES **
-	//		
-	//		IRCd.msgSendQueryFromIngame = colorize(IRCd.msgSendQueryFromIngame);
-	//		IRCd.msgLinked = colorize(IRCd.msgLinked);
-	//		IRCd.msgDelinked = colorize(IRCd.msgDelinked);
-	//		IRCd.msgDelinkedReason = colorize(IRCd.msgDelinked);
-	//		IRCd.msgIRCJoin = colorize(IRCd.msgIRCJoin);
-	//		IRCd.msgIRCJoinDynmap = colorize(IRCd.msgIRCJoinDynmap);
-	//		IRCd.msgIRCLeave = colorize(IRCd.msgIRCLeave);
-	//		IRCd.msgIRCLeaveReason = colorize(IRCd.msgIRCLeaveReason);
-	//		IRCd.msgIRCLeaveDynmap = colorize(IRCd.msgIRCLeaveDynmap);
-	//		IRCd.msgIRCLeaveReasonDynmap = colorize(IRCd.msgIRCLeaveReasonDynmap);
-	//		IRCd.msgIRCKick = colorize(IRCd.msgIRCKick);
-	//		IRCd.msgIRCKickReason = colorize(IRCd.msgIRCKickReason);
-	//		IRCd.msgIRCKickDynmap = colorize(IRCd.msgIRCKickDynmap);
-	//		IRCd.msgIRCKickReasonDynmap = colorize(IRCd.msgIRCKickReasonDynmap);
-	//		IRCd.msgIRCBan = colorize(IRCd.msgIRCBan);
-	//		IRCd.msgIRCBanDynmap = colorize(IRCd.msgIRCBanDynmap);
-	//		IRCd.msgIRCUnban = colorize(IRCd.msgIRCUnban);
-	//		IRCd.msgIRCUnbanDynmap = colorize(IRCd.msgIRCUnbanDynmap);
-	//		IRCd.msgIRCNickChange = colorize(IRCd.msgIRCNickChange);
-	//		IRCd.msgIRCNickChangeDynmap = colorize(IRCd.msgIRCNickChangeDynmap);
-	//		IRCd.msgIRCAction = colorize(IRCd.msgIRCAction);
-	//		IRCd.msgIRCMessage = colorize(IRCd.msgIRCMessage);
-	//		IRCd.msgIRCNotice = colorize(IRCd.msgIRCNotice);
-	//		IRCd.msgIRCPrivateAction = colorize(IRCd.msgIRCPrivateAction);
-	//		IRCd.msgIRCPrivateMessage = colorize(IRCd.msgIRCPrivateMessage);
-	//		IRCd.msgIRCPrivateNotice = colorize(IRCd.msgIRCPrivateNotice);
-	//		IRCd.msgIRCActionDynmap = colorize(IRCd.msgIRCActionDynmap);
-	//		IRCd.msgIRCMessageDynmap = colorize(IRCd.msgIRCMessageDynmap);
-	//		IRCd.msgIRCNoticeDynmap = colorize(IRCd.msgIRCNoticeDynmap);
-	//		IRCd.msgDynmapMessage = colorize(IRCd.msgDynmapMessage);
-	//		IRCd.msgPlayerList = colorize(IRCd.msgPlayerList);
-    //
-	//		log.info("[BukkitIRCd] Loaded messages file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin464." : ""));
-	//	}
-	//	catch (Exception e) {
-	//		log.info("[BukkitIRCd] Failed to load messages file: " + e.toString());
-	//	}
-	//}
-
-	// It was originally disabled, I'd like to know why.
-	@SuppressWarnings("unused")
-	private void firstRunSettings(File dataFolder)
-	{
-		log.info("[BukkitIRCd] Configuration file not found, creating new one." + (IRCd.debugMode ? " Code BukkitIRCdPlugin475." : ""));
-		dataFolder.mkdirs();
-
-		File configFile = new File(dataFolder, "config.yml");
-		try
-		{
-			if(!configFile.createNewFile())
-				throw new IOException("Failed file creation");
-		}
-		catch(IOException e)
-		{
-			log.warning("[BukkitIRCd] Could not create config file!" + (IRCd.debugMode ? " Error Code BukkitIRCdPlugin486." : ""));
-		}
-
-		writeSettings(configFile);
-	}
 	
-	// Set up the MOTD for the standalone BukkitIRCd server
-	private void loadMOTD() {
-		File motdFile = new File(getDataFolder(), "motd.txt");
-
-		IRCd.MOTD.clear();
-
-		try {
-			// use buffering, reading one line at a time
-			// FileReader always assumes default encoding is OK!
-			BufferedReader input =  new BufferedReader(new FileReader(motdFile));
-			try {
-				String line = null; // not declared within while loop
-				/*
-				 * readLine is a bit quirky :
-				 * it returns the content of a line MINUS the newline.
-				 * it returns null only for the END of the stream.
-				 * it returns an empty String if two newlines appear in a row.
-				 */
-				while (( line = input.readLine()) != null){
-					IRCd.MOTD.add(line);
-				}
-			}
-			finally {
-				input.close();
-				log.info("[BukkitIRCd] Loaded MOTD file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin516." : ""));
-			}
-		}
-		catch (Exception e) {
-			log.info("[BukkitIRCd] Failed to load MOTD file: " + e.toString());
-		}
-	}
+    MOTD.loadMOTD();
 
 	// Load the bans file
-	private void loadBans() {
-		File bansFile = new File(getDataFolder(), "bans.txt");
-
-		IRCd.ircBans.clear();
-
-		try {
-			// use buffering, reading one line at a time
-			// FileReader always assumes default encoding is OK!
-			BufferedReader input =  new BufferedReader(new FileReader(bansFile));
-			try {
-				String line = null; //not declared within while loop
-				/*
-				 * readLine is a bit quirky :
-				 * it returns the content of a line MINUS the newline.
-				 * it returns null only for the END of the stream.
-				 * it returns an empty String if two newlines appear in a row.
-				 */
-				while (( line = input.readLine()) != null){
-					String[] split = line.split(",");
-					if (!line.trim().startsWith("#")) {
-						try { IRCd.ircBans.add(new IrcBan(split[0], split[1], Long.parseLong(split[2]))); }
-						catch (NumberFormatException e) { log.warning("[BukkitIRCd] Invalid ban: " + line); }
-					}
-				}
-			}
-			finally {
-				input.close();
-				log.info("[BukkitIRCd] Loaded bans file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin551." : ""));
-			}
-		}
-		catch (Exception e) {
-			log.info("[BukkitIRCd] Failed to load bans file: " + e.toString());
-		}
-	}
-
-	// Write the bans file
-	private boolean writeBans()
-	{
-		File bansFile = new File(getDataFolder(), "bans.txt");
-
-		boolean result = false;
-		OutputStreamWriter fileWriter = null;
-		BufferedWriter bufferWriter = null;
-		try
-		{
-			if(!bansFile.exists())
-				bansFile.createNewFile();
-
-			fileWriter = new OutputStreamWriter(new FileOutputStream(bansFile), "UTF8");
-			bufferWriter = new BufferedWriter(fileWriter);
-
-			bufferWriter.append("# wildcard hostmask,banned by,time");
-			bufferWriter.newLine();
-
-			synchronized(IRCd.csIrcBans) {
-				for (IrcBan ban : IRCd.ircBans) {
-					bufferWriter.append(ban.fullHost + "," + ban.bannedBy + "," + ban.banTime);
-					bufferWriter.newLine();
-				}
-			}
-
-			bufferWriter.flush();
-			log.info("[BukkitIRCd] Saved bans file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin585." : ""));
-			result = true;
-		}
-		catch(IOException e)
-		{
-			log.warning("[BukkitIRCd] Caught exception while writing bans to file: ");
-			e.printStackTrace();
-		}
-		finally
-		{
-			try
-			{
-				if(bufferWriter != null)
-				{
-					bufferWriter.flush();
-					bufferWriter.close();
-				}
-
-				if(fileWriter != null)
-					fileWriter.close();
-			}
-			catch(IOException e)
-			{
-				log.warning("[BukkitIRCd] IO Exception writing file: " + bansFile.getName());
-			}
-		}
-		return result;
-	}
-
-	// If a motd is not found, save it
-	private void saveDefaultMOTD(File dataFolder, String fileName)
-	{
-		log.info("[BukkitIRCd] MOTD file not found, creating new one." + (IRCd.debugMode ? " Code BukkitIRCdPlugin616." : ""));
-		dataFolder.mkdirs();
-
-		File motdFile = new File(dataFolder, fileName);
-		try
-		{
-			if(!motdFile.createNewFile())
-				throw new IOException("Failed file creation.");
-		}
-		catch(IOException e)
-		{
-			log.warning("[BukkitIRCd] Could not create MOTD file!" + (IRCd.debugMode ? " Code BukkitIRCdPlugin627." : ""));
-		}
-
-		writeMOTD(motdFile);
-	}
-
-	private void writeMOTD(File motdFile)
-	{
-		OutputStreamWriter fileWriter = null;
-		BufferedWriter bufferWriter = null;
-		try
-		{
-			if(!motdFile.exists())
-				motdFile.createNewFile();
-
-			fileWriter = new OutputStreamWriter(new FileOutputStream(motdFile), "UTF8");
-			bufferWriter = new BufferedWriter(fileWriter);
-			// E M d H:m:s
-			Date curDate = new Date();
-			SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss");
-
-			bufferWriter.append("Last changed on " + dateFormat.format(curDate));
-			bufferWriter.newLine();
-			bufferWriter.append("");
-			bufferWriter.newLine();
-			bufferWriter.append("_________        __    __   .__        ___________  _____     _"); 
-			bufferWriter.newLine();
-			bufferWriter.append("\\______  \\___ __|  |  |  |  |__| __   |_   _| ___ \\/  __ \\   | |");
-			bufferWriter.newLine();
-			bufferWriter.append(" |   |_\\  \\  |  |  | _|  | _____/  |_   | | | |_/ /| /  \\/ __| |");
-			bufferWriter.newLine();
-			bufferWriter.append(" |    __ _/  |  \\  |/ /  |/ /  \\   __\\  | | |    / | |    / _` |");
-			bufferWriter.newLine();
-			bufferWriter.append(" |   |_/  \\  |  /    <|    <|  ||  |   _| |_| |\\ \\ | \\__/\\ (_| |");
-			bufferWriter.newLine();
-			bufferWriter.append(" |______  /____/|__|_ \\__|_ \\__||__|   \\___/\\_| \\_| \\____/\\__,_|");
-			bufferWriter.newLine();
-			bufferWriter.append("        \\/           \\/    \\/");
-			bufferWriter.newLine();
-			bufferWriter.append("");
-			bufferWriter.newLine();
-			bufferWriter.append("Welcome to " + Config.ircd_servername + ", running " + ircd_version + ".");
-			bufferWriter.newLine();
-			bufferWriter.append("Enjoy your stay!");
-			bufferWriter.newLine();
-
-			bufferWriter.flush();
-			log.info("[BukkitIRCd] Saved MOTD file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin674" : ""));
-		}
-		catch(IOException e)
-		{
-			log.warning("[BukkitIRCd] Caught exception while writing MOTD to file: ");
-			e.printStackTrace();
-		}
-		finally
-		{
-			try
-			{
-				if(bufferWriter != null)
-				{
-					bufferWriter.flush();
-					bufferWriter.close();
-				}
-
-				if(fileWriter != null)
-					fileWriter.close();
-			}
-			catch(IOException e)
-			{
-				log.warning("[BukkitIRCd] IO Exception writing file: " + motdFile.getName());
-			}
-		}
-	}
 	
-	// Was also disabled, I'd like to know why
-	private void saveDefaultMessages(File dataFolder, String fileName)
-	{
-		log.info("[BukkitIRCd] Messages file not found, creating new one." + (IRCd.debugMode ? " Code BukkitIRCdPlugin705" : ""));
-		dataFolder.mkdirs();
 
-		File msgFile = new File(dataFolder, fileName);
-		try
-		{
-			if(!msgFile.createNewFile())
-				throw new IOException("Failed file creation");
-		}
-		catch(IOException e)
-		{
-			log.warning("[BukkitIRCd] Could not create messages file!" + (IRCd.debugMode ? " Error code BukkitIRCdPlugin716." : ""));
-		}
-
-		writeMessages(msgFile);
-	}
-	
-	
-	private void writeMessages(File messagesFile)
-	{
-		try
-		{
-			messages.save(messagesFile);
-			log.info("[BukkitIRCd] Saved messages file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin728." : ""));
-		}
-		catch(Exception e)
-		{
-			log.warning("[BukkitIRCd] Caught exception while writing messages to file: ");
-			e.printStackTrace();
-		}
-	}
 
 
 	public boolean hasPermission(Player player, String permission)

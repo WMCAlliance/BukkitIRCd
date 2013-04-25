@@ -3,6 +3,7 @@ package com.Jdbye.BukkitIRCd.configuration;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -22,7 +23,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
 import com.Jdbye.BukkitIRCd.Hash;
-import com.Jdbye.BukkitIRCd.HashType;
 import com.Jdbye.BukkitIRCd.IRCUser;
 import com.Jdbye.BukkitIRCd.IRCd;
 
@@ -127,7 +127,7 @@ public class Config extends JavaPlugin{
 		IRCd.convertColorCodes = ircd_convertcolorcodes;
 		IRCd.handleAmpersandColors = ircd_handleampersandcolors;
 		IRCd.ircBanType = ircd_bantype;
-		IRCd.version = ircd_version;
+		IRCd.version = BukkitIRCdPlugin.ircd_version;
 		IRCd.operUser = ircd_operuser;
 		IRCd.operPass = ircd_operpass;
 		IRCd.operModes = ircd_opermodes;
@@ -234,4 +234,27 @@ public class Config extends JavaPlugin{
 		}
 		
 	}
+	
+	private void firstRunSettings(File dataFolder)
+	{
+		BukkitIRCdPlugin.log.info("[BukkitIRCd] Configuration file not found, creating new one." + (IRCd.debugMode ? " Code BukkitIRCdPlugin475." : ""));
+		dataFolder.mkdirs();
+
+		File configFile = new File(dataFolder, "config.yml");
+		try
+		{
+			if(!configFile.createNewFile())
+				throw new IOException("Failed file creation");
+		}
+		catch(IOException e)
+		{
+			BukkitIRCdPlugin.log.warning("[BukkitIRCd] Could not create config file!" + (IRCd.debugMode ? " Error Code BukkitIRCdPlugin486." : ""));
+		}
+
+		writeSettings(configFile);
+	}
+	
+	
+	
+	
 }
