@@ -102,7 +102,7 @@ public class IRCd implements Runnable {
 	public static boolean enableNotices = true;
 	public static boolean convertColorCodes = true;
 	public static boolean handleAmpersandColors = true;
-	public String modestr = "standalone";
+	public static String modestr = "standalone";
 	public static boolean stripIngameSuffix = true;
 	public static boolean redundantModes = false;
 	public static Modes mode;

@@ -32,13 +32,13 @@ public class Messages extends JavaPlugin {
 	public static FileConfiguration messages;
 	
 	
-	public void saveMessages() {
-		File messagesFile = new File(getDataFolder(), "messages.yml");
-		Messages.messages = YamlConfiguration.Configuration(messagesFile);
+	public static void saveMessages() {
+		File messagesFile = new File(BukkitIRCdPlugin.thePlugin.getDataFolder(), "messages.yml");
+		Messages.messages = YamlConfiguration.loadConfiguration(messagesFile);
 		if (!(messagesFile.exists())) {
 			BukkitIRCdPlugin.log.info("[BukkitIRCd] Creating default messages file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin192." : ""));
 			messages.options().copyDefaults(true);
-			saveDefaultMessages(getDataFolder(),"messages.yml");
+			saveDefaultMessages(BukkitIRCdPlugin.thePlugin.getDataFolder(),"messages.yml");
 			BukkitIRCdPlugin.log.info("[BukkitIRCd] Saving initial messages file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin194." : ""));
 			
 		}
@@ -139,7 +139,7 @@ public class Messages extends JavaPlugin {
 		}
 	}
 	
-	private void saveDefaultMessages(File dataFolder, String fileName)
+	private static void saveDefaultMessages(File dataFolder, String fileName)
 	{
 		BukkitIRCdPlugin.log.info("[BukkitIRCd] Messages file not found, creating new one." + (IRCd.debugMode ? " Code BukkitIRCdPlugin705" : ""));
 		dataFolder.mkdirs();
@@ -158,7 +158,7 @@ public class Messages extends JavaPlugin {
 		writeMessages(msgFile);
 	}
 	
-	private void writeMessages(File messagesFile)
+	private static void writeMessages(File messagesFile)
 	{
 		try
 		{

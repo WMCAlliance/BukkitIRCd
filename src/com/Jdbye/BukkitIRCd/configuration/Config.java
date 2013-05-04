@@ -23,15 +23,16 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
 import com.Jdbye.BukkitIRCd.Hash;
+import com.Jdbye.BukkitIRCd.HashType;
 import com.Jdbye.BukkitIRCd.IRCUser;
 import com.Jdbye.BukkitIRCd.IRCd;
 
 import com.Jdbye.BukkitIRCd.commands.*;
 
 
-public class Config extends JavaPlugin{
+public class Config{
 
-	private String mode = "standalone";
+	private static String mode = "standalone";
 
 	private static Date curDate = new Date();
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
@@ -83,28 +84,29 @@ public class Config extends JavaPlugin{
 	
 	public static boolean enableRawSend = false;
 	
-	static IRCd ircd = null;
-	private Thread thr = null;
+	private static BukkitIRCdPlugin plugin = BukkitIRCdPlugin.thePlugin;
 	
+
 	public static FileConfiguration config;
 	
-	public void saveSettings() {
-		File configFile = new File(getDataFolder(), "config.yml");
+	
+	public static void saveSettings() {
+		File configFile = new File(plugin.getDataFolder(), "config.yml");
 		writeSettings(configFile);
 	}
 	
-	public void reloadingConfig() {
-		reloadConfig();
-		config = getConfig();
+	public static void reloadingConfig() {
+		plugin.reloadConfig();
+		config = plugin.getConfig();
 		// IF config file doesn't exist, create it
-		if (!(new File(getDataFolder(), "config.yml")).exists()) {
+		if (!(new File(plugin.getDataFolder(), "config.yml")).exists()) {
 			BukkitIRCdPlugin.log.info("[BukkitIRCd] Creating default configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin183." : ""));
 			config.options().copyDefaults(true);
 		}
 		loadSettings();
 	}
 	
-	public void initConfig() {
+	public static void initConfig() {
 		IRCd.redundantModes = ircd_redundant_modes;
 		IRCd.port = ircd_port;
 		IRCd.maxConnections = ircd_maxconn;
@@ -132,7 +134,7 @@ public class Config extends JavaPlugin{
 		IRCd.operPass = ircd_operpass;
 		IRCd.operModes = ircd_opermodes;
 		IRCd.consoleChannelName = ircd_consolechannel;
-		ircd.modestr = mode;
+		IRCd.modestr = mode;
 		IRCd.debugMode = debugmode;
 		IRCd.gameColors = ircd_game_colors.split(",");
 		IRCd.ircColors = BukkitIRCdPlugin.convertStringArrayToIntArray(ircd_irc_colors.split(","), IRCd.ircColors);
@@ -152,11 +154,11 @@ public class Config extends JavaPlugin{
 		IRCd.linkDelay = link_delay;
 		IRCd.SID = link_serverid;
 	}
-	private void writeSettings(File configFile)
+	private static void writeSettings(File configFile)
 	{
 		try
 		{
-			saveConfig();
+			plugin.saveConfig();
 			BukkitIRCdPlugin.log.info("[BukkitIRCd] Saved configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin742." : ""));
 		}
 		catch(Exception e)

@@ -35,16 +35,16 @@ import com.Jdbye.BukkitIRCd.commands.*;
 
 public class MOTD extends JavaPlugin{
 	
-	public void enableMOTD() {
-		if (!(new File(getDataFolder(), "motd.txt")).exists()) {
-			saveDefaultMOTD(getDataFolder(),"motd.txt");
+	public static void enableMOTD() {
+		if (!(new File(BukkitIRCdPlugin.thePlugin.getDataFolder(), "motd.txt")).exists()) {
+			saveDefaultMOTD(BukkitIRCdPlugin.thePlugin.getDataFolder(),"motd.txt");
 			BukkitIRCdPlugin.log.info("[BukkitIRCd] Default MOTD file created." + (IRCd.debugMode ? " Code BukkitIRCdPlugin199." : ""));
 		}
 	}
 	
 	// Set up the MOTD for the standalone BukkitIRCd server
-	public void loadMOTD() {
-		File motdFile = new File(getDataFolder(), "motd.txt");
+	public static void loadMOTD() {
+		File motdFile = new File(BukkitIRCdPlugin.thePlugin.getDataFolder(), "motd.txt");
 
 		IRCd.MOTD.clear();
 
@@ -75,7 +75,7 @@ public class MOTD extends JavaPlugin{
 	}
 	
 	// If a motd is not found, save it
-	private void saveDefaultMOTD(File dataFolder, String fileName)
+	private static void saveDefaultMOTD(File dataFolder, String fileName)
 	{
 		BukkitIRCdPlugin.log.info("[BukkitIRCd] MOTD file not found, creating new one." + (IRCd.debugMode ? " Code BukkitIRCdPlugin616." : ""));
 		dataFolder.mkdirs();
@@ -96,7 +96,7 @@ public class MOTD extends JavaPlugin{
 	
 
 
-	private void writeMOTD(File motdFile)
+	private static void writeMOTD(File motdFile)
 	{
 		OutputStreamWriter fileWriter = null;
 		BufferedWriter bufferWriter = null;
