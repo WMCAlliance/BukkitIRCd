@@ -33,17 +33,18 @@ import com.Jdbye.BukkitIRCd.IrcBan;
 import com.Jdbye.BukkitIRCd.commands.*;
 
 
-public class Bans extends JavaPlugin{
+public class Bans{
 
-	public void enableBans() {
-		if (!(new File(getDataFolder(), "bans.txt")).exists()) {
+	
+	public static void enableBans() {
+		if (!(new File(BukkitIRCdPlugin.thePlugin.getDataFolder(), "bans.txt")).exists()) {
 			if (writeBans()) BukkitIRCdPlugin.log.info("[BukkitIRCd] Blank bans file created." + (IRCd.debugMode ? " Code BukkitIRCdPlugin204." : ""));
 			else BukkitIRCdPlugin.log.warning("[BukkitIRCd] Failed to create bans file." + (IRCd.debugMode ? " Error Code BukkitIRCdPlugin205." : ""));
 		}
 	}
 
-	public void loadBans() {
-		File bansFile = new File(getDataFolder(), "bans.txt");
+	public static void loadBans() {
+		File bansFile = new File(BukkitIRCdPlugin.thePlugin.getDataFolder(), "bans.txt");
 
 		IRCd.ircBans.clear();
 
@@ -78,9 +79,9 @@ public class Bans extends JavaPlugin{
 	}
 
 	// Write the bans file
-	public boolean writeBans()
+	public static boolean writeBans()
 	{
-		File bansFile = new File(getDataFolder(), "bans.txt");
+		File bansFile = new File(BukkitIRCdPlugin.thePlugin.getDataFolder(), "bans.txt");
 
 		boolean result = false;
 		OutputStreamWriter fileWriter = null;
