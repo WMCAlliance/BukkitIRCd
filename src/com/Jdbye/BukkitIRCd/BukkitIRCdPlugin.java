@@ -74,8 +74,10 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		thePlugin = this;
 	}
 	
+	public static Config config = null;
 	public void onEnable() {
 		// Register our events
+		
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(this.playerListener, this);
 		pm.registerEvents(this.serverListener, this);
@@ -256,7 +258,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
     }
 	
 	
-    MOTD.loadMOTD();
+   
 
 	// Load the bans file
 	
