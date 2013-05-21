@@ -117,7 +117,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	
 		dynmapEventRegistered = false;
 		//File configFile = new File(getDataFolder(), "config.yml");
-		Config.saveSettings();
+		Config.saveConfiguration();
 
 		Bans.writeBans();
 
@@ -148,7 +148,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			}
 		}
 		
-		Config.reloadConfig();
+		Config.reloadConfiguration();
 		
 		Messages.saveMessages();
 		
