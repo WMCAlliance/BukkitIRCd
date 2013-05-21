@@ -1,5 +1,9 @@
 package com.Jdbye.BukkitIRCd.configuration;
 
+import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
+import com.Jdbye.BukkitIRCd.IRCd;
+import com.Jdbye.BukkitIRCd.IrcBan;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -7,30 +11,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import java.util.logging.Logger;
-
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.PluginManager;
-
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.file.FileConfiguration;
-
-import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
-import com.Jdbye.BukkitIRCd.Hash;
-import com.Jdbye.BukkitIRCd.IRCUser;
-import com.Jdbye.BukkitIRCd.IRCd;
-import com.Jdbye.BukkitIRCd.IrcBan;
-
-import com.Jdbye.BukkitIRCd.commands.*;
 
 
 public class Bans{
@@ -38,8 +18,8 @@ public class Bans{
 	
 	public static void enableBans() {
 		if (!(new File(BukkitIRCdPlugin.thePlugin.getDataFolder(), "bans.txt")).exists()) {
-			if (writeBans()) BukkitIRCdPlugin.log.info("[BukkitIRCd] Blank bans file created." + (IRCd.debugMode ? " Code BukkitIRCdPlugin204." : ""));
-			else BukkitIRCdPlugin.log.warning("[BukkitIRCd] Failed to create bans file." + (IRCd.debugMode ? " Error Code BukkitIRCdPlugin205." : ""));
+			if (writeBans()) BukkitIRCdPlugin.log.info("[BukkitIRCd] Blank bans file created." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin204." : ""));
+			else BukkitIRCdPlugin.log.warning("[BukkitIRCd] Failed to create bans file." + (Config.isDebugModeEnabled() ? " Error Code BukkitIRCdPlugin205." : ""));
 		}
 	}
 
@@ -70,7 +50,7 @@ public class Bans{
 			}
 			finally {
 				input.close();
-				BukkitIRCdPlugin.log.info("[BukkitIRCd] Loaded bans file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin551." : ""));
+				BukkitIRCdPlugin.log.info("[BukkitIRCd] Loaded bans file." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin551." : ""));
 			}
 		}
 		catch (Exception e) {
@@ -105,7 +85,7 @@ public class Bans{
 			}
 
 			bufferWriter.flush();
-			BukkitIRCdPlugin.log.info("[BukkitIRCd] Saved bans file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin585." : ""));
+			BukkitIRCdPlugin.log.info("[BukkitIRCd] Saved bans file." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin585." : ""));
 			result = true;
 		}
 		catch(IOException e)

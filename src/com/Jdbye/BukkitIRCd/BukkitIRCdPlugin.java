@@ -1,34 +1,35 @@
 package com.Jdbye.BukkitIRCd;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
+import com.Jdbye.BukkitIRCd.commands.IRCBanCommand;
+import com.Jdbye.BukkitIRCd.commands.IRCKickCommand;
+import com.Jdbye.BukkitIRCd.commands.IRCLinkCommand;
+import com.Jdbye.BukkitIRCd.commands.IRCListCommand;
+import com.Jdbye.BukkitIRCd.commands.IRCMsgCommand;
+import com.Jdbye.BukkitIRCd.commands.IRCReloadCommand;
+import com.Jdbye.BukkitIRCd.commands.IRCReplyCommand;
+import com.Jdbye.BukkitIRCd.commands.IRCTopicCommand;
+import com.Jdbye.BukkitIRCd.commands.IRCUnbanCommand;
+import com.Jdbye.BukkitIRCd.commands.IRCWhoisCommand;
+import com.Jdbye.BukkitIRCd.commands.RawsendCommand;
+import com.Jdbye.BukkitIRCd.configuration.Bans;
+import com.Jdbye.BukkitIRCd.configuration.Config;
+import com.Jdbye.BukkitIRCd.configuration.MOTD;
+import com.Jdbye.BukkitIRCd.configuration.Messages;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.dynmap.DynmapAPI;
+
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.logging.Logger;
-
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.dynmap.DynmapAPI;
-
-import com.Jdbye.BukkitIRCd.commands.*;
-import com.Jdbye.BukkitIRCd.configuration.*;
 
 /**
  * BukkitIRCdPlugin for Bukkit
@@ -58,7 +59,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	public Map<String, String> lastReceived = new HashMap<String, String>();
 
 
-	public static String ircd_version;
+	public static String ircdVersion;
 
 	public boolean dynmapEventRegistered = false;
 
@@ -83,7 +84,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		pm.registerEvents(this.serverListener, this);
 		
 		PluginDescriptionFile pdfFile = getDescription();
-		ircd_version = pdfFile.getName() + " " + pdfFile.getVersion() + " by " + pdfFile.getAuthors().get(0);
+		ircdVersion = pdfFile.getName() + " " + pdfFile.getVersion() + " by " + pdfFile.getAuthors().get(0);
 		setupMetrics();
 		pluginInit();
 
@@ -99,7 +100,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		getCommand("ircreload").setExecutor(new IRCReloadCommand(this));
 		getCommand("rawsend").setExecutor(new RawsendCommand(this));
 		
-		log.info(ircd_version + " is enabled!");
+		log.info(ircdVersion + " is enabled!");
 		
 	}
 	
@@ -120,7 +121,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 		Bans.writeBans();
 
-		log.info(ircd_version + " is disabled!");
+		log.info(ircdVersion + " is disabled!");
 	}
 	public boolean isDebugging(final Player player) {
 		if (debugees.containsKey(player)) {
@@ -147,7 +148,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			}
 		}
 		
-		Config.reloadingConfig();
+		Config.reloadConfig();
 		
 		Messages.saveMessages();
 		
@@ -162,8 +163,6 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		
 		Messages.loadMessages(ircd);
 
-		Config.initConfig();
-		
 		Bans.loadBans();
 		
 		IRCd.bukkitPlayers.clear();
@@ -172,31 +171,31 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		for (Player player : getServer().getOnlinePlayers()) {
 			StringBuffer mode = new StringBuffer();
             if (player.hasPermission("bukkitircd.mode.owner")){
-            	if (IRCd.debugMode) {
+            	if (Config.isDebugModeEnabled()) {
             		log.info("Add mode +q for " + player.getName());
             	}
             	mode.append("~");
             }
             else if (player.hasPermission("bukkitircd.mode.protect")){
-            	if (IRCd.debugMode) {
+            	if (Config.isDebugModeEnabled()) {
             		log.info("Add mode +a for " + player.getName());
             	}
             	mode.append("&");
             }
             else if (player.hasPermission("bukkitircd.mode.op")){
-            	if (IRCd.debugMode) {
+            	if (Config.isDebugModeEnabled()) {
             		log.info("Add mode +o for " + player.getName());
             	}
             	mode.append("@");
             }
             else if (player.hasPermission("bukkitircd.mode.halfop")){
-            	if (IRCd.debugMode) {
+            	if (Config.isDebugModeEnabled()) {
             		log.info("Add mode +h for " + player.getName());
             	}
             	mode.append("%");
             }
             else if (player.hasPermission("bukkitircd.mode.voice")){
-            	if (IRCd.debugMode) {
+            	if (Config.isDebugModeEnabled()) {
             		log.info("Add mode +v for " + player.getName());
             	}
             	mode.append("+");
@@ -233,14 +232,14 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	public void setupDynmap(DynmapAPI plugin) {
 		if (plugin != null) {
 			dynmap = plugin;
-			log.info("[BukkitIRCd] Hooked into Dynmap." + (IRCd.debugMode ? " Code BukkitIRCdPlugin301." : ""));
+			log.info("[BukkitIRCd] Hooked into Dynmap." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin301." : ""));
 		}
 	}
 
 	public void unloadDynmap() {
 		if (BukkitIRCdPlugin.dynmap != null) {
 			BukkitIRCdPlugin.dynmap = null;
-			log.info("[BukkitIRCd] Dynmap plugin lost." + (IRCd.debugMode ? " Error Code BukkitIRCdPlugin308." : ""));
+			log.info("[BukkitIRCd] Dynmap plugin lost." + (Config.isDebugModeEnabled() ? " Error Code BukkitIRCdPlugin308." : ""));
 		}
 	}
 

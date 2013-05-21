@@ -1,32 +1,13 @@
 package com.Jdbye.BukkitIRCd.configuration;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import java.util.logging.Logger;
-
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.PluginManager;
-
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.file.FileConfiguration;
-
 import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
-import com.Jdbye.BukkitIRCd.Hash;
-import com.Jdbye.BukkitIRCd.IRCUser;
 import com.Jdbye.BukkitIRCd.IRCd;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 
-import com.Jdbye.BukkitIRCd.commands.*;
+import java.io.File;
+import java.io.IOException;
 
 public class Messages extends JavaPlugin {
 	public static FileConfiguration messages;
@@ -36,10 +17,10 @@ public class Messages extends JavaPlugin {
 		File messagesFile = new File(BukkitIRCdPlugin.thePlugin.getDataFolder(), "messages.yml");
 		Messages.messages = YamlConfiguration.loadConfiguration(messagesFile);
 		if (!(messagesFile.exists())) {
-			BukkitIRCdPlugin.log.info("[BukkitIRCd] Creating default messages file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin192." : ""));
+			BukkitIRCdPlugin.log.info("[BukkitIRCd] Creating default messages file." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin192." : ""));
 			messages.options().copyDefaults(true);
 			saveDefaultMessages(BukkitIRCdPlugin.thePlugin.getDataFolder(),"messages.yml");
-			BukkitIRCdPlugin.log.info("[BukkitIRCd] Saving initial messages file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin194." : ""));
+			BukkitIRCdPlugin.log.info("[BukkitIRCd] Saving initial messages file." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin194." : ""));
 			
 		}
 	}
@@ -132,7 +113,7 @@ public class Messages extends JavaPlugin {
 			IRCd.msgDynmapMessage = BukkitIRCdPlugin.colorize(IRCd.msgDynmapMessage);
 			IRCd.msgPlayerList = BukkitIRCdPlugin.colorize(IRCd.msgPlayerList);
 
-			BukkitIRCdPlugin.log.info("[BukkitIRCd] Loaded messages file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin464." : ""));
+			BukkitIRCdPlugin.log.info("[BukkitIRCd] Loaded messages file." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin464." : ""));
 		}
 		catch (Exception e) {
 			BukkitIRCdPlugin.log.info("[BukkitIRCd] Failed to load messages file: " + e.toString());
@@ -141,18 +122,21 @@ public class Messages extends JavaPlugin {
 	
 	private static void saveDefaultMessages(File dataFolder, String fileName)
 	{
-		BukkitIRCdPlugin.log.info("[BukkitIRCd] Messages file not found, creating new one." + (IRCd.debugMode ? " Code BukkitIRCdPlugin705" : ""));
+		BukkitIRCdPlugin.log.info("[BukkitIRCd] Messages file not found, creating new one." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin705" : ""));
 		dataFolder.mkdirs();
 
 		File msgFile = new File(dataFolder, fileName);
 		try
 		{
-			if(!msgFile.createNewFile())
-				throw new IOException("Failed file creation");
-		}
+            if (!msgFile.exists())
+            {
+                if (!msgFile.createNewFile())
+                    throw new IOException("Failed file creation");
+            }
+        }
 		catch(IOException e)
 		{
-			BukkitIRCdPlugin.log.warning("[BukkitIRCd] Could not create messages file!" + (IRCd.debugMode ? " Error code BukkitIRCdPlugin716." : ""));
+			BukkitIRCdPlugin.log.warning("[BukkitIRCd] Could not create messages file!" + (Config.isDebugModeEnabled() ? " Error code BukkitIRCdPlugin716." : ""));
 		}
 
 		writeMessages(msgFile);
@@ -163,7 +147,7 @@ public class Messages extends JavaPlugin {
 		try
 		{
 			messages.save(messagesFile);
-			BukkitIRCdPlugin.log.info("[BukkitIRCd] Saved messages file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin728." : ""));
+			BukkitIRCdPlugin.log.info("[BukkitIRCd] Saved messages file." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin728." : ""));
 		}
 		catch(Exception e)
 		{
