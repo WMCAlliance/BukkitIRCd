@@ -55,6 +55,8 @@ package com.Jdbye.BukkitIRCd;
 // - bukkitircd.oper - Gives the player IRC Operator status. Currently doesn't do anything apart from show it in /whois 
 // - bukkitircd.mode.owner, bukkitircd.mode.protect, bukkitircd.mode.op, bukkitircd.mode.halfop, bukkitircd.mode.voice - Gives the player the corresponding IRC user mode.
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -126,6 +128,11 @@ public class IRCd implements Runnable {
 	public static int linkTimeoutInterval = 180;
 	public static int linkDelay = 60;
 	public static int SID = 111;
+
+	// Host mask settings
+	public static boolean useHostMask = false;
+	public static String maskPrefix = "BukkitIRCd-";
+	public static String maskKey = "0x00000000";
 
 	// Custom messages
 	public static String msgSendQueryFromIngame = "&r[IRC] [me -> &7%PREFIX%%USER%%SUFFIX%&r] %MESSAGE%";
@@ -1835,9 +1842,45 @@ public class IRCd implements Runnable {
 			return false;
 	}
 
+	private static String hashPart(byte itemId, byte[] item, int itemLen, int outLen) throws NoSuchAlgorithmException {
+		final MessageDigest md = MessageDigest.getInstance("MD5");
+
+		md.update(itemId);
+		md.update(maskKey.getBytes());
+		md.update((byte)0);
+		md.update(item, 0, itemLen);
+
+		final byte[] d = md.digest();
+
+		final String alphabet = "0123456789abcdefghijklmnopqrstuv";
+
+		String output = "";
+		for (int i = 0; i < outLen; i++) {
+			output = output + alphabet.charAt((d[i] + 256) % 32);
+		}
+
+		return output;
+	}
+
+	public static String maskHost(InetAddress ip) {
+		if (useHostMask) {
+			final byte[] bytes = ip.getAddress();
+			try {
+				return maskPrefix + hashPart ((byte)10, bytes, 4, 3)
+						    + "." + hashPart ((byte)11, bytes, 3, 3)
+					        + "." + hashPart ((byte)13, bytes, 2, 6)
+					        + ".IP";
+			} catch (NoSuchAlgorithmException e) {
+				return ip.getHostName();
+			}
+		} else {
+			return ip.getHostName();
+		}
+	}
+
 	public static boolean addBukkitUser(String modes, Player player) {
 		String nick = player.getName();
-		String host = player.getAddress().getAddress().getHostName();
+		String host = maskHost(player.getAddress().getAddress());
 		String ip = player.getAddress().getAddress().getHostAddress();
 		String world = player.getWorld().getName();
 		if (getBukkitUser(nick) < 0) {

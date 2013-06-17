@@ -58,7 +58,7 @@ public class IRCMsgCommand implements CommandExecutor {
 									.replace(
 											"%MESSAGE%",
 											IRCd.convertColors(
-													IRCd.join(args, " ", 0),
+													IRCd.join(args, " ", 1),
 													false)));
 							;
 
@@ -91,7 +91,7 @@ public class IRCMsgCommand implements CommandExecutor {
 														"%MESSAGE%",
 														IRCd.convertColors(
 																IRCd.join(args,
-																		" ", 0),
+																		" ", 1),
 																false)));
 										;
 									} else
