@@ -25,11 +25,7 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-<<<<<<< HEAD
             <version>1.5.2-R1.0</version>
-=======
-            <version>1.5.2-R0.1</version>
->>>>>>> 5e50f73b4023de3b2ed480e8e2558d9be229bbb1
         </dependency>
         <dependency>
 		<groupId>org.dynmap</groupId>
