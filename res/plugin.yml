@@ -1,7 +1,7 @@
 name: BukkitIRCd
 main: com.Jdbye.BukkitIRCd.BukkitIRCdPlugin
-version: 1.2
-dev-url: http://ci.blny.tk/job/BukkitIRCd/
+version: 1.1
+dev-url: http://home.wizardcm.com:8080/job/BukkitIRCd
 website: http://wma.im
 authors: [Jdbye, WizardCM, Mu5tank05]
 description: Powerful IRC plugin for Bukkit. Can be used on its own or alongside an InspIRCd server.

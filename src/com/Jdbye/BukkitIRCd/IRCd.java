@@ -135,37 +135,37 @@ public class IRCd implements Runnable {
 	public static String maskKey = "0x00000000";
 
 	// Custom messages
-	public static String msgSendQueryFromIngame = "&r[IRC] [me -> &7{Prefix}{User}{Suffix}&r] {Message}";
-	public static String msgLinked = "&e[IRC] Linked to server {LinkName}";
-	public static String msgDelinked = "&e[IRC] Split from server {LinkName}";
-	public static String msgDelinkedReason = "&e[IRC] Split from server {LinkName} ({Reason})";
-	public static String msgIRCJoin = "&e[IRC] {User} joined IRC";
-	public static String msgIRCJoinDynmap = "{User} joined IRC";
-	public static String msgIRCLeave = "&e[IRC] {User} left IRC";
-	public static String msgIRCLeaveReason = "&e[IRC] {User} left IRC ({Reason})";
-	public static String msgIRCLeaveDynmap = "{User} left IRC";
-	public static String msgIRCLeaveReasonDynmap = "{User} left IRC ({Reason})";
-	public static String msgIRCKick = "&e[IRC] {KickedUser} was kicked by {KickedBy}";
-	public static String msgIRCKickReason = "&e[IRC] {KickedUser} was kicked by {KickedBy} ({Reason})";
-	public static String msgIRCKickDynmap = "{KickedUser} was kicked by {KickedBy}";
-	public static String msgIRCKickReasonDynmap = "{KickedUser} was kicked by {KickedBy} ({Reason})";
-	public static String msgIRCBan = "&e[IRC] {BannedUser} was banned by {BannedBy}";
-	public static String msgIRCBanDynmap = "{BannedUser} was banned by {BannedBy}";
-	public static String msgIRCUnban = "&e[IRC] {BannedUser} was unbanned by {BannedBy}";
-	public static String msgIRCUnbanDynmap = "{BannedUser} was unbanned by {BannedBy}";
-	public static String msgIRCNickChange = "&e[IRC] {OldNick} is now known as {NewNick}&f";
-	public static String msgIRCNickChangeDynmap = "{OldNick} is now known as {NewNick}";
-	public static String msgIRCAction = "[IRC] * &7{User}&f {Message}";
-	public static String msgIRCMessage = "[IRC] <&7{User}&f> {Message}";
-	public static String msgIRCNotice = "[IRC] -&7{User}&f- {Message}";
-	public static String msgIRCPrivateAction = "[IRC] &aTo you&f: * &7{User}&f {Message}";
-	public static String msgIRCPrivateMessage = "[IRC] &aTo you&f: <&7{User}&f> {Message}";
-	public static String msgIRCPrivateNotice = "[IRC] &aTo you&f: -&7{User}&f- {Message}";
-	public static String msgIRCActionDynmap = "* {User} {Message}";
-	public static String msgIRCMessageDynmap = "<{User}> {Message}";
-	public static String msgIRCNoticeDynmap = "-{User}- {Message}";
-	public static String msgDynmapMessage = "[Dynmap] {User}: {Message}";
-	public static String msgPlayerList = "^BOnline Players ({Count}):^B {Users}";
+	public static String msgSendQueryFromIngame = "&r[IRC] [me -> &7%PREFIX%%USER%%SUFFIX%&r] %MESSAGE%";
+	public static String msgLinked = "&e[IRC] Linked to server %LINKNAME%";
+	public static String msgDelinked = "&e[IRC] Split from server %LINKNAME%";
+	public static String msgDelinkedReason = "&e[IRC] Split from server %LINKNAME% (%REASON%)";
+	public static String msgIRCJoin = "&e[IRC] %USER% joined IRC";
+	public static String msgIRCJoinDynmap = "%USER% joined IRC";
+	public static String msgIRCLeave = "&e[IRC] %USER% left IRC";
+	public static String msgIRCLeaveReason = "&e[IRC] %USER% left IRC (%REASON%)";
+	public static String msgIRCLeaveDynmap = "%USER% left IRC";
+	public static String msgIRCLeaveReasonDynmap = "%USER% left IRC (%REASON%)";
+	public static String msgIRCKick = "&e[IRC] %KICKEDUSER% was kicked by %KICKEDBY%";
+	public static String msgIRCKickReason = "&e[IRC] %KICKEDUSER% was kicked by %KICKEDBY% (%REASON%)";
+	public static String msgIRCKickDynmap = "%KICKEDUSER% was kicked by %KICKEDBY%";
+	public static String msgIRCKickReasonDynmap = "%KICKEDUSER% was kicked by %KICKEDBY% (%REASON%)";
+	public static String msgIRCBan = "&e[IRC] %BANNEDUSER% was banned by %BANNEDBY%";
+	public static String msgIRCBanDynmap = "%BANNEDUSER% was banned by %BANNEDBY%";
+	public static String msgIRCUnban = "&e[IRC] %BANNEDUSER% was unbanned by %BANNEDBY%";
+	public static String msgIRCUnbanDynmap = "%BANNEDUSER% was unbanned by %BANNEDBY%";
+	public static String msgIRCNickChange = "&e[IRC] %OLDNICK% is now known as %NEWNICK%&f";
+	public static String msgIRCNickChangeDynmap = "%OLDNICK% is now known as %NEWNICK%";
+	public static String msgIRCAction = "[IRC] * &7%USER%&f %MESSAGE%";
+	public static String msgIRCMessage = "[IRC] <&7%USER%&f> %MESSAGE%";
+	public static String msgIRCNotice = "[IRC] -&7%USER%&f- %MESSAGE%";
+	public static String msgIRCPrivateAction = "[IRC] &aTo you&f: * &7%USER%&f %MESSAGE%";
+	public static String msgIRCPrivateMessage = "[IRC] &aTo you&f: <&7%USER%&f> %MESSAGE%";
+	public static String msgIRCPrivateNotice = "[IRC] &aTo you&f: -&7%USER%&f- %MESSAGE%";
+	public static String msgIRCActionDynmap = "* %USER% %MESSAGE%";
+	public static String msgIRCMessageDynmap = "<%USER%> %MESSAGE%";
+	public static String msgIRCNoticeDynmap = "-%USER%- %MESSAGE%";
+	public static String msgDynmapMessage = "[Dynmap] %USER%: %MESSAGE%";
+	public static String msgPlayerList = "^BOnline Players (%COUNT%):^B %USERS%";
 
 	public static final long serverStartTime = System.currentTimeMillis() / 1000L;
 	public static long channelTS = serverStartTime,
@@ -461,7 +461,7 @@ public class IRCd implements Runnable {
 										BukkitIRCdPlugin.thePlugin.getServer()
 												.broadcastMessage(
 														msgLinked.replace(
-																"{LinkName}",
+																"%LINKNAME%",
 																linkName));
 								}
 								server.setSoTimeout(500);
@@ -552,7 +552,7 @@ public class IRCd implements Runnable {
 									BukkitIRCdPlugin.thePlugin.getServer()
 											.broadcastMessage(
 													msgDelinked.replace(
-															"{LinkName}",
+															"%LINKNAME%",
 															linkName));
 							}
 							lastconnected = false;
@@ -1037,16 +1037,16 @@ public class IRCd implements Runnable {
 												.broadcastMessage(
 														msgIRCLeaveReason
 																.replace(
-																		"{User}",
+																		"%USER%",
 																		processor.nick)
 																.replace(
-																		"{Suffix}",
+																		"%SUFFIX%",
 																		IRCd.getGroupSuffix(processor.modes))
 																.replace(
-																		"{Prefix}",
+																		"%PREFIX%",
 																		IRCd.getGroupPrefix(processor.modes))
 																.replace(
-																		"{Reason}",
+																		"%REASON%",
 																		convertColors(
 																				reason,
 																				IRCToGame)));
@@ -1057,10 +1057,10 @@ public class IRCd implements Runnable {
 														"IRC",
 														msgIRCLeaveReasonDynmap
 																.replace(
-																		"{User}",
+																		"%USER%",
 																		processor.nick)
 																.replace(
-																		"{Reason}",
+																		"%REASON%",
 																		stripIRCFormatting(reason)));
 								} else {
 									if (msgIRCLeave.length() > 0)
@@ -1069,13 +1069,13 @@ public class IRCd implements Runnable {
 												.broadcastMessage(
 														msgIRCLeave
 																.replace(
-																		"{User}",
+																		"%USER%",
 																		processor.nick)
 																.replace(
-																		"{Suffix}",
+																		"%SUFFIX%",
 																		IRCd.getGroupSuffix(processor.modes))
 																.replace(
-																		"{Prefix}",
+																		"%PREFIX%",
 																		IRCd.getGroupPrefix(processor.modes)));
 									if ((BukkitIRCdPlugin.dynmap != null)
 											&& (msgIRCLeaveDynmap.length() > 0))
@@ -1084,7 +1084,7 @@ public class IRCd implements Runnable {
 														"IRC",
 														msgIRCLeaveDynmap
 																.replace(
-																		"{User}",
+																		"%USER%",
 																		processor.nick));
 								}
 							}
@@ -1116,19 +1116,19 @@ public class IRCd implements Runnable {
 										.getServer()
 										.broadcastMessage(
 												msgIRCLeave
-														.replace("{User}",
+														.replace("%USER%",
 																processor.nick)
 														.replace(
-																"{Prefix}",
+																"%PREFIX%",
 																IRCd.getGroupPrefix(processor.modes))
 														.replace(
-																"{Suffix}",
+																"%SUFFIX%",
 																IRCd.getGroupSuffix(processor.modes)));
 							if ((BukkitIRCdPlugin.dynmap != null)
 									&& (msgIRCLeaveDynmap.length() > 0))
 								BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
 										"IRC", msgIRCLeaveDynmap.replace(
-												"{User}", processor.nick));
+												"%USER%", processor.nick));
 						}
 					}
 					iter.remove();
@@ -1163,24 +1163,24 @@ public class IRCd implements Runnable {
 									.getServer()
 									.broadcastMessage(
 											msgIRCLeaveReason
-													.replace("{User}",
+													.replace("%USER%",
 															curUser.nick)
 													.replace(
-															"{Prefix}",
+															"%PREFIX%",
 															IRCd.getGroupPrefix(curUser
 																	.getTextModes()))
 													.replace(
-															"{Suffix}",
+															"%SUFFIX%",
 															IRCd.getGroupSuffix(curUser
 																	.getTextModes()))
-													.replace("{Reason}",
+													.replace("%REASON%",
 															is.host + " split"));
 						if ((BukkitIRCdPlugin.dynmap != null)
 								&& (msgIRCLeaveReasonDynmap.length() > 0))
 							BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
 									"IRC",
-									msgIRCLeaveReasonDynmap.replace("{User}",
-											curUser.nick).replace("{Reason}",
+									msgIRCLeaveReasonDynmap.replace("%USER%",
+											curUser.nick).replace("%REASON%",
 											is.host + " split"));
 					}
 					iter.remove();
@@ -1254,30 +1254,30 @@ public class IRCd implements Runnable {
 												.broadcastMessage(
 														msgIRCKickReason
 																.replace(
-																		"{KickedUser}",
+																		"%KICKEDUSER%",
 																		processor.nick)
 																.replace(
-																		"{KickedBy}",
+																		"%KICKEDBY%",
 																		kickedByNick)
 																.replace(
-																		"{Reason}",
+																		"%REASON%",
 																		convertColors(
 																				reason,
 																				true))
 																.replace(
-																		"{KickedPrefix}",
+																		"%KICKEDPREFIX%",
 																		IRCd.getGroupPrefix(processor.modes))
 																.replace(
-																		"{KickedSuffix}",
+																		"%KICKEDSUFFIX%",
 																		IRCd.getGroupSuffix(processor.modes))
 																.replace(
-																		"{KickerPrefix}",
+																		"%KICKERPREFIX%",
 																		IRCd.getGroupPrefix(IRCd
 																				.getIRCUser(
 																						kickedByNick)
 																				.getTextModes()))
 																.replace(
-																		"{KickerSuffix}",
+																		"%KICKERSUFFIX%",
 																		IRCd.getGroupSuffix(IRCd
 																				.getIRCUser(
 																						kickedByNick)
@@ -1289,13 +1289,13 @@ public class IRCd implements Runnable {
 														"IRC",
 														msgIRCKickReasonDynmap
 																.replace(
-																		"{KickedUser}",
+																		"%KICKEDUSER%",
 																		processor.nick)
 																.replace(
-																		"{KickedBy}",
+																		"%KICKEDBY%",
 																		kickedByNick)
 																.replace(
-																		"{Reason}",
+																		"%REASON%",
 																		stripIRCFormatting(reason)));
 								} else {
 									if (msgIRCKick.length() > 0)
@@ -1304,25 +1304,25 @@ public class IRCd implements Runnable {
 												.broadcastMessage(
 														msgIRCKick
 																.replace(
-																		"{KickedUser}",
+																		"%KICKEDUSER%",
 																		processor.nick)
 																.replace(
-																		"{KickedBy}",
+																		"%KICKEDBY%",
 																		kickedByNick)
 																.replace(
-																		"{KickedPrefix}",
+																		"%KICKEDPREFIX%",
 																		IRCd.getGroupPrefix(processor.modes))
 																.replace(
-																		"{KickedSuffix}",
+																		"%KICKEDSUFFIX%",
 																		IRCd.getGroupSuffix(processor.modes))
 																.replace(
-																		"{KickerPrefix}",
+																		"%KICKERPREFIX%",
 																		IRCd.getGroupPrefix(IRCd
 																				.getIRCUser(
 																						kickedByNick)
 																				.getTextModes()))
 																.replace(
-																		"{KickerSuffix}",
+																		"%KICKERSUFFIX%",
 																		IRCd.getGroupSuffix(IRCd
 																				.getIRCUser(
 																						kickedByNick)
@@ -1334,10 +1334,10 @@ public class IRCd implements Runnable {
 														"IRC",
 														msgIRCKickDynmap
 																.replace(
-																		"{KickedUser}",
+																		"%KICKEDUSER%",
 																		processor.nick)
 																.replace(
-																		"{KickedBy}",
+																		"%KICKEDBY%",
 																		kickedByNick));
 								}
 							}
@@ -1423,31 +1423,31 @@ public class IRCd implements Runnable {
 										.broadcastMessage(
 												msgIRCKickReason
 														.replace(
-																"{KickedUser}",
+																"%KICKEDUSER%",
 																iuser.nick)
-														.replace("{KickedBy}",
+														.replace("%KICKEDBY%",
 																kickedByNick)
 														.replace(
-																"{Reason}",
+																"%REASON%",
 																convertColors(
 																		reason,
 																		true))
 														.replace(
-																"{KickedPrefix}",
+																"%KICKEDPREFIX%",
 																IRCd.getGroupPrefix(iuser
 																		.getTextModes()))
 														.replace(
-																"{KickedSuffix}",
+																"%KICKEDSUFFIX%",
 																IRCd.getGroupSuffix(iuser
 																		.getTextModes()))
 														.replace(
-																"{KickerPrefix}",
+																"%KICKERPREFIX%",
 																IRCd.getGroupPrefix(IRCd
 																		.getIRCUser(
 																				kickedByNick)
 																		.getTextModes()))
 														.replace(
-																"{KickerSuffix}",
+																"%KICKERSUFFIX%",
 																IRCd.getGroupSuffix(IRCd
 																		.getIRCUser(
 																				kickedByNick)
@@ -1459,12 +1459,12 @@ public class IRCd implements Runnable {
 												"IRC",
 												msgIRCKickReasonDynmap
 														.replace(
-																"{KickedUser}",
+																"%KICKEDUSER%",
 																iuser.nick)
-														.replace("{KickedBy}",
+														.replace("%KICKEDBY%",
 																kickedByNick)
 														.replace(
-																"{Reason}",
+																"%REASON%",
 																stripIRCFormatting(reason)));
 						} else {
 							println(":" + sourceUID + " KICK " + channelName
@@ -1475,26 +1475,26 @@ public class IRCd implements Runnable {
 										.broadcastMessage(
 												msgIRCKick
 														.replace(
-																"{KickedUser}",
+																"%KICKEDUSER%",
 																iuser.nick)
-														.replace("{KickedBy}",
+														.replace("%KICKEDBY%",
 																kickedByNick)
 														.replace(
-																"{KickedPrefix}",
+																"%KICKEDPREFIX%",
 																IRCd.getGroupPrefix(iuser
 																		.getTextModes()))
 														.replace(
-																"{KickedSuffix}",
+																"%KICKEDSUFFIX%",
 																IRCd.getGroupSuffix(iuser
 																		.getTextModes()))
 														.replace(
-																"{KickerPrefix}",
+																"%KICKERPREFIX%",
 																IRCd.getGroupPrefix(IRCd
 																		.getIRCUser(
 																				kickedByNick)
 																		.getTextModes()))
 														.replace(
-																"{KickerSuffix}",
+																"%KICKERSUFFIX%",
 																IRCd.getGroupSuffix(IRCd
 																		.getIRCUser(
 																				kickedByNick)
@@ -1504,8 +1504,8 @@ public class IRCd implements Runnable {
 								BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
 										"IRC",
 										msgIRCKickDynmap.replace(
-												"{KickedUser}", iuser.nick)
-												.replace("{KickedBy}",
+												"%KICKEDUSER%", iuser.nick)
+												.replace("%KICKEDBY%",
 														kickedByNick));
 						}
 						returnVal = true;
@@ -1582,19 +1582,19 @@ public class IRCd implements Runnable {
 											.broadcastMessage(
 													msgIRCBan
 															.replace(
-																	"{BannedUser}",
+																	"%BANNEDUSER%",
 																	ircuser.nick)
 															.replace(
-																	"{BannedBy}",
+																	"%BANNEDBY%",
 																	bannedBy));
 								if ((BukkitIRCdPlugin.dynmap != null)
 										&& (msgIRCBanDynmap.length() > 0))
 									BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
 											"IRC",
 											msgIRCBanDynmap.replace(
-													"{BannedUser}",
+													"%BANNEDUSER%",
 													ircuser.nick).replace(
-													"{BannedBy}", bannedBy));
+													"%BANNEDBY%", bannedBy));
 							}
 						}
 					}
@@ -2952,9 +2952,9 @@ public class IRCd implements Runnable {
 									.getServer()
 									.broadcastMessage(
 											msgDelinkedReason
-													.replace("{LinkName}",
+													.replace("%LINKNAME%",
 															linkName)
-													.replace("{Reason}", reason));
+													.replace("%REASON%", reason));
 						linkcompleted = false;
 					}
 					try {
@@ -3245,21 +3245,21 @@ public class IRCd implements Runnable {
 											.broadcastMessage(
 													msgIRCJoin
 															.replace(
-																	"{User}",
+																	"%USER%",
 																	ircuser.nick)
 															.replace(
-																	"{Prefix}",
+																	"%PREFIX%",
 																	IRCd.getGroupPrefix(ircuser
 																			.getTextModes()))
 															.replace(
-																	"{Suffix}",
+																	"%SUFFIX%",
 																	IRCd.getGroupSuffix(ircuser
 																			.getTextModes())));
 								if ((BukkitIRCdPlugin.dynmap != null)
 										&& (msgIRCJoinDynmap.length() > 0))
 									BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
 											"IRC", msgIRCJoinDynmap.replace(
-													"{User}", ircuser.nick));
+													"%USER%", ircuser.nick));
 							}
 						}
 						ircuser.joined = true;
@@ -3416,10 +3416,10 @@ public class IRCd implements Runnable {
 													.broadcastMessage(
 															msgIRCBan
 																	.replace(
-																			"{BannedUser}",
+																			"%BANNEDUSER%",
 																			user)
 																	.replace(
-																			"{BannedBy}",
+																			"%BANNEDBY%",
 																			ircuser.nick));
 										if ((BukkitIRCdPlugin.dynmap != null)
 												&& (msgIRCBanDynmap.length() > 0))
@@ -3428,10 +3428,10 @@ public class IRCd implements Runnable {
 															"IRC",
 															msgIRCBanDynmap
 																	.replace(
-																			"{BannedUser}",
+																			"%BANNEDUSER%",
 																			user)
 																	.replace(
-																			"{BannedBy}",
+																			"%BANNEDBY%",
 																			ircuser.nick));
 									} else {
 										if (msgIRCUnban.length() > 0)
@@ -3440,10 +3440,10 @@ public class IRCd implements Runnable {
 													.broadcastMessage(
 															msgIRCUnban
 																	.replace(
-																			"{BannedUser}",
+																			"%BANNEDUSER%",
 																			user)
 																	.replace(
-																			"{BannedBy}",
+																			"%BANNEDBY%",
 																			ircuser.nick));
 										if ((BukkitIRCdPlugin.dynmap != null)
 												&& (msgIRCUnbanDynmap.length() > 0))
@@ -3452,10 +3452,10 @@ public class IRCd implements Runnable {
 															"IRC",
 															msgIRCUnbanDynmap
 																	.replace(
-																			"{BannedUser}",
+																			"%BANNEDUSER%",
 																			user)
 																	.replace(
-																			"{BannedBy}",
+																			"%BANNEDBY%",
 																			ircuser.nick));
 									}
 								}
@@ -3578,23 +3578,23 @@ public class IRCd implements Runnable {
 								.getServer()
 								.broadcastMessage(
 										msgIRCNickChange
-												.replace("{OldNick}",
+												.replace("%OLDNICK%",
 														ircuser.nick)
 												.replace(
-														"{Prefix}",
+														"%PREFIX%",
 														IRCd.getGroupPrefix(ircuser
 																.getTextModes()))
 												.replace(
-														"{Suffix}",
+														"%SUFFIX%",
 														IRCd.getGroupSuffix(ircuser
 																.getTextModes()))
-												.replace("{NewNick}", split[2]));
+												.replace("%NEWNICK%", split[2]));
 					if ((BukkitIRCdPlugin.dynmap != null)
 							&& (msgIRCNickChangeDynmap.length() > 0))
 						BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
 								"IRC",
-								msgIRCNickChangeDynmap.replace("{OldNick}",
-										ircuser.nick).replace("{NewNick}",
+								msgIRCNickChangeDynmap.replace("%OLDNICK%",
+										ircuser.nick).replace("%NEWNICK%",
 										split[2]));
 				}
 				ircuser.nick = split[2];
@@ -3706,29 +3706,29 @@ public class IRCd implements Runnable {
 												.broadcastMessage(
 														msgIRCKickReason
 																.replace(
-																		"{KickedUser}",
+																		"%KICKEDUSER%",
 																		kicked)
 																.replace(
-																		"{KickedBy}",
+																		"%KICKEDBY%",
 																		kicker)
 																.replace(
-																		"{Reason}",
+																		"%REASON%",
 																		convertColors(
 																				reason,
 																				true))
 																.replace(
-																		"{KickedPrefix}",
+																		"%KICKEDPREFIX%",
 																		IRCd.getGroupPrefix(ircvictim
 																				.getTextModes()))
 																.replace(
-																		"{KickedSuffix}",
+																		"%KICKEDSUFFIX%",
 																		IRCd.getGroupSuffix(ircvictim
 																				.getTextModes()))
 																.replace(
-																		"{KickerPrefix}",
+																		"%KICKERPREFIX%",
 																		IRCd.getGroupPrefix(modes))
 																.replace(
-																		"{KickerSuffix}",
+																		"%KICKERSUFFIX%",
 																		IRCd.getGroupSuffix(modes)));
 									if ((BukkitIRCdPlugin.dynmap != null)
 											&& (msgIRCKickReasonDynmap.length() > 0))
@@ -3737,27 +3737,27 @@ public class IRCd implements Runnable {
 														"IRC",
 														msgIRCKickReasonDynmap
 																.replace(
-																		"{KickedUser}",
+																		"%KICKEDUSER%",
 																		kicked)
 																.replace(
-																		"{KickedBy}",
+																		"%KICKEDBY%",
 																		kicker)
 																.replace(
-																		"{Reason}",
+																		"%REASON%",
 																		stripIRCFormatting(reason))
 																.replace(
-																		"{KickedPrefix}",
+																		"%KICKEDPREFIX%",
 																		IRCd.getGroupPrefix(ircvictim
 																				.getTextModes()))
 																.replace(
-																		"{KickedSuffix}",
+																		"%KICKEDSUFFIX%",
 																		IRCd.getGroupSuffix(ircvictim
 																				.getTextModes()))
 																.replace(
-																		"{KickerPrefix}",
+																		"%KICKERPREFIX%",
 																		IRCd.getGroupPrefix(modes))
 																.replace(
-																		"{KickerSuffix}",
+																		"%KICKERSUFFIX%",
 																		IRCd.getGroupSuffix(modes)));
 								} else {
 									if (msgIRCKick.length() > 0)
@@ -3766,24 +3766,24 @@ public class IRCd implements Runnable {
 												.broadcastMessage(
 														msgIRCKick
 																.replace(
-																		"{KickedUser}",
+																		"%KICKEDUSER%",
 																		kicked)
 																.replace(
-																		"{KickedBy}",
+																		"%KICKEDBY%",
 																		kicker)
 																.replace(
-																		"{KickedPrefix}",
+																		"%KICKEDPREFIX%",
 																		IRCd.getGroupPrefix(ircvictim
 																				.getTextModes()))
 																.replace(
-																		"{KickedSuffix}",
+																		"%KICKEDSUFFIX%",
 																		IRCd.getGroupSuffix(ircvictim
 																				.getTextModes()))
 																.replace(
-																		"{KickerPrefix}",
+																		"%KICKERPREFIX%",
 																		IRCd.getGroupPrefix(modes))
 																.replace(
-																		"{KickerSuffix}",
+																		"%KICKERSUFFIX%",
 																		IRCd.getGroupSuffix(modes)));
 									if ((BukkitIRCdPlugin.dynmap != null)
 											&& (msgIRCKickDynmap.length() > 0))
@@ -3792,10 +3792,10 @@ public class IRCd implements Runnable {
 														"IRC",
 														msgIRCKickDynmap
 																.replace(
-																		"{KickedUser}",
+																		"%KICKEDUSER%",
 																		kicked)
 																.replace(
-																		"{KickedBy}",
+																		"%KICKEDBY%",
 																		kicker));
 								}
 								ircvictim.joined = false;
@@ -3860,18 +3860,18 @@ public class IRCd implements Runnable {
 										.getServer()
 										.broadcastMessage(
 												msgIRCLeaveReason
-														.replace("{User}",
+														.replace("%USER%",
 																ircuser.nick)
 														.replace(
-																"{Prefix}",
+																"%PREFIX%",
 																IRCd.getGroupPrefix(ircuser
 																		.getTextModes()))
 														.replace(
-																"{Suffix}",
+																"%SUFFIX%",
 																IRCd.getGroupSuffix(ircuser
 																		.getTextModes()))
 														.replace(
-																"{Reason}",
+																"%REASON%",
 																convertColors(
 																		reason,
 																		true)));
@@ -3881,10 +3881,10 @@ public class IRCd implements Runnable {
 										.sendBroadcastToWeb(
 												"IRC",
 												msgIRCLeaveReasonDynmap
-														.replace("{User}",
+														.replace("%USER%",
 																ircuser.nick)
 														.replace(
-																"{Reason}",
+																"%REASON%",
 																stripIRCFormatting(reason)));
 						} else {
 
@@ -3893,21 +3893,21 @@ public class IRCd implements Runnable {
 										.getServer()
 										.broadcastMessage(
 												msgIRCLeave
-														.replace("{User}",
+														.replace("%USER%",
 																ircuser.nick)
 														.replace(
-																"{Suffix}",
+																"%SUFFIX%",
 																IRCd.getGroupSuffix(ircuser
 																		.getTextModes()))
 														.replace(
-																"{Prefix}",
+																"%PREFIX%",
 																IRCd.getGroupPrefix(ircuser
 																		.getTextModes())));
 							if ((BukkitIRCdPlugin.dynmap != null)
 									&& (msgIRCLeaveDynmap.length() > 0))
 								BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
 										"IRC", msgIRCLeaveDynmap.replace(
-												"{User}", ircuser.nick));
+												"%USER%", ircuser.nick));
 						}
 						ircuser.joined = false;
 						ircuser.setModes("");
@@ -3958,18 +3958,18 @@ public class IRCd implements Runnable {
 										.getServer()
 										.broadcastMessage(
 												msgIRCLeaveReason
-														.replace("{User}",
+														.replace("%USER%",
 																ircuser.nick)
 														.replace(
-																"{Suffix}",
+																"%SUFFIX%",
 																IRCd.getGroupSuffix(ircuser
 																		.getTextModes()))
 														.replace(
-																"{Prefix}",
+																"%PREFIX%",
 																IRCd.getGroupPrefix(ircuser
 																		.getTextModes()))
 														.replace(
-																"{Reason}",
+																"%REASON%",
 																convertColors(
 																		reason,
 																		true)));
@@ -3979,10 +3979,10 @@ public class IRCd implements Runnable {
 										.sendBroadcastToWeb(
 												"IRC",
 												msgIRCLeaveReasonDynmap
-														.replace("{User}",
+														.replace("%USER%",
 																ircuser.nick)
 														.replace(
-																"{Reason}",
+																"%REASON%",
 																stripIRCFormatting(reason)));
 						} else {
 
@@ -3991,21 +3991,21 @@ public class IRCd implements Runnable {
 										.getServer()
 										.broadcastMessage(
 												msgIRCLeave
-														.replace("{User}",
+														.replace("%USER%",
 																ircuser.nick)
 														.replace(
-																"{Suffix}",
+																"%SUFFIX%",
 																IRCd.getGroupSuffix(ircuser
 																		.getTextModes()))
 														.replace(
-																"{Prefix}",
+																"%PREFIX%",
 																IRCd.getGroupPrefix(ircuser
 																		.getTextModes())));
 							if ((BukkitIRCdPlugin.dynmap != null)
 									&& (msgIRCLeaveDynmap.length() > 0))
 								BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
 										"IRC", msgIRCLeaveDynmap.replace(
-												"{User}", ircuser.nick));
+												"%USER%", ircuser.nick));
 						}
 					}
 					ircuser.setConsoleModes("");
@@ -4110,17 +4110,17 @@ public class IRCd implements Runnable {
 										.getServer()
 										.broadcastMessage(
 												msgIRCLeaveReason
-														.replace("{User}", user)
+														.replace("%USER%", user)
 														.replace(
-																"{Suffix}",
+																"%SUFFIX%",
 																IRCd.getGroupSuffix(ircuser
 																		.getTextModes()))
 														.replace(
-																"{Prefix}",
+																"%PREFIX%",
 																IRCd.getGroupPrefix(ircuser
 																		.getTextModes()))
 														.replace(
-																"{Reason}",
+																"%REASON%",
 																convertColors(
 																		reason,
 																		true)));
@@ -4129,8 +4129,8 @@ public class IRCd implements Runnable {
 								BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
 										"IRC",
 										msgIRCLeaveReasonDynmap.replace(
-												"{User}", user).replace(
-												"{Reason}",
+												"%USER%", user).replace(
+												"%REASON%",
 												stripIRCFormatting(reason)));
 							ircuser2.setConsoleModes("");
 							ircuser2.setModes("");
@@ -4222,10 +4222,10 @@ public class IRCd implements Runnable {
 											+ convertColors(
 													msgPlayerList
 															.replace(
-																	"{Count}",
+																	"%COUNT%",
 																	Integer.toString(count))
 															.replace(
-																	"{Users}",
+																	"%USERS%",
 																	s.substring(
 																			0,
 																			s.length() - 2)),
@@ -4236,14 +4236,14 @@ public class IRCd implements Runnable {
 								if (msgtemplate.length() > 0){
 									String msg = msgtemplate
 											.replace(
-													"{User}",
+													"%USER%",
 													ircuser.nick)
 											.replace(
-													"{Suffix}",
+													"%SUFFIX%",
 													IRCd.getGroupSuffix(ircuser
 															.getTextModes()))
 											.replace(
-													"{Prefix}",
+													"%PREFIX%",
 													IRCd.getGroupPrefix(ircuser
 															.getTextModes()))
 											// TODO Player Highlight
@@ -4251,7 +4251,7 @@ public class IRCd implements Runnable {
 											// ,
 											// "&b" + "&r")
 											.replace(
-													"{Message}",
+													"%MESSAGE%",
 													IRCd.convertColors(
 															message,
 															true));
@@ -4270,10 +4270,10 @@ public class IRCd implements Runnable {
 													"IRC",
 													msgtemplatedynmap
 															.replace(
-																	"{User}",
+																	"%USER%",
 																	ircuser.nick)
 															.replace(
-																	"{Message}",
+																	"%MESSAGE%",
 																	stripIRCFormatting(message)));
 							}
 						}
@@ -4331,17 +4331,17 @@ public class IRCd implements Runnable {
 
 							if (msgtemplate.length() > 0)
 								BukkitIRCdPlugin.log.info(msgtemplate
-										.replace("{User}", ircuser.nick)
+										.replace("%USER%", ircuser.nick)
 										.replace(
-												"{Suffix}",
+												"%SUFFIX%",
 												IRCd.getGroupSuffix(ircuser
 														.getTextModes()))
 										.replace(
-												"{Prefix}",
+												"%PREFIX%",
 												IRCd.getGroupPrefix(ircuser
 														.getTextModes()))
 										.replace(
-												"{Message}",
+												"%MESSAGE%",
 												IRCd.convertColors(message,
 														true)));
 						}
@@ -4372,17 +4372,17 @@ public class IRCd implements Runnable {
 
 								if (msgtemplate.length() > 0)
 									player.sendMessage(msgtemplate
-											.replace("{User}", ircuser.nick)
+											.replace("%USER%", ircuser.nick)
 											.replace(
-													"{Suffix}",
+													"%SUFFIX%",
 													IRCd.getGroupSuffix(ircuser
 															.getTextModes()))
 											.replace(
-													"{Prefix}",
+													"%PREFIX%",
 													IRCd.getGroupPrefix(ircuser
 															.getTextModes()))
 											.replace(
-													"{Message}",
+													"%MESSAGE%",
 													IRCd.convertColors(message,
 															true)));
 							}
@@ -4566,15 +4566,15 @@ class ClientConnection implements Runnable {
 										.getServer()
 										.broadcastMessage(
 												IRCd.msgIRCNickChange
-														.replace("{OldNick}",
+														.replace("%OLDNICK%",
 																nick)
 														.replace(
-																"{Prefix}",
+																"%PREFIX%",
 																IRCd.getGroupPrefix(modes))
 														.replace(
-																"{Suffix}",
+																"%SUFFIX%",
 																IRCd.getGroupSuffix(modes))
-														.replace("{NewNick}",
+														.replace("%NEWNICK%",
 																split[1]));
 							if ((BukkitIRCdPlugin.dynmap != null)
 									&& (IRCd.msgIRCNickChangeDynmap.length() > 0))
@@ -4582,9 +4582,9 @@ class ClientConnection implements Runnable {
 										.sendBroadcastToWeb(
 												"IRC",
 												IRCd.msgIRCNickChangeDynmap
-														.replace("{OldNick}",
+														.replace("%OLDNICK%",
 																nick).replace(
-																"{NewNick}",
+																"%NEWNICK%",
 																split[1]));
 						}
 						IRCd.writeAll(":" + getFullHost() + " NICK " + split[1]);
@@ -4787,10 +4787,10 @@ class ClientConnection implements Runnable {
 															.broadcastMessage(
 																	IRCd.msgIRCBan
 																			.replace(
-																					"{BannedUser}",
+																					"%BANNEDUSER%",
 																					host)
 																			.replace(
-																					"{BannedBy}",
+																					"%BANNEDBY%",
 																					nick));
 												if ((BukkitIRCdPlugin.dynmap != null)
 														&& (IRCd.msgIRCBanDynmap
@@ -4800,10 +4800,10 @@ class ClientConnection implements Runnable {
 																	"IRC",
 																	IRCd.msgIRCBanDynmap
 																			.replace(
-																					"{BannedUser}",
+																					"%BANNEDUSER%",
 																					host)
 																			.replace(
-																					"{BannedBy}",
+																					"%BANNEDBY%",
 																					nick));
 												IRCd.banIRCUser(host,
 														getFullHost());
@@ -4814,10 +4814,10 @@ class ClientConnection implements Runnable {
 															.broadcastMessage(
 																	IRCd.msgIRCUnban
 																			.replace(
-																					"{BannedUser}",
+																					"%BANNEDUSER%",
 																					host)
 																			.replace(
-																					"{BannedBy}",
+																					"%BANNEDBY%",
 																					nick));
 												if ((BukkitIRCdPlugin.dynmap != null)
 														&& (IRCd.msgIRCUnbanDynmap
@@ -4827,10 +4827,10 @@ class ClientConnection implements Runnable {
 																	"IRC",
 																	IRCd.msgIRCUnbanDynmap
 																			.replace(
-																					"{BannedUser}",
+																					"%BANNEDUSER%",
 																					host)
 																			.replace(
-																					"{BannedBy}",
+																					"%BANNEDBY%",
 																					nick));
 												IRCd.unBanIRCUser(host,
 														getFullHost());
@@ -4954,11 +4954,11 @@ class ClientConnection implements Runnable {
 									if (reason != null) {
 										if (IRCd.msgIRCKickReason.length() > 0)
 											s.broadcastMessage(IRCd.msgIRCKickReason
-													.replace("{KickedUser}",
+													.replace("%KICKEDUSER%",
 															bannick)
-													.replace("{KickedBy}", nick)
+													.replace("%KICKEDBY%", nick)
 													.replace(
-															"{Reason}",
+															"%REASON%",
 															IRCd.convertColors(
 																	reason,
 																	true)));
@@ -4971,9 +4971,9 @@ class ClientConnection implements Runnable {
 									} else {
 										if (IRCd.msgIRCKick.length() > 0)
 											s.broadcastMessage(IRCd.msgIRCKick
-													.replace("{KickedUser}",
+													.replace("%KICKEDUSER%",
 															bannick).replace(
-															"{KickedBy}", nick));
+															"%KICKEDBY%", nick));
 										IRCd.kickPlayerIngame(p, "Kicked by "
 												+ nick + " on IRC");
 									}
@@ -5172,10 +5172,10 @@ class ClientConnection implements Runnable {
 												+ IRCd.convertColors(
 														IRCd.msgPlayerList
 																.replace(
-																		"{Count}",
+																		"%COUNT%",
 																		Integer.toString(count))
 																.replace(
-																		"{Users}",
+																		"%USERS%",
 																		s.substring(
 																				0,
 																				s.length() - 2)),
@@ -5190,16 +5190,16 @@ class ClientConnection implements Runnable {
 													.broadcastMessage(
 															IRCd.msgIRCAction
 																	.replace(
-																			"{User}",
+																			"%USER%",
 																			nick)
 																	.replace(
-																			"{Suffix}",
+																			"%SUFFIX%",
 																			IRCd.getGroupSuffix(modes))
 																	.replace(
-																			"{Prefix}",
+																			"%PREFIX%",
 																			IRCd.getGroupPrefix(modes))
 																	.replace(
-																			"{Message}",
+																			"%MESSAGE%",
 																			IRCd.convertColors(
 																					message2,
 																					true)));
@@ -5211,10 +5211,10 @@ class ClientConnection implements Runnable {
 															"IRC",
 															IRCd.msgIRCActionDynmap
 																	.replace(
-																			"{User}",
+																			"%USER%",
 																			nick)
 																	.replace(
-																			"{Message}",
+																			"%MESSAGE%",
 																			IRCd.stripIRCFormatting(message2)));
 									} else {
 
@@ -5224,16 +5224,16 @@ class ClientConnection implements Runnable {
 													.broadcastMessage(
 															IRCd.msgIRCMessage
 																	.replace(
-																			"{User}",
+																			"%USER%",
 																			nick)
 																	.replace(
-																			"{Suffix}",
+																			"%SUFFIX%",
 																			IRCd.getGroupSuffix(modes))
 																	.replace(
-																			"{Prefix}",
+																			"%PREFIX%",
 																			IRCd.getGroupPrefix(modes))
 																	.replace(
-																			"{Message}",
+																			"%MESSAGE%",
 																			IRCd.convertColors(
 																					message2,
 																					true)));
@@ -5245,10 +5245,10 @@ class ClientConnection implements Runnable {
 															"IRC",
 															IRCd.msgIRCMessageDynmap
 																	.replace(
-																			"{User}",
+																			"%USER%",
 																			nick)
 																	.replace(
-																			"{Message}",
+																			"%MESSAGE%",
 																			IRCd.stripIRCFormatting(message2)));
 									}
 								}
@@ -5267,15 +5267,15 @@ class ClientConnection implements Runnable {
 								if (IRCd.msgIRCPrivateAction.length() > 0)
 									BukkitIRCdPlugin.log
 											.info(IRCd.msgIRCPrivateAction
-													.replace("{User}", nick)
+													.replace("%USER%", nick)
 													.replace(
-															"{Suffix}",
+															"%SUFFIX%",
 															IRCd.getGroupSuffix(modes))
 													.replace(
-															"{Prefix}",
+															"%PREFIX%",
 															IRCd.getGroupPrefix(modes))
 													.replace(
-															"{Message}",
+															"%MESSAGE%",
 															IRCd.convertColors(
 																	message2,
 																	true)));
@@ -5284,15 +5284,15 @@ class ClientConnection implements Runnable {
 								if (IRCd.msgIRCPrivateMessage.length() > 0)
 									BukkitIRCdPlugin.log
 											.info(IRCd.msgIRCPrivateMessage
-													.replace("{User}", nick)
+													.replace("%USER%", nick)
 													.replace(
-															"{Suffix}",
+															"%SUFFIX%",
 															IRCd.getGroupSuffix(modes))
 													.replace(
-															"{Prefix}",
+															"%PREFIX%",
 															IRCd.getGroupPrefix(modes))
 													.replace(
-															"{Message}",
+															"%MESSAGE%",
 															IRCd.convertColors(
 																	message2,
 																	true)));
@@ -5362,16 +5362,16 @@ class ClientConnection implements Runnable {
 													.sendMessage(
 															IRCd.msgIRCPrivateAction
 																	.replace(
-																			"{User}",
+																			"%USER%",
 																			nick)
 																	.replace(
-																			"{Suffix}",
+																			"%SUFFIX%",
 																			IRCd.getGroupSuffix(modes))
 																	.replace(
-																			"{Prefix}",
+																			"%PREFIX%",
 																			IRCd.getGroupPrefix(modes))
 																	.replace(
-																			"{Message}",
+																			"%MESSAGE%",
 																			IRCd.convertColors(
 																					message2,
 																					true)));
@@ -5383,16 +5383,16 @@ class ClientConnection implements Runnable {
 													.sendMessage(
 															IRCd.msgIRCPrivateMessage
 																	.replace(
-																			"{User}",
+																			"%USER%",
 																			nick)
 																	.replace(
-																			"{Suffix}",
+																			"%SUFFIX%",
 																			IRCd.getGroupSuffix(modes))
 																	.replace(
-																			"{Prefix}",
+																			"%PREFIX%",
 																			IRCd.getGroupPrefix(modes))
 																	.replace(
-																			"{Message}",
+																			"%MESSAGE%",
 																			IRCd.convertColors(
 																					message2,
 																					true)));
@@ -5428,16 +5428,16 @@ class ClientConnection implements Runnable {
 											.getServer()
 											.broadcastMessage(
 													IRCd.msgIRCNotice
-															.replace("{User}",
+															.replace("%USER%",
 																	nick)
 															.replace(
-																	"{Prefix}",
+																	"%PREFIX%",
 																	IRCd.getGroupPrefix(modes))
 															.replace(
-																	"{Suffix}",
+																	"%SUFFIX%",
 																	IRCd.getGroupSuffix(modes))
 															.replace(
-																	"{Message}",
+																	"%MESSAGE%",
 																	IRCd.convertColors(
 																			message,
 																			true)));
@@ -5447,10 +5447,10 @@ class ClientConnection implements Runnable {
 											.sendBroadcastToWeb(
 													"IRC",
 													IRCd.msgIRCNoticeDynmap
-															.replace("{User}",
+															.replace("%USER%",
 																	nick)
 															.replace(
-																	"{Message}",
+																	"%MESSAGE%",
 																	IRCd.stripIRCFormatting(message)));
 							}
 						}
@@ -5477,16 +5477,16 @@ class ClientConnection implements Runnable {
 												.sendMessage(
 														IRCd.msgIRCPrivateAction
 																.replace(
-																		"{User}",
+																		"%USER%",
 																		nick)
 																.replace(
-																		"{Suffix}",
+																		"%SUFFIX%",
 																		IRCd.getGroupSuffix(modes))
 																.replace(
-																		"{Prefix}",
+																		"%PREFIX%",
 																		IRCd.getGroupPrefix(modes))
 																.replace(
-																		"{Message}",
+																		"%MESSAGE%",
 																		IRCd.convertColors(
 																				message,
 																				true)));
@@ -5570,15 +5570,15 @@ class ClientConnection implements Runnable {
 				if (IRCd.msgIRCJoin.length() > 0)
 					BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(
 							IRCd.msgIRCJoin
-									.replace("{User}", nick)
-									.replace("{Suffix}",
+									.replace("%USER%", nick)
+									.replace("%SUFFIX%",
 											IRCd.getGroupSuffix(modes))
-									.replace("{Prefix}",
+									.replace("%PREFIX%",
 											IRCd.getGroupPrefix(modes)));
 				if ((BukkitIRCdPlugin.dynmap != null)
 						&& (IRCd.msgIRCJoinDynmap.length() > 0))
 					BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC",
-							IRCd.msgIRCJoinDynmap.replace("{User}", nick));
+							IRCd.msgIRCJoinDynmap.replace("%USER%", nick));
 			}
 			sendChanWelcome(IRCd.channelName);
 		}

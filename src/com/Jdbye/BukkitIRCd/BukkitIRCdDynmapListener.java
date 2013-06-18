@@ -22,7 +22,7 @@ public class BukkitIRCdDynmapListener implements Listener {
 			}
 			else {
 				if (IRCd.linkcompleted) {
-					if (IRCd.msgDynmapMessage.length() > 0) IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.channelName+" :" + IRCd.msgDynmapMessage.replace("{User}", webevt.getName()).replace("{Message}", webevt.getMessage()));
+					if (IRCd.msgDynmapMessage.length() > 0) IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.channelName+" :" + IRCd.msgDynmapMessage.replace("%USER%", webevt.getName()).replace("%MESSAGE%", webevt.getMessage()));
 				}
 			}
 		} catch (Exception e) {
