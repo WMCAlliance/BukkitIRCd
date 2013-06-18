@@ -30,8 +30,8 @@ public class IRCUnbanCommand implements CommandExecutor{
 
 					if (IRCd.wildCardMatch(ban, "*!*@*")) { // Full hostmask
 						if (IRCd.unBanIRCUser(ban, player.getName() + IRCd.ingameSuffix + "!" + player.getName() + "@" + player.getAddress().getAddress().getHostName())) {
-							if (IRCd.msgIRCUnban.length() > 0) thePlugin.getServer().broadcastMessage(IRCd.msgIRCUnban.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%",player.getName()));
-							if ((thePlugin.dynmap != null) && (IRCd.msgIRCUnbanDynmap.length() > 0)) thePlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCUnbanDynmap.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%",player.getName()));
+							if (IRCd.msgIRCUnban.length() > 0) thePlugin.getServer().broadcastMessage(IRCd.msgIRCUnban.replace("{BannedUser}", ban).replace("{BannedBy}",player.getName()));
+							if ((thePlugin.dynmap != null) && (IRCd.msgIRCUnbanDynmap.length() > 0)) thePlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCUnbanDynmap.replace("{BannedUser}", ban).replace("{BannedBy}",player.getName()));
 							player.sendMessage(ChatColor.RED + "User unbanned.");
 						}
 						else
@@ -39,8 +39,8 @@ public class IRCUnbanCommand implements CommandExecutor{
 					}
 					else if (thePlugin.countStr(ban, ".") == 3) { // It's an IP
 						if (IRCd.unBanIRCUser("*!*@" + ban, player.getName() + IRCd.ingameSuffix + "!" + player.getName() + "@" + player.getAddress().getAddress().getHostName())) {
-							if (IRCd.msgIRCUnban.length() > 0) thePlugin.getServer().broadcastMessage(IRCd.msgIRCUnban.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%",player.getName()));
-							if ((thePlugin.dynmap != null) && (IRCd.msgIRCUnbanDynmap.length() > 0)) thePlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCUnbanDynmap.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%",player.getName()));
+							if (IRCd.msgIRCUnban.length() > 0) thePlugin.getServer().broadcastMessage(IRCd.msgIRCUnban.replace("{BannedUser}", ban).replace("{BannedBy}",player.getName()));
+							if ((thePlugin.dynmap != null) && (IRCd.msgIRCUnbanDynmap.length() > 0)) thePlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCUnbanDynmap.replace("{BannedUser}", ban).replace("{BannedBy}",player.getName()));
 							player.sendMessage(ChatColor.RED + "IP unbanned.");
 						}
 						else
@@ -64,8 +64,8 @@ public class IRCUnbanCommand implements CommandExecutor{
 
 				if (IRCd.wildCardMatch(ban, "*!*@*")) { // Full hostmask
 					if (IRCd.unBanIRCUser(ban, IRCd.serverName + "!" + IRCd.serverName + "@" + IRCd.serverHostName)) {
-						if (IRCd.msgIRCUnban.length() > 0) thePlugin.getServer().broadcastMessage(IRCd.msgIRCUnban.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%","console"));
-						if ((thePlugin.dynmap != null) && (IRCd.msgIRCUnbanDynmap.length() > 0)) thePlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCUnbanDynmap.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%","console"));
+						if (IRCd.msgIRCUnban.length() > 0) thePlugin.getServer().broadcastMessage(IRCd.msgIRCUnban.replace("{BannedUser}", ban).replace("{BannedBy}","console"));
+						if ((thePlugin.dynmap != null) && (IRCd.msgIRCUnbanDynmap.length() > 0)) thePlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCUnbanDynmap.replace("{BannedUser}", ban).replace("{BannedBy}","console"));
 						sender.sendMessage(ChatColor.RED + "User unbanned.");
 					}
 					else
@@ -73,8 +73,8 @@ public class IRCUnbanCommand implements CommandExecutor{
 				}
 				else if (thePlugin.countStr(ban, ".") == 3) { // It's an IP
 					if (IRCd.unBanIRCUser("*!*@" + ban, IRCd.serverName+"!" + IRCd.serverName+"@" + IRCd.serverHostName)) {
-						if (IRCd.msgIRCUnban.length() > 0) thePlugin.getServer().broadcastMessage(IRCd.msgIRCUnban.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%","console"));
-						if ((thePlugin.dynmap != null) && (IRCd.msgIRCUnbanDynmap.length() > 0)) thePlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCUnbanDynmap.replace("%BANNEDUSER%", ban).replace("%BANNEDBY%","console"));
+						if (IRCd.msgIRCUnban.length() > 0) thePlugin.getServer().broadcastMessage(IRCd.msgIRCUnban.replace("{BannedUser}", ban).replace("{BannedBy}","console"));
+						if ((thePlugin.dynmap != null) && (IRCd.msgIRCUnbanDynmap.length() > 0)) thePlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCUnbanDynmap.replace("{BannedUser}", ban).replace("{BannedBy}","console"));
 						sender.sendMessage(ChatColor.RED + "IP unbanned.");
 					}
 					else
