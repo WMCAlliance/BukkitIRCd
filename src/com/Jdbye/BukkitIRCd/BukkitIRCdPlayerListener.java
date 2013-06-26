@@ -133,10 +133,16 @@ public class BukkitIRCdPlayerListener implements Listener {
             	}
             	mode.append("+");
             }
+            try
+            {
             if (!IRCd.redundantModes && mode.length() > 0){
             	mode.delete(1, mode.length()); //Remove all but the mode powerful mode if redundant modes are not allowed
             }
+            }
+            catch (StringIndexOutOfBoundsException e)
+            {
             IRCd.addBukkitUser(mode.toString(),player);
+            }
     }
 
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -197,8 +203,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 					}
 					String kickMessage = s.toString();
 					String kickedPlayer = split[1];
-					BukkitPlayer bp;
-					if ((bp = IRCd.getBukkitUserObject(event.getPlayer().getName())) != null) {
+					if ((IRCd.getBukkitUserObject(event.getPlayer().getName())) != null) {
 						plugin.removeLastReceivedBy(kickedPlayer);
 						IRCd.kickBukkitUser(kickMessage, IRCd.getBukkitUser(kickedPlayer), IRCd.getBukkitUser(event.getPlayer().getName()));
 						IRCd.removeBukkitUser(IRCd.getBukkitUser(kickedPlayer));

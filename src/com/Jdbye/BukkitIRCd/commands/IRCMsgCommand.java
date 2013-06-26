@@ -14,10 +14,7 @@ import com.Jdbye.BukkitIRCd.Modes;
 
 public class IRCMsgCommand implements CommandExecutor {
 
-	private BukkitIRCdPlugin thePlugin;
-
 	public IRCMsgCommand(BukkitIRCdPlugin plugin) {
-		this.thePlugin = plugin;
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label,

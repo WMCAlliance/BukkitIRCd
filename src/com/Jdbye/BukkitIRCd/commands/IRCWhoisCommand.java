@@ -12,10 +12,7 @@ import com.Jdbye.BukkitIRCd.IRCd;
 
 public class IRCWhoisCommand implements CommandExecutor{
 
-	private BukkitIRCdPlugin thePlugin;
-
 	public IRCWhoisCommand(BukkitIRCdPlugin plugin) {
-		this.thePlugin = plugin;
 	}
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
 			String[] args) {

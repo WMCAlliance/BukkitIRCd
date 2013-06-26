@@ -84,6 +84,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
+@SuppressWarnings("unused")
 public class IRCd implements Runnable {
 
 	// Universal settings
@@ -2086,7 +2087,7 @@ public class IRCd implements Runnable {
 	public static void kickPlayerIngame(Player player, String kickReason) {
 		int IRCUser = getBukkitUser(player.getName());
 		IRCd.kickBukkitUser(kickReason, IRCUser);
-		BukkitTask kickUser = new BukkitKickRunnable(
+		new BukkitKickRunnable(
 				BukkitIRCdPlugin.thePlugin, player, kickReason).runTaskLater(
 				BukkitIRCdPlugin.thePlugin, 1L);
 		IRCd.removeBukkitUser(IRCUser);
@@ -2912,7 +2913,7 @@ public class IRCd implements Runnable {
 	public static boolean executeCommand(String command) {
 		try {
 			if ((commandSender != null) && (bukkitServer != null)) {
-				BukkitTask commandTask = new BukkitCommandExecutorRunnable(
+				new BukkitCommandExecutorRunnable(
 						BukkitIRCdPlugin.thePlugin,
 						convertColors(command, true), commandSender)
 						.runTaskLater(BukkitIRCdPlugin.thePlugin, 1L);
