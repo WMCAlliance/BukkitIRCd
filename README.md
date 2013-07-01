@@ -33,7 +33,7 @@ Maven handles the dependencies of BukkitIRCd, including BukkitAPI and dynmap-api
 * Check out this repo and run: mvn clean install
 
 #### Pull requests
-Although we love your input we do have a few simple rules.
+Although we love your input we do have a few dead simple rules.
 * We ask you do all work in the 'development' branch
 * We ask that you clearly state what the changes are in your request
 * Make sure your local branch is as up-to-date as possible before the merge
