@@ -133,6 +133,7 @@ public class IRCd implements Runnable {
 	// Host mask settings
 	public static boolean useHostMask = false;
 	public static String maskPrefix = "BukkitIRCd-";
+	public static String maskSuffix = ".IP";
 	public static String maskKey = "0x00000000";
 
 	// Custom messages
@@ -1870,7 +1871,7 @@ public class IRCd implements Runnable {
 				return maskPrefix + hashPart ((byte)10, bytes, 4, 3)
 						    + "." + hashPart ((byte)11, bytes, 3, 3)
 					        + "." + hashPart ((byte)13, bytes, 2, 6)
-					        + ".IP";
+					        + maskSuffix;
 			} catch (NoSuchAlgorithmException e) {
 				return ip.getHostName();
 			}
