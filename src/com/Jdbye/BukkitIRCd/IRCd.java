@@ -133,6 +133,7 @@ public class IRCd implements Runnable {
 	// Host mask settings
 	public static boolean useHostMask = false;
 	public static String maskPrefix = "BukkitIRCd-";
+	public static String maskSuffix = ".IP";
 	public static String maskKey = "0x00000000";
 
 	// Custom messages
@@ -1870,7 +1871,7 @@ public class IRCd implements Runnable {
 				return maskPrefix + hashPart ((byte)10, bytes, 4, 3)
 						    + "." + hashPart ((byte)11, bytes, 3, 3)
 					        + "." + hashPart ((byte)13, bytes, 2, 6)
-					        + ".IP";
+					        + maskSuffix;
 			} catch (NoSuchAlgorithmException e) {
 				return ip.getHostName();
 			}
@@ -3552,18 +3553,31 @@ public class IRCd implements Runnable {
 		} else if (split[1].equalsIgnoreCase("IDLE")) {
 			// IN :<uuid> IDLE <target uuid>
 			// OUT :<uuid> IDLE <target uuid> <signon> <seconds idle>
-			IRCUser ircuser;
-			if ((ircuser = uid2ircuser.get(split[2])) != null) {
-				println(":" + split[2] + " IDLE " + split[0] + " "
-						+ ircuser.signonTime + " " + ircuser.getSecondsIdle());
+			final BukkitPlayer bp;
+			long idletime = 0;
+			long signedOn = 0;
+			final String source = split[0];
+			final String target = split[2];
+			final boolean success;
+			if (target.equalsIgnoreCase(serverUID)) {
+				signedOn = serverStartTime;
+				idletime = 0;
+				success = true;
+			} else if ((bp = getBukkitUserByUID(target)) != null) {
+				idletime = (System.currentTimeMillis() - bp.idleTime) / 1000L;
+				signedOn = bp.signedOn;
+				success = true;
 			}
 			// The error below can/will happen in the event a player is /whois'ed from IRC - I'd like to know why and how to fix it
 			else {
 				if (debugMode) {
-					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[2] + " not found in list. Error code IRCd1999."); // Log as severe because this situation should never occur and points to a bug in the code
+					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + target + " not found in list. Error code IRCd1999."); // Log as severe because this situation should never occur and points to a bug in the code
 				}
+				success = false;
 			}
-
+			if (success) {
+				println(":" + target + " IDLE " + source + " " + signedOn + " " + idletime);
+			}
 		} else if (split[1].equalsIgnoreCase("NICK")) {
 			// :280AAAAAA NICK test 1321981244
 			IRCUser ircuser;
