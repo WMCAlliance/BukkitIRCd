@@ -52,7 +52,7 @@ package com.Jdbye.BukkitIRCd;
 // - bukkitircd.whois - Permission for /ircwhois
 // - bukkitircd.msg - Permission for /ircmsg
 // - bukkitircd.topic - Permission for /irctopic
-// - bukkitircd.oper - Gives the player IRC Operator status. Currently doesn't do anything apart from show it in /whois 
+// - bukkitircd.oper - Gives the player IRC Operator status. Currently doesn't do anything apart from show it in /whois
 // - bukkitircd.mode.owner, bukkitircd.mode.protect, bukkitircd.mode.op, bukkitircd.mode.halfop, bukkitircd.mode.voice - Gives the player the corresponding IRC user mode.
 
 import java.security.MessageDigest;
@@ -61,6 +61,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -236,6 +237,7 @@ public class IRCd implements Runnable {
 	public IRCd() {
 	}
 
+	@Override
 	public void run() {
 		while (running) {
 			try {
@@ -715,13 +717,13 @@ public class IRCd implements Runnable {
 			bp.setUID(UID);
 			if (bp.hasPermission("bukkitircd.oper")) {
 				println(pre + "UID " + UID + " " + (bp.idleTime / 1000L) + " "
-						+ bp.nick + ingameSuffix + " " + bp.host + " "
+						+ bp.nick + ingameSuffix + " " + bp.realhost + " "
 						+ bp.host + " " + bp.nick + " " + bp.ip + " "
 						+ bp.signedOn + " +or :Minecraft Player");
 				println(":" + UID + " OPERTYPE IRC_Operator");
 			} else
 				println(pre + "UID " + UID + " " + (bp.idleTime / 1000L) + " "
-						+ bp.nick + ingameSuffix + " " + bp.host + " "
+						+ bp.nick + ingameSuffix + " " + bp.realhost + " "
 						+ bp.host + " " + bp.nick + " " + bp.ip + " "
 						+ bp.signedOn + " +r :Minecraft Player");
 
@@ -819,7 +821,7 @@ public class IRCd implements Runnable {
 								processor.ipaddress, processor.modes,
 								processor.customWhois, processor.isRegistered,
 								processor.isOper, processor.awayMsg,
-								processor.signonTime, processor.lastActivity);
+								processor.signonTime, processor.lastActivity, "");
 					}
 					i++;
 				}
@@ -851,7 +853,7 @@ public class IRCd implements Runnable {
 							processor.modes, processor.customWhois,
 							processor.isRegistered, processor.isOper,
 							processor.awayMsg, processor.signonTime,
-							processor.lastActivity);
+							processor.lastActivity, "");
 					iu.joined = (processor.isIdented && processor.isNickSet);
 					users.add(iu);
 				}
@@ -982,35 +984,39 @@ public class IRCd implements Runnable {
 	}
 
 	// This doesn't seem to work - find out why
-	public static String[] getIRCWhois(IRCUser ircuser) {
+	public static Collection<String> getIRCWhois(IRCUser ircuser) {
 		if (ircuser == null)
 			return null;
-		String whois[] = null;
+		ArrayList<String> whois = new ArrayList<String>(10);
 		synchronized (csIrcUsers) {
-			whois = new String[8];
 			String idletime = TimeUtils.millisToLongDHMS(ircuser
 					.getSecondsIdle() * 1000);
-			whois[0] = ChatColor.DARK_GREEN + "Nickname: " + ChatColor.GRAY
-					+ ircuser.nick + ChatColor.WHITE;
-			whois[1] = ChatColor.DARK_GREEN + "Ident: " + ChatColor.GRAY
-					+ ircuser.ident + ChatColor.WHITE;
-			whois[2] = ChatColor.DARK_GREEN + "Hostname: " + ChatColor.GRAY
-					+ ircuser.hostmask + ChatColor.WHITE;
-			whois[3] = ChatColor.DARK_GREEN + "Realname: " + ChatColor.GRAY
-					+ ircuser.realname + ChatColor.WHITE;
-			whois[4] = ChatColor.DARK_GREEN + "Is registered: "
+			whois.add(ChatColor.DARK_GREEN + "Nickname: " + ChatColor.GRAY
+					+ ircuser.nick + ChatColor.WHITE);
+			whois.add(ChatColor.DARK_GREEN + "Ident: " + ChatColor.GRAY
+					+ ircuser.ident + ChatColor.WHITE);
+			whois.add(ChatColor.DARK_GREEN + "Hostname: " + ChatColor.GRAY
+					+ ircuser.hostmask + ChatColor.WHITE);
+			whois.add(ChatColor.DARK_GREEN + "Realname: " + ChatColor.GRAY
+					+ ircuser.realname + ChatColor.WHITE);
+			whois.add(ChatColor.DARK_GREEN + "Is registered: "
 					+ ChatColor.GRAY + (ircuser.isRegistered ? "Yes" : "No")
-					+ ChatColor.WHITE;
-			whois[5] = ChatColor.DARK_GREEN + "Is operator: " + ChatColor.GRAY
-					+ (ircuser.isOper ? "Yes" : "No") + ChatColor.WHITE;
-			whois[5] = ChatColor.DARK_GREEN + "Away: " + ChatColor.GRAY
+					+ ChatColor.WHITE);
+			if (!ircuser.accountname.isEmpty()) {
+				whois.add(ChatColor.DARK_GREEN + "Account name: "
+					+ ChatColor.GRAY + ircuser.accountname
+					+ ChatColor.WHITE);
+			}
+			whois.add(ChatColor.DARK_GREEN + "Is operator: " + ChatColor.GRAY
+					+ (ircuser.isOper ? "Yes" : "No") + ChatColor.WHITE);
+			whois.add(ChatColor.DARK_GREEN + "Away: " + ChatColor.GRAY
 					+ ((!ircuser.awayMsg.equals("")) ? ircuser.awayMsg : "No")
-					+ ChatColor.WHITE;
-			whois[6] = ChatColor.DARK_GREEN + "Idle " + ChatColor.GRAY
-					+ idletime + ChatColor.WHITE;
-			whois[7] = ChatColor.DARK_GREEN + "Signed on at " + ChatColor.GRAY
+					+ ChatColor.WHITE);
+			whois.add(ChatColor.DARK_GREEN + "Idle " + ChatColor.GRAY
+					+ idletime + ChatColor.WHITE);
+			whois.add(ChatColor.DARK_GREEN + "Signed on at " + ChatColor.GRAY
 					+ dateFormat.format(ircuser.signonTime * 1000)
-					+ ChatColor.WHITE;
+					+ ChatColor.WHITE);
 		}
 		return whois;
 	}
@@ -1640,7 +1646,7 @@ public class IRCd implements Runnable {
 							BukkitIRCdPlugin.log
 							.severe("[BukkitIRCd] User "
 									+ user
-									+ " not found in UID list. Error code IRCd1004."); // Log							
+									+ " not found in UID list. Error code IRCd1004."); // Log
 						}
 
 						return false;
@@ -1681,7 +1687,7 @@ public class IRCd implements Runnable {
 				} else {
 					if (debugMode) {
 						BukkitIRCdPlugin.log.severe("[BukkitIRCd] User " + user
-								+ " not found in UID list. Error code IRCd1034."); // Log						
+								+ " not found in UID list. Error code IRCd1034."); // Log
 					}
 
 
@@ -1749,11 +1755,12 @@ public class IRCd implements Runnable {
 		return states[N];
 	}
 
+	/*
 	public static boolean addBukkitUser(String modes, String nick,
 			String world, String host, String ip) {
 		if (getBukkitUser(nick) < 0) {
 			synchronized (csBukkitPlayers) {
-				BukkitPlayer bp = new BukkitPlayer(nick, world, modes, host,
+				BukkitPlayer bp = new BukkitPlayer(nick, world, modes, host, host,
 						ip, System.currentTimeMillis() / 1000L,
 						System.currentTimeMillis());
 				bukkitPlayers.add(bp);
@@ -1843,6 +1850,7 @@ public class IRCd implements Runnable {
 		} else
 			return false;
 	}
+	*/
 
 	private static String hashPart(byte itemId, byte[] item, int itemLen, int outLen) throws NoSuchAlgorithmException {
 		final MessageDigest md = MessageDigest.getInstance("MD5");
@@ -1883,11 +1891,12 @@ public class IRCd implements Runnable {
 	public static boolean addBukkitUser(String modes, Player player) {
 		String nick = player.getName();
 		String host = maskHost(player.getAddress().getAddress());
+		String realhost = player.getAddress().getAddress().getHostName();
 		String ip = player.getAddress().getAddress().getHostAddress();
 		String world = player.getWorld().getName();
 		if (getBukkitUser(nick) < 0) {
 			synchronized (csBukkitPlayers) {
-				BukkitPlayer bp = new BukkitPlayer(nick, world, modes, host,
+				BukkitPlayer bp = new BukkitPlayer(nick, world, modes, realhost, host,
 						ip, System.currentTimeMillis() / 1000L,
 						System.currentTimeMillis());
 				bukkitPlayers.add(bp);
@@ -1933,7 +1942,7 @@ public class IRCd implements Runnable {
 						if (bp.hasPermission("bukkitircd.oper")) {
 							println(pre + "UID " + UID + " "
 									+ (bp.idleTime / 1000L) + " " + bp.nick
-									+ ingameSuffix + " " + bp.host + " "
+									+ ingameSuffix + " " + bp.realhost + " "
 									+ bp.host + " " + bp.nick + " " + bp.ip
 									+ " " + bp.signedOn
 									+ " +or :Minecraft Player");
@@ -1941,7 +1950,7 @@ public class IRCd implements Runnable {
 						} else
 							println(pre + "UID " + UID + " "
 									+ (bp.idleTime / 1000L) + " " + bp.nick
-									+ ingameSuffix + " " + bp.host + " "
+									+ ingameSuffix + " " + bp.realhost + " "
 									+ bp.host + " " + bp.nick + " " + bp.ip
 									+ " " + bp.signedOn
 									+ " +r :Minecraft Player");
@@ -2010,7 +2019,7 @@ public class IRCd implements Runnable {
 
 	/**
 	 * Used for Console Kicks
-	 * 
+	 *
 	 * @param kickReason
 	 * @param ID
 	 * @return
@@ -2042,7 +2051,7 @@ public class IRCd implements Runnable {
 
 	/**
 	 * Used for player kicks
-	 * 
+	 *
 	 * @param kickReason
 	 * @param kickedID
 	 * @param kickerID
@@ -2081,7 +2090,7 @@ public class IRCd implements Runnable {
 
 	/**
 	 * Kicks player synchronously
-	 * 
+	 *
 	 * @param player
 	 * @param reason
 	 */
@@ -2352,7 +2361,7 @@ public class IRCd implements Runnable {
 
 	/**
 	 * Converts colors from Minecrat to IRC, or IRC to Minecraft if specified
-	 * 
+	 *
 	 * @param input
 	 * @param fromIRCtoGame
 	 *            Convert IRC colors to Minecraft colors?
@@ -2635,7 +2644,7 @@ public class IRCd implements Runnable {
 
 	/**
 	 * Strips IRC Formatting
-	 * 
+	 *
 	 * @param input
 	 * @return
 	 */
@@ -2661,7 +2670,7 @@ public class IRCd implements Runnable {
 
 	/**
 	 * Gets group prefix from modes
-	 * 
+	 *
 	 * @param modes
 	 * @return
 	 */
@@ -2757,7 +2766,7 @@ public class IRCd implements Runnable {
 
 	/**
 	 * Gets group suffix from modes
-	 * 
+	 *
 	 * @param modes
 	 * @return
 	 */
@@ -3055,7 +3064,7 @@ public class IRCd implements Runnable {
 			boolean isOper = split[10].contains("o");
 			IRCUser ircuser = new IRCUser(nick, realname, ident, realhost,
 					vhost, ipaddress, "", "", isRegistered, false, "",
-					signedOn, idleTime);
+					signedOn, idleTime, "");
 			ircuser.isRegistered = isRegistered;
 			ircuser.isOper = isOper;
 			uid2ircuser.put(UID, ircuser); // Add it to the hashmap
@@ -3079,7 +3088,7 @@ public class IRCd implements Runnable {
 			} else {
 				if (debugMode) {
 					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + UID
-							+ " not found in list. Error code IRCd1707."); // Log				
+							+ " not found in list. Error code IRCd1707."); // Log
 				}
 			}
 
@@ -3175,7 +3184,7 @@ public class IRCd implements Runnable {
 			} else {
 				if (debugMode) {
 					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
-							+ " not found in list. Error code IRCd1779."); // Log as					
+							+ " not found in list. Error code IRCd1779."); // Log as
 				}
 			}
 
@@ -3214,7 +3223,7 @@ public class IRCd implements Runnable {
 					// Log as severe because this situation should never occur and
 					// points to a bug in the code
 					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID " + split[0]
-							+ " not found in list. Error code IRCd1806.");			
+							+ " not found in list. Error code IRCd1806.");
 				}
 
 			}
@@ -3269,7 +3278,7 @@ public class IRCd implements Runnable {
 						if (debugMode) {
 							BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "
 									+ usersplit[1]
-									+ " not found in list. Error code IRCd1831."); // Log			
+									+ " not found in list. Error code IRCd1831."); // Log
 						}
 					}
 
@@ -3295,7 +3304,7 @@ public class IRCd implements Runnable {
 						if (debugMode) {
 							BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "
 									+ usersplit[1]
-									+ " not found in list. Error code IRCd1849."); // Log					
+									+ " not found in list. Error code IRCd1849."); // Log
 						}
 					}
 
@@ -3313,7 +3322,7 @@ public class IRCd implements Runnable {
 			} else {
 				if (debugMode) {
 					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
-							+ " not found in list. Error code IRCd1861."); // Log as					
+							+ " not found in list. Error code IRCd1861."); // Log as
 				}
 			}
 
@@ -3328,7 +3337,7 @@ public class IRCd implements Runnable {
 			} else {
 				if (debugMode) {
 					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
-							+ " not found in list. Error code IRCd1870."); // Log as		
+							+ " not found in list. Error code IRCd1870."); // Log as
 				}
 			}
 
@@ -3616,7 +3625,7 @@ public class IRCd implements Runnable {
 			} else {
 				if (debugMode) {
 					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[2]
-							+ " not found in list. Error code IRCd2013."); // Log as severe, points to a bug in the code					
+							+ " not found in list. Error code IRCd2013."); // Log as severe, points to a bug in the code
 				}
 			}
 
@@ -3673,7 +3682,7 @@ public class IRCd implements Runnable {
 								BukkitIRCdPlugin.log
 								.severe("[BukkitIRCd] Bukkit Player UID "
 										+ split[3]
-										+ " not found in list. Error code IRCd2051."); // Log								
+										+ " not found in list. Error code IRCd2051."); // Log
 							}
 						}
 
@@ -3681,7 +3690,7 @@ public class IRCd implements Runnable {
 						if (debugMode) {
 							BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID "
 									+ split[0]
-									+ " not found in list. Error code IRCd2053."); // Log							
+									+ " not found in list. Error code IRCd2053."); // Log
 						}
 					}
 
@@ -3820,7 +3829,7 @@ public class IRCd implements Runnable {
 								BukkitIRCdPlugin.log
 								.severe("[BukkitIRCd] UID "
 										+ split[3]
-										+ " not found in list. Error code IRCd2083."); // Log								
+										+ " not found in list. Error code IRCd2083."); // Log
 							}
 						}
 
@@ -3828,7 +3837,7 @@ public class IRCd implements Runnable {
 						if (debugMode) {
 							BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID "
 									+ split[0]
-									+ " not found in list. Error code IRCd2085."); // Log							
+									+ " not found in list. Error code IRCd2085."); // Log
 						}
 					}
 
@@ -3845,7 +3854,7 @@ public class IRCd implements Runnable {
 						if (debugMode) {
 							BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "
 									+ split[3]
-									+ " not found in list. Error code IRCd2094."); // Log							
+									+ " not found in list. Error code IRCd2094."); // Log
 						}
 					}
 
@@ -3930,7 +3939,7 @@ public class IRCd implements Runnable {
 				} else {
 					if (debugMode) {
 						BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
-								+ " not found in list. Error code IRCd2125."); // Log						
+								+ " not found in list. Error code IRCd2125."); // Log
 					}
 				}
 
@@ -3945,7 +3954,7 @@ public class IRCd implements Runnable {
 				} else {
 					if (debugMode) {
 						BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
-								+ " not found in list. Error code IRCd2134."); // Log						
+								+ " not found in list. Error code IRCd2134."); // Log
 					}
 				}
 
@@ -4032,7 +4041,7 @@ public class IRCd implements Runnable {
 			} else {
 				if (debugMode) {
 					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
-							+ " not found in list. Error code IRCd2166."); // Log					
+							+ " not found in list. Error code IRCd2166."); // Log
 				}
 			}
 
@@ -4078,7 +4087,7 @@ public class IRCd implements Runnable {
 						if (bp.hasPermission("bukkitircd.oper")) {
 							println(pre + "UID " + UID + " "
 									+ (bp.idleTime / 1000L) + " " + bp.nick
-									+ ingameSuffix + " " + bp.host + " "
+									+ ingameSuffix + " " + bp.realhost + " "
 									+ bp.host + " " + bp.nick + " " + bp.ip
 									+ " " + bp.signedOn
 									+ " +or :Minecraft Player");
@@ -4086,7 +4095,7 @@ public class IRCd implements Runnable {
 						} else
 							println(pre + "UID " + UID + " "
 									+ (bp.idleTime / 1000L) + " " + bp.nick
-									+ ingameSuffix + " " + bp.host + " "
+									+ ingameSuffix + " " + bp.realhost + " "
 									+ bp.host + " " + bp.nick + " " + bp.ip
 									+ " " + bp.signedOn
 									+ " +r :Minecraft Player");
@@ -4157,7 +4166,7 @@ public class IRCd implements Runnable {
 						if (debugMode) {
 							BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "
 									+ split[2]
-									+ " not found in list. Error code IRCd2224."); // Log							
+									+ " not found in list. Error code IRCd2224."); // Log
 						}
 					}
 
@@ -4166,7 +4175,7 @@ public class IRCd implements Runnable {
 			} else {
 				if (debugMode) {
 					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID " + split[0]
-							+ " not found in list. Error code IRCd2228."); // Log					
+							+ " not found in list. Error code IRCd2228."); // Log
 				}
 			}
 
@@ -4273,7 +4282,7 @@ public class IRCd implements Runnable {
 							if(stripIngameSuffix){
 								msg = msg.replace(IRCd.ingameSuffix,"");
 							}
-							
+
 									BukkitIRCdPlugin.thePlugin
 											.getServer()
 											.broadcastMessage(msg
@@ -4409,18 +4418,38 @@ public class IRCd implements Runnable {
 			} else {
 				if (debugMode) {
 					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
-							+ " not found in list. Error code IRCd2336."); // Log					
+							+ " not found in list. Error code IRCd2336."); // Log
 				}
 			}
 
 
+		} else if (split[1].equalsIgnoreCase("METADATA")) {
+			// :00A METADATA 854AAAABZ accountname :glguy
+			final String target = split[2];
+			final String key = split[3];
+
+			final String value;
+			if (split[4].startsWith(":")) {
+				split[4] = split[4].substring(1);
+				value = join(split, " ", 4);
+			} else {
+				value = split[4];
+			}
+
+			final IRCUser user = uid2ircuser.get(target);
+			if (user != null) {
+				if (key.equalsIgnoreCase("accountname")) {
+					user.accountname = value;
+				}
+			}
 		}
+
 		// End of IF command check
 	}
 }
 
 class ClientConnection implements Runnable {
-	private Socket server;
+	private final Socket server;
 	private String line;
 	public String nick, realname, ident, hostmask, ipaddress;
 	public String modes = "";
@@ -4428,6 +4457,7 @@ class ClientConnection implements Runnable {
 	public boolean isIdented = false;
 	public boolean isNickSet = false;
 	public boolean isRegistered = false;
+	public String accountname = "";
 	public boolean isOper = false;
 	public String awayMsg = "";
 	public long lastPingResponse;
@@ -4448,6 +4478,7 @@ class ClientConnection implements Runnable {
 		}
 	}
 
+	@Override
 	public void run() {
 		if (running) {
 			try {
@@ -5691,8 +5722,10 @@ class ClientConnection implements Runnable {
 				String playerident;
 				String playernick;
 				String playerhost;
+				String playerrealhost;
 				String playerip;
 				String playerworld;
+				String playeraccountname;
 				boolean playerisoper;
 
 				String mode = bp.getMode();
@@ -5705,6 +5738,7 @@ class ClientConnection implements Runnable {
 				playerident = bp.nick;
 				playernick = bp.nick + IRCd.ingameSuffix;
 				playerhost = bp.host;
+				playerrealhost = bp.realhost;
 				playerip = bp.ip;
 				playerworld = bp.world;
 				playerisoper = bp.hasPermission("bukkitircd.oper");
@@ -5715,7 +5749,7 @@ class ClientConnection implements Runnable {
 				if (isOper)
 					writeln(IRCd.serverMessagePrefix + " 378 " + nick + " "
 							+ playernick + " :is connecting from *@"
-							+ playerhost + " " + playerip);
+							+ playerrealhost + " " + playerip);
 				writeln(IRCd.serverMessagePrefix + " 319 " + nick + " "
 						+ playernick + " :" + playermodes + IRCd.channelName);
 				writeln(IRCd.serverMessagePrefix + " 312 " + nick + " "

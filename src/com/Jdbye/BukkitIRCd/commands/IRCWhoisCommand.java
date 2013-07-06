@@ -14,6 +14,7 @@ public class IRCWhoisCommand implements CommandExecutor{
 
 	public IRCWhoisCommand(BukkitIRCdPlugin plugin) {
 	}
+	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
 			String[] args) {
 		if (sender instanceof Player){
@@ -22,10 +23,8 @@ public class IRCWhoisCommand implements CommandExecutor{
 				if (args.length > 0) {
 					IRCUser ircuser = IRCd.getIRCUser(args[0]);
 					if (ircuser != null) {
-						String[] whois = IRCd.getIRCWhois(ircuser);
-						if (whois != null) {
-							for (String whoisline : whois) player.sendMessage(whoisline);
-						}
+						for (String whoisline : IRCd.getIRCWhois(ircuser))
+							player.sendMessage(whoisline);
 					}
 					else { player.sendMessage(ChatColor.RED + "That user is not online."); }
 				}
@@ -38,12 +37,12 @@ public class IRCWhoisCommand implements CommandExecutor{
 			if (args.length > 0) {
 				IRCUser ircuser = IRCd.getIRCUser(args[0]);
 				if (ircuser != null) {
-					String[] whois = IRCd.getIRCWhois(ircuser);
-					for (String whoisline : whois) sender.sendMessage(whoisline);
+					for (String whoisline : IRCd.getIRCWhois(ircuser))
+						sender.sendMessage(whoisline);
 				}
 				else { sender.sendMessage(ChatColor.RED + "That user is not online."); }
 			}
-			else { sender.sendMessage(ChatColor.RED + "Please provide a nickname."); return false; }		
+			else { sender.sendMessage(ChatColor.RED + "Please provide a nickname."); return false; }
 			return true;
 		}
 	}
