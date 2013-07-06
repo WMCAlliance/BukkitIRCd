@@ -3626,6 +3626,7 @@ public class IRCd implements Runnable {
 										split[2]));
 				}
 				ircuser.nick = split[2];
+				ircuser.isRegistered = false;
 			} else {
 				if (debugMode) {
 					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[2]
