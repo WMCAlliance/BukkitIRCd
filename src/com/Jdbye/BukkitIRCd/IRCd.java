@@ -984,7 +984,7 @@ public class IRCd implements Runnable {
 	}
 
 	// This doesn't seem to work - find out why
-	public static Collection<String> getIRCWhois(IRCUser ircuser) {
+	public static Collection<String> getIRCWhois(final IRCUser ircuser, final boolean isOper) {
 		if (ircuser == null)
 			return null;
 		ArrayList<String> whois = new ArrayList<String>(10);
@@ -997,6 +997,10 @@ public class IRCd implements Runnable {
 					+ ircuser.ident + ChatColor.WHITE);
 			whois.add(ChatColor.DARK_GREEN + "Hostname: " + ChatColor.GRAY
 					+ ircuser.hostmask + ChatColor.WHITE);
+			if (isOper && !ircuser.hostmask.equalsIgnoreCase(ircuser.realhost)) {
+				whois.add(ChatColor.DARK_GREEN + "Real Hostname: " + ChatColor.GRAY
+						+ ircuser.realhost + ChatColor.WHITE);
+			}
 			whois.add(ChatColor.DARK_GREEN + "Realname: " + ChatColor.GRAY
 					+ ircuser.realname + ChatColor.WHITE);
 			whois.add(ChatColor.DARK_GREEN + "Is registered: "
@@ -5725,7 +5729,6 @@ class ClientConnection implements Runnable {
 				String playerrealhost;
 				String playerip;
 				String playerworld;
-				String playeraccountname;
 				boolean playerisoper;
 
 				String mode = bp.getMode();
