@@ -2,12 +2,14 @@ Changes
 
 <h3>New Features</h3>
 <ul>
-<li></li>
+<li>Cleaner string layout in messages.yml - {String} instead of %STRING%</li>
+<li>Configurable host masking - can also be toggled!</li>
 </ul>
 
 <h3>Fixes</h3>
 <ul>
-<li></li>
+<li>Users with no modes now connect to IRC if redundant=modes is false</li>
+<li>/imsg no longer shows the username in the message</li>
 </ul>
 
 <strong>Note:</strong> If this is the first time you are trying this plugin, be sure to copy over the provided config.yml and messages.yml, as they do not correctly generate yet.
