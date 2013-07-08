@@ -84,6 +84,6 @@
 </description>
   <ciManagement>
   	<system>Jenkins</system>
-  	<url>http://netbook.home.wizardcm.com:8080/job/BukkitIRCd/</url>
+  	<url>http://ci.blny.tk/job/BukkitIRCd/</url>
   </ciManagement>
 </project>
