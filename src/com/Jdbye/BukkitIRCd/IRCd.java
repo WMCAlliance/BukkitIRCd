@@ -3251,21 +3251,8 @@ public class IRCd implements Runnable {
 							if (!ircuser.joined) {
 
 								if (msgIRCJoin.length() > 0)
-									BukkitIRCdPlugin.thePlugin
-											.getServer()
-											.broadcastMessage(
-													msgIRCJoin
-															.replace(
-																	"%USER%",
-																	ircuser.nick)
-															.replace(
-																	"%PREFIX%",
-																	IRCd.getGroupPrefix(ircuser
-																			.getTextModes()))
-															.replace(
-																	"%SUFFIX%",
-																	IRCd.getGroupSuffix(ircuser
-																			.getTextModes())));
+									//TODO I believe fix for #45 would go here
+									BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCJoin.replace("%USER%",ircuser.nick).replace("%PREFIX%",IRCd.getGroupPrefix(ircuser.getTextModes())).replace("%SUFFIX%",IRCd.getGroupSuffix(ircuser.getTextModes())));
 								if ((BukkitIRCdPlugin.dynmap != null)
 										&& (msgIRCJoinDynmap.length() > 0))
 									BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
