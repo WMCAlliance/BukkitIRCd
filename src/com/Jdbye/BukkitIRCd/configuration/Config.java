@@ -19,8 +19,7 @@ public final class Config
 {
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
     private static String serverCreationDate = dateFormat.format(new Date());
-    private static String mode = "standalone";
-    private static String ircdOperPass = "";
+    private static String ircdOperPass = "";  // caching only
     private static BukkitIRCdPlugin plugin = BukkitIRCdPlugin.thePlugin;
     private static FileConfiguration config;
 
@@ -52,13 +51,7 @@ public final class Config
     public static void reloadConfiguration()
     {
         plugin.reloadConfig();
-        config = plugin.getConfig();
 
-        if (!(new File(plugin.getDataFolder(), "config.yml")).exists())
-        {
-            BukkitIRCdPlugin.log.info("[BukkitIRCd] Creating default configuration file." + (isDebugModeEnabled() ? " Code BukkitIRCdPlugin183." : ""));
-            config.options().copyDefaults(true);
-        }
 
         loadConfiguration();
     }
@@ -68,9 +61,16 @@ public final class Config
      */
     public static void loadConfiguration()
     {
+        config = plugin.getConfig();
+
+        if (!(new File(plugin.getDataFolder(), "config.yml")).exists())
+        {
+            BukkitIRCdPlugin.log.info("[BukkitIRCd] Creating default configuration file." + (isDebugModeEnabled() ? " Code BukkitIRCdPlugin183." : ""));
+            config.options().copyDefaults(true);
+        }
+
         try
         {
-            BukkitIRCdPlugin.mode = config.getString("mode", BukkitIRCdPlugin.mode);
             BukkitIRCdPlugin.ircd_creationdate = config.getString("server-creation-date", BukkitIRCdPlugin.ircd_creationdate);
             BukkitIRCdPlugin.log.info("[BukkitIRCd] Loaded configuration file." + (isDebugModeEnabled() ? " Code BukkitIRCdPlugin363." : ""));
         }
@@ -83,12 +83,13 @@ public final class Config
 
     public static String getMode()
     {
-        return mode;
+        final String mode = "standalone";
+        return config.getString("mode", mode);
     }
 
     public static void setMode(final String mode)
     {
-        Config.mode = mode;
+        config.set("mode", mode);
     }
 
     public static SimpleDateFormat getDateFormat()
@@ -347,7 +348,7 @@ public final class Config
 
     public static void setIrcdOperPass(final String ircdOperPass)
     {
-        Config.ircdOperPass = ircdOperPass;
+        config.set("standalone.oper-password", ircdOperPass);
     }
 
     public static String getIrcdOperModes()

@@ -48,8 +48,6 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	
 	public final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
 
-	public static String mode = "standalone";
-
 	public static BukkitIRCdPlugin thePlugin = null;
 
 	private static Date curDate = new Date();

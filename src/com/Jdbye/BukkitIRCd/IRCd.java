@@ -84,47 +84,10 @@ import java.util.Map.Entry;
 public class IRCd implements Runnable {
 
 	// Universal settings
-    //private static boolean Config.isDebugModeEnabled() = false;
-    //private static String BukkitIRCdPlugin.ircdVersion = "BukkitIRCd by Jdbye edited by WMCAlliance";
-    //private static String Config.getServerName() = "Minecraft";
-    //private static String serverDescription = "Minecraft BukkitIRCd Server";
-    //private static String Config.getServerHostName() = "bukkitircd.localhost";
-    //private static String Config.getIrcdIngameSuffix() = "-mc";
-    //private static String Config.getIrcdChannel() = "#minecraft";
 	public static String channelTopic = "Welcome to a Bukkit server!";
 	public static String channelTopicSet = Config.getIrcdServerName();
-    //private static String Config.getIrcdConsoleChannel() = "#minecraft-staff";
-    //private static String Config.getIrcdBantype() = "ip";
 	public static long channelTopicSetDate = System.currentTimeMillis() / 1000L;
-    //private static boolean enableNotices = true;
-    //private static boolean Config.isIrcdConvertColorCodes() = true;
-    //private static boolean handleAmpersandColors = true;
-    //private static String modestr = "standalone";
-    //private static boolean stripIngameSuffix = true;
-	//private static boolean redundantModes = false;
 	public static Modes mode;
-
-	// Standalone server settings
-	//private static int port = 6667;
-   // private static int maxConnections = 1000;
-   // private static int pingInterval = 60;
-   // private static int Config.getTimeout() = 180;
-   // private static int nickLen = 32;
-   // private static String operUser = "", operPass = "";
-   // private static String operModes = "@";
-
-	// Link settings
-   // private static String remoteHost = "localhost";
-  //  private static int remotePort = 7000;
-  //  private static int localPort = 7000;
- //   private static boolean autoConnect = true;
- //   private static String Config.getLinkName() = "irc.localhost";
-   // private static String connectPassword = "test";
-  //  private static String receivePassword = "test";
-  //  private static int linkPingInterval = 60;
-  //  private static int linkTimeoutInterval = 180;
-  //  private static int linkDelay = 60;
-  //  private static int Config.getLinkServerID() = 111;
 
 	// Custom messages
 	public static String msgSendQueryFromIngame = "&r[IRC] [me -> &7{Prefix}{User}{Suffix}&r] {Message}";
@@ -250,7 +213,7 @@ public class IRCd implements Runnable {
 				}
 
 				serverMessagePrefix = ":" + Config.getIrcdServerHostName();
-				if (Config.getMode().equalsIgnoreCase("unreal")
+                if (Config.getMode().equalsIgnoreCase("unreal")
 						|| Config.getMode().equalsIgnoreCase("unrealircd"))
 					mode = Modes.UNREALIRCD;
 				else if (Config.getMode().equalsIgnoreCase("inspire")
