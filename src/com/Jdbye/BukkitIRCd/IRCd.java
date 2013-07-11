@@ -554,11 +554,7 @@ public class IRCd implements Runnable {
 									&& (BukkitIRCdPlugin.thePlugin != null)
 									&& linkcompleted) {
 								if (msgDelinked.length() > 0)
-									BukkitIRCdPlugin.thePlugin.getServer()
-											.broadcastMessage(
-													msgDelinked.replace(
-															"%LINKNAME%",
-															linkName));
+									BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgDelinked.replace("%LINKNAME%",linkName));
 							}
 							lastconnected = false;
 						}
