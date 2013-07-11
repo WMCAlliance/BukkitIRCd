@@ -81,6 +81,7 @@ import java.util.LinkedList;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
+import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
@@ -2106,7 +2107,7 @@ public class IRCd implements Runnable {
 				BukkitIRCdPlugin.thePlugin, 1L);
 		IRCd.removeBukkitUser(IRCUser);
 	}
-
+	
 	public static int getBukkitUser(String nick) {
 		synchronized (csBukkitPlayers) {
 			int i = 0;
@@ -3670,15 +3671,16 @@ public class IRCd implements Runnable {
 						if ((bp = getBukkitUserByUID(split[3])) != null) {
 							if ((IRCd.isPlugin)
 									&& (BukkitIRCdPlugin.thePlugin != null)) {
-								Player p = BukkitIRCdPlugin.thePlugin
-										.getServer().getPlayer(bp.nick);
-								if (p != null) {
-									if (reason != null)
-										kickPlayerIngame(p, "Kicked by " + user
-												+ " on IRC: " + reason);
-									else
-										kickPlayerIngame(p, "Kicked by " + user
-												+ " on IRC");
+								Player p = BukkitIRCdPlugin.thePlugin.getServer().getPlayer(bp.nick);
+								if (p != null) { //TODO Make these strings configurable - colours, lines, etc
+									if (reason != null) {
+										kickPlayerIngame(p, "Kicked by " + user + " on IRC: " + reason);
+										Bukkit.getServer().broadcastMessage(ChatColor.GRAY + user + ChatColor.RED + " kicked " + ChatColor.GRAY + p.getDisplayName() + ChatColor.RED + " for " + ChatColor.GRAY + reason + ChatColor.RED + ".");
+									}
+									else {
+										kickPlayerIngame(p, "Kicked by " + user + " on IRC");
+										Bukkit.getServer().broadcastMessage(ChatColor.GRAY + user + ChatColor.RED + " kicked " + ChatColor.GRAY + p.getDisplayName() + ChatColor.RED + ".");
+									}
 								}
 								removeBukkitUserByUID(split[3]);
 							}
@@ -5019,6 +5021,7 @@ class ClientConnection implements Runnable {
 														+ nick
 														+ " on IRC: "
 														+ IRCd.stripIRCFormatting(reason));
+										Bukkit.getServer().broadcastMessage(ChatColor.GRAY + nick + ChatColor.RED + " kicked " + ChatColor.GRAY + p.getDisplayName() + ChatColor.RED + " for " + ChatColor.GRAY + reason + ChatColor.RED + ".");
 									} else {
 										if (IRCd.msgIRCKick.length() > 0)
 											s.broadcastMessage(IRCd.msgIRCKick
@@ -5027,6 +5030,7 @@ class ClientConnection implements Runnable {
 															"%KICKEDBY%", nick));
 										IRCd.kickPlayerIngame(p, "Kicked by "
 												+ nick + " on IRC");
+										Bukkit.getServer().broadcastMessage(ChatColor.GRAY + nick + ChatColor.RED + " kicked " + ChatColor.GRAY + p.getDisplayName() + ChatColor.RED + ".");
 									}
 								}
 							}
