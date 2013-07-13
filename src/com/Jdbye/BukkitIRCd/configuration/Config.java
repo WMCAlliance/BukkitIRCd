@@ -1,262 +1,613 @@
 package com.Jdbye.BukkitIRCd.configuration;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import java.util.logging.Logger;
-
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.PluginManager;
-
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.file.FileConfiguration;
-
 import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
 import com.Jdbye.BukkitIRCd.Hash;
 import com.Jdbye.BukkitIRCd.HashType;
-import com.Jdbye.BukkitIRCd.IRCUser;
-import com.Jdbye.BukkitIRCd.IRCd;
+import org.bukkit.configuration.file.FileConfiguration;
 
-import com.Jdbye.BukkitIRCd.commands.*;
+import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
+
+/**
+ * Provides a simple configuration interface.
+ */
+public final class Config
+{
+    private static SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
+    private static String serverCreationDate = dateFormat.format(new Date());
+    private static String ircdOperPass = "";  // caching only
+    private static BukkitIRCdPlugin plugin = BukkitIRCdPlugin.thePlugin;
+    private static FileConfiguration config;
+
+    private Config()
+    {
+
+    }
+
+    /**
+     * Saves the configuration file.
+     */
+    public static void saveConfiguration()
+    {
+        try
+        {
+            plugin.saveConfig();
+            BukkitIRCdPlugin.log.info("[BukkitIRCd] Saved configuration file." + (isDebugModeEnabled() ? " Code BukkitIRCdPlugin742." : ""));
+        }
+        catch (final Exception e)
+        {
+            BukkitIRCdPlugin.log.warning("[BukkitIRCd] Caught exception while writing settings to file: ");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Reloads the configuration file.
+     */
+    public static void reloadConfiguration()
+    {
+        plugin.reloadConfig();
 
 
-public class Config{
+        loadConfiguration();
+    }
 
-	private static String mode = "standalone";
+    /**
+     * Loads the configuration.
+     */
+    public static void loadConfiguration()
+    {
+        config = plugin.getConfig();
 
-	private static Date curDate = new Date();
-	private static SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
-	public static String ircd_creationdate = dateFormat.format(curDate);
-	
-	public static boolean ircd_redundant_modes = false;
-	public static int ircd_port = 6667;
-	public static int ircd_maxconn = 1000;
-	public static int ircd_pinginterval = 45;
-	public static int ircd_timeout = 180;
-	public static int ircd_maxnicklen = 32;
-	public static String ircd_channel = "#minecraft";
-	public static String ircd_servername = "BukkitIRCd";
-	public static String ircd_serverdescription = "Minecraft BukkitIRCd Server";
-	public static String ircd_serverhostname = "bukkitircd.localhost";
-	public static String ircd_ingamesuffix = "/minecraft";
-	public static String ircd_topic = "Welcome to a Bukkit server!";
-	public static String ircd_topicsetby = ircd_servername;
-	public static long ircd_topicsetdate = System.currentTimeMillis() / 1000L;
-	public static String ircd_bantype = "ip";
-	public static boolean ircd_convertcolorcodes = true;
-	public static boolean ircd_handleampersandcolors = true;
-	public static boolean ircd_enablenotices = true;
-	public static String ircd_operuser = "";
-	public static String ircd_operpass = "";
-	public static String ircd_opermodes = "~&@%+";
-	public static String ircd_consolechannel = "#staff";
-	public static String ircd_irc_colors = "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15";
-	public static String ircd_game_colors = "0,f,1,2,c,4,5,6,e,a,3,b,9,d,8,7";
-	public static boolean ircd_color_death_messages = false;
-	public static boolean ircd_color_say_messages = false;
-	public static boolean ircd_broadcast_death_messages = true;
-	public static boolean debugmode = false;
-	public static boolean ircd_strip_ingame_suffix = true;
-	
-	public static String link_remotehost = "localhost";
-	public static int link_remoteport = 7000;
-	public static int link_localport = 7000;
-	public static boolean link_autoconnect = true;
-	public static String link_name = "irc.localhost";
-	public static String link_connectpassword = "test";
-	public static String link_receivepassword = "test";
-	public static int link_pinginterval = 60;
-	public static int link_timeout = 180;
-	public static int link_delay = 60;
-	public static int link_serverid = new Random().nextInt(900) + 100;
+        if (!(new File(plugin.getDataFolder(), "config.yml")).exists())
+        {
+            BukkitIRCdPlugin.log.info("[BukkitIRCd] Creating default configuration file." + (isDebugModeEnabled() ? " Code BukkitIRCdPlugin183." : ""));
+            config.options().copyDefaults(true);
+        }
 
-	public static List<String> kickCommands = Arrays.asList("/kick");
-	
-	public static boolean enableRawSend = false;
-	
-	private static BukkitIRCdPlugin plugin = BukkitIRCdPlugin.thePlugin;
-	
+        try
+        {
+            BukkitIRCdPlugin.ircd_creationdate = config.getString("server-creation-date", BukkitIRCdPlugin.ircd_creationdate);
+            BukkitIRCdPlugin.log.info("[BukkitIRCd] Loaded configuration file." + (isDebugModeEnabled() ? " Code BukkitIRCdPlugin363." : ""));
+        }
+        catch (Exception e)
+        {
+            BukkitIRCdPlugin.log.info("[BukkitIRCd] Failed to load configuration file: " + e.toString());
+        }
 
-	public static FileConfiguration config;
-	
-	
-	public static void saveSettings() {
-		File configFile = new File(plugin.getDataFolder(), "config.yml");
-		writeSettings(configFile);
-	}
-	
-	public static void reloadingConfig() {
-		plugin.reloadConfig();
-		config = plugin.getConfig();
-		// IF config file doesn't exist, create it
-		if (!(new File(plugin.getDataFolder(), "config.yml")).exists()) {
-			BukkitIRCdPlugin.log.info("[BukkitIRCd] Creating default configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin183." : ""));
-			config.options().copyDefaults(true);
-		}
-		loadSettings();
-	}
-	
-	public static void initConfig() {
-		IRCd.redundantModes = ircd_redundant_modes;
-		IRCd.port = ircd_port;
-		IRCd.maxConnections = ircd_maxconn;
-		IRCd.pingInterval = ircd_pinginterval;
-		IRCd.timeoutInterval = ircd_timeout;
-		IRCd.nickLen = ircd_maxnicklen;
-		IRCd.channelName = ircd_channel;
-		//if (!reload) {
-		//	IRCd.channelTopic = ircd_topic;
-		//	IRCd.channelTopicSet = ircd_topicsetby;
-		//	IRCd.channelTopicSetDate = ircd_topicsetdate / 1000L;
-		//}
-		IRCd.stripIngameSuffix = ircd_strip_ingame_suffix;
-		IRCd.serverName = ircd_servername;
-		IRCd.serverDescription = ircd_serverdescription;
-		IRCd.serverHostName = ircd_serverhostname;
-		IRCd.serverCreationDate = ircd_creationdate;
-		IRCd.ingameSuffix = ircd_ingamesuffix;
-		IRCd.enableNotices = ircd_enablenotices;
-		IRCd.convertColorCodes = ircd_convertcolorcodes;
-		IRCd.handleAmpersandColors = ircd_handleampersandcolors;
-		IRCd.ircBanType = ircd_bantype;
-		IRCd.version = BukkitIRCdPlugin.ircd_version;
-		IRCd.operUser = ircd_operuser;
-		IRCd.operPass = ircd_operpass;
-		IRCd.operModes = ircd_opermodes;
-		IRCd.consoleChannelName = ircd_consolechannel;
-		IRCd.modestr = mode;
-		IRCd.debugMode = debugmode;
-		IRCd.gameColors = ircd_game_colors.split(",");
-		IRCd.ircColors = BukkitIRCdPlugin.convertStringArrayToIntArray(ircd_irc_colors.split(","), IRCd.ircColors);
-		IRCd.broadcastDeathMessages = ircd_broadcast_death_messages;
-		IRCd.colorDeathMessages = ircd_color_death_messages;
-		IRCd.colorSayMessages = ircd_color_say_messages;
-		// Linking specific settings
-		IRCd.remoteHost = link_remotehost;
-		IRCd.remotePort = link_remoteport;
-		IRCd.localPort = link_localport;
-		IRCd.autoConnect = link_autoconnect;
-		IRCd.linkName = link_name;
-		IRCd.connectPassword = link_connectpassword;
-		IRCd.receivePassword = link_receivepassword;
-		IRCd.linkPingInterval = link_pinginterval;
-		IRCd.linkTimeoutInterval = link_timeout;
-		IRCd.linkDelay = link_delay;
-		IRCd.SID = link_serverid;
-	}
-	private static void writeSettings(File configFile)
-	{
-		try
-		{
-			plugin.saveConfig();
-			BukkitIRCdPlugin.log.info("[BukkitIRCd] Saved configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin742." : ""));
-		}
-		catch(Exception e)
-		{
-			BukkitIRCdPlugin.log.warning("[BukkitIRCd] Caught exception while writing settings to file: ");
-			e.printStackTrace();
-		}
-	}
-	
-	public static void loadSettings() {
-		try {
-			ircd_redundant_modes = config.getBoolean("redundant-modes",ircd_redundant_modes);
-			ircd_strip_ingame_suffix = config.getBoolean("strip-ingame-suffix",ircd_strip_ingame_suffix);
-			ircd_color_death_messages = config.getBoolean("color-death-messages", ircd_color_death_messages);
-			ircd_color_say_messages = config.getBoolean("color-say-messages", ircd_color_say_messages);
-			BukkitIRCdPlugin.mode = config.getString("mode", BukkitIRCdPlugin.mode);
-			ircd_ingamesuffix = config.getString("ingame-suffix", ircd_ingamesuffix);
-			ircd_enablenotices = config.getBoolean("enable-notices", ircd_enablenotices);
-			ircd_convertcolorcodes = config.getBoolean("convert-color-codes", ircd_convertcolorcodes);
-			ircd_handleampersandcolors = config.getBoolean("handle-ampersand-colors",ircd_handleampersandcolors);
-			ircd_irc_colors = config.getString("irc-colors", ircd_irc_colors);
-			ircd_game_colors = config.getString("game-colors", ircd_game_colors);
-			ircd_channel = config.getString("channel-name", ircd_channel);
-			ircd_consolechannel = config.getString("console-channel-name", ircd_consolechannel);
-			BukkitIRCdPlugin.ircd_creationdate = config.getString("server-creation-date", BukkitIRCdPlugin.ircd_creationdate);
-			ircd_servername = config.getString("server-name", ircd_servername);
-			ircd_serverdescription = config.getString("server-description", ircd_serverdescription);
-			ircd_serverhostname = config.getString("server-host", ircd_serverhostname);
-			ircd_bantype = config.getString("ban-type", ircd_bantype);
-			debugmode = config.getBoolean("debug-mode", debugmode);
-			enableRawSend = config.getBoolean("enable-raw-send", enableRawSend);
-			kickCommands = config.getStringList("kick-commands");
+    }
 
-			String operpass = "";
-			
-			ircd_port = config.getInt("standalone.port", ircd_port);
-			ircd_maxconn = config.getInt("standalone.max-connections", ircd_maxconn);
-			ircd_pinginterval = config.getInt("standalone.ping-interval", ircd_pinginterval);
-			ircd_timeout = config.getInt("standalone.timeout", ircd_timeout);
-			ircd_maxnicklen = config.getInt("standalone.max-nick-length", ircd_maxnicklen);
-			ircd_operuser = config.getString("standalone.oper-username", ircd_operuser);
-			operpass = config.getString("standalone.oper-password", ircd_operpass);
-			ircd_opermodes = config.getString("standalone.oper-modes", ircd_opermodes);
-			ircd_topic = config.getString("standalone.channel-topic", ircd_topic).replace("^K", (char)3 + "").replace("^B", (char)2 + "").replace("^I", (char)29 + "").replace("^O", (char)15 + "").replace("^U", (char)31 + "");
-			ircd_topicsetby = config.getString("standalone.channel-topic-set-by", ircd_topicsetby);
-			ircd_broadcast_death_messages = config.getBoolean("broadcast-death-messages",ircd_broadcast_death_messages);
-			try {
-				ircd_topicsetdate = BukkitIRCdPlugin.dateFormat.parse(config.getString("standalone.channel-topic-set-date", BukkitIRCdPlugin.dateFormat.format(ircd_topicsetdate))).getTime();
-			}
-			catch (ParseException e) { }
+    public static String getMode()
+    {
+        final String mode = "standalone";
+        return config.getString("mode", mode);
+    }
 
-			link_remotehost = config.getString("inspircd.remote-host", link_remotehost);
-			link_remoteport = config.getInt("inspircd.remote-port", link_remoteport);
-			link_localport = config.getInt("inspircd.local-port", link_localport);
-			link_autoconnect = config.getBoolean("inspircd.auto-connect", link_autoconnect);
-			link_name = config.getString("inspircd.link-name", link_name);
-			link_connectpassword = config.getString("inspircd.connect-password", link_connectpassword);
-			link_receivepassword = config.getString("inspircd.receive-password", link_receivepassword);
-			link_pinginterval = config.getInt("inspircd.ping-interval", link_pinginterval);
-			link_timeout = config.getInt("inspircd.timeout", link_timeout);
-			link_delay = config.getInt("inspircd.connect-delay", link_delay);
-			link_serverid = config.getInt("inspircd.server-id", link_serverid);
+    public static void setMode(final String mode)
+    {
+        config.set("mode", mode);
+    }
 
-			if (operpass.length() == 0) ircd_operpass = "";
-			else if (operpass.startsWith("~")) { ircd_operpass = operpass.substring(1); }
-			else { ircd_operpass = Hash.compute(operpass, HashType.SHA_512); }
+    public static SimpleDateFormat getDateFormat()
+    {
+        return dateFormat;
+    }
 
-			BukkitIRCdPlugin.log.info("[BukkitIRCd] Loaded configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin363." : ""));
-			
-			//saveConfig();
-			BukkitIRCdPlugin.log.info("[BukkitIRCd] Saved initial configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin365." : ""));
-		}
-		catch (Exception e) {
-			BukkitIRCdPlugin.log.info("[BukkitIRCd] Failed to load configuration file: " + e.toString());
-		}
-		
-	}
-	/*
-	private void firstRunSettings(File dataFolder)
-	{
-		BukkitIRCdPlugin.log.info("[BukkitIRCd] Configuration file not found, creating new one." + (IRCd.debugMode ? " Code BukkitIRCdPlugin475." : ""));
-		dataFolder.mkdirs();
+    public static void setDateFormat(final SimpleDateFormat dateFormat)
+    {
+        Config.dateFormat = dateFormat;
+    }
 
-		File configFile = new File(dataFolder, "config.yml");
-		try
-		{
-			if(!configFile.createNewFile())
-				throw new IOException("Failed file creation");
-		}
-		catch(IOException e)
-		{
-			BukkitIRCdPlugin.log.warning("[BukkitIRCd] Could not create config file!" + (IRCd.debugMode ? " Error Code BukkitIRCdPlugin486." : ""));
-		}
+    public static String getServerCreationDate()
+    {
+        return serverCreationDate;
+    }
 
-		writeSettings(configFile);
-	}
-	*/
-	
-	
-	
+    public static boolean isIrcdRedundantModes()
+    {
+        final boolean ircdRedundantModes = false;
+        return config.getBoolean("redundant-modes", ircdRedundantModes);
+    }
+
+    public static void setIrcdRedundantModes(final boolean ircdRedundantModes)
+    {
+        config.set("redundant-modes", ircdRedundantModes);
+    }
+
+    public static int getIrcdPort()
+    {
+        final int ircdPort = 6667;
+        return config.getInt("standalone.port", ircdPort);
+    }
+
+    public static void setIrcdPort(final int ircdPort)
+    {
+        config.set("standalone.port", ircdPort);
+    }
+
+    public static int getIrcdMaxConnections()
+    {
+        final int ircdMaxConnections = 1000;
+        return config.getInt("standalone.max-connections", ircdMaxConnections);
+    }
+
+    public static void setIrcdMaxConnections(final int ircdMaxConnections)
+    {
+        config.set("standalone.max-connections", ircdMaxConnections);
+    }
+
+    public static int getIrcdPingInterval()
+    {
+        final int ircdPingInterval = 45;
+        return config.getInt("standalone.ping-interval", ircdPingInterval);
+    }
+
+    public static void setIrcdPingInterval(final int ircdPingInterval)
+    {
+        config.set("standalone.ping-interval", ircdPingInterval);
+    }
+
+    public static int getIrcdPinkTimeoutInterval()
+    {
+        final int ircdPinkTimeoutInterval = 180;
+        return config.getInt("standalone.timeout", ircdPinkTimeoutInterval);
+    }
+
+    public static void setIrcdPinkTimeoutInterval(final int ircdPinkTimeoutInterval)
+    {
+        config.set("standalone.timeout", ircdPinkTimeoutInterval);
+    }
+
+    public static int getIrcdMaxNickLength()
+    {
+        final int ircdMaxNickLength = 32;
+        return config.getInt("standalone.max-nick-length", ircdMaxNickLength);
+    }
+
+    public static void setIrcdMaxNickLength(final int ircdMaxNickLength)
+    {
+        config.set("standalone.max-nick-length", ircdMaxNickLength);
+    }
+
+    public static String getIrcdChannel()
+    {
+        final String ircdChannel = "#minecraft";
+        return config.getString("channel-name", ircdChannel);
+    }
+
+    public static void setIrcdChannel(final String ircdChannel)
+    {
+        config.set("channel-name", ircdChannel);
+    }
+
+    public static String getIrcdServerName()
+    {
+        final String ircdServerName = "BukkitIRCd";
+        return config.getString("server-name", ircdServerName);
+    }
+
+    public static void setIrcdServerName(final String ircdServerName)
+    {
+        config.set("server-name", ircdServerName);
+    }
+
+    public static String getIrcdServerDescription()
+    {
+        final String ircdServerDescription = "Minecraft BukkitIRCd Server";
+        return config.getString("server-description", ircdServerDescription);
+    }
+
+    public static void setIrcdServerDescription(final String ircdServerDescription)
+    {
+        config.set("server-description", ircdServerDescription);
+    }
+
+    public static String getIrcdServerHostName()
+    {
+        final String ircdServerHostName = "bukkitircd.localhost";
+        return config.getString("server-host", ircdServerHostName);
+    }
+
+    public static void setIrcdServerHostName(final String ircdServerHostName)
+    {
+        config.set("server-host", ircdServerHostName);
+    }
+
+    public static String getIrcdIngameSuffix()
+    {
+        final String ircdIngameSuffix = "/minecraft";
+        return config.getString("ingame-suffix", ircdIngameSuffix);
+    }
+
+    public static void setIrcdIngameSuffix(final String ircdIngameSuffix)
+    {
+        config.set("ingame-suffix", ircdIngameSuffix);
+    }
+
+    public static String getIrcdTopic()
+    {
+        final String ircdTopic = "Welcome to a Bukkit server!";
+        return config.getString("standalone.channel-topic", ircdTopic).replace("^K", (char) 3 + "").replace("^B", (char) 2 + "").replace("^I", (char) 29 + "").replace("^O", (char) 15 + "").replace("^U", (char) 31 + "");
+    }
+
+    public static void setIrcdTopic(final String ircdTopic)
+    {
+        config.set("standalone.channel-topic", ircdTopic.replace("^K", (char) 3 + "").replace("^B", (char) 2 + "").replace("^I", (char) 29 + "").replace("^O", (char) 15 + "").replace("^U", (char) 31 + ""));
+    }
+
+    public static String getIrcdTopicSetBy()
+    {
+        return config.getString("standalone.channel-topic-set-by", getIrcdServerName());
+    }
+
+    public static void setIrcdTopicSetBy(final String ircdTopicSetBy)
+    {
+        config.set("standalone.channel-topic-set-by", ircdTopicSetBy);
+    }
+
+    public static long getIrcdTopicSetDate()
+    {
+        try
+        {
+            return BukkitIRCdPlugin.dateFormat.parse(config.getString("standalone.channel-topic-set-date", BukkitIRCdPlugin.dateFormat.format(System.currentTimeMillis() / 1000L))).getTime();
+        }
+        catch (ParseException e)
+        {
+            e.printStackTrace();
+        }
+
+        return (new Date()).getTime();
+    }
+
+    public static void setIrcdTopicSetDate(final long ircdTopicSetDate)
+    {
+        config.set("standalone.channel-topic-set-date", ircdTopicSetDate);
+    }
+
+    public static String getIrcdBantype()
+    {
+        final String ircdBantype = "ip";
+        return config.getString("ban-type", ircdBantype);
+    }
+
+    public static void setIrcdBantype(final String ircdBantype)
+    {
+        config.set("ban-type", ircdBantype);
+    }
+
+    public static boolean isIrcdConvertColorCodes()
+    {
+        final boolean ircdConvertColorCodes = true;
+        return config.getBoolean("convert-color-codes", ircdConvertColorCodes);
+    }
+
+    public static void setIrcdConvertColorCodes(final boolean ircdConvertColorCodes)
+    {
+        config.set("convert-color-codes", ircdConvertColorCodes);
+    }
+
+    public static boolean isIrcdHandleAmpersandColors()
+    {
+        final boolean ircdHandleAmpersandColors = true;
+        return config.getBoolean("handle-ampersand-colors", ircdHandleAmpersandColors);
+    }
+
+    public static void setIrcdHandleAmpersandColors(final boolean ircdHandleAmpersandColors)
+    {
+        config.set("handle-ampersand-colors", ircdHandleAmpersandColors);
+    }
+
+    public static boolean isIrcdNoticesEnabled()
+    {
+        final boolean ircdNoticesEnabled = true;
+        return config.getBoolean("enable-notices", ircdNoticesEnabled);
+    }
+
+    public static void setIrcdNoticesEnabled(final boolean ircdNoticesEnabled)
+    {
+        config.set("enable-notices", ircdNoticesEnabled);
+    }
+
+    public static String getIrcdOperUser()
+    {
+        final String ircdOperUser = "";
+        return config.getString("standalone.oper-username", ircdOperUser);
+    }
+
+    public static void setIrcdOperUser(final String ircdOperUser)
+    {
+        config.set("standalone.oper-username", ircdOperUser);
+    }
+
+    public static String getIrcdOperPass()
+    {
+        if (!ircdOperPass.isEmpty())
+        {
+            return ircdOperPass;
+        }
+
+        final String operpass = config.getString("standalone.oper-password", ircdOperPass);
+        if (operpass.isEmpty())
+        {
+            ircdOperPass = operpass;
+        }
+        else if (operpass.startsWith("~"))
+        {
+            ircdOperPass = operpass.substring(1);
+        }
+        else if (!operpass.isEmpty())
+        {
+            ircdOperPass = Hash.compute(operpass, HashType.SHA_512);
+        }
+        return ircdOperPass;
+    }
+
+    public static void setIrcdOperPass(final String ircdOperPass)
+    {
+        config.set("standalone.oper-password", ircdOperPass);
+    }
+
+    public static String getIrcdOperModes()
+    {
+        final String ircdOperModes = "~&@%+";
+        return config.getString("standalone.oper-modes", ircdOperModes);
+    }
+
+    public static void setIrcdOperModes(final String ircdOperModes)
+    {
+        config.set("standalone.oper-modes", ircdOperModes);
+    }
+
+    public static String getIrcdConsoleChannel()
+    {
+        final String ircdConsoleChannel = "#staff";
+        return config.getString("console-channel-name", ircdConsoleChannel);
+    }
+
+    public static void setIrcdConsoleChannel(final String ircdConsoleChannel)
+    {
+        config.set("console-channel-name", ircdConsoleChannel);
+    }
+
+    public static String getIrcdIrcColors()
+    {
+        final String ircdIrcColors = "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15";
+        return config.getString("irc-colors", ircdIrcColors);
+    }
+
+    public static void setIrcdIrcColors(final String ircdIrcColors)
+    {
+        config.set("irc-colors", ircdIrcColors);
+    }
+
+    public static String getIrcdGameColors()
+    {
+        final String ircdGameColors = "0,f,1,2,c,4,5,6,e,a,3,b,9,d,8,7";
+        return config.getString("game-colors", ircdGameColors);
+    }
+
+    public static void setIrcdGameColors(final String ircdGameColors)
+    {
+        config.set("game-colors", ircdGameColors);
+    }
+
+    public static boolean isIrcdColorDeathMessagesEnabled()
+    {
+        final boolean ircdColorDeathMessagesEnabled = false;
+        return config.getBoolean("color-death-messages", ircdColorDeathMessagesEnabled);
+    }
+
+    public static void setIrcdColorDeathMessagesEnabled(final boolean ircdColorDeathMessagesEnabled)
+    {
+        config.set("color-death-messages", ircdColorDeathMessagesEnabled);
+    }
+
+    public static boolean isIrcdColorSayMessageEnabled()
+    {
+        final boolean ircdColorSayMessageEnabled = false;
+        return config.getBoolean("color-say-messages", ircdColorSayMessageEnabled);
+    }
+
+    public static void setIrcdColorSayMessageEnabled(final boolean ircdColorSayMessageEnabled)
+    {
+        config.set("color-say-messages", ircdColorSayMessageEnabled);
+    }
+
+    public static boolean isIrcdBroadCastDeathMessages()
+    {
+        final boolean ircdBroadCastDeathMessages = true;
+        return config.getBoolean("broadcast-death-messages", ircdBroadCastDeathMessages);
+    }
+
+    public static void setIrcdBroadCastDeathMessages(final boolean ircdBroadCastDeathMessages)
+    {
+        config.set("broadcast-death-messages", ircdBroadCastDeathMessages);
+    }
+
+    public static boolean isDebugModeEnabled()
+    {
+        final boolean debugModeEnabled = false;
+        return config.getBoolean("debug-mode", debugModeEnabled);
+    }
+
+    public static void setDebugModeEnabled(final boolean debugModeEnabled)
+    {
+        config.set("debug-mode", debugModeEnabled);
+    }
+
+    public static boolean isIrcdIngameSuffixStripEnabled()
+    {
+        final boolean ircdIngameSuffixStripEnabled = true;
+        return config.getBoolean("strip-ingame-suffix", ircdIngameSuffixStripEnabled);
+    }
+
+    public static void setIrcdIngameSuffixStripEnabled(final boolean ircdIngameSuffixStripEnabled)
+    {
+        config.set("strip-ingame-suffix", ircdIngameSuffixStripEnabled);
+    }
+
+    public static String getLinkRemoteHost()
+    {
+        final String linkRemoteHost = "localhost";
+        return config.getString("inspircd.remote-host", linkRemoteHost);
+    }
+
+    public static void setLinkRemoteHost(final String linkRemoteHost)
+    {
+        config.set("inspircd.remote-host", linkRemoteHost);
+    }
+
+    public static int getLinkRemotePort()
+    {
+        final int linkRemotePort = 7000;
+        return config.getInt("inspircd.remote-port", linkRemotePort);
+    }
+
+    public static void setLinkRemotePort(final int linkRemotePort)
+    {
+        config.set("inspircd.remote-port", linkRemotePort);
+    }
+
+    public static int getLinkLocalPort()
+    {
+        final int linkLocalPort = 7000;
+        return config.getInt("inspircd.local-port", linkLocalPort);
+    }
+
+    public static void setLinkLocalPort(final int linkLocalPort)
+    {
+        config.set("inspircd.local-port", linkLocalPort);
+    }
+
+    public static boolean isLinkAutoconnect()
+    {
+        final boolean linkAutoconnect = true;
+        return config.getBoolean("inspircd.auto-connect", linkAutoconnect);
+    }
+
+    public static void setLinkAutoconnect(final boolean linkAutoconnect)
+    {
+        config.set("inspircd.auto-connect", linkAutoconnect);
+    }
+
+    public static String getLinkName()
+    {
+        final String linkName = "irc.localhost";
+        return config.getString("inspircd.link-name", linkName);
+    }
+
+    public static void setLinkName(final String linkName)
+    {
+        config.set("inspircd.link-name", linkName);
+    }
+
+    public static String getLinkConnectPassword()
+    {
+        final String linkConnectPassword = "test";
+        return config.getString("inspircd.connect-password", linkConnectPassword);
+    }
+
+    public static void setLinkConnectPassword(final String linkConnectPassword)
+    {
+        config.set("inspircd.connect-password", linkConnectPassword);
+    }
+
+    public static String getLinkReceivePassword()
+    {
+        final String linkReceivePassword = "test";
+        return config.getString("inspircd.receive-password", linkReceivePassword);
+    }
+
+    public static void setLinkReceivePassword(final String linkReceivePassword)
+    {
+        config.set("inspircd.receive-password", linkReceivePassword);
+    }
+
+    public static int getLinkPingInterval()
+    {
+        final int linkPingInterval = 60;
+        return config.getInt("inspircd.ping-interval", linkPingInterval);
+    }
+
+    public static void setLinkPingInterval(final int linkPingInterval)
+    {
+        config.set("inspircd.ping-interval", linkPingInterval);
+    }
+
+    public static int getLinkTimeout()
+    {
+        final int linkTimeout = 180;
+        return config.getInt("inspircd.timeout", linkTimeout);
+    }
+
+    public static void setLinkTimeout(final int linkTimeout)
+    {
+        config.set("inspircd.timeout", linkTimeout);
+    }
+
+    public static int getLinkDelay()
+    {
+        final int linkDelay = 60;
+        return config.getInt("inspircd.connect-delay", linkDelay);
+    }
+
+    public static void setLinkDelay(final int linkDelay)
+    {
+        config.set("inspircd.connect-delay", linkDelay);
+    }
+
+    public static int getLinkServerID()
+    {
+        return config.getInt("inspircd.server-id", new Random().nextInt(900) + 100);
+    }
+
+    public static void setLinkServerID(final int linkServerID)
+    {
+        config.set("inspircd.server-id", linkServerID);
+    }
+
+    public static List<String> getKickCommands()
+    {
+        return config.getStringList("kick-commands");
+    }
+
+    public static void setKickCommands(final List<String> kickCommands)
+    {
+        config.set("kick-commands", kickCommands);
+    }
+
+    public static boolean isEnableRawSend()
+    {
+        final boolean enableRawSend = false;
+        return config.getBoolean("enable-raw-send", enableRawSend);
+    }
+
+    public static void setEnableRawSend(final boolean enableRawSend)
+    {
+        config.set("enable-raw-send", enableRawSend);
+    }
+
+    public static BukkitIRCdPlugin getPlugin()
+    {
+        return plugin;
+    }
+
+    public static void setPlugin(final BukkitIRCdPlugin plugin)
+    {
+        Config.plugin = plugin;
+    }
+
+    public static FileConfiguration getConfig()
+    {
+        return config;
+    }
+
+    public static void setConfig(final FileConfiguration config)
+    {
+        Config.config = config;
+    }
 }
