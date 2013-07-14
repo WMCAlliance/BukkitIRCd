@@ -25,21 +25,15 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>LATEST</version>
+            <version>1.5.1-R0.2</version>
         </dependency>
-        
         <dependency>
 		<groupId>org.dynmap</groupId>
 			<artifactId>dynmap-api</artifactId>
 			<version>1.2</version>
 			<type>jar</type>
 	    </dependency>
-
-        <dependency>
-        	<groupId>org.pircbotx</groupId>
-        	<artifactId>pircbotx</artifactId>
-        	<version>1.9</version>
-        </dependency>
+	   
     </dependencies>
 
   <name>BukkitIRCd</name>
@@ -84,6 +78,6 @@
 </description>
   <ciManagement>
   	<system>Jenkins</system>
-  	<url>http://ci.blny.tk/job/BukkitIRCd/</url>
+  	<url>http://netbook.home.wizardcm.com:8080/job/BukkitIRCd/</url>
   </ciManagement>
 </project>

@@ -12,7 +12,10 @@ import org.bukkit.entity.Player;
 
 public class IRCLinkCommand implements CommandExecutor{
 
+	private BukkitIRCdPlugin thePlugin;
+
 	public IRCLinkCommand(BukkitIRCdPlugin plugin) {
+		this.thePlugin = plugin;
 	}
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
 			String[] args) {

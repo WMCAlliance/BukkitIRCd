@@ -60,34 +60,8 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	public static String ircdVersion;
 
 	public boolean dynmapEventRegistered = false;
-<<<<<<< HEAD
 
 	public static final Logger log = Logger.getLogger("Minecraft");
-=======
-	private boolean ircd_strip_ingame_suffix = true;
-	
-	public static String link_remotehost = "localhost";
-	public static int link_remoteport = 7000;
-	public static int link_localport = 7000;
-	public static boolean link_autoconnect = true;
-	public static String link_name = "irc.localhost";
-	public static String link_connectpassword = "test";
-	public static String link_receivepassword = "test";
-	public static int link_pinginterval = 60;
-	public static int link_timeout = 180;
-	public static int link_delay = 60;
-	public static int link_serverid = new Random().nextInt(900) + 100;
-
-	public static boolean use_host_mask = false;
-	public static String mask_prefix = "BukkitIRCd-";
-	public static String mask_suffix = ".IP";
-	public static String mask_key = "0x00000000";
-
-	public static List<String> kickCommands = Arrays.asList("/kick");
-	public static final Logger log = Logger.getLogger("Minecraft");
-
-	public boolean enableRawSend = false;
->>>>>>> development
 
 	public static DynmapAPI dynmap = null;
 	
@@ -185,69 +159,12 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		
 		ircd = new IRCd();
 		
-<<<<<<< HEAD
 		Messages.loadMessages(ircd);
 
 		Bans.loadBans();
 		
-=======
-		loadMessages(ircd);
-		IRCd.redundantModes = ircd_redundant_modes;
-		IRCd.port = ircd_port;
-		IRCd.maxConnections = ircd_maxconn;
-		IRCd.pingInterval = ircd_pinginterval;
-		IRCd.timeoutInterval = ircd_timeout;
-		IRCd.nickLen = ircd_maxnicklen;
-		IRCd.channelName = ircd_channel;
-		if (!reload) {
-			IRCd.channelTopic = ircd_topic;
-			IRCd.channelTopicSet = ircd_topicsetby;
-			IRCd.channelTopicSetDate = ircd_topicsetdate / 1000L;
-		}
-		IRCd.stripIngameSuffix = ircd_strip_ingame_suffix;
-		IRCd.serverName = ircd_servername;
-		IRCd.serverDescription = ircd_serverdescription;
-		IRCd.serverHostName = ircd_serverhostname;
-		IRCd.serverCreationDate = ircd_creationdate;
-		IRCd.ingameSuffix = ircd_ingamesuffix;
-		IRCd.enableNotices = ircd_enablenotices;
-		IRCd.convertColorCodes = ircd_convertcolorcodes;
-		IRCd.handleAmpersandColors = ircd_handleampersandcolors;
-		IRCd.ircBanType = ircd_bantype;
-		IRCd.version = ircd_version;
-		IRCd.operUser = ircd_operuser;
-		IRCd.operPass = ircd_operpass;
-		IRCd.operModes = ircd_opermodes;
-		IRCd.consoleChannelName = ircd_consolechannel;
-		ircd.modestr = mode;
-		IRCd.debugMode = debugmode;
-		IRCd.gameColors = ircd_game_colors.split(",");
-		IRCd.ircColors = convertStringArrayToIntArray(ircd_irc_colors.split(","), IRCd.ircColors);
-		IRCd.broadcastDeathMessages = ircd_broadcast_death_messages;
-		IRCd.colorDeathMessages = ircd_color_death_messages;
-		IRCd.colorSayMessages = ircd_color_say_messages;
-		// Linking specific settings
-		IRCd.remoteHost = link_remotehost;
-		IRCd.remotePort = link_remoteport;
-		IRCd.localPort = link_localport;
-		IRCd.autoConnect = link_autoconnect;
-		IRCd.linkName = link_name;
-		IRCd.connectPassword = link_connectpassword;
-		IRCd.receivePassword = link_receivepassword;
-		IRCd.linkPingInterval = link_pinginterval;
-		IRCd.linkTimeoutInterval = link_timeout;
-		IRCd.linkDelay = link_delay;
-		IRCd.SID = link_serverid;
-
-		IRCd.useHostMask = use_host_mask;
-		IRCd.maskKey = mask_key;
-		IRCd.maskPrefix = mask_prefix;
-		IRCd.maskSuffix = mask_suffix;
-
-		loadBans();
->>>>>>> development
 		IRCd.bukkitPlayers.clear();
-
+		
 		// Set players to different IRC modes based on permission
 		for (Player player : getServer().getOnlinePlayers()) {
 			StringBuffer mode = new StringBuffer();
@@ -320,88 +237,11 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	public void unloadDynmap() {
 		if (BukkitIRCdPlugin.dynmap != null) {
 			BukkitIRCdPlugin.dynmap = null;
-<<<<<<< HEAD
 			log.info("[BukkitIRCd] Dynmap plugin lost." + (Config.isDebugModeEnabled() ? " Error Code BukkitIRCdPlugin308." : ""));
-=======
-			log.info("[BukkitIRCd] Dynmap plugin lost." + (IRCd.debugMode ? " Error Code BukkitIRCdPlugin308." : ""));
 		}
 	}
 
-	private void loadSettings() {
-		try {
-			ircd_redundant_modes = config.getBoolean("redundant-modes",ircd_redundant_modes);
-			ircd_strip_ingame_suffix = config.getBoolean("strip-ingame-suffix",ircd_strip_ingame_suffix);
-			ircd_color_death_messages = config.getBoolean("color-death-messages", ircd_color_death_messages);
-			ircd_color_say_messages = config.getBoolean("color-say-messages", ircd_color_say_messages);
-			mode = config.getString("mode", mode);
-			ircd_ingamesuffix = config.getString("ingame-suffix", ircd_ingamesuffix);
-			ircd_enablenotices = config.getBoolean("enable-notices", ircd_enablenotices);
-			ircd_convertcolorcodes = config.getBoolean("convert-color-codes", ircd_convertcolorcodes);
-			ircd_handleampersandcolors = config.getBoolean("handle-ampersand-colors",ircd_handleampersandcolors);
-			ircd_irc_colors = config.getString("irc-colors", ircd_irc_colors);
-			ircd_game_colors = config.getString("game-colors", ircd_game_colors);
-			ircd_channel = config.getString("channel-name", ircd_channel);
-			ircd_consolechannel = config.getString("console-channel-name", ircd_consolechannel);
-			ircd_creationdate = config.getString("server-creation-date", ircd_creationdate);
-			ircd_servername = config.getString("server-name", ircd_servername);
-			ircd_serverdescription = config.getString("server-description", ircd_serverdescription);
-			ircd_serverhostname = config.getString("server-host", ircd_serverhostname);
-			ircd_bantype = config.getString("ban-type", ircd_bantype);
-			debugmode = config.getBoolean("debug-mode", debugmode);
-			enableRawSend = config.getBoolean("enable-raw-send", enableRawSend);
-			kickCommands = config.getStringList("kick-commands");
-
-			String operpass = "";
-			
-			ircd_port = config.getInt("standalone.port", ircd_port);
-			ircd_maxconn = config.getInt("standalone.max-connections", ircd_maxconn);
-			ircd_pinginterval = config.getInt("standalone.ping-interval", ircd_pinginterval);
-			ircd_timeout = config.getInt("standalone.timeout", ircd_timeout);
-			ircd_maxnicklen = config.getInt("standalone.max-nick-length", ircd_maxnicklen);
-			ircd_operuser = config.getString("standalone.oper-username", ircd_operuser);
-			operpass = config.getString("standalone.oper-password", ircd_operpass);
-			ircd_opermodes = config.getString("standalone.oper-modes", ircd_opermodes);
-			ircd_topic = config.getString("standalone.channel-topic", ircd_topic).replace("^K", (char)3 + "").replace("^B", (char)2 + "").replace("^I", (char)29 + "").replace("^O", (char)15 + "").replace("^U", (char)31 + "");
-			ircd_topicsetby = config.getString("standalone.channel-topic-set-by", ircd_topicsetby);
-			ircd_broadcast_death_messages = config.getBoolean("broadcast-death-messages",ircd_broadcast_death_messages);
-			try {
-				ircd_topicsetdate = dateFormat.parse(config.getString("standalone.channel-topic-set-date", dateFormat.format(ircd_topicsetdate))).getTime();
-			}
-			catch (ParseException e) { }
-
-			link_remotehost = config.getString("inspircd.remote-host", link_remotehost);
-			link_remoteport = config.getInt("inspircd.remote-port", link_remoteport);
-			link_localport = config.getInt("inspircd.local-port", link_localport);
-			link_autoconnect = config.getBoolean("inspircd.auto-connect", link_autoconnect);
-			link_name = config.getString("inspircd.link-name", link_name);
-			link_connectpassword = config.getString("inspircd.connect-password", link_connectpassword);
-			link_receivepassword = config.getString("inspircd.receive-password", link_receivepassword);
-			link_pinginterval = config.getInt("inspircd.ping-interval", link_pinginterval);
-			link_timeout = config.getInt("inspircd.timeout", link_timeout);
-			link_delay = config.getInt("inspircd.connect-delay", link_delay);
-			link_serverid = config.getInt("inspircd.server-id", link_serverid);
-
-			use_host_mask = config.getBoolean("use-host-mask", use_host_mask);
-			mask_prefix = config.getString("host-mask-prefix", mask_prefix);
-			mask_suffix = config.getString("host-mask-suffix", mask_suffix);
-			mask_key = config.getString("host-mask-key", mask_key);
-
-			if (operpass.length() == 0) ircd_operpass = "";
-			else if (operpass.startsWith("~")) { ircd_operpass = operpass.substring(1); }
-			else { ircd_operpass = Hash.compute(operpass, HashType.SHA_512); }
-
-			log.info("[BukkitIRCd] Loaded configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin363." : ""));
-
-			saveConfig();
-			log.info("[BukkitIRCd] Saved initial configuration file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin365." : ""));
-		}
-		catch (Exception e) {
-			log.info("[BukkitIRCd] Failed to load configuration file: " + e.toString());
->>>>>>> development
-		}
-	}
-
-
+	
 	/**
      * Converts color codes to processed codes
      *

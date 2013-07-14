@@ -10,7 +10,7 @@ What we are trying to do is continue the work of Jdbye. We are starting off with
 
 If you know how to code in Java, then by all means take a look at our [Issues](https://github.com/WMCAlliance/BukkitIRCd/issues) page and submit a Pull Request (to the development branch) with code additions as required. We're going to need all the support and teamwork we can get.
 
-To download builds made from the development branch, you can get them at [our Jenkins](http://ci.blny.tk/job/BukkitIRCd/). Remember, these can be unstable, though we try to keep them as stable as possible.
+To download builds made from the development branch, you can get them at [our Jenkins](http://netbook.home.wizardcm.com:8080/job/BukkitIRCd/). Remember, these can be unstable, though we try to keep them as stable as possible.
 
 If you need to discuss anything with the team, don't hesitate to [join us on IRC](http://widget00.mibbit.com/?server=irc.echelon4.net&amp;channel=%23minecraft-dev) via irc.wma.im #minecraft-dev
 
@@ -33,7 +33,7 @@ Maven handles the dependencies of BukkitIRCd, including BukkitAPI and dynmap-api
 * Check out this repo and run: mvn clean install
 
 #### Pull requests
-Although we love your input we do have a few dead simple rules.
+Although we love your input we do have a few simple rules.
 * We ask you do all work in the 'development' branch
 * We ask that you clearly state what the changes are in your request
 * Make sure your local branch is as up-to-date as possible before the merge

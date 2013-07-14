@@ -1,33 +1,21 @@
-Changes in this release!
+Changes
 
 <h3>New Features</h3>
 <ul>
-<li>Cleaner string layout in messages.yml - {String} instead of %STRING%</li>
-<li>Configurable host masking - can also be toggled!</li>
+<li></li>
 </ul>
 
 <h3>Fixes</h3>
 <ul>
-<li>Users with no modes now connect to IRC if redundant=modes is false</li>
-<li>/imsg no longer shows the username in the message</li>
+<li></li>
 </ul>
 
 <strong>Note:</strong> If this is the first time you are trying this plugin, be sure to copy over the provided config.yml and messages.yml, as they do not correctly generate yet.
 
-
 Known Issues
 
 <ul>
-<li>Standalone server allows infinite connections from one location</li>
-<li>Standalone server will error when someone disconnects from IRC</li>
-<li>Standalone will not respond to PING, some clients will complain that there is lag, even though there is none</li>
-<li>The config file is not always read (could be a standalone issue)</li>
-<li>When initially linking, if players are already online, they will not be ranked based on permissions</li>
-<li>If an IRC username is already in use, the player will use their ID, which is an alphanumerical string</li>
-<li>Some console commands will not show responses in the staff channel - the LagMeter plugin is a good example</li>
-<li>IRC messages can only be a certain length - currently staff messages are limited to 299 characters</li>
-<li>In some cases /whois on a player (from IRC) doesn't respond</li>
-<li>When linking, usually all IRC users are listed ingame as connecting</li>
+<li></li>
 </ul>
 
 <strong>Note:</strong> If you find issues in this version that are not listed here, please let us know on our <a href="https://github.com/WMCAlliance/BukkitIRCd/issues" target="_blank">Github Issues</a> page. Please include your Bukkit version, and use relevant labels.
