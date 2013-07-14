@@ -62,11 +62,6 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 	public boolean dynmapEventRegistered = false;
 
-	public static boolean use_host_mask = false;
-	public static String mask_prefix = "BukkitIRCd-";
-	public static String mask_suffix = ".IP";
-	public static String mask_key = "0x00000000";
-
     public static List<String> kickCommands = Arrays.asList("/kick");
 	public static final Logger log = Logger.getLogger("Minecraft");
 	
@@ -170,11 +165,6 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		Messages.loadMessages(ircd);
 
 		Config.initConfig();
-		
-		IRCd.useHostMask = use_host_mask;
-		IRCd.maskKey = mask_key;
-		IRCd.maskPrefix = mask_prefix;
-		IRCd.maskSuffix = mask_suffix;
 
 		Bans.loadBans();
 		
@@ -256,13 +246,6 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 	}
 
-		//	use_host_mask = config.getBoolean("use-host-mask", use_host_mask);
-		//	mask_prefix = config.getString("host-mask-prefix", mask_prefix);
-		//	mask_suffix = config.getString("host-mask-suffix", mask_suffix);
-		//	mask_key = config.getString("host-mask-key", mask_key);
-
-			
-
 	/**
      * Converts color codes to processed codes
      *
@@ -274,9 +257,6 @@ public class BukkitIRCdPlugin extends JavaPlugin {
         if (message == null) return null;
         return message.replaceAll("&([a-f0-9k-or])", "\u00a7$1");
     }
-	
-	
-   
 
 	// Load the bans file
 	

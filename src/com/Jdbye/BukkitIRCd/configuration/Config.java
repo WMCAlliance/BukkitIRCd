@@ -80,6 +80,11 @@ public class Config{
 	public static int link_delay = 60;
 	public static int link_serverid = new Random().nextInt(900) + 100;
 
+	public static boolean use_host_mask = false;
+	public static String mask_prefix = "BukkitIRCd-";
+	public static String mask_suffix = ".IP";
+	public static String mask_key = "0x00000000";
+	
 	public static List<String> kickCommands = Arrays.asList("/kick");
 	
 	public static boolean enableRawSend = false;
@@ -153,7 +158,14 @@ public class Config{
 		IRCd.linkTimeoutInterval = link_timeout;
 		IRCd.linkDelay = link_delay;
 		IRCd.SID = link_serverid;
+		
+		IRCd.useHostMask = use_host_mask;
+		IRCd.maskKey = mask_key;
+		IRCd.maskPrefix = mask_prefix;
+		IRCd.maskSuffix = mask_suffix;
+		
 	}
+	
 	private static void writeSettings(File configFile)
 	{
 		try
@@ -221,7 +233,12 @@ public class Config{
 			link_timeout = config.getInt("inspircd.timeout", link_timeout);
 			link_delay = config.getInt("inspircd.connect-delay", link_delay);
 			link_serverid = config.getInt("inspircd.server-id", link_serverid);
-
+			
+			use_host_mask = config.getBoolean("use-host-mask", use_host_mask);
+			mask_prefix = config.getString("host-mask-prefix", mask_prefix);
+			mask_suffix = config.getString("host-mask-suffix", mask_suffix);
+			mask_key = config.getString("host-mask-key", mask_key);
+			
 			if (operpass.length() == 0) ircd_operpass = "";
 			else if (operpass.startsWith("~")) { ircd_operpass = operpass.substring(1); }
 			else { ircd_operpass = Hash.compute(operpass, HashType.SHA_512); }
