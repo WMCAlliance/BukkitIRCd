@@ -4,7 +4,7 @@
 
   <groupId>com.jdbye.bukkitircd</groupId>
   <artifactId>bukkitircd</artifactId>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <properties>
@@ -25,7 +25,7 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>LATEST</version>
+            <version>1.5.1-R0.2</version>
         </dependency>
         <dependency>
 		<groupId>org.dynmap</groupId>
@@ -33,11 +33,7 @@
 			<version>1.2</version>
 			<type>jar</type>
 	    </dependency>
-	    <dependency>
-			<groupId>org.pircbotx</groupId>
-			<artifactId>pircbotx</artifactId>
-			<version>1.9</version>
-		</dependency>
+	   
     </dependencies>
 
   <name>BukkitIRCd</name>
@@ -57,16 +53,15 @@
 		</resource>
 	</resources>
     <plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>2.0.2</version>
-            <configuration>
-                <source>1.6</source>
-                <target>1.6</target>
-                <compilerArgument>-proc:none</compilerArgument>
-            </configuration>
-        </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.0.2</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -83,6 +78,6 @@
 </description>
   <ciManagement>
   	<system>Jenkins</system>
-  	<url>http://ci.blny.tk/job/BukkitIRCd/</url>
+  	<url>http://netbook.home.wizardcm.com:8080/job/BukkitIRCd/</url>
   </ciManagement>
 </project>
