@@ -1,14 +1,14 @@
 package com.Jdbye.BukkitIRCd.commands;
 
+import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
+import com.Jdbye.BukkitIRCd.IRCUser;
+import com.Jdbye.BukkitIRCd.IRCd;
+import com.Jdbye.BukkitIRCd.configuration.Config;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
-import com.Jdbye.BukkitIRCd.IRCUser;
-import com.Jdbye.BukkitIRCd.IRCd;
 
 public class IRCKickCommand implements CommandExecutor{
 
@@ -46,7 +46,7 @@ public class IRCKickCommand implements CommandExecutor{
 				if (args.length > 1) reason = IRCd.join(args, " ", 1);
 				IRCUser ircuser = IRCd.getIRCUser(args[0]);
 				if (ircuser != null) {
-					if (IRCd.kickIRCUser(ircuser, IRCd.serverName, IRCd.serverName, IRCd.serverHostName, reason, false)) sender.sendMessage(ChatColor.RED + "Player kicked.");
+					if (IRCd.kickIRCUser(ircuser, Config.getIrcdServerName(), Config.getIrcdServerName(), Config.getIrcdServerHostName(), reason, false)) sender.sendMessage(ChatColor.RED + "Player kicked.");
 					else sender.sendMessage(ChatColor.RED + "Failed to kick player.");
 					
 				}
