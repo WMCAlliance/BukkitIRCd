@@ -11,7 +11,10 @@ import com.Jdbye.BukkitIRCd.IRCd;
 
 public class IRCListCommand implements CommandExecutor{
 
+	private BukkitIRCdPlugin thePlugin;
+
 	public IRCListCommand(BukkitIRCdPlugin plugin) {
+		this.thePlugin = plugin;
 	}
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
 			String[] args) {

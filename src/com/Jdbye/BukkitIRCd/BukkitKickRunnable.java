@@ -10,9 +10,12 @@ public class BukkitKickRunnable extends BukkitRunnable{
 	//Kicks are not thread safe
 	private Player kickedPlayer;
 	private String kickReason;
+	private final BukkitIRCdPlugin instance;
+	
 	public BukkitKickRunnable(BukkitIRCdPlugin instance, Player kickedPlayer, String kickReason){
 		this.kickedPlayer = kickedPlayer;
 		this.kickReason = kickReason;
+		this.instance = instance;
 		
 	}
 
