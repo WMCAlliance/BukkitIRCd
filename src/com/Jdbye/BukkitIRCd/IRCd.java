@@ -553,11 +553,7 @@ public class IRCd implements Runnable {
 									&& (BukkitIRCdPlugin.thePlugin != null)
 									&& linkcompleted) {
 								if (msgDelinked.length() > 0)
-									BukkitIRCdPlugin.thePlugin.getServer()
-											.broadcastMessage(
-													msgDelinked.replace(
-															"%LINKNAME%",
-															linkName));
+									BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgDelinked.replace("%LINKNAME%",linkName));
 							}
 							lastconnected = false;
 						}
@@ -2106,7 +2102,7 @@ public class IRCd implements Runnable {
 				BukkitIRCdPlugin.thePlugin, 1L);
 		IRCd.removeBukkitUser(IRCUser);
 	}
-
+	
 	public static int getBukkitUser(String nick) {
 		synchronized (csBukkitPlayers) {
 			int i = 0;
@@ -3255,21 +3251,8 @@ public class IRCd implements Runnable {
 							if (!ircuser.joined) {
 
 								if (msgIRCJoin.length() > 0)
-									BukkitIRCdPlugin.thePlugin
-											.getServer()
-											.broadcastMessage(
-													msgIRCJoin
-															.replace(
-																	"%USER%",
-																	ircuser.nick)
-															.replace(
-																	"%PREFIX%",
-																	IRCd.getGroupPrefix(ircuser
-																			.getTextModes()))
-															.replace(
-																	"%SUFFIX%",
-																	IRCd.getGroupSuffix(ircuser
-																			.getTextModes())));
+									//TODO I believe fix for #45 would go here
+									BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCJoin.replace("%USER%",ircuser.nick).replace("%PREFIX%",IRCd.getGroupPrefix(ircuser.getTextModes())).replace("%SUFFIX%",IRCd.getGroupSuffix(ircuser.getTextModes())));
 								if ((BukkitIRCdPlugin.dynmap != null)
 										&& (msgIRCJoinDynmap.length() > 0))
 									BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
@@ -3670,15 +3653,16 @@ public class IRCd implements Runnable {
 						if ((bp = getBukkitUserByUID(split[3])) != null) {
 							if ((IRCd.isPlugin)
 									&& (BukkitIRCdPlugin.thePlugin != null)) {
-								Player p = BukkitIRCdPlugin.thePlugin
-										.getServer().getPlayer(bp.nick);
-								if (p != null) {
-									if (reason != null)
-										kickPlayerIngame(p, "Kicked by " + user
-												+ " on IRC: " + reason);
-									else
-										kickPlayerIngame(p, "Kicked by " + user
-												+ " on IRC");
+								Player p = BukkitIRCdPlugin.thePlugin.getServer().getPlayer(bp.nick);
+								if (p != null) { //TODO Make these strings configurable - colours, lines, etc
+									if (reason != null) {
+										kickPlayerIngame(p, "Kicked by " + user + " on IRC: " + reason);
+										BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(ChatColor.GRAY + user + ChatColor.RED + " kicked " + ChatColor.GRAY + p.getDisplayName() + ChatColor.RED + " for " + ChatColor.GRAY + reason + ChatColor.RED + ".");
+									}
+									else {
+										kickPlayerIngame(p, "Kicked by " + user + " on IRC");
+										BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(ChatColor.GRAY + user + ChatColor.RED + " kicked " + ChatColor.GRAY + p.getDisplayName() + ChatColor.RED + ".");
+									}
 								}
 								removeBukkitUserByUID(split[3]);
 							}
@@ -5019,6 +5003,7 @@ class ClientConnection implements Runnable {
 														+ nick
 														+ " on IRC: "
 														+ IRCd.stripIRCFormatting(reason));
+										BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(ChatColor.GRAY + nick + ChatColor.RED + " kicked " + ChatColor.GRAY + p.getDisplayName() + ChatColor.RED + " for " + ChatColor.GRAY + reason + ChatColor.RED + ".");
 									} else {
 										if (IRCd.msgIRCKick.length() > 0)
 											s.broadcastMessage(IRCd.msgIRCKick
@@ -5027,6 +5012,7 @@ class ClientConnection implements Runnable {
 															"%KICKEDBY%", nick));
 										IRCd.kickPlayerIngame(p, "Kicked by "
 												+ nick + " on IRC");
+										BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(ChatColor.GRAY + nick + ChatColor.RED + " kicked " + ChatColor.GRAY + p.getDisplayName() + ChatColor.RED + ".");
 									}
 								}
 							}
