@@ -1,6 +1,5 @@
 package com.Jdbye.BukkitIRCd;
 
-import com.Jdbye.BukkitIRCd.configuration.Config;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,21 +26,21 @@ public class BukkitIRCdPlayerListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerDeath(PlayerDeathEvent event){
-		if (!Config.isIrcdBroadCastDeathMessages()){
+		if (!IRCd.broadcastDeathMessages){
 			return; 
 		}
-		String message = event.getDeathMessage().replace(event.getEntity().getName(),event.getEntity().getName()+Config.getIrcdIngameSuffix());
+		String message = event.getDeathMessage().replace(event.getEntity().getName(),event.getEntity().getName()+IRCd.ingameSuffix);
 		
-		if(!Config.isIrcdColorDeathMessagesEnabled()){
+		if(!IRCd.colorDeathMessages){
 			message = ChatColor.stripColor(message);
 		}
 		else {
 			message = IRCd.convertColors(message,false);
 		}
 		if(IRCd.mode == Modes.INSPIRCD){
-			if (IRCd.isLinkcompleted())  {
+			if (IRCd.linkcompleted)  {
 				
-				IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + Config.getIrcdChannel() + " :" + message);
+				IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.channelName + " :" + message);
 				}
 		}
 		else {
@@ -57,7 +56,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 		
 		if (split.length > 1){
 			
-			if (Config.getKickCommands().contains(split[0].toLowerCase())){
+			if (BukkitIRCdPlugin.kickCommands.contains(split[0].toLowerCase())){
 			
 				//PlayerKickEvent does not give kicker, so we listen to kick commands instead
 					StringBuilder s = new StringBuilder(300);
@@ -80,12 +79,12 @@ public class BukkitIRCdPlayerListener implements Listener {
 				
 				
 				message = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',message));
-				if(Config.isIrcdColorSayMessageEnabled()){
+				if(IRCd.colorSayMessages){
 					message = (char) 3 + "13" + message;
 				}
 				if(IRCd.mode == Modes.INSPIRCD){
-					if (IRCd.isLinkcompleted())  {
-						IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + Config.getIrcdChannel() + " :" + message);
+					if (IRCd.linkcompleted)  {
+						IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.channelName + " :" + message);
 						}
 				}else{
 					IRCd.writeAll(message);
@@ -104,42 +103,42 @@ public class BukkitIRCdPlayerListener implements Listener {
             StringBuffer mode = new StringBuffer();
             Player player = event.getPlayer();
             if (player.hasPermission("bukkitircd.mode.owner")){
-            	if (Config.isDebugModeEnabled()) {
+            	if (IRCd.debugMode) {
             		BukkitIRCdPlugin.log.info("Add mode +q for " + player.getName());
             	}
             	mode.append("~");
             	
             }
             if (player.hasPermission("bukkitircd.mode.protect")){
-            	if (Config.isDebugModeEnabled()) {
+            	if (IRCd.debugMode) {
             		BukkitIRCdPlugin.log.info("Add mode +a for " + player.getName());
             	}
             	mode.append("&");
             }
             if (player.hasPermission("bukkitircd.mode.op")){
-            	if (Config.isDebugModeEnabled()) {
+            	if (IRCd.debugMode) {
             		BukkitIRCdPlugin.log.info("Add mode +o for " + player.getName());
             	}
             	mode.append("@");
             }
             if (player.hasPermission("bukkitircd.mode.halfop")){
-            	if (Config.isDebugModeEnabled()) {
+            	if (IRCd.debugMode) {
             		BukkitIRCdPlugin.log.info("Add mode +h for " + player.getName());
             	}
             	mode.append("%");
             }
             if (player.hasPermission("bukkitircd.mode.voice")){
-            	if (Config.isDebugModeEnabled()) {
+            	if (IRCd.debugMode) {
             		BukkitIRCdPlugin.log.info("Add mode +v for " + player.getName());
             	}
             	mode.append("+");
             }
-            if (!Config.isIrcdRedundantModes()){
-            	mode.delete(1, mode.length()); //Remove all but the mode powerful mode if redundant modes are not allowed
+            if (!IRCd.redundantModes && mode.length() > 0){
+                mode.delete(1, mode.length()); //Remove all but the mode powerful mode if redundant modes are not allowed
             }
             IRCd.addBukkitUser(mode.toString(),player);
-    }
-
+       }
+	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerQuit(PlayerQuitEvent event)
 	{
@@ -159,7 +158,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 		else {
 			BukkitPlayer bp;
 			if ((bp = IRCd.getBukkitUserObject(event.getPlayer().getName())) != null) {
-				if (IRCd.isLinkcompleted()) IRCd.println(":" + bp.getUID() + " PRIVMSG " + Config.getIrcdChannel() + " :" + IRCd.convertColors(event.getMessage(), false));
+				if (IRCd.linkcompleted) IRCd.println(":" + bp.getUID() + " PRIVMSG " + IRCd.channelName + " :" + IRCd.convertColors(event.getMessage(), false));
 			}
 		}
 		event.setMessage(IRCd.stripIRCFormatting(event.getMessage()));
@@ -182,14 +181,14 @@ public class BukkitIRCdPlayerListener implements Listener {
 				else {
 					BukkitPlayer bp;
 					if ((bp = IRCd.getBukkitUserObject(event.getPlayer().getName())) != null) {
-						if (IRCd.isLinkcompleted()) IRCd.println(":" + bp.getUID() + " PRIVMSG " + Config.getIrcdChannel() + " :" + (char)1 + "ACTION " + IRCd.convertColors(IRCd.join(event.getMessage().split(" ")," ",1), false) + (char)1);
+						if (IRCd.linkcompleted) IRCd.println(":" + bp.getUID() + " PRIVMSG " + IRCd.channelName + " :" + (char)1 + "ACTION " + IRCd.convertColors(IRCd.join(event.getMessage().split(" ")," ",1), false) + (char)1);
 					}
 				}
 				event.setMessage(IRCd.stripIRCFormatting(event.getMessage()));
 			}
 			
 			
-			if (Config.getKickCommands().contains(split[0].substring(1).toLowerCase())){
+			if (BukkitIRCdPlugin.kickCommands.contains(split[0].substring(1).toLowerCase())){
 				//PlayerKickEvent does not give kicker, so we listen to kick commands instead
 				if (event.getPlayer().hasPermission("bukkitircd.kick")){
 					StringBuilder s = new StringBuilder(300);
@@ -198,8 +197,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 					}
 					String kickMessage = s.toString();
 					String kickedPlayer = split[1];
-					BukkitPlayer bp;
-					if ((bp = IRCd.getBukkitUserObject(event.getPlayer().getName())) != null) {
+					if ((IRCd.getBukkitUserObject(event.getPlayer().getName())) != null) {
 						plugin.removeLastReceivedBy(kickedPlayer);
 						IRCd.kickBukkitUser(kickMessage, IRCd.getBukkitUser(kickedPlayer), IRCd.getBukkitUser(event.getPlayer().getName()));
 						IRCd.removeBukkitUser(IRCd.getBukkitUser(kickedPlayer));
@@ -219,14 +217,14 @@ public class BukkitIRCdPlayerListener implements Listener {
 					String message = s.toString();
 					
 					message = ChatColor.translateAlternateColorCodes('&',ChatColor.stripColor(message));
-					if(Config.isIrcdColorSayMessageEnabled()){
+					if(IRCd.colorSayMessages){
 						message = (char) 3 + "13" + message;
 					}
 					
 					if(IRCd.mode == Modes.INSPIRCD){
 						
-						if (IRCd.isLinkcompleted()) {
-							IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + Config.getIrcdChannel() + " :" + message);
+						if (IRCd.linkcompleted) { 
+							IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.channelName + " :" + message);
 							}
 					}else{
 						IRCd.writeAll(message);

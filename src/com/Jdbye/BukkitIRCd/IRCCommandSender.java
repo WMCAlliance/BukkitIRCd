@@ -1,6 +1,9 @@
 package com.Jdbye.BukkitIRCd;
 
-import com.Jdbye.BukkitIRCd.configuration.Config;
+import java.util.Set;
+import java.util.regex.PatternSyntaxException;
+
+// import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissibleBase;
@@ -8,11 +11,6 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
-
-import java.util.Set;
-import java.util.regex.PatternSyntaxException;
-
-// import org.bukkit.ChatColor;
 
 public class IRCCommandSender implements CommandSender {
     private Server server;
@@ -23,7 +21,7 @@ public class IRCCommandSender implements CommandSender {
 	public IRCCommandSender(Server server) {
 		super();
         this.server = server;
-        this.nick = Config.getIrcdServerName();
+        this.nick = IRCd.serverName;
         enabled = true;
     }
 
@@ -42,8 +40,8 @@ public class IRCCommandSender implements CommandSender {
 		}
     	
 
-    			if (IRCd.mode == Modes.STANDALONE) IRCd.writeOpers(":" + Config.getIrcdServerName() + "!" + Config.getIrcdServerName() + "@" + Config.getIrcdServerHostName() + " PRIVMSG " + Config.getIrcdConsoleChannel() + " :" + IRCd.convertColors(message, false));
-    			else if (IRCd.isLinkcompleted()) IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + Config.getIrcdConsoleChannel() + " :" + IRCd.convertColors(message, false));
+    			if (IRCd.mode == Modes.STANDALONE) IRCd.writeOpers(":" + IRCd.serverName + "!" + IRCd.serverName + "@" + IRCd.serverHostName + " PRIVMSG " + IRCd.consoleChannelName + " :" + IRCd.convertColors(message, false));
+    			else if (IRCd.linkcompleted) IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.consoleChannelName + " :" + IRCd.convertColors(message, false));
     		}
     	
     

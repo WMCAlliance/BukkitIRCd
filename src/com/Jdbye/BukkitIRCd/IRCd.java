@@ -52,16 +52,22 @@ package com.Jdbye.BukkitIRCd;
 // - bukkitircd.whois - Permission for /ircwhois
 // - bukkitircd.msg - Permission for /ircmsg
 // - bukkitircd.topic - Permission for /irctopic
-// - bukkitircd.oper - Gives the player IRC Operator status. Currently doesn't do anything apart from show it in /whois 
+// - bukkitircd.oper - Gives the player IRC Operator status. Currently doesn't do anything apart from show it in /whois
 // - bukkitircd.mode.owner, bukkitircd.mode.protect, bukkitircd.mode.op, bukkitircd.mode.halfop, bukkitircd.mode.voice - Gives the player the corresponding IRC user mode.
 
-import com.Jdbye.BukkitIRCd.configuration.Config;
-import org.bukkit.ChatColor;
-import org.bukkit.Server;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
-
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -69,58 +75,100 @@ import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
+import org.bukkit.ChatColor;
+import org.bukkit.Server;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
+
+@SuppressWarnings("unused")
 public class IRCd implements Runnable {
 
 	// Universal settings
+	public static boolean debugMode = false;
+	public static String version = "BukkitIRCd by Jdbye edited by WMCAlliance";
+	public static String serverName = "Minecraft";
+	public static String serverDescription = "Minecraft BukkitIRCd Server";
+	public static String serverHostName = "bukkitircd.localhost";
+	public static String ingameSuffix = "-mc";
+	public static String channelName = "#minecraft";
 	public static String channelTopic = "Welcome to a Bukkit server!";
-	public static String channelTopicSet = Config.getIrcdServerName();
+	public static String channelTopicSet = serverName;
+	public static String consoleChannelName = "#minecraft-staff";
+	public static String ircBanType = "ip";
 	public static long channelTopicSetDate = System.currentTimeMillis() / 1000L;
+	public static boolean enableNotices = true;
+	public static boolean convertColorCodes = true;
+	public static boolean handleAmpersandColors = true;
+	public String modestr = "standalone";
+	public static boolean stripIngameSuffix = true;
+	public static boolean redundantModes = false;
 	public static Modes mode;
 
+	// Standalone server settings
+	public static int port = 6667;
+	public static int maxConnections = 1000;
+	public static int pingInterval = 60;
+	public static int timeoutInterval = 180;
+	public static int nickLen = 32;
+	public static String operUser = "", operPass = "";
+	public static String operModes = "@";
+
+	// Link settings
+	public static String remoteHost = "localhost";
+	public static int remotePort = 7000;
+	public static int localPort = 7000;
+	public static boolean autoConnect = true;
+	public static String linkName = "irc.localhost";
+	public static String connectPassword = "test";
+	public static String receivePassword = "test";
+	public static int linkPingInterval = 60;
+	public static int linkTimeoutInterval = 180;
+	public static int linkDelay = 60;
+	public static int SID = 111;
+
+	// Host mask settings
+	public static boolean useHostMask = false;
+	public static String maskPrefix = "BukkitIRCd-";
+	public static String maskSuffix = ".IP";
+	public static String maskKey = "0x00000000";
+
 	// Custom messages
-	public static String msgSendQueryFromIngame = "&r[IRC] [me -> &7{Prefix}{User}{Suffix}&r] {Message}";
-	public static String msgLinked = "&e[IRC] Linked to server {LinkName}";
-	public static String msgDelinked = "&e[IRC] Split from server {LinkName}";
-	public static String msgDelinkedReason = "&e[IRC] Split from server {LinkName} ({Reason})";
-	public static String msgIRCJoin = "&e[IRC] {User} joined IRC";
-	public static String msgIRCJoinDynmap = "{User} joined IRC";
-	public static String msgIRCLeave = "&e[IRC] {User} left IRC";
-	public static String msgIRCLeaveReason = "&e[IRC] {User} left IRC ({Reason})";
-	public static String msgIRCLeaveDynmap = "{User} left IRC";
-	public static String msgIRCLeaveReasonDynmap = "{User} left IRC ({Reason})";
-	public static String msgIRCKick = "&e[IRC] {KickedUser} was kicked by {KickedBy}";
-	public static String msgIRCKickReason = "&e[IRC] {KickedUser} was kicked by {KickedBy} ({Reason})";
-	public static String msgIRCKickDynmap = "{KickedUser} was kicked by {KickedBy}";
-	public static String msgIRCKickReasonDynmap = "{KickedUser} was kicked by {KickedBy} ({Reason})";
-	public static String msgIRCBan = "&e[IRC] {BannedUser} was banned by {BannedBy}";
-	public static String msgIRCBanDynmap = "{BannedUser} was banned by {BannedBy}";
-	public static String msgIRCUnban = "&e[IRC] {BannedUser} was unbanned by {BannedBy}";
-	public static String msgIRCUnbanDynmap = "{BannedUser} was unbanned by {BannedBy}";
-	public static String msgIRCNickChange = "&e[IRC] {OldNick} is now known as {NewNick}&f";
-	public static String msgIRCNickChangeDynmap = "{OldNick} is now known as {NewNick}";
-	public static String msgIRCAction = "[IRC] * &7{User}&f {Message}";
-	public static String msgIRCMessage = "[IRC] <&7{User}&f> {Message}";
-	public static String msgIRCNotice = "[IRC] -&7{User}&f- {Message}";
-	public static String msgIRCPrivateAction = "[IRC] &aTo you&f: * &7{User}&f {Message}";
-	public static String msgIRCPrivateMessage = "[IRC] &aTo you&f: <&7{User}&f> {Message}";
-	public static String msgIRCPrivateNotice = "[IRC] &aTo you&f: -&7{User}&f- {Message}";
-	public static String msgIRCActionDynmap = "* {User} {Message}";
-	public static String msgIRCMessageDynmap = "<{User}> {Message}";
-	public static String msgIRCNoticeDynmap = "-{User}- {Message}";
-	public static String msgDynmapMessage = "[Dynmap] {User}: {Message}";
-	public static String msgPlayerList = "^BOnline Players ({Count}):^B {Users}";
+	public static String msgSendQueryFromIngame = "&r[IRC] [me -> &7%PREFIX%%USER%%SUFFIX%&r] %MESSAGE%";
+	public static String msgLinked = "&e[IRC] Linked to server %LINKNAME%";
+	public static String msgDelinked = "&e[IRC] Split from server %LINKNAME%";
+	public static String msgDelinkedReason = "&e[IRC] Split from server %LINKNAME% (%REASON%)";
+	public static String msgIRCJoin = "&e[IRC] %USER% joined IRC";
+	public static String msgIRCJoinDynmap = "%USER% joined IRC";
+	public static String msgIRCLeave = "&e[IRC] %USER% left IRC";
+	public static String msgIRCLeaveReason = "&e[IRC] %USER% left IRC (%REASON%)";
+	public static String msgIRCLeaveDynmap = "%USER% left IRC";
+	public static String msgIRCLeaveReasonDynmap = "%USER% left IRC (%REASON%)";
+	public static String msgIRCKick = "&e[IRC] %KICKEDUSER% was kicked by %KICKEDBY%";
+	public static String msgIRCKickReason = "&e[IRC] %KICKEDUSER% was kicked by %KICKEDBY% (%REASON%)";
+	public static String msgIRCKickDynmap = "%KICKEDUSER% was kicked by %KICKEDBY%";
+	public static String msgIRCKickReasonDynmap = "%KICKEDUSER% was kicked by %KICKEDBY% (%REASON%)";
+	public static String msgIRCBan = "&e[IRC] %BANNEDUSER% was banned by %BANNEDBY%";
+	public static String msgIRCBanDynmap = "%BANNEDUSER% was banned by %BANNEDBY%";
+	public static String msgIRCUnban = "&e[IRC] %BANNEDUSER% was unbanned by %BANNEDBY%";
+	public static String msgIRCUnbanDynmap = "%BANNEDUSER% was unbanned by %BANNEDBY%";
+	public static String msgIRCNickChange = "&e[IRC] %OLDNICK% is now known as %NEWNICK%&f";
+	public static String msgIRCNickChangeDynmap = "%OLDNICK% is now known as %NEWNICK%";
+	public static String msgIRCAction = "[IRC] * &7%USER%&f %MESSAGE%";
+	public static String msgIRCMessage = "[IRC] <&7%USER%&f> %MESSAGE%";
+	public static String msgIRCNotice = "[IRC] -&7%USER%&f- %MESSAGE%";
+	public static String msgIRCPrivateAction = "[IRC] &aTo you&f: * &7%USER%&f %MESSAGE%";
+	public static String msgIRCPrivateMessage = "[IRC] &aTo you&f: <&7%USER%&f> %MESSAGE%";
+	public static String msgIRCPrivateNotice = "[IRC] &aTo you&f: -&7%USER%&f- %MESSAGE%";
+	public static String msgIRCActionDynmap = "* %USER% %MESSAGE%";
+	public static String msgIRCMessageDynmap = "<%USER%> %MESSAGE%";
+	public static String msgIRCNoticeDynmap = "-%USER%- %MESSAGE%";
+	public static String msgDynmapMessage = "[Dynmap] %USER%: %MESSAGE%";
+	public static String msgPlayerList = "^BOnline Players (%COUNT%):^B %USERS%";
 
 	public static final long serverStartTime = System.currentTimeMillis() / 1000L;
 	public static long channelTS = serverStartTime,
@@ -134,26 +182,26 @@ public class IRCd implements Runnable {
 	public static HashMap<String, IRCServer> servers = new HashMap<String, IRCServer>();
 	public static UidGenerator ugen = new UidGenerator();
 	public static String serverUID;
-    private static boolean linkcompleted = false;
-    private static boolean burstSent = false, capabSent = false;
-    private static boolean lastconnected = false;
-    private static boolean isIncoming = false;
-   // private static boolean broadcastDeathMessages = true;
-   // private static boolean colorDeathMessages = false;
-   // private static boolean colorSayMessages = false;
+	public static boolean linkcompleted = false;
+	public static boolean burstSent = false, capabSent = false;
+	public static boolean lastconnected = false;
+	public static boolean isIncoming = false;
+	public static boolean broadcastDeathMessages = true;
+	public static boolean colorDeathMessages = false;
+	public static boolean colorSayMessages = false;
 
-    private static boolean isPlugin = false;
+	public static boolean isPlugin = false;
 
-	//private static Date curDate = new Date();
+	private static Date curDate = new Date();
 	public static SimpleDateFormat dateFormat = new SimpleDateFormat(
 			"EEE MMM dd HH:mm:ss yyyy");
-   // private static String serverCreationDate = dateFormat.format(curDate);
+	public static String serverCreationDate = dateFormat.format(curDate);
 	public static long serverCreationDateLong = System.currentTimeMillis() / 1000L;
 
-    //private static int[] ircColors = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
-	//		13, 14, 15 };
-    //private static String[] gameColors = { "0", "f", "1", "2", "c", "4", "5",
-	//		"6", "e", "a", "3", "b", "9", "d", "8", "7" };
+	public static int[] ircColors = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+			13, 14, 15 };
+	public static String[] gameColors = { "0", "f", "1", "2", "c", "4", "5",
+			"6", "e", "a", "3", "b", "9", "d", "8", "7" };
 
 	private static List<ClientConnection> clientConnections = new LinkedList<ClientConnection>();
 	public static List<BukkitPlayer> bukkitPlayers = new LinkedList<BukkitPlayer>();
@@ -189,6 +237,7 @@ public class IRCd implements Runnable {
 	public IRCd() {
 	}
 
+	@Override
 	public void run() {
 		while (running) {
 			try {
@@ -207,17 +256,17 @@ public class IRCd implements Runnable {
 
 				try {
 					serverCreationDateLong = dateFormat.parse(
-							Config.getServerCreationDate()).getTime() / 1000L;
+							serverCreationDate).getTime() / 1000L;
 				} catch (ParseException e) {
 					serverCreationDateLong = 0;
 				}
 
-				serverMessagePrefix = ":" + Config.getIrcdServerHostName();
-                if (Config.getMode().equalsIgnoreCase("unreal")
-						|| Config.getMode().equalsIgnoreCase("unrealircd"))
+				serverMessagePrefix = ":" + serverHostName;
+				if (modestr.equalsIgnoreCase("unreal")
+						|| modestr.equalsIgnoreCase("unrealircd"))
 					mode = Modes.UNREALIRCD;
-				else if (Config.getMode().equalsIgnoreCase("inspire")
-						|| Config.getMode().equalsIgnoreCase("inspircd"))
+				else if (modestr.equalsIgnoreCase("inspire")
+						|| modestr.equalsIgnoreCase("inspircd"))
 					mode = Modes.INSPIRCD;
 				else
 					mode = Modes.STANDALONE;
@@ -231,8 +280,8 @@ public class IRCd implements Runnable {
 					MOTD.add(" |______  /____/|__|_ \\__|_ \\__||__|   \\___/\\_| \\_| \\____/\\__,_|");
 					MOTD.add("        \\/           \\/    \\/");
 					MOTD.add("");
-					MOTD.add("Welcome to " + Config.getIrcdServerName() + ", running "
-							+ BukkitIRCdPlugin.ircdVersion + ".");
+					MOTD.add("Welcome to " + IRCd.serverName + ", running "
+							+ IRCd.version + ".");
 					MOTD.add("Enjoy your stay!");
 				}
 
@@ -242,20 +291,20 @@ public class IRCd implements Runnable {
 					clientConnections.clear();
 					try {
 						try {
-							listener = new ServerSocket(Config.getIrcdPort());
+							listener = new ServerSocket(port);
 							listener.setSoTimeout(1000);
 							listener.setReuseAddress(true);
 							BukkitIRCdPlugin.log
 									.info("[BukkitIRCd] Listening for client connections on port "
-											+ Config.getIrcdPort());
+											+ port);
 						} catch (IOException e) {
 							BukkitIRCdPlugin.log
-									.severe("Failed to listen on port " + Config.getIrcdPort()
+									.severe("Failed to listen on port " + port
 											+ ": " + e);
 						}
 						while (running) {
-							if ((clientConnections.size() < Config.getIrcdMaxConnections())
-									|| (Config.getIrcdMaxConnections() == 0)) {
+							if ((clientConnections.size() < maxConnections)
+									|| (maxConnections == 0)) {
 								ClientConnection connection;
 								try {
 									server = listener.accept();
@@ -270,7 +319,7 @@ public class IRCd implements Runnable {
 									}
 								} catch (SocketTimeoutException e) {
 								}
-								if (tickCount + (Config.getIrcdPingInterval() * 1000) < System
+								if (tickCount + (pingInterval * 1000) < System
 										.currentTimeMillis()) {
 									tickCount = System.currentTimeMillis();
 									writeAll("PING :" + tickCount);
@@ -294,22 +343,22 @@ public class IRCd implements Runnable {
 					Thread.currentThread()
 							.setName("Thread-BukkitIRCd-InspIRCd");
 					String line = null;
-					serverUID = ugen.generateUID(Config.getLinkServerID());
-					pre = ":" + Config.getLinkServerID() + " ";
+					serverUID = ugen.generateUID(SID);
+					pre = ":" + SID + " ";
 					lastconnected = false;
 					isIncoming = false;
 					remoteSID = null;
 
 					try {
-						listener = new ServerSocket(Config.getLinkLocalPort());
+						listener = new ServerSocket(localPort);
 						listener.setSoTimeout(1000);
 						listener.setReuseAddress(true);
 						BukkitIRCdPlugin.log
 								.info("[BukkitIRCd] Listening for server connections on port "
-										+ Config.getLinkLocalPort());
+										+ localPort);
 					} catch (IOException e) {
 						BukkitIRCdPlugin.log.severe("Failed to listen on port "
-								+ Config.getLinkLocalPort() + ": " + e);
+								+ localPort + ": " + e);
 					}
 
 					try {
@@ -323,7 +372,7 @@ public class IRCd implements Runnable {
 								.info("[BukkitIRCd] Got server connection from "
 										+ addr.getHostAddress());
 						isIncoming = true;
-					} else if (Config.isLinkAutoconnect()) {
+					} else if (autoConnect) {
 						connect();
 					}
 
@@ -339,7 +388,7 @@ public class IRCd implements Runnable {
 									throw new IOException(
 											"Lost connection to server before sending handshake!");
 								String[] split = line.split(" ");
-								if (Config.isDebugModeEnabled())
+								if (debugMode)
 									BukkitIRCdPlugin.log
 											.info("[BukkitIRCd] "
 													+ ChatColor.YELLOW
@@ -376,7 +425,7 @@ public class IRCd implements Runnable {
 										line = in.readLine();
 										if (line != null) {
 											split = line.split(" ");
-											if (Config.isDebugModeEnabled())
+											if (debugMode)
 												BukkitIRCdPlugin.log
 														.info("[BukkitIRCd]"
 																+ ChatColor.YELLOW
@@ -388,16 +437,16 @@ public class IRCd implements Runnable {
 								if (split[0].equalsIgnoreCase("SERVER")) {
 									// SERVER test.tempcraft.net password 0 280
 									// :TempCraft Testing Server
-									if ((!split[2].equals(Config.getLinkReceivePassword()))
-											|| (!split[1].equals(Config.getLinkName()))) {
-										if (!split[2].equals(Config.getLinkReceivePassword()))
+									if ((!split[2].equals(receivePassword))
+											|| (!split[1].equals(linkName))) {
+										if (!split[2].equals(receivePassword))
 											println("ERROR :Invalid password.");
-										else if (!split[1].equals(Config.getLinkName()))
+										else if (!split[1].equals(linkName))
 											println("ERROR :No configuration for hostname "
 													+ split[1]);
 										server.close();
 
-										if (!split[1].equals(Config.getLinkName()))
+										if (!split[1].equals(linkName))
 											throw new IOException(
 													"Rejected connection from remote host: Invalid link name.");
 										else
@@ -416,8 +465,8 @@ public class IRCd implements Runnable {
 										BukkitIRCdPlugin.thePlugin.getServer()
 												.broadcastMessage(
 														msgLinked.replace(
-																"{LinkName}",
-                                                                Config.getLinkName()));
+																"%LINKNAME%",
+																linkName));
 								}
 								server.setSoTimeout(500);
 								lastconnected = true;
@@ -429,7 +478,7 @@ public class IRCd implements Runnable {
 									&& (!server.isClosed())) {
 								try {
 									if (linkLastPingPong
-											+ (Config.getLinkTimeout() * 1000) < System
+											+ (linkTimeoutInterval * 1000) < System
 												.currentTimeMillis()) {
 										// Link ping timeout, disconnect and
 										// notify remote server
@@ -437,9 +486,9 @@ public class IRCd implements Runnable {
 										server.close();
 									} else {
 										if (linkLastPingSent
-												+ (Config.getLinkPingInterval() * 1000) < System
+												+ (linkPingInterval * 1000) < System
 													.currentTimeMillis()) {
-											println(pre + "PING " + Config.getLinkServerID() + " "
+											println(pre + "PING " + SID + " "
 													+ remoteSID);
 											linkLastPingSent = System
 													.currentTimeMillis();
@@ -450,7 +499,7 @@ public class IRCd implements Runnable {
 												&& (line.trim().length() > 0)) {
 											if (line.startsWith("ERROR ")) {
 												// ERROR :Invalid password.
-												if (Config.isDebugModeEnabled())
+												if (debugMode)
 													BukkitIRCdPlugin.log
 															.info("[BukkitIRCd]"
 																	+ ChatColor.YELLOW
@@ -499,16 +548,12 @@ public class IRCd implements Runnable {
 						if (lastconnected) {
 							BukkitIRCdPlugin.log
 									.info("[BukkitIRCd] Lost connection to "
-											+ Config.getLinkRemoteHost() + ":" + Config.getLinkRemoteHost());
+											+ remoteHost + ":" + remotePort);
 							if ((IRCd.isPlugin)
 									&& (BukkitIRCdPlugin.thePlugin != null)
 									&& linkcompleted) {
 								if (msgDelinked.length() > 0)
-									BukkitIRCdPlugin.thePlugin.getServer()
-											.broadcastMessage(
-													msgDelinked.replace(
-															"{LinkName}",
-															Config.getLinkName()));
+									BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgDelinked.replace("%LINKNAME%",linkName));
 							}
 							lastconnected = false;
 						}
@@ -525,13 +570,13 @@ public class IRCd implements Runnable {
 						servers.clear();
 						remoteSID = null;
 						if (running) {
-							if (Config.isLinkAutoconnect()) {
+							if (autoConnect) {
 								BukkitIRCdPlugin.log
 										.info("[BukkitIRCd] Waiting "
-												+ Config.getLinkDelay()
+												+ linkDelay
 												+ " seconds before retrying...");
 								long endTime = System.currentTimeMillis()
-										+ (Config.getLinkDelay() * 1000);
+										+ (linkDelay * 1000);
 								while (System.currentTimeMillis() < endTime) {
 									if ((!running) || isConnected())
 										break;
@@ -609,21 +654,21 @@ public class IRCd implements Runnable {
 	public static boolean connect() {
 		if (mode == Modes.INSPIRCD) {
 			BukkitIRCdPlugin.log.info("[BukkitIRCd] Attempting connection to "
-					+ Config.getLinkRemoteHost() + ":" + Config.getLinkRemoteHost());
+					+ remoteHost + ":" + remotePort);
 			try {
-				server = new Socket(Config.getLinkRemoteHost(), Config.getLinkRemotePort());
+				server = new Socket(remoteHost, remotePort);
 				if ((server != null) && server.isConnected()) {
 					BukkitIRCdPlugin.log.info("[BukkitIRCd] Connected to "
-							+ Config.getLinkRemoteHost() + ":" + Config.getLinkRemotePort());
+							+ remoteHost + ":" + remotePort);
 					isIncoming = false;
 					return true;
 				} else
 					BukkitIRCdPlugin.log
 							.info("[BukkitIRCd] Failed connection to "
-									+ Config.getLinkRemoteHost() + ":" + Config.getLinkRemotePort());
+									+ remoteHost + ":" + remotePort);
 			} catch (IOException e) {
 				BukkitIRCdPlugin.log.info("[BukkitIRCd] Failed connection to "
-						+ Config.getLinkRemoteHost() + ":" + Config.getLinkRemotePort() + " (" + e + ")");
+						+ remoteHost + ":" + remotePort + " (" + e + ")");
 			}
 		}
 		return false;
@@ -636,7 +681,7 @@ public class IRCd implements Runnable {
 			return false;
 		println("CAPAB START 1201");
 		println("CAPAB CAPABILITIES :NICKMAX="
-				+ (Config.getIrcdMaxNickLength() + 1)
+				+ (nickLen + 1)
 				+ " CHANMAX=50 IDENTMAX=33 MAXTOPIC=500 MAXQUIT=500 MAXKICK=500 MAXGECOS=500 MAXAWAY=999 MAXMODES=1 HALFOP=1 PROTOCOL=1201");
 		// println("CAPAB CHANMODES :admin=&a ban=b founder=~q halfop=%h op=@o operonly=O voice=+ v");
 		// // Don't send this line, the server will complain that we don't
@@ -645,8 +690,8 @@ public class IRCd implements Runnable {
 		// send this line, the server will complain that we don't support
 		// various modes and refuse to link
 		println("CAPAB END");
-		println("SERVER " + Config.getIrcdServerHostName() + " " + Config.getLinkConnectPassword() + " 0 "
-				+ Config.getLinkServerID() + " :" + Config.getIrcdServerDescription());
+		println("SERVER " + serverHostName + " " + connectPassword + " 0 "
+				+ SID + " :" + serverDescription);
 		capabSent = true;
 		return true;
 	}
@@ -655,26 +700,26 @@ public class IRCd implements Runnable {
 		if (burstSent)
 			return false;
 		println(pre + "BURST " + (System.currentTimeMillis() / 1000L));
-		println(pre + "VERSION :" + BukkitIRCdPlugin.ircdVersion);
+		println(pre + "VERSION :" + version);
 
 		println(pre + "UID " + serverUID + " " + serverStartTime + " "
-				+ Config.getIrcdServerName() + " " + Config.getIrcdServerHostName() + " " + Config.getIrcdServerHostName()
-				+ " " + Config.getIrcdServerName() + " 127.0.0.1 " + serverStartTime
-				+ " +Bro :" + BukkitIRCdPlugin.ircdVersion);
+				+ serverName + " " + serverHostName + " " + serverHostName
+				+ " " + serverName + " 127.0.0.1 " + serverStartTime
+				+ " +Bro :" + version);
 		println(":" + serverUID + " OPERTYPE Network_Service");
 
 		for (BukkitPlayer bp : bukkitPlayers) {
-			String UID = ugen.generateUID(Config.getLinkServerID());
+			String UID = ugen.generateUID(SID);
 			bp.setUID(UID);
 			if (bp.hasPermission("bukkitircd.oper")) {
 				println(pre + "UID " + UID + " " + (bp.idleTime / 1000L) + " "
-						+ bp.nick + Config.getIrcdIngameSuffix() + " " + bp.host + " "
+						+ bp.nick + ingameSuffix + " " + bp.realhost + " "
 						+ bp.host + " " + bp.nick + " " + bp.ip + " "
 						+ bp.signedOn + " +or :Minecraft Player");
 				println(":" + UID + " OPERTYPE IRC_Operator");
 			} else
 				println(pre + "UID " + UID + " " + (bp.idleTime / 1000L) + " "
-						+ bp.nick + Config.getIrcdIngameSuffix() + " " + bp.host + " "
+						+ bp.nick + ingameSuffix + " " + bp.realhost + " "
 						+ bp.host + " " + bp.nick + " " + bp.ip + " "
 						+ bp.signedOn + " +r :Minecraft Player");
 
@@ -687,21 +732,21 @@ public class IRCd implements Runnable {
 						+ " swhois :is currently in an unknown world");
 		}
 
-		println(pre + "FJOIN " + Config.getIrcdConsoleChannel() + " " + consoleChannelTS
+		println(pre + "FJOIN " + consoleChannelName + " " + consoleChannelTS
 				+ " +nt :," + serverUID);
-		println(":" + serverUID + " FMODE " + Config.getIrcdConsoleChannel() + " "
+		println(":" + serverUID + " FMODE " + consoleChannelName + " "
 				+ consoleChannelTS + " +qaohv " + serverUID + " " + serverUID
 				+ " " + serverUID + " " + serverUID + " " + serverUID);
-		println(pre + "FJOIN " + Config.getIrcdChannel() + " " + channelTS + " +nt :,"
+		println(pre + "FJOIN " + channelName + " " + channelTS + " +nt :,"
 				+ serverUID);
-		println(":" + serverUID + " FMODE " + Config.getIrcdChannel() + " " + channelTS
+		println(":" + serverUID + " FMODE " + channelName + " " + channelTS
 				+ " +qaohv " + serverUID + " " + serverUID + " " + serverUID
 				+ " " + serverUID + " " + serverUID);
 
 		for (BukkitPlayer bp : bukkitPlayers) {
 			String UID = bp.getUID();
 			String textMode = bp.getTextMode();
-			println(pre + "FJOIN " + Config.getIrcdChannel() + " " + channelTS + " +nt :,"
+			println(pre + "FJOIN " + channelName + " " + channelTS + " +nt :,"
 					+ UID);
 			if (textMode.length() > 0) {
 				String modestr = "";
@@ -709,10 +754,10 @@ public class IRCd implements Runnable {
 					modestr += UID + " ";
 				}
 				modestr = modestr.substring(0, modestr.length()-1);
-				println(":" + serverUID + " FMODE " + Config.getIrcdChannel() + " " + channelTS + " + " + textMode + " " + modestr);
+				println(":" + serverUID + " FMODE " + channelName + " " + channelTS + " + " + textMode + " " + modestr);
 
 				modestr = modestr.substring(0, modestr.length() - 1);
-				println(":" + serverUID + " FMODE " + Config.getIrcdChannel() + " "
+				println(":" + serverUID + " FMODE " + channelName + " "
 						+ channelTS + " + " + textMode + " " + modestr);
 			}
 		}
@@ -772,7 +817,7 @@ public class IRCd implements Runnable {
 								processor.ipaddress, processor.modes,
 								processor.customWhois, processor.isRegistered,
 								processor.isOper, processor.awayMsg,
-								processor.signonTime, processor.lastActivity);
+								processor.signonTime, processor.lastActivity, "");
 					}
 					i++;
 				}
@@ -804,7 +849,7 @@ public class IRCd implements Runnable {
 							processor.modes, processor.customWhois,
 							processor.isRegistered, processor.isOper,
 							processor.awayMsg, processor.signonTime,
-							processor.lastActivity);
+							processor.lastActivity, "");
 					iu.joined = (processor.isIdented && processor.isNickSet);
 					users.add(iu);
 				}
@@ -859,9 +904,9 @@ public class IRCd implements Runnable {
 				String modes = bukkitPlayer.getMode();
 				String nick2;
 				if (modes.length() > 0)
-					nick2 = modes.substring(0, 1) + nick + Config.getIrcdIngameSuffix();
+					nick2 = modes.substring(0, 1) + nick + ingameSuffix;
 				else
-					nick2 = nick + Config.getIrcdIngameSuffix();
+					nick2 = nick + ingameSuffix;
 				if (users.length() == 0) {
 					users = nick2;
 				} else {
@@ -935,35 +980,43 @@ public class IRCd implements Runnable {
 	}
 
 	// This doesn't seem to work - find out why
-	public static String[] getIRCWhois(IRCUser ircuser) {
+	public static Collection<String> getIRCWhois(final IRCUser ircuser, final boolean isOper) {
 		if (ircuser == null)
 			return null;
-		String whois[] = null;
+		ArrayList<String> whois = new ArrayList<String>(10);
 		synchronized (csIrcUsers) {
-			whois = new String[8];
 			String idletime = TimeUtils.millisToLongDHMS(ircuser
 					.getSecondsIdle() * 1000);
-			whois[0] = ChatColor.DARK_GREEN + "Nickname: " + ChatColor.GRAY
-					+ ircuser.nick + ChatColor.WHITE;
-			whois[1] = ChatColor.DARK_GREEN + "Ident: " + ChatColor.GRAY
-					+ ircuser.ident + ChatColor.WHITE;
-			whois[2] = ChatColor.DARK_GREEN + "Hostname: " + ChatColor.GRAY
-					+ ircuser.hostmask + ChatColor.WHITE;
-			whois[3] = ChatColor.DARK_GREEN + "Realname: " + ChatColor.GRAY
-					+ ircuser.realname + ChatColor.WHITE;
-			whois[4] = ChatColor.DARK_GREEN + "Is registered: "
+			whois.add(ChatColor.DARK_GREEN + "Nickname: " + ChatColor.GRAY
+					+ ircuser.nick + ChatColor.WHITE);
+			whois.add(ChatColor.DARK_GREEN + "Ident: " + ChatColor.GRAY
+					+ ircuser.ident + ChatColor.WHITE);
+			whois.add(ChatColor.DARK_GREEN + "Hostname: " + ChatColor.GRAY
+					+ ircuser.hostmask + ChatColor.WHITE);
+			if (isOper && !ircuser.hostmask.equalsIgnoreCase(ircuser.realhost)) {
+				whois.add(ChatColor.DARK_GREEN + "Real Hostname: " + ChatColor.GRAY
+						+ ircuser.realhost + ChatColor.WHITE);
+			}
+			whois.add(ChatColor.DARK_GREEN + "Realname: " + ChatColor.GRAY
+					+ ircuser.realname + ChatColor.WHITE);
+			whois.add(ChatColor.DARK_GREEN + "Is registered: "
 					+ ChatColor.GRAY + (ircuser.isRegistered ? "Yes" : "No")
-					+ ChatColor.WHITE;
-			whois[5] = ChatColor.DARK_GREEN + "Is operator: " + ChatColor.GRAY
-					+ (ircuser.isOper ? "Yes" : "No") + ChatColor.WHITE;
-			whois[5] = ChatColor.DARK_GREEN + "Away: " + ChatColor.GRAY
+					+ ChatColor.WHITE);
+			if (!ircuser.accountname.isEmpty()) {
+				whois.add(ChatColor.DARK_GREEN + "Account name: "
+					+ ChatColor.GRAY + ircuser.accountname
+					+ ChatColor.WHITE);
+			}
+			whois.add(ChatColor.DARK_GREEN + "Is operator: " + ChatColor.GRAY
+					+ (ircuser.isOper ? "Yes" : "No") + ChatColor.WHITE);
+			whois.add(ChatColor.DARK_GREEN + "Away: " + ChatColor.GRAY
 					+ ((!ircuser.awayMsg.equals("")) ? ircuser.awayMsg : "No")
-					+ ChatColor.WHITE;
-			whois[6] = ChatColor.DARK_GREEN + "Idle " + ChatColor.GRAY
-					+ idletime + ChatColor.WHITE;
-			whois[7] = ChatColor.DARK_GREEN + "Signed on at " + ChatColor.GRAY
+					+ ChatColor.WHITE);
+			whois.add(ChatColor.DARK_GREEN + "Idle " + ChatColor.GRAY
+					+ idletime + ChatColor.WHITE);
+			whois.add(ChatColor.DARK_GREEN + "Signed on at " + ChatColor.GRAY
 					+ dateFormat.format(ircuser.signonTime * 1000)
-					+ ChatColor.WHITE;
+					+ ChatColor.WHITE);
 		}
 		return whois;
 	}
@@ -992,16 +1045,16 @@ public class IRCd implements Runnable {
 												.broadcastMessage(
 														msgIRCLeaveReason
 																.replace(
-																		"{User}",
+																		"%USER%",
 																		processor.nick)
 																.replace(
-																		"{Suffix}",
+																		"%SUFFIX%",
 																		IRCd.getGroupSuffix(processor.modes))
 																.replace(
-																		"{Prefix}",
+																		"%PREFIX%",
 																		IRCd.getGroupPrefix(processor.modes))
 																.replace(
-																		"{Reason}",
+																		"%REASON%",
 																		convertColors(
 																				reason,
 																				IRCToGame)));
@@ -1012,10 +1065,10 @@ public class IRCd implements Runnable {
 														"IRC",
 														msgIRCLeaveReasonDynmap
 																.replace(
-																		"{User}",
+																		"%USER%",
 																		processor.nick)
 																.replace(
-																		"{Reason}",
+																		"%REASON%",
 																		stripIRCFormatting(reason)));
 								} else {
 									if (msgIRCLeave.length() > 0)
@@ -1024,13 +1077,13 @@ public class IRCd implements Runnable {
 												.broadcastMessage(
 														msgIRCLeave
 																.replace(
-																		"{User}",
+																		"%USER%",
 																		processor.nick)
 																.replace(
-																		"{Suffix}",
+																		"%SUFFIX%",
 																		IRCd.getGroupSuffix(processor.modes))
 																.replace(
-																		"{Prefix}",
+																		"%PREFIX%",
 																		IRCd.getGroupPrefix(processor.modes)));
 									if ((BukkitIRCdPlugin.dynmap != null)
 											&& (msgIRCLeaveDynmap.length() > 0))
@@ -1039,7 +1092,7 @@ public class IRCd implements Runnable {
 														"IRC",
 														msgIRCLeaveDynmap
 																.replace(
-																		"{User}",
+																		"%USER%",
 																		processor.nick));
 								}
 							}
@@ -1071,19 +1124,19 @@ public class IRCd implements Runnable {
 										.getServer()
 										.broadcastMessage(
 												msgIRCLeave
-														.replace("{User}",
+														.replace("%USER%",
 																processor.nick)
 														.replace(
-																"{Prefix}",
+																"%PREFIX%",
 																IRCd.getGroupPrefix(processor.modes))
 														.replace(
-																"{Suffix}",
+																"%SUFFIX%",
 																IRCd.getGroupSuffix(processor.modes)));
 							if ((BukkitIRCdPlugin.dynmap != null)
 									&& (msgIRCLeaveDynmap.length() > 0))
 								BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
 										"IRC", msgIRCLeaveDynmap.replace(
-												"{User}", processor.nick));
+												"%USER%", processor.nick));
 						}
 					}
 					iter.remove();
@@ -1101,7 +1154,7 @@ public class IRCd implements Runnable {
 			return false;
 		IRCServer is = servers.get(serverID);
 		if (is != null) {
-			if (Config.isDebugModeEnabled())
+			if (debugMode)
 				BukkitIRCdPlugin.log.info("[BukkitIRCd] Server " + serverID
 						+ " (" + is.host + ") delinked");
 			Iterator<Entry<String, IRCUser>> iter = uid2ircuser.entrySet()
@@ -1118,24 +1171,24 @@ public class IRCd implements Runnable {
 									.getServer()
 									.broadcastMessage(
 											msgIRCLeaveReason
-													.replace("{User}",
+													.replace("%USER%",
 															curUser.nick)
 													.replace(
-															"{Prefix}",
+															"%PREFIX%",
 															IRCd.getGroupPrefix(curUser
 																	.getTextModes()))
 													.replace(
-															"{Suffix}",
+															"%SUFFIX%",
 															IRCd.getGroupSuffix(curUser
 																	.getTextModes()))
-													.replace("{Reason}",
+													.replace("%REASON%",
 															is.host + " split"));
 						if ((BukkitIRCdPlugin.dynmap != null)
 								&& (msgIRCLeaveReasonDynmap.length() > 0))
 							BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
 									"IRC",
-									msgIRCLeaveReasonDynmap.replace("{User}",
-											curUser.nick).replace("{Reason}",
+									msgIRCLeaveReasonDynmap.replace("%USER%",
+											curUser.nick).replace("%REASON%",
 											is.host + " split"));
 					}
 					iter.remove();
@@ -1152,7 +1205,7 @@ public class IRCd implements Runnable {
 	public static boolean kickBanIRCUser(IRCUser ircuser, String kickBannedBy,
 			String kickBannedByHost, boolean isIngame) {
 		return kickBanIRCUser(ircuser, kickBannedBy, kickBannedByHost, null,
-				isIngame, Config.getIrcdBantype());
+				isIngame, ircBanType);
 	}
 
 	public static boolean kickBanIRCUser(IRCUser ircuser, String kickBannedBy,
@@ -1164,14 +1217,14 @@ public class IRCd implements Runnable {
 	public static boolean kickBanIRCUser(IRCUser ircuser, String kickBannedBy,
 			String kickBannedByHost, String reason, boolean isIngame) {
 		return kickBanIRCUser(ircuser, kickBannedBy, kickBannedByHost, null,
-				isIngame, Config.getIrcdBantype());
+				isIngame, ircBanType);
 	}
 
 	public static boolean kickBanIRCUser(IRCUser ircuser, String kickBannedBy,
 			String kickBannedByHost, String reason, boolean isIngame,
 			String banType) {
 		if (banType == null)
-			banType = Config.getIrcdBantype();
+			banType = ircBanType;
 		String split[] = kickBannedByHost.split("!")[1].split("@");
 		String kickedByIdent = split[0];
 		String kickedByHostname = split[1];
@@ -1209,30 +1262,30 @@ public class IRCd implements Runnable {
 												.broadcastMessage(
 														msgIRCKickReason
 																.replace(
-																		"{KickedUser}",
+																		"%KICKEDUSER%",
 																		processor.nick)
 																.replace(
-																		"{KickedBy}",
+																		"%KICKEDBY%",
 																		kickedByNick)
 																.replace(
-																		"{Reason}",
+																		"%REASON%",
 																		convertColors(
 																				reason,
 																				true))
 																.replace(
-																		"{KickedPrefix}",
+																		"%KICKEDPREFIX%",
 																		IRCd.getGroupPrefix(processor.modes))
 																.replace(
-																		"{KickedSuffix}",
+																		"%KICKEDSUFFIX%",
 																		IRCd.getGroupSuffix(processor.modes))
 																.replace(
-																		"{KickerPrefix}",
+																		"%KICKERPREFIX%",
 																		IRCd.getGroupPrefix(IRCd
 																				.getIRCUser(
 																						kickedByNick)
 																				.getTextModes()))
 																.replace(
-																		"{KickerSuffix}",
+																		"%KICKERSUFFIX%",
 																		IRCd.getGroupSuffix(IRCd
 																				.getIRCUser(
 																						kickedByNick)
@@ -1244,13 +1297,13 @@ public class IRCd implements Runnable {
 														"IRC",
 														msgIRCKickReasonDynmap
 																.replace(
-																		"{KickedUser}",
+																		"%KICKEDUSER%",
 																		processor.nick)
 																.replace(
-																		"{KickedBy}",
+																		"%KICKEDBY%",
 																		kickedByNick)
 																.replace(
-																		"{Reason}",
+																		"%REASON%",
 																		stripIRCFormatting(reason)));
 								} else {
 									if (msgIRCKick.length() > 0)
@@ -1259,25 +1312,25 @@ public class IRCd implements Runnable {
 												.broadcastMessage(
 														msgIRCKick
 																.replace(
-																		"{KickedUser}",
+																		"%KICKEDUSER%",
 																		processor.nick)
 																.replace(
-																		"{KickedBy}",
+																		"%KICKEDBY%",
 																		kickedByNick)
 																.replace(
-																		"{KickedPrefix}",
+																		"%KICKEDPREFIX%",
 																		IRCd.getGroupPrefix(processor.modes))
 																.replace(
-																		"{KickedSuffix}",
+																		"%KICKEDSUFFIX%",
 																		IRCd.getGroupSuffix(processor.modes))
 																.replace(
-																		"{KickerPrefix}",
+																		"%KICKERPREFIX%",
 																		IRCd.getGroupPrefix(IRCd
 																				.getIRCUser(
 																						kickedByNick)
 																				.getTextModes()))
 																.replace(
-																		"{KickerSuffix}",
+																		"%KICKERSUFFIX%",
 																		IRCd.getGroupSuffix(IRCd
 																				.getIRCUser(
 																						kickedByNick)
@@ -1289,16 +1342,16 @@ public class IRCd implements Runnable {
 														"IRC",
 														msgIRCKickDynmap
 																.replace(
-																		"{KickedUser}",
+																		"%KICKEDUSER%",
 																		processor.nick)
 																.replace(
-																		"{KickedBy}",
+																		"%KICKEDBY%",
 																		kickedByNick));
 								}
 							}
 						}
 						if (isIngame) {
-							kickedByNick += Config.getIrcdIngameSuffix();
+							kickedByNick += ingameSuffix;
 							if (reason != null)
 								reason = convertColors(reason, false);
 						}
@@ -1358,11 +1411,11 @@ public class IRCd implements Runnable {
 					if (iuser.consoleJoined) {
 						if (reason != null) {
 							println(":" + sourceUID + " KICK "
-									+ Config.getIrcdConsoleChannel() + " " + uid + " :"
+									+ consoleChannelName + " " + uid + " :"
 									+ reason);
 						} else {
 							println(":" + sourceUID + " KICK "
-									+ Config.getIrcdConsoleChannel() + " " + uid + " :"
+									+ consoleChannelName + " " + uid + " :"
 									+ kickedByNick);
 						}
 						returnVal = true;
@@ -1370,7 +1423,7 @@ public class IRCd implements Runnable {
 					}
 					if (iuser.joined) {
 						if (reason != null) {
-							println(":" + sourceUID + " KICK " + Config.getIrcdChannel()
+							println(":" + sourceUID + " KICK " + channelName
 									+ " " + uid + " :" + reason);
 							if (msgIRCKickReason.length() > 0)
 								BukkitIRCdPlugin.thePlugin
@@ -1378,31 +1431,31 @@ public class IRCd implements Runnable {
 										.broadcastMessage(
 												msgIRCKickReason
 														.replace(
-																"{KickedUser}",
+																"%KICKEDUSER%",
 																iuser.nick)
-														.replace("{KickedBy}",
+														.replace("%KICKEDBY%",
 																kickedByNick)
 														.replace(
-																"{Reason}",
+																"%REASON%",
 																convertColors(
 																		reason,
 																		true))
 														.replace(
-																"{KickedPrefix}",
+																"%KICKEDPREFIX%",
 																IRCd.getGroupPrefix(iuser
 																		.getTextModes()))
 														.replace(
-																"{KickedSuffix}",
+																"%KICKEDSUFFIX%",
 																IRCd.getGroupSuffix(iuser
 																		.getTextModes()))
 														.replace(
-																"{KickerPrefix}",
+																"%KICKERPREFIX%",
 																IRCd.getGroupPrefix(IRCd
 																		.getIRCUser(
 																				kickedByNick)
 																		.getTextModes()))
 														.replace(
-																"{KickerSuffix}",
+																"%KICKERSUFFIX%",
 																IRCd.getGroupSuffix(IRCd
 																		.getIRCUser(
 																				kickedByNick)
@@ -1414,15 +1467,15 @@ public class IRCd implements Runnable {
 												"IRC",
 												msgIRCKickReasonDynmap
 														.replace(
-																"{KickedUser}",
+																"%KICKEDUSER%",
 																iuser.nick)
-														.replace("{KickedBy}",
+														.replace("%KICKEDBY%",
 																kickedByNick)
 														.replace(
-																"{Reason}",
+																"%REASON%",
 																stripIRCFormatting(reason)));
 						} else {
-							println(":" + sourceUID + " KICK " + Config.getIrcdChannel()
+							println(":" + sourceUID + " KICK " + channelName
 									+ " " + uid + " :" + kickedByNick);
 							if (msgIRCKick.length() > 0)
 								BukkitIRCdPlugin.thePlugin
@@ -1430,26 +1483,26 @@ public class IRCd implements Runnable {
 										.broadcastMessage(
 												msgIRCKick
 														.replace(
-																"{KickedUser}",
+																"%KICKEDUSER%",
 																iuser.nick)
-														.replace("{KickedBy}",
+														.replace("%KICKEDBY%",
 																kickedByNick)
 														.replace(
-																"{KickedPrefix}",
+																"%KICKEDPREFIX%",
 																IRCd.getGroupPrefix(iuser
 																		.getTextModes()))
 														.replace(
-																"{KickedSuffix}",
+																"%KICKEDSUFFIX%",
 																IRCd.getGroupSuffix(iuser
 																		.getTextModes()))
 														.replace(
-																"{KickerPrefix}",
+																"%KICKERPREFIX%",
 																IRCd.getGroupPrefix(IRCd
 																		.getIRCUser(
 																				kickedByNick)
 																		.getTextModes()))
 														.replace(
-																"{KickerSuffix}",
+																"%KICKERSUFFIX%",
 																IRCd.getGroupSuffix(IRCd
 																		.getIRCUser(
 																				kickedByNick)
@@ -1459,8 +1512,8 @@ public class IRCd implements Runnable {
 								BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
 										"IRC",
 										msgIRCKickDynmap.replace(
-												"{KickedUser}", iuser.nick)
-												.replace("{KickedBy}",
+												"%KICKEDUSER%", iuser.nick)
+												.replace("%KICKEDBY%",
 														kickedByNick));
 						}
 						returnVal = true;
@@ -1511,9 +1564,9 @@ public class IRCd implements Runnable {
 				ircuser = ircusers[i];
 				if (ircuser.nick.equalsIgnoreCase(ircuser.nick)) {
 					if (isIngame) {
-						bannedByHost = bannedBy + Config.getIrcdIngameSuffix() + "!" + bannedBy
+						bannedByHost = bannedBy + ingameSuffix + "!" + bannedBy
 								+ "@" + bannedByHost;
-						bannedBy += Config.getIrcdIngameSuffix();
+						bannedBy += ingameSuffix;
 					}
 					String banHost;
 					if ((banType.equals("host"))
@@ -1537,19 +1590,19 @@ public class IRCd implements Runnable {
 											.broadcastMessage(
 													msgIRCBan
 															.replace(
-																	"{BannedUser}",
+																	"%BANNEDUSER%",
 																	ircuser.nick)
 															.replace(
-																	"{BannedBy}",
+																	"%BANNEDBY%",
 																	bannedBy));
 								if ((BukkitIRCdPlugin.dynmap != null)
 										&& (msgIRCBanDynmap.length() > 0))
 									BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
 											"IRC",
 											msgIRCBanDynmap.replace(
-													"{BannedUser}",
+													"%BANNEDUSER%",
 													ircuser.nick).replace(
-													"{BannedBy}", bannedBy));
+													"%BANNEDBY%", bannedBy));
 							}
 						}
 					}
@@ -1568,32 +1621,32 @@ public class IRCd implements Runnable {
 				if (mode == Modes.STANDALONE) {
 					ircBans.add(new IrcBan(banHost, bannedByHost, System
 							.currentTimeMillis() / 1000L));
-					writeAll(":" + bannedByHost + " MODE " + Config.getIrcdChannel()
+					writeAll(":" + bannedByHost + " MODE " + IRCd.channelName
 							+ " + b " + banHost);
 					return true;
 				} else if (mode == Modes.INSPIRCD) {
 					String user = bannedByHost.split("!")[0];
-					if (user.endsWith(Config.getIrcdIngameSuffix()))
+					if (user.endsWith(ingameSuffix))
 						user = user.substring(0,
-								user.length() - Config.getIrcdIngameSuffix().length());
+								user.length() - ingameSuffix.length());
 					String UID;
 					BukkitPlayer bp = null;
 					if (((UID = getUIDFromIRCUser(user)) != null)
 							|| ((bp = getBukkitUserObject(user)) != null)
-							|| (user.equals(Config.getIrcdServerName()))) {
-						if (user.equals(Config.getIrcdServerName()))
+							|| (user.equals(serverName))) {
+						if (user.equals(serverName))
 							UID = serverUID;
 						else if (UID == null)
 							UID = bp.getUID();
-						println(":" + UID + " FMODE " + Config.getIrcdChannel() + " "
+						println(":" + UID + " FMODE " + channelName + " "
 								+ channelTS + " + b :" + banHost);
 						return true;
 					} else {
-						if (Config.isDebugModeEnabled()) {
+						if (debugMode) {
 							BukkitIRCdPlugin.log
 							.severe("[BukkitIRCd] User "
 									+ user
-									+ " not found in UID list. Error code IRCd1004."); // Log							
+									+ " not found in UID list. Error code IRCd1004."); // Log
 						}
 
 						return false;
@@ -1611,30 +1664,30 @@ public class IRCd implements Runnable {
 				if ((ban = getIRCBan(banHost)) < 0)
 					return false;
 				ircBans.remove(ban);
-				IRCd.writeAll(":" + bannedByHost + " MODE " + Config.getIrcdChannel()
+				IRCd.writeAll(":" + bannedByHost + " MODE " + IRCd.channelName
 						+ " -b " + banHost);
 				return true;
 			} else if (mode == Modes.INSPIRCD) {
 				String user = bannedByHost.split("!")[0];
-				if (user.endsWith(Config.getIrcdIngameSuffix()))
+				if (user.endsWith(ingameSuffix))
 					user = user.substring(0,
-							user.length() - Config.getIrcdIngameSuffix().length());
+							user.length() - ingameSuffix.length());
 				String UID;
 				BukkitPlayer bp = null;
 				if (((UID = getUIDFromIRCUser(user)) != null)
 						|| ((bp = getBukkitUserObject(user)) != null)
-						|| (user.equals(Config.getIrcdServerName()))) {
-					if (user.equals(Config.getIrcdServerName()))
+						|| (user.equals(serverName))) {
+					if (user.equals(serverName))
 						UID = serverUID;
 					else if (UID == null)
 						UID = bp.getUID();
-					println(":" + UID + " FMODE " + Config.getIrcdChannel() + " "
+					println(":" + UID + " FMODE " + channelName + " "
 							+ channelTS + " -b :" + banHost);
 					return true;
 				} else {
-					if (Config.isDebugModeEnabled()) {
+					if (debugMode) {
 						BukkitIRCdPlugin.log.severe("[BukkitIRCd] User " + user
-								+ " not found in UID list. Error code IRCd1034."); // Log						
+								+ " not found in UID list. Error code IRCd1034."); // Log
 					}
 
 
@@ -1702,45 +1755,46 @@ public class IRCd implements Runnable {
 		return states[N];
 	}
 
+	/*
 	public static boolean addBukkitUser(String modes, String nick,
 			String world, String host, String ip) {
 		if (getBukkitUser(nick) < 0) {
 			synchronized (csBukkitPlayers) {
-				BukkitPlayer bp = new BukkitPlayer(nick, world, modes, host,
+				BukkitPlayer bp = new BukkitPlayer(nick, world, modes, host, host,
 						ip, System.currentTimeMillis() / 1000L,
 						System.currentTimeMillis());
 				bukkitPlayers.add(bp);
 
 				if (mode == Modes.STANDALONE) {
-					writeAll(":" + nick + Config.getIrcdIngameSuffix() + "!" + nick + "@"
-							+ host + " JOIN " + Config.getIrcdChannel());
+					writeAll(":" + nick + ingameSuffix + "!" + nick + "@"
+							+ host + " JOIN " + IRCd.channelName);
 				}
 				String mode1 = "+", mode2 = "";
 				if (modes.contains("~")) {
 					mode1 += "q";
-					mode2 += nick + Config.getIrcdIngameSuffix() + " ";
+					mode2 += nick + ingameSuffix + " ";
 				}
 				if (modes.contains("&")) {
 					mode1 += "a";
-					mode2 += nick + Config.getIrcdIngameSuffix() + " ";
+					mode2 += nick + ingameSuffix + " ";
 				}
 				if (modes.contains("@")) {
 					mode1 += "o";
-					mode2 += nick + Config.getIrcdIngameSuffix() + " ";
+					mode2 += nick + ingameSuffix + " ";
 				}
 				if (modes.contains("%")) {
 					mode1 += "h";
-					mode2 += nick + Config.getIrcdIngameSuffix() + " ";
+					mode2 += nick + ingameSuffix + " ";
 				}
 				if (modes.contains("+")) {
 					mode1 += "v";
-					mode2 += nick + Config.getIrcdIngameSuffix() + " ";
+					mode2 += nick + ingameSuffix + " ";
 				}
 				if (!mode1.equals("+")) {
 					if (mode == Modes.STANDALONE) {
 
-						writeAll(":" + Config.getIrcdServerName() + "!" + Config.getIrcdServerName() + "@"
-								+ Config.getIrcdServerHostName() + " MODE " + Config.getIrcdChannel()
+						writeAll(":" + serverName + "!" + serverName + "@"
+								+ serverHostName + " MODE " + IRCd.channelName
 								+ " " + mode1 + " "
 								+ mode2.substring(0, mode2.length() - 1));
 					}
@@ -1748,14 +1802,14 @@ public class IRCd implements Runnable {
 
 				if (mode == Modes.INSPIRCD) {
 
-					String UID = ugen.generateUID(Config.getLinkServerID());
+					String UID = ugen.generateUID(SID);
 					bp.setUID(UID);
 					synchronized (csBukkitPlayers) {
 						String textMode = bp.getTextMode();
 						if (bp.hasPermission("bukkitircd.oper")) {
 							println(pre + "UID " + UID + " "
 									+ (bp.idleTime / 1000L) + " " + bp.nick
-									+ Config.getIrcdIngameSuffix() + " " + bp.host + " "
+									+ ingameSuffix + " " + bp.host + " "
 									+ bp.host + " " + bp.nick + " " + bp.ip
 									+ " " + bp.signedOn
 									+ " +or :Minecraft Player");
@@ -1763,12 +1817,12 @@ public class IRCd implements Runnable {
 						} else
 							println(pre + "UID " + UID + " "
 									+ (bp.idleTime / 1000L) + " " + bp.nick
-									+ Config.getIrcdIngameSuffix() + " " + bp.host + " "
+									+ ingameSuffix + " " + bp.host + " "
 									+ bp.host + " " + bp.nick + " " + bp.ip
 									+ " " + bp.signedOn
 									+ " +r :Minecraft Player");
 
-						println(pre + "FJOIN " + Config.getIrcdChannel() + " " + channelTS
+						println(pre + "FJOIN " + channelName + " " + channelTS
 								+ " +nt :," + UID);
 						if (textMode.length() > 0) {
 							String modestr = "";
@@ -1777,7 +1831,7 @@ public class IRCd implements Runnable {
 							}
 							modestr = modestr
 									.substring(0, modestr.length() - 1);
-							println(":" + serverUID + " FMODE " + Config.getIrcdChannel()
+							println(":" + serverUID + " FMODE " + channelName
 									+ " " + channelTS + " +" + textMode + " "
 									+ modestr);
 						}
@@ -1796,61 +1850,99 @@ public class IRCd implements Runnable {
 		} else
 			return false;
 	}
+	*/
+
+	private static String hashPart(byte itemId, byte[] item, int itemLen, int outLen) throws NoSuchAlgorithmException {
+		final MessageDigest md = MessageDigest.getInstance("MD5");
+
+		md.update(itemId);
+		md.update(maskKey.getBytes());
+		md.update((byte)0);
+		md.update(item, 0, itemLen);
+
+		final byte[] d = md.digest();
+
+		final String alphabet = "0123456789abcdefghijklmnopqrstuv";
+
+		String output = "";
+		for (int i = 0; i < outLen; i++) {
+			output = output + alphabet.charAt((d[i] + 256) % 32);
+		}
+
+		return output;
+	}
+
+	public static String maskHost(InetAddress ip) {
+		if (useHostMask) {
+			final byte[] bytes = ip.getAddress();
+			try {
+				return maskPrefix + hashPart ((byte)10, bytes, 4, 3)
+						    + "." + hashPart ((byte)11, bytes, 3, 3)
+					        + "." + hashPart ((byte)13, bytes, 2, 6)
+					        + maskSuffix;
+			} catch (NoSuchAlgorithmException e) {
+				return ip.getHostName();
+			}
+		} else {
+			return ip.getHostName();
+		}
+	}
 
 	public static boolean addBukkitUser(String modes, Player player) {
 		String nick = player.getName();
-		String host = player.getAddress().getAddress().getHostName();
+		String host = maskHost(player.getAddress().getAddress());
+		String realhost = player.getAddress().getAddress().getHostName();
 		String ip = player.getAddress().getAddress().getHostAddress();
 		String world = player.getWorld().getName();
 		if (getBukkitUser(nick) < 0) {
 			synchronized (csBukkitPlayers) {
-				BukkitPlayer bp = new BukkitPlayer(nick, world, modes, host,
+				BukkitPlayer bp = new BukkitPlayer(nick, world, modes, realhost, host,
 						ip, System.currentTimeMillis() / 1000L,
 						System.currentTimeMillis());
 				bukkitPlayers.add(bp);
 				if (mode == Modes.STANDALONE) {
-					writeAll(":" + nick + Config.getIrcdIngameSuffix() + "!" + nick + "@"
-							+ host + " JOIN " + Config.getIrcdChannel());
+					writeAll(":" + nick + ingameSuffix + "!" + nick + "@"
+							+ host + " JOIN " + IRCd.channelName);
 				}
 				String mode1 = "+", mode2 = "";
 				if (modes.contains("~")) {
 					mode1 += "q";
-					mode2 += nick + Config.getIrcdIngameSuffix() + " ";
+					mode2 += nick + ingameSuffix + " ";
 				}
 				if (modes.contains("&")) {
 					mode1 += "a";
-					mode2 += nick + Config.getIrcdIngameSuffix() + " ";
+					mode2 += nick + ingameSuffix + " ";
 				}
 				if (modes.contains("@")) {
 					mode1 += "o";
-					mode2 += nick + Config.getIrcdIngameSuffix() + " ";
+					mode2 += nick + ingameSuffix + " ";
 				}
 				if (modes.contains("%")) {
 					mode1 += "h";
-					mode2 += nick + Config.getIrcdIngameSuffix() + " ";
+					mode2 += nick + ingameSuffix + " ";
 				}
 				if (modes.contains("+")) {
 					mode1 += "v";
-					mode2 += nick + Config.getIrcdIngameSuffix() + " ";
+					mode2 += nick + ingameSuffix + " ";
 				}
 				if (!mode1.equals("+")) {
 					if (mode == Modes.STANDALONE) {
-						writeAll(":" + Config.getIrcdServerName() + "!" + Config.getIrcdServerName() + "@"
-								+ Config.getIrcdServerHostName() + " MODE " + Config.getIrcdChannel()
+						writeAll(":" + serverName + "!" + serverName + "@"
+								+ serverHostName + " MODE " + IRCd.channelName
 								+ " " + mode1 + " "
 								+ mode2.substring(0, mode2.length() - 1));
 					}
 				}
 
 				if (mode == Modes.INSPIRCD) {
-					String UID = ugen.generateUID(Config.getLinkServerID());
+					String UID = ugen.generateUID(SID);
 					bp.setUID(UID);
 					synchronized (csBukkitPlayers) {
 						String textMode = bp.getTextMode();
 						if (bp.hasPermission("bukkitircd.oper")) {
 							println(pre + "UID " + UID + " "
 									+ (bp.idleTime / 1000L) + " " + bp.nick
-									+ Config.getIrcdIngameSuffix() + " " + bp.host + " "
+									+ ingameSuffix + " " + bp.realhost + " "
 									+ bp.host + " " + bp.nick + " " + bp.ip
 									+ " " + bp.signedOn
 									+ " +or :Minecraft Player");
@@ -1858,12 +1950,12 @@ public class IRCd implements Runnable {
 						} else
 							println(pre + "UID " + UID + " "
 									+ (bp.idleTime / 1000L) + " " + bp.nick
-									+ Config.getIrcdIngameSuffix() + " " + bp.host + " "
+									+ ingameSuffix + " " + bp.realhost + " "
 									+ bp.host + " " + bp.nick + " " + bp.ip
 									+ " " + bp.signedOn
 									+ " +r :Minecraft Player");
 
-						println(pre + "FJOIN " + Config.getIrcdChannel() + " " + channelTS
+						println(pre + "FJOIN " + channelName + " " + channelTS
 								+ " +nt :," + UID);
 						if (textMode.length() > 0) {
 							String modestr = "";
@@ -1873,7 +1965,7 @@ public class IRCd implements Runnable {
 							modestr = modestr
 									.substring(0, modestr.length() - 1);
 
-							println(":" + serverUID + " FMODE " + Config.getIrcdChannel()
+							println(":" + serverUID + " FMODE " + channelName
 									+ " " + channelTS + " +" + textMode + " "
 									+ modestr);
 						}
@@ -1899,7 +1991,7 @@ public class IRCd implements Runnable {
 			if (ID >= 0) {
 				BukkitPlayer bp = bukkitPlayers.get(ID);
 				if (mode == Modes.STANDALONE) {
-					writeAll(":" + bp.nick + Config.getIrcdIngameSuffix() + "!" + bp.nick + "@"
+					writeAll(":" + bp.nick + ingameSuffix + "!" + bp.nick + "@"
 							+ bp.host + " QUIT :Left the server");
 				} else if (mode == Modes.INSPIRCD) {
 					println(":" + bp.getUID() + " QUIT :Left the server");
@@ -1927,9 +2019,9 @@ public class IRCd implements Runnable {
 
 	/**
 	 * Used for Console Kicks
-	 * 
+	 *
 	 * @param kickReason
-	 * @param kickedID
+	 * @param ID
 	 * @return
 	 */
 	public static boolean kickBukkitUser(String kickReason, int kickedID) {
@@ -1940,15 +2032,15 @@ public class IRCd implements Runnable {
 					kickReason = " :" + convertColors(kickReason, false);
 				}
 				if (mode == Modes.STANDALONE) {
-					writeAll(":" + Config.getIrcdServerName() + "!" + Config.getIrcdServerName() + "@"
-							+ Config.getIrcdServerHostName() + " KICK " + Config.getIrcdChannel()
-							+ " " + kickedBukkitPlayer.nick + Config.getIrcdIngameSuffix()
+					writeAll(":" + serverName + "!" + serverName + "@"
+							+ serverHostName + " KICK " + IRCd.channelName
+							+ " " + kickedBukkitPlayer.nick + ingameSuffix
 							+ kickReason);
 				} else {
 
 					// KICK
-					println(":" + serverUID + " KICK " + Config.getIrcdChannel() + " "
-							+ kickedBukkitPlayer.nick + Config.getIrcdIngameSuffix()
+					println(":" + serverUID + " KICK " + IRCd.channelName + " "
+							+ kickedBukkitPlayer.nick + ingameSuffix
 							+ kickReason);
 				}
 				return true;
@@ -1959,7 +2051,7 @@ public class IRCd implements Runnable {
 
 	/**
 	 * Used for player kicks
-	 * 
+	 *
 	 * @param kickReason
 	 * @param kickedID
 	 * @param kickerID
@@ -1979,16 +2071,16 @@ public class IRCd implements Runnable {
 					kickReason = " :" + convertColors(kickReason, false);
 				}
 				if (mode == Modes.STANDALONE) {
-					writeAll(":" + kickerName + Config.getIrcdIngameSuffix() + "!" + kickerName
-							+ "@" + kickerHost + " KICK " + Config.getIrcdChannel()
-							+ " " + kickedBukkitPlayer.nick + Config.getIrcdIngameSuffix()
+					writeAll(":" + kickerName + ingameSuffix + "!" + kickerName
+							+ "@" + kickerHost + " KICK " + IRCd.channelName
+							+ " " + kickedBukkitPlayer.nick + ingameSuffix
 							+ convertColors(kickReason, false));
 				} else {
 
 					// KICK
 					println(":" + kickerBukkitPlayer.getUID() + " KICK "
-							+ Config.getIrcdChannel() + " " + kickedBukkitPlayer.nick
-							+ Config.getIrcdIngameSuffix() + convertColors(kickReason, false));
+							+ IRCd.channelName + " " + kickedBukkitPlayer.nick
+							+ ingameSuffix + convertColors(kickReason, false));
 				}
 				return true;
 			}
@@ -1998,19 +2090,19 @@ public class IRCd implements Runnable {
 
 	/**
 	 * Kicks player synchronously
-	 * 
+	 *
 	 * @param player
-	 * @param kickReason
+	 * @param reason
 	 */
 	public static void kickPlayerIngame(Player player, String kickReason) {
 		int IRCUser = getBukkitUser(player.getName());
 		IRCd.kickBukkitUser(kickReason, IRCUser);
-		BukkitTask kickUser = new BukkitKickRunnable(
+		new BukkitKickRunnable(
 				BukkitIRCdPlugin.thePlugin, player, kickReason).runTaskLater(
 				BukkitIRCdPlugin.thePlugin, 1L);
 		IRCd.removeBukkitUser(IRCUser);
 	}
-
+	
 	public static int getBukkitUser(String nick) {
 		synchronized (csBukkitPlayers) {
 			int i = 0;
@@ -2018,7 +2110,7 @@ public class IRCd implements Runnable {
 			while (i < bukkitPlayers.size()) {
 				curnick = bukkitPlayers.get(i).nick;
 				if ((curnick.equalsIgnoreCase(nick))
-						|| ((curnick + Config.getIrcdIngameSuffix()).equalsIgnoreCase(nick))) {
+						|| ((curnick + ingameSuffix).equalsIgnoreCase(nick))) {
 					return i;
 				} else
 					i++;
@@ -2035,7 +2127,7 @@ public class IRCd implements Runnable {
 				BukkitPlayer bp = bukkitPlayers.get(i);
 				curnick = bp.nick;
 				if ((curnick.equalsIgnoreCase(nick))
-						|| ((curnick + Config.getIrcdIngameSuffix()).equalsIgnoreCase(nick))) {
+						|| ((curnick + ingameSuffix).equalsIgnoreCase(nick))) {
 					return bp;
 				}
 				i++;
@@ -2101,8 +2193,8 @@ public class IRCd implements Runnable {
 			}
 		}
 
-		line = ":" + nick + Config.getIrcdIngameSuffix() + "!" + nick + "@" + host
-				+ " PRIVMSG " + Config.getIrcdChannel() + " :" + message;
+		line = ":" + nick + ingameSuffix + "!" + nick + "@" + host
+				+ " PRIVMSG " + IRCd.channelName + " :" + message;
 
 		synchronized (csIrcUsers) {
 			if (mode == Modes.STANDALONE) {
@@ -2113,7 +2205,7 @@ public class IRCd implements Runnable {
 							&& processor.isIdented
 							&& processor.isNickSet
 							&& (processor.lastPingResponse
-									+ (Config.getIrcdPinkTimeoutInterval() * 1000) > System
+									+ (timeoutInterval * 1000) > System
 										.currentTimeMillis())) {
 						processor.writeln(line);
 						i++;
@@ -2137,7 +2229,7 @@ public class IRCd implements Runnable {
 							&& processor.isIdented
 							&& processor.isNickSet
 							&& (processor.lastPingResponse
-									+ (Config.getIrcdPinkTimeoutInterval() * 1000) > System
+									+ (timeoutInterval * 1000) > System
 										.currentTimeMillis())) {
 						processor.writeln(line);
 						i++;
@@ -2162,7 +2254,7 @@ public class IRCd implements Runnable {
 							&& processor.isNickSet
 							&& processor.isOper
 							&& (processor.lastPingResponse
-									+ (Config.getIrcdPinkTimeoutInterval() * 1000) > System
+									+ (timeoutInterval * 1000) > System
 										.currentTimeMillis())) {
 						processor.writeln(line);
 						i++;
@@ -2209,7 +2301,7 @@ public class IRCd implements Runnable {
 							&& processor.isIdented
 							&& processor.isNickSet
 							&& (processor.lastPingResponse
-									+ (Config.getIrcdPinkTimeoutInterval() * 1000) > System
+									+ (timeoutInterval * 1000) > System
 										.currentTimeMillis())) {
 						processor.writeln(line);
 						i++;
@@ -2238,7 +2330,7 @@ public class IRCd implements Runnable {
 							&& processor.isNickSet
 							&& processor.isOper
 							&& (processor.lastPingResponse
-									+ (Config.getIrcdPinkTimeoutInterval() * 1000) > System
+									+ (timeoutInterval * 1000) > System
 										.currentTimeMillis())) {
 						processor.writeln(line);
 						i++;
@@ -2269,7 +2361,7 @@ public class IRCd implements Runnable {
 
 	/**
 	 * Converts colors from Minecrat to IRC, or IRC to Minecraft if specified
-	 * 
+	 *
 	 * @param input
 	 * @param fromIRCtoGame
 	 *            Convert IRC colors to Minecraft colors?
@@ -2285,7 +2377,7 @@ public class IRCd implements Runnable {
 		char IRC_Reset = (char) 15; // SI Control Code (^O)
 		char MC_Color = (char) 167; // Section Sign
 		if (fromIRCtoGame) {
-			if (!Config.isIrcdConvertColorCodes()) {
+			if (!convertColorCodes) {
 				return IRCd.stripIRCFormatting(input);
 			}
 			output = input.replaceAll("(\\d),\\d{1,2}", "$1"); // Remove IRC
@@ -2432,10 +2524,10 @@ public class IRCd implements Runnable {
 			// Characters
 
 		} else {
-			if (!Config.isIrcdConvertColorCodes()) {
+			if (!convertColorCodes) {
 				return ChatColor.stripColor(input);
 			}
-			if (Config.isIrcdHandleAmpersandColors()) {
+			if (handleAmpersandColors) {
 				output = ChatColor.translateAlternateColorCodes('&', input);
 			} else {
 				output = input;
@@ -2552,7 +2644,7 @@ public class IRCd implements Runnable {
 
 	/**
 	 * Strips IRC Formatting
-	 * 
+	 *
 	 * @param input
 	 * @return
 	 */
@@ -2578,7 +2670,7 @@ public class IRCd implements Runnable {
 
 	/**
 	 * Gets group prefix from modes
-	 * 
+	 *
 	 * @param modes
 	 * @return
 	 */
@@ -2674,7 +2766,7 @@ public class IRCd implements Runnable {
 
 	/**
 	 * Gets group suffix from modes
-	 * 
+	 *
 	 * @param modes
 	 * @return
 	 */
@@ -2775,22 +2867,22 @@ public class IRCd implements Runnable {
 			channelTopicSet = user;
 		}
 		if ((isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
-			Config.setIrcdTopic(topic);
-			Config.setIrcdTopicSetDate(System.currentTimeMillis());
+			BukkitIRCdPlugin.ircd_topic = topic;
+			BukkitIRCdPlugin.ircd_topicsetdate = System.currentTimeMillis();
 			if (user.length() > 0) {
-				Config.setIrcdTopicSetBy(user);
+				BukkitIRCdPlugin.ircd_topicsetby = user;
 			}
 		}
 
 		if (mode == Modes.STANDALONE) {
-			writeAll(":" + userhost + " TOPIC " + Config.getIrcdChannel() + " :"
+			writeAll(":" + userhost + " TOPIC " + channelName + " :"
 					+ channelTopic);
-			writeOpers(":" + userhost + " TOPIC " + Config.getIrcdConsoleChannel() + " :"
+			writeOpers(":" + userhost + " TOPIC " + consoleChannelName + " :"
 					+ channelTopic);
 		} else if (mode == Modes.INSPIRCD) {
 			BukkitPlayer bp;
 			if ((bp = getBukkitUserObject(user)) != null) {
-				println(":" + bp.getUID() + " TOPIC " + Config.getIrcdChannel() + " :"
+				println(":" + bp.getUID() + " TOPIC " + channelName + " :"
 						+ channelTopic);
 			}
 		}
@@ -2831,7 +2923,7 @@ public class IRCd implements Runnable {
 	public static boolean executeCommand(String command) {
 		try {
 			if ((commandSender != null) && (bukkitServer != null)) {
-				BukkitTask commandTask = new BukkitCommandExecutorRunnable(
+				new BukkitCommandExecutorRunnable(
 						BukkitIRCdPlugin.thePlugin,
 						convertColors(command, true), commandSender)
 						.runTaskLater(BukkitIRCdPlugin.thePlugin, 1L);
@@ -2850,7 +2942,7 @@ public class IRCd implements Runnable {
 				|| (out == null))
 			return false;
 		synchronized (csServer) {
-			if (Config.isDebugModeEnabled())
+			if (debugMode)
 				System.out.println("[BukkitIRCd]" + ChatColor.DARK_BLUE
 						+ "[<-] " + line);
 			out.println(line);
@@ -2864,23 +2956,23 @@ public class IRCd implements Runnable {
 		synchronized (csServer) {
 			if (mode == Modes.INSPIRCD) {
 				if ((server != null) && server.isConnected()) {
-					println(pre + "SQUIT " + Config.getLinkServerID() + " :" + reason);
+					println(pre + "SQUIT " + SID + " :" + reason);
 					if (linkcompleted) {
 						if (msgDelinkedReason.length() > 0)
 							BukkitIRCdPlugin.thePlugin
 									.getServer()
 									.broadcastMessage(
 											msgDelinkedReason
-													.replace("{LinkName}",
-															Config.getLinkName())
-													.replace("{Reason}", reason));
+													.replace("%LINKNAME%",
+															linkName)
+													.replace("%REASON%", reason));
 						linkcompleted = false;
 					}
 					try {
 						server.close();
 					} catch (IOException e) {
 					}
-				} else if (Config.isDebugModeEnabled())
+				} else if (debugMode)
 					System.out
 							.println("[BukkitIRCd] Already disconnected from link, so no need to cleanup.");
 			}
@@ -2921,7 +3013,7 @@ public class IRCd implements Runnable {
 	}
 
 	public void parseLinkCommand(String command) throws IOException {
-		if (Config.isDebugModeEnabled())
+		if (debugMode)
 			BukkitIRCdPlugin.log.info("[BukkitIRCd]" + ChatColor.YELLOW
 					+ "[->] " + command);
 
@@ -2939,8 +3031,8 @@ public class IRCd implements Runnable {
 			if (split.length == 3)
 				println(pre + "PONG " + split[2]);
 			else if ((split.length == 4)
-					&& (split[3].equalsIgnoreCase(Integer.toString(Config.getLinkServerID()))))
-				println(pre + "PONG " + Config.getLinkServerID() + " " + split[2]);
+					&& (split[3].equalsIgnoreCase(Integer.toString(SID))))
+				println(pre + "PONG " + SID + " " + split[2]);
 		} else if (split[1].equalsIgnoreCase("PONG")) {
 			// Received a pong, update the last ping pong timestamp.
 			// :280 PONG 280 123
@@ -2972,7 +3064,7 @@ public class IRCd implements Runnable {
 			boolean isOper = split[10].contains("o");
 			IRCUser ircuser = new IRCUser(nick, realname, ident, realhost,
 					vhost, ipaddress, "", "", isRegistered, false, "",
-					signedOn, idleTime);
+					signedOn, idleTime, "");
 			ircuser.isRegistered = isRegistered;
 			ircuser.isOper = isOper;
 			uid2ircuser.put(UID, ircuser); // Add it to the hashmap
@@ -2994,9 +3086,9 @@ public class IRCd implements Runnable {
 					iuser.awayMsg = "";
 				}
 			} else {
-				if (Config.isDebugModeEnabled()) {
+				if (debugMode) {
 					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + UID
-							+ " not found in list. Error code IRCd1707."); // Log				
+							+ " not found in list. Error code IRCd1707."); // Log
 				}
 			}
 
@@ -3007,13 +3099,13 @@ public class IRCd implements Runnable {
 			if (split[2].startsWith(":"))
 				split[2] = split[2].substring(1);
 			IRCUser iuser;
-			if (split[2].equalsIgnoreCase(Config.getIrcdServerHostName())) { // Double check to
+			if (split[2].equalsIgnoreCase(serverHostName)) { // Double check to
 				// make sure
 				// this request
 				// is for us
 				if ((iuser = uid2ircuser.get(split[0])) != null) {
-					println(pre + "PUSH " + split[0] + " ::" + Config.getIrcdServerHostName()
-							+ " 391 " + iuser.nick + " " + Config.getIrcdServerHostName()
+					println(pre + "PUSH " + split[0] + " ::" + serverHostName
+							+ " 391 " + iuser.nick + " " + serverHostName
 							+ " :"
 							+ dateFormat.format(System.currentTimeMillis()));
 				}
@@ -3021,7 +3113,7 @@ public class IRCd implements Runnable {
 		} else if (split[1].equalsIgnoreCase("ENDBURST")) {
 			// :280 ENDBURST
 			if (split[0].equalsIgnoreCase(remoteSID)
-					|| split[0].equalsIgnoreCase(Config.getLinkName())) {
+					|| split[0].equalsIgnoreCase(linkName)) {
 				sendLinkBurst();
 			}
 		} else if (split[1].equalsIgnoreCase("SERVER")) {
@@ -3029,7 +3121,7 @@ public class IRCd implements Runnable {
 			String hub;
 			try {
 				if (split[0].equalsIgnoreCase(remoteSID)
-						|| split[0].equalsIgnoreCase(Config.getLinkName())) {
+						|| split[0].equalsIgnoreCase(linkName)) {
 					hub = remoteSID;
 				} else {
 					hub = split[0];
@@ -3064,7 +3156,7 @@ public class IRCd implements Runnable {
 			// :test.tempcraft.net SQUIT dev.tempcraft.net :Remote host closed
 			// connection
 			String quitServer = split[2];
-			if (quitServer.equalsIgnoreCase(Config.getLinkName())
+			if (quitServer.equalsIgnoreCase(linkName)
 					|| quitServer.equalsIgnoreCase(remoteSID))
 				disconnectServer("Remote server delinked");
 			else {
@@ -3090,9 +3182,9 @@ public class IRCd implements Runnable {
 			if ((ircuser = uid2ircuser.get(split[0])) != null) {
 				ircuser.isOper = true;
 			} else {
-				if (Config.isDebugModeEnabled()) {
+				if (debugMode) {
 					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
-							+ " not found in list. Error code IRCd1779."); // Log as					
+							+ " not found in list. Error code IRCd1779."); // Log as
 				}
 			}
 
@@ -3127,18 +3219,18 @@ public class IRCd implements Runnable {
 					}
 				}
 			} else {
-				if (Config.isDebugModeEnabled()) {
+				if (debugMode) {
 					// Log as severe because this situation should never occur and
 					// points to a bug in the code
-					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/Config.getLinkServerID() " + split[0]
-							+ " not found in list. Error code IRCd1806.");			
+					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID " + split[0]
+							+ " not found in list. Error code IRCd1806.");
 				}
 
 			}
 		} else if (split[1].equalsIgnoreCase("FJOIN")) {
 			// :dev.tempcraft.net FJOIN #tempcraft.staff 1321829730 +tnsk
 			// MASTER-RACE :qa,0AJAAAAAA o,0IJAAAAAP v,0IJAAAAAQ
-			if (split[2].equalsIgnoreCase(Config.getIrcdChannel())) {
+			if (split[2].equalsIgnoreCase(channelName)) {
 				try {
 					long tmp = Long.parseLong(split[3]);
 					if (channelTS > tmp)
@@ -3159,39 +3251,26 @@ public class IRCd implements Runnable {
 							if (!ircuser.joined) {
 
 								if (msgIRCJoin.length() > 0)
-									BukkitIRCdPlugin.thePlugin
-											.getServer()
-											.broadcastMessage(
-													msgIRCJoin
-															.replace(
-																	"{User}",
-																	ircuser.nick)
-															.replace(
-																	"{Prefix}",
-																	IRCd.getGroupPrefix(ircuser
-																			.getTextModes()))
-															.replace(
-																	"{Suffix}",
-																	IRCd.getGroupSuffix(ircuser
-																			.getTextModes())));
+									//TODO I believe fix for #45 would go here
+									BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(msgIRCJoin.replace("%USER%",ircuser.nick).replace("%PREFIX%",IRCd.getGroupPrefix(ircuser.getTextModes())).replace("%SUFFIX%",IRCd.getGroupSuffix(ircuser.getTextModes())));
 								if ((BukkitIRCdPlugin.dynmap != null)
 										&& (msgIRCJoinDynmap.length() > 0))
 									BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
 											"IRC", msgIRCJoinDynmap.replace(
-													"{User}", ircuser.nick));
+													"%USER%", ircuser.nick));
 							}
 						}
 						ircuser.joined = true;
 					} else {
-						if (Config.isDebugModeEnabled()) {
+						if (debugMode) {
 							BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "
 									+ usersplit[1]
-									+ " not found in list. Error code IRCd1831."); // Log			
+									+ " not found in list. Error code IRCd1831."); // Log
 						}
 					}
 
 				}
-			} else if (split[2].equalsIgnoreCase(Config.getIrcdConsoleChannel())) {
+			} else if (split[2].equalsIgnoreCase(consoleChannelName)) {
 				try {
 					long tmp = Long.parseLong(split[3]);
 					if (consoleChannelTS > tmp)
@@ -3209,10 +3288,10 @@ public class IRCd implements Runnable {
 						ircuser.setConsoleModes(usersplit[0]);
 						ircuser.consoleJoined = true;
 					} else {
-						if (Config.isDebugModeEnabled()) {
+						if (debugMode) {
 							BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "
 									+ usersplit[1]
-									+ " not found in list. Error code IRCd1849."); // Log					
+									+ " not found in list. Error code IRCd1849."); // Log
 						}
 					}
 
@@ -3228,9 +3307,9 @@ public class IRCd implements Runnable {
 			if ((ircuser = uid2ircuser.get(split[0])) != null) {
 				ircuser.hostmask = split[2];
 			} else {
-				if (Config.isDebugModeEnabled()) {
+				if (debugMode) {
 					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
-							+ " not found in list. Error code IRCd1861."); // Log as					
+							+ " not found in list. Error code IRCd1861."); // Log as
 				}
 			}
 
@@ -3243,9 +3322,9 @@ public class IRCd implements Runnable {
 			if ((ircuser = uid2ircuser.get(split[0])) != null) {
 				ircuser.realname = join(split, " ", 2);
 			} else {
-				if (Config.isDebugModeEnabled()) {
+				if (debugMode) {
 					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
-							+ " not found in list. Error code IRCd1870."); // Log as		
+							+ " not found in list. Error code IRCd1870."); // Log as
 				}
 			}
 
@@ -3258,14 +3337,14 @@ public class IRCd implements Runnable {
 				if (split[0].startsWith(":"))
 					split[0] = split[0].substring(1);
 
-				if (split[2].equalsIgnoreCase(Config.getIrcdChannel()))
+				if (split[2].equalsIgnoreCase(channelName))
 					try {
 						long tmp = Long.parseLong(split[3]);
 						if (channelTS > tmp)
 							channelTS = tmp;
 					} catch (NumberFormatException e) {
 					}
-				else if (split[2].equalsIgnoreCase(Config.getIrcdConsoleChannel()))
+				else if (split[2].equalsIgnoreCase(consoleChannelName))
 					try {
 						long tmp = Long.parseLong(split[3]);
 						if (consoleChannelTS > tmp)
@@ -3288,7 +3367,7 @@ public class IRCd implements Runnable {
 						add = false;
 					else {
 						if ((ircusertarget = uid2ircuser.get(user)) != null) {
-							if (split[2].equalsIgnoreCase(Config.getIrcdChannel())) {
+							if (split[2].equalsIgnoreCase(channelName)) {
 								String textModes = ircusertarget.getTextModes();
 								if (add) {
 									System.out.println("Adding mode " + mode
@@ -3304,7 +3383,7 @@ public class IRCd implements Runnable {
 												.replace(mode, ""));
 								}
 							} else if (split[2]
-									.equalsIgnoreCase(Config.getIrcdConsoleChannel())) {
+									.equalsIgnoreCase(consoleChannelName)) {
 								String consoleTextModes = ircusertarget
 										.getConsoleTextModes();
 								if (add) {
@@ -3335,10 +3414,10 @@ public class IRCd implements Runnable {
 													.broadcastMessage(
 															msgIRCBan
 																	.replace(
-																			"{BannedUser}",
+																			"%BANNEDUSER%",
 																			user)
 																	.replace(
-																			"{BannedBy}",
+																			"%BANNEDBY%",
 																			ircuser.nick));
 										if ((BukkitIRCdPlugin.dynmap != null)
 												&& (msgIRCBanDynmap.length() > 0))
@@ -3347,10 +3426,10 @@ public class IRCd implements Runnable {
 															"IRC",
 															msgIRCBanDynmap
 																	.replace(
-																			"{BannedUser}",
+																			"%BANNEDUSER%",
 																			user)
 																	.replace(
-																			"{BannedBy}",
+																			"%BANNEDBY%",
 																			ircuser.nick));
 									} else {
 										if (msgIRCUnban.length() > 0)
@@ -3359,10 +3438,10 @@ public class IRCd implements Runnable {
 													.broadcastMessage(
 															msgIRCUnban
 																	.replace(
-																			"{BannedUser}",
+																			"%BANNEDUSER%",
 																			user)
 																	.replace(
-																			"{BannedBy}",
+																			"%BANNEDBY%",
 																			ircuser.nick));
 										if ((BukkitIRCdPlugin.dynmap != null)
 												&& (msgIRCUnbanDynmap.length() > 0))
@@ -3371,10 +3450,10 @@ public class IRCd implements Runnable {
 															"IRC",
 															msgIRCUnbanDynmap
 																	.replace(
-																			"{BannedUser}",
+																			"%BANNEDUSER%",
 																			user)
 																	.replace(
-																			"{BannedBy}",
+																			"%BANNEDBY%",
 																			ircuser.nick));
 									}
 								}
@@ -3387,7 +3466,7 @@ public class IRCd implements Runnable {
 		} else if (split[1].equalsIgnoreCase("FTOPIC")) {
 			// :dev.tempcraft.net FTOPIC #tempcraft.survival 1322061484
 			// Jdbye/ingame '4HI'"
-			if (split[2].equalsIgnoreCase(Config.getIrcdChannel())) {
+			if (split[2].equalsIgnoreCase(channelName)) {
 				// Main channel
 				String user = split[4];
 				if (split[5].startsWith(":"))
@@ -3401,11 +3480,11 @@ public class IRCd implements Runnable {
 				}
 				channelTopicSet = user;
 				if ((isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
-					Config.setIrcdTopic(topic);
-					Config.setIrcdTopicSetDate(channelTopicSetDate * 1000);
-					Config.setIrcdTopicSetBy(user);
+					BukkitIRCdPlugin.ircd_topic = topic;
+					BukkitIRCdPlugin.ircd_topicsetdate = channelTopicSetDate * 1000;
+					BukkitIRCdPlugin.ircd_topicsetby = user;
 				}
-			} else if (split[2].equalsIgnoreCase(Config.getIrcdConsoleChannel())) {
+			} else if (split[2].equalsIgnoreCase(consoleChannelName)) {
 				// This is of no interest to us
 			}
 			// Ignore other channels, since this plugin only cares about the
@@ -3416,7 +3495,7 @@ public class IRCd implements Runnable {
 			// 14http://TempCraft.net/ | 4Vote for us:
 			// 14http://tempcraft.net/?act=vote | 4Join our forums:
 			// 14http://stormbit.net/ | Don't change the separators to white
-			if (split[2].equalsIgnoreCase(Config.getIrcdChannel())) {
+			if (split[2].equalsIgnoreCase(channelName)) {
 				// Main channel
 				String UID = split[0];
 				if (split[3].startsWith(":"))
@@ -3436,13 +3515,13 @@ public class IRCd implements Runnable {
 					channelTopicSetDate = System.currentTimeMillis() / 1000L;
 					channelTopicSet = user;
 					if ((isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
-						Config.setIrcdTopic(topic);
-						Config.setIrcdTopicSetDate(channelTopicSetDate * 1000);
-						Config.setIrcdTopicSetBy(user);
+						BukkitIRCdPlugin.ircd_topic = topic;
+						BukkitIRCdPlugin.ircd_topicsetdate = channelTopicSetDate * 1000;
+						BukkitIRCdPlugin.ircd_topicsetby = user;
 					}
 				} else {
-					if (Config.isDebugModeEnabled()) {
-					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/Config.getLinkServerID() " + UID
+					if (debugMode) {
+					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID " + UID
 							+ " not found in list. Error code IRCd1985."); // Log
 					}
 				}
@@ -3462,7 +3541,7 @@ public class IRCd implements Runnable {
 				// in
 				// the
 				// code
-			} else if (split[2].equalsIgnoreCase(Config.getIrcdConsoleChannel())) {
+			} else if (split[2].equalsIgnoreCase(consoleChannelName)) {
 				// This is of no interest to us
 			}
 			// Ignore other channels, since this plugin only cares about the
@@ -3470,18 +3549,31 @@ public class IRCd implements Runnable {
 		} else if (split[1].equalsIgnoreCase("IDLE")) {
 			// IN :<uuid> IDLE <target uuid>
 			// OUT :<uuid> IDLE <target uuid> <signon> <seconds idle>
-			IRCUser ircuser;
-			if ((ircuser = uid2ircuser.get(split[2])) != null) {
-				println(":" + split[2] + " IDLE " + split[0] + " "
-						+ ircuser.signonTime + " " + ircuser.getSecondsIdle());
+			final BukkitPlayer bp;
+			long idletime = 0;
+			long signedOn = 0;
+			final String source = split[0];
+			final String target = split[2];
+			final boolean success;
+			if (target.equalsIgnoreCase(serverUID)) {
+				signedOn = serverStartTime;
+				idletime = 0;
+				success = true;
+			} else if ((bp = getBukkitUserByUID(target)) != null) {
+				idletime = (System.currentTimeMillis() - bp.idleTime) / 1000L;
+				signedOn = bp.signedOn;
+				success = true;
 			}
 			// The error below can/will happen in the event a player is /whois'ed from IRC - I'd like to know why and how to fix it
 			else {
-				if (Config.isDebugModeEnabled()) {
-					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[2] + " not found in list. Error code IRCd1999."); // Log as severe because this situation should never occur and points to a bug in the code
+				if (debugMode) {
+					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + target + " not found in list. Error code IRCd1999."); // Log as severe because this situation should never occur and points to a bug in the code
 				}
+				success = false;
 			}
-
+			if (success) {
+				println(":" + target + " IDLE " + source + " " + signedOn + " " + idletime);
+			}
 		} else if (split[1].equalsIgnoreCase("NICK")) {
 			// :280AAAAAA NICK test 1321981244
 			IRCUser ircuser;
@@ -3497,30 +3589,31 @@ public class IRCd implements Runnable {
 								.getServer()
 								.broadcastMessage(
 										msgIRCNickChange
-												.replace("{OldNick}",
+												.replace("%OLDNICK%",
 														ircuser.nick)
 												.replace(
-														"{Prefix}",
+														"%PREFIX%",
 														IRCd.getGroupPrefix(ircuser
 																.getTextModes()))
 												.replace(
-														"{Suffix}",
+														"%SUFFIX%",
 														IRCd.getGroupSuffix(ircuser
 																.getTextModes()))
-												.replace("{NewNick}", split[2]));
+												.replace("%NEWNICK%", split[2]));
 					if ((BukkitIRCdPlugin.dynmap != null)
 							&& (msgIRCNickChangeDynmap.length() > 0))
 						BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
 								"IRC",
-								msgIRCNickChangeDynmap.replace("{OldNick}",
-										ircuser.nick).replace("{NewNick}",
+								msgIRCNickChangeDynmap.replace("%OLDNICK%",
+										ircuser.nick).replace("%NEWNICK%",
 										split[2]));
 				}
 				ircuser.nick = split[2];
+				ircuser.isRegistered = false;
 			} else {
-				if (Config.isDebugModeEnabled()) {
+				if (debugMode) {
 					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[2]
-							+ " not found in list. Error code IRCd2013."); // Log as severe, points to a bug in the code					
+							+ " not found in list. Error code IRCd2013."); // Log as severe, points to a bug in the code
 				}
 			}
 
@@ -3538,12 +3631,12 @@ public class IRCd implements Runnable {
 			} else
 				reason = null;
 
-			if (split[3].startsWith(Integer.toString(Config.getLinkServerID()))) {
-				if (split[2].equalsIgnoreCase(Config.getIrcdChannel())) {
+			if (split[3].startsWith(Integer.toString(SID))) {
+				if (split[2].equalsIgnoreCase(channelName)) {
 					if (split[3].equalsIgnoreCase(serverUID)) {
-						println(pre + "FJOIN " + Config.getIrcdChannel() + " " + channelTS
+						println(pre + "FJOIN " + channelName + " " + channelTS
 								+ " +nt :," + serverUID);
-						println(":" + serverUID + " FMODE " + Config.getIrcdChannel() + " "
+						println(":" + serverUID + " FMODE " + channelName + " "
 								+ channelTS + " +qaohv " + serverUID + " "
 								+ serverUID + " " + serverUID + " " + serverUID
 								+ " " + serverUID);
@@ -3560,41 +3653,42 @@ public class IRCd implements Runnable {
 						if ((bp = getBukkitUserByUID(split[3])) != null) {
 							if ((IRCd.isPlugin)
 									&& (BukkitIRCdPlugin.thePlugin != null)) {
-								Player p = BukkitIRCdPlugin.thePlugin
-										.getServer().getPlayer(bp.nick);
-								if (p != null) {
-									if (reason != null)
-										kickPlayerIngame(p, "Kicked by " + user
-												+ " on IRC: " + reason);
-									else
-										kickPlayerIngame(p, "Kicked by " + user
-												+ " on IRC");
+								Player p = BukkitIRCdPlugin.thePlugin.getServer().getPlayer(bp.nick);
+								if (p != null) { //TODO Make these strings configurable - colours, lines, etc
+									if (reason != null) {
+										kickPlayerIngame(p, "Kicked by " + user + " on IRC: " + reason);
+										BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(ChatColor.GRAY + user + ChatColor.RED + " kicked " + ChatColor.GRAY + p.getDisplayName() + ChatColor.RED + " for " + ChatColor.GRAY + reason + ChatColor.RED + ".");
+									}
+									else {
+										kickPlayerIngame(p, "Kicked by " + user + " on IRC");
+										BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(ChatColor.GRAY + user + ChatColor.RED + " kicked " + ChatColor.GRAY + p.getDisplayName() + ChatColor.RED + ".");
+									}
 								}
 								removeBukkitUserByUID(split[3]);
 							}
 						} else {
-							if (Config.isDebugModeEnabled()) {
+							if (debugMode) {
 								BukkitIRCdPlugin.log
 								.severe("[BukkitIRCd] Bukkit Player UID "
 										+ split[3]
-										+ " not found in list. Error code IRCd2051."); // Log								
+										+ " not found in list. Error code IRCd2051."); // Log
 							}
 						}
 
 					} else {
-						if (Config.isDebugModeEnabled()) {
-							BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/Config.getLinkServerID() "
+						if (debugMode) {
+							BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID "
 									+ split[0]
-									+ " not found in list. Error code IRCd2053."); // Log							
+									+ " not found in list. Error code IRCd2053."); // Log
 						}
 					}
 
-				} else if (split[2].equalsIgnoreCase(Config.getIrcdConsoleChannel())) {
+				} else if (split[2].equalsIgnoreCase(consoleChannelName)) {
 					if (split[3].equalsIgnoreCase(serverUID)) {
-						println(pre + "FJOIN " + Config.getIrcdConsoleChannel() + " "
+						println(pre + "FJOIN " + consoleChannelName + " "
 								+ consoleChannelTS + " +nt :," + serverUID);
 						println(":" + serverUID + " FMODE "
-								+ Config.getIrcdConsoleChannel() + " " + consoleChannelTS
+								+ consoleChannelName + " " + consoleChannelTS
 								+ " +qaohv " + serverUID + " " + serverUID
 								+ " " + serverUID + " " + serverUID + " "
 								+ serverUID);
@@ -3602,7 +3696,7 @@ public class IRCd implements Runnable {
 					}
 				}
 			} else {
-				if (split[2].equalsIgnoreCase(Config.getIrcdChannel())) {
+				if (split[2].equalsIgnoreCase(channelName)) {
 					// Main channel
 					if (((ircuser = uid2ircuser.get(split[0])) != null)
 							|| ((server = servers.get(split[0])) != null)) {
@@ -3625,29 +3719,29 @@ public class IRCd implements Runnable {
 												.broadcastMessage(
 														msgIRCKickReason
 																.replace(
-																		"{KickedUser}",
+																		"%KICKEDUSER%",
 																		kicked)
 																.replace(
-																		"{KickedBy}",
+																		"%KICKEDBY%",
 																		kicker)
 																.replace(
-																		"{Reason}",
+																		"%REASON%",
 																		convertColors(
 																				reason,
 																				true))
 																.replace(
-																		"{KickedPrefix}",
+																		"%KICKEDPREFIX%",
 																		IRCd.getGroupPrefix(ircvictim
 																				.getTextModes()))
 																.replace(
-																		"{KickedSuffix}",
+																		"%KICKEDSUFFIX%",
 																		IRCd.getGroupSuffix(ircvictim
 																				.getTextModes()))
 																.replace(
-																		"{KickerPrefix}",
+																		"%KICKERPREFIX%",
 																		IRCd.getGroupPrefix(modes))
 																.replace(
-																		"{KickerSuffix}",
+																		"%KICKERSUFFIX%",
 																		IRCd.getGroupSuffix(modes)));
 									if ((BukkitIRCdPlugin.dynmap != null)
 											&& (msgIRCKickReasonDynmap.length() > 0))
@@ -3656,27 +3750,27 @@ public class IRCd implements Runnable {
 														"IRC",
 														msgIRCKickReasonDynmap
 																.replace(
-																		"{KickedUser}",
+																		"%KICKEDUSER%",
 																		kicked)
 																.replace(
-																		"{KickedBy}",
+																		"%KICKEDBY%",
 																		kicker)
 																.replace(
-																		"{Reason}",
+																		"%REASON%",
 																		stripIRCFormatting(reason))
 																.replace(
-																		"{KickedPrefix}",
+																		"%KICKEDPREFIX%",
 																		IRCd.getGroupPrefix(ircvictim
 																				.getTextModes()))
 																.replace(
-																		"{KickedSuffix}",
+																		"%KICKEDSUFFIX%",
 																		IRCd.getGroupSuffix(ircvictim
 																				.getTextModes()))
 																.replace(
-																		"{KickerPrefix}",
+																		"%KICKERPREFIX%",
 																		IRCd.getGroupPrefix(modes))
 																.replace(
-																		"{KickerSuffix}",
+																		"%KICKERSUFFIX%",
 																		IRCd.getGroupSuffix(modes)));
 								} else {
 									if (msgIRCKick.length() > 0)
@@ -3685,24 +3779,24 @@ public class IRCd implements Runnable {
 												.broadcastMessage(
 														msgIRCKick
 																.replace(
-																		"{KickedUser}",
+																		"%KICKEDUSER%",
 																		kicked)
 																.replace(
-																		"{KickedBy}",
+																		"%KICKEDBY%",
 																		kicker)
 																.replace(
-																		"{KickedPrefix}",
+																		"%KICKEDPREFIX%",
 																		IRCd.getGroupPrefix(ircvictim
 																				.getTextModes()))
 																.replace(
-																		"{KickedSuffix}",
+																		"%KICKEDSUFFIX%",
 																		IRCd.getGroupSuffix(ircvictim
 																				.getTextModes()))
 																.replace(
-																		"{KickerPrefix}",
+																		"%KICKERPREFIX%",
 																		IRCd.getGroupPrefix(modes))
 																.replace(
-																		"{KickerSuffix}",
+																		"%KICKERSUFFIX%",
 																		IRCd.getGroupSuffix(modes)));
 									if ((BukkitIRCdPlugin.dynmap != null)
 											&& (msgIRCKickDynmap.length() > 0))
@@ -3711,33 +3805,33 @@ public class IRCd implements Runnable {
 														"IRC",
 														msgIRCKickDynmap
 																.replace(
-																		"{KickedUser}",
+																		"%KICKEDUSER%",
 																		kicked)
 																.replace(
-																		"{KickedBy}",
+																		"%KICKEDBY%",
 																		kicker));
 								}
 								ircvictim.joined = false;
 							}
 						} else {
-							if (Config.isDebugModeEnabled()) {
+							if (debugMode) {
 								BukkitIRCdPlugin.log
 								.severe("[BukkitIRCd] UID "
 										+ split[3]
-										+ " not found in list. Error code IRCd2083."); // Log								
+										+ " not found in list. Error code IRCd2083."); // Log
 							}
 						}
 
 					} else {
-						if (Config.isDebugModeEnabled()) {
-							BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/Config.getLinkServerID() "
+						if (debugMode) {
+							BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID "
 									+ split[0]
-									+ " not found in list. Error code IRCd2085."); // Log							
+									+ " not found in list. Error code IRCd2085."); // Log
 						}
 					}
 
 
-				} else if (split[2].equalsIgnoreCase(Config.getIrcdConsoleChannel())) {
+				} else if (split[2].equalsIgnoreCase(consoleChannelName)) {
 					// Console channel
 					// Only thing important here is to set consolemodes to blank
 					// so they can't execute commands on the console channel
@@ -3746,10 +3840,10 @@ public class IRCd implements Runnable {
 						ircvictim.setConsoleModes("");
 						ircvictim.consoleJoined = false;
 					} else {
-						if (Config.isDebugModeEnabled()) {
+						if (debugMode) {
 							BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "
 									+ split[3]
-									+ " not found in list. Error code IRCd2094."); // Log							
+									+ " not found in list. Error code IRCd2094."); // Log
 						}
 					}
 
@@ -3768,7 +3862,7 @@ public class IRCd implements Runnable {
 
 			if (split[2].startsWith(":"))
 				split[2] = split[2].substring(1);
-			if (split[2].equalsIgnoreCase(Config.getIrcdChannel())) {
+			if (split[2].equalsIgnoreCase(channelName)) {
 				// Main channel
 				if ((ircuser = uid2ircuser.get(split[0])) != null) {
 					if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
@@ -3779,18 +3873,18 @@ public class IRCd implements Runnable {
 										.getServer()
 										.broadcastMessage(
 												msgIRCLeaveReason
-														.replace("{User}",
+														.replace("%USER%",
 																ircuser.nick)
 														.replace(
-																"{Prefix}",
+																"%PREFIX%",
 																IRCd.getGroupPrefix(ircuser
 																		.getTextModes()))
 														.replace(
-																"{Suffix}",
+																"%SUFFIX%",
 																IRCd.getGroupSuffix(ircuser
 																		.getTextModes()))
 														.replace(
-																"{Reason}",
+																"%REASON%",
 																convertColors(
 																		reason,
 																		true)));
@@ -3800,10 +3894,10 @@ public class IRCd implements Runnable {
 										.sendBroadcastToWeb(
 												"IRC",
 												msgIRCLeaveReasonDynmap
-														.replace("{User}",
+														.replace("%USER%",
 																ircuser.nick)
 														.replace(
-																"{Reason}",
+																"%REASON%",
 																stripIRCFormatting(reason)));
 						} else {
 
@@ -3812,33 +3906,33 @@ public class IRCd implements Runnable {
 										.getServer()
 										.broadcastMessage(
 												msgIRCLeave
-														.replace("{User}",
+														.replace("%USER%",
 																ircuser.nick)
 														.replace(
-																"{Suffix}",
+																"%SUFFIX%",
 																IRCd.getGroupSuffix(ircuser
 																		.getTextModes()))
 														.replace(
-																"{Prefix}",
+																"%PREFIX%",
 																IRCd.getGroupPrefix(ircuser
 																		.getTextModes())));
 							if ((BukkitIRCdPlugin.dynmap != null)
 									&& (msgIRCLeaveDynmap.length() > 0))
 								BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
 										"IRC", msgIRCLeaveDynmap.replace(
-												"{User}", ircuser.nick));
+												"%USER%", ircuser.nick));
 						}
 						ircuser.joined = false;
 						ircuser.setModes("");
 					}
 				} else {
-					if (Config.isDebugModeEnabled()) {
+					if (debugMode) {
 						BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
-								+ " not found in list. Error code IRCd2125."); // Log						
+								+ " not found in list. Error code IRCd2125."); // Log
 					}
 				}
 
-			} else if (split[2].equalsIgnoreCase(Config.getIrcdConsoleChannel())) {
+			} else if (split[2].equalsIgnoreCase(consoleChannelName)) {
 				// Console channel
 				// Only thing important here is to set oper to false so they
 				// can't execute commands on the console channel without being
@@ -3847,9 +3941,9 @@ public class IRCd implements Runnable {
 					ircuser.setConsoleModes("");
 					ircuser.consoleJoined = false;
 				} else {
-					if (Config.isDebugModeEnabled()) {
+					if (debugMode) {
 						BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
-								+ " not found in list. Error code IRCd2134."); // Log						
+								+ " not found in list. Error code IRCd2134."); // Log
 					}
 				}
 
@@ -3877,18 +3971,18 @@ public class IRCd implements Runnable {
 										.getServer()
 										.broadcastMessage(
 												msgIRCLeaveReason
-														.replace("{User}",
+														.replace("%USER%",
 																ircuser.nick)
 														.replace(
-																"{Suffix}",
+																"%SUFFIX%",
 																IRCd.getGroupSuffix(ircuser
 																		.getTextModes()))
 														.replace(
-																"{Prefix}",
+																"%PREFIX%",
 																IRCd.getGroupPrefix(ircuser
 																		.getTextModes()))
 														.replace(
-																"{Reason}",
+																"%REASON%",
 																convertColors(
 																		reason,
 																		true)));
@@ -3898,10 +3992,10 @@ public class IRCd implements Runnable {
 										.sendBroadcastToWeb(
 												"IRC",
 												msgIRCLeaveReasonDynmap
-														.replace("{User}",
+														.replace("%USER%",
 																ircuser.nick)
 														.replace(
-																"{Reason}",
+																"%REASON%",
 																stripIRCFormatting(reason)));
 						} else {
 
@@ -3910,21 +4004,21 @@ public class IRCd implements Runnable {
 										.getServer()
 										.broadcastMessage(
 												msgIRCLeave
-														.replace("{User}",
+														.replace("%USER%",
 																ircuser.nick)
 														.replace(
-																"{Suffix}",
+																"%SUFFIX%",
 																IRCd.getGroupSuffix(ircuser
 																		.getTextModes()))
 														.replace(
-																"{Prefix}",
+																"%PREFIX%",
 																IRCd.getGroupPrefix(ircuser
 																		.getTextModes())));
 							if ((BukkitIRCdPlugin.dynmap != null)
 									&& (msgIRCLeaveDynmap.length() > 0))
 								BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
 										"IRC", msgIRCLeaveDynmap.replace(
-												"{User}", ircuser.nick));
+												"%USER%", ircuser.nick));
 						}
 					}
 					ircuser.setConsoleModes("");
@@ -3934,9 +4028,9 @@ public class IRCd implements Runnable {
 				}
 				uid2ircuser.remove(split[0]);
 			} else {
-				if (Config.isDebugModeEnabled()) {
+				if (debugMode) {
 					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
-							+ " not found in list. Error code IRCd2166."); // Log					
+							+ " not found in list. Error code IRCd2166."); // Log
 				}
 			}
 
@@ -3958,21 +4052,21 @@ public class IRCd implements Runnable {
 					BukkitPlayer bp;
 					if (split[2].equalsIgnoreCase(serverUID)) {
 						println(pre + "UID " + serverUID + " "
-								+ serverStartTime + " " + Config.getIrcdServerName() + " "
-								+ Config.getIrcdServerHostName() + " " + Config.getIrcdServerHostName() + " "
-								+ Config.getIrcdServerName() + " 127.0.0.1 " + serverStartTime
-								+ " +Bro :" + BukkitIRCdPlugin.ircdVersion);
+								+ serverStartTime + " " + serverName + " "
+								+ serverHostName + " " + serverHostName + " "
+								+ serverName + " 127.0.0.1 " + serverStartTime
+								+ " +Bro :" + version);
 						println(":" + serverUID + " OPERTYPE Network_Service");
-						println(pre + "FJOIN " + Config.getIrcdConsoleChannel() + " "
+						println(pre + "FJOIN " + consoleChannelName + " "
 								+ consoleChannelTS + " +nt :," + serverUID);
 						println(":" + serverUID + " FMODE "
-								+ Config.getIrcdConsoleChannel() + " " + consoleChannelTS
+								+ consoleChannelName + " " + consoleChannelTS
 								+ " +qaohv " + serverUID + " " + serverUID
 								+ " " + serverUID + " " + serverUID + " "
 								+ serverUID);
-						println(pre + "FJOIN " + Config.getIrcdChannel() + " " + channelTS
+						println(pre + "FJOIN " + channelName + " " + channelTS
 								+ " +nt :," + serverUID);
-						println(":" + serverUID + " FMODE " + Config.getIrcdChannel() + " "
+						println(":" + serverUID + " FMODE " + channelName + " "
 								+ channelTS + " +qaohv " + serverUID + " "
 								+ serverUID + " " + serverUID + " " + serverUID
 								+ " " + serverUID);
@@ -3982,7 +4076,7 @@ public class IRCd implements Runnable {
 						if (bp.hasPermission("bukkitircd.oper")) {
 							println(pre + "UID " + UID + " "
 									+ (bp.idleTime / 1000L) + " " + bp.nick
-									+ Config.getIrcdIngameSuffix() + " " + bp.host + " "
+									+ ingameSuffix + " " + bp.realhost + " "
 									+ bp.host + " " + bp.nick + " " + bp.ip
 									+ " " + bp.signedOn
 									+ " +or :Minecraft Player");
@@ -3990,12 +4084,12 @@ public class IRCd implements Runnable {
 						} else
 							println(pre + "UID " + UID + " "
 									+ (bp.idleTime / 1000L) + " " + bp.nick
-									+ Config.getIrcdIngameSuffix() + " " + bp.host + " "
+									+ ingameSuffix + " " + bp.realhost + " "
 									+ bp.host + " " + bp.nick + " " + bp.ip
 									+ " " + bp.signedOn
 									+ " +r :Minecraft Player");
 
-						println(pre + "FJOIN " + Config.getIrcdChannel() + " " + channelTS
+						println(pre + "FJOIN " + channelName + " " + channelTS
 								+ " +nt :," + UID);
 						if (textMode.length() > 0) {
 							String modestr = "";
@@ -4004,7 +4098,7 @@ public class IRCd implements Runnable {
 							}
 							modestr = modestr
 									.substring(0, modestr.length() - 1);
-							println(":" + serverUID + " FMODE " + Config.getIrcdChannel()
+							println(":" + serverUID + " FMODE " + channelName
 									+ " " + channelTS + " + " + textMode + " "
 									+ modestr);
 						}
@@ -4029,17 +4123,17 @@ public class IRCd implements Runnable {
 										.getServer()
 										.broadcastMessage(
 												msgIRCLeaveReason
-														.replace("{User}", user)
+														.replace("%USER%", user)
 														.replace(
-																"{Suffix}",
+																"%SUFFIX%",
 																IRCd.getGroupSuffix(ircuser
 																		.getTextModes()))
 														.replace(
-																"{Prefix}",
+																"%PREFIX%",
 																IRCd.getGroupPrefix(ircuser
 																		.getTextModes()))
 														.replace(
-																"{Reason}",
+																"%REASON%",
 																convertColors(
 																		reason,
 																		true)));
@@ -4048,8 +4142,8 @@ public class IRCd implements Runnable {
 								BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
 										"IRC",
 										msgIRCLeaveReasonDynmap.replace(
-												"{User}", user).replace(
-												"{Reason}",
+												"%USER%", user).replace(
+												"%REASON%",
 												stripIRCFormatting(reason)));
 							ircuser2.setConsoleModes("");
 							ircuser2.setModes("");
@@ -4058,19 +4152,19 @@ public class IRCd implements Runnable {
 						}
 						uid2ircuser.remove(split[2]);
 					} else {
-						if (Config.isDebugModeEnabled()) {
+						if (debugMode) {
 							BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID "
 									+ split[2]
-									+ " not found in list. Error code IRCd2224."); // Log							
+									+ " not found in list. Error code IRCd2224."); // Log
 						}
 					}
 
 				}
 
 			} else {
-				if (Config.isDebugModeEnabled()) {
-					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/Config.getLinkServerID() " + split[0]
-							+ " not found in list. Error code IRCd2228."); // Log					
+				if (debugMode) {
+					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/SID " + split[0]
+							+ " not found in list. Error code IRCd2228."); // Log
 				}
 			}
 
@@ -4095,7 +4189,7 @@ public class IRCd implements Runnable {
 			else if (isCTCP && isNotice)
 				return; // CTCP reply, ignore this
 
-			if (isNotice && (!Config.isIrcdNoticesEnabled()))
+			if (isNotice && (!enableNotices))
 				return; // Ignore notices if notices are disabled.
 
 			IRCUser ircuser;
@@ -4103,7 +4197,7 @@ public class IRCd implements Runnable {
 			if ((ircuser = uid2ircuser.get(split[0])) != null) {
 				synchronized (csBukkitPlayers) {
 					BukkitPlayer bp;
-					if (split[2].equalsIgnoreCase(Config.getIrcdChannel())) { // Messaging
+					if (split[2].equalsIgnoreCase(channelName)) { // Messaging
 						// the
 						// public
 						// channel
@@ -4136,15 +4230,15 @@ public class IRCd implements Runnable {
 									println(":"
 											+ serverUID
 											+ " PRIVMSG "
-											+ Config.getIrcdChannel()
+											+ IRCd.channelName
 											+ " :"
 											+ convertColors(
 													msgPlayerList
 															.replace(
-																	"{Count}",
+																	"%COUNT%",
 																	Integer.toString(count))
 															.replace(
-																	"{Users}",
+																	"%USERS%",
 																	s.substring(
 																			0,
 																			s.length() - 2)),
@@ -4155,14 +4249,14 @@ public class IRCd implements Runnable {
 								if (msgtemplate.length() > 0){
 									String msg = msgtemplate
 											.replace(
-													"{User}",
+													"%USER%",
 													ircuser.nick)
 											.replace(
-													"{Suffix}",
+													"%SUFFIX%",
 													IRCd.getGroupSuffix(ircuser
 															.getTextModes()))
 											.replace(
-													"{Prefix}",
+													"%PREFIX%",
 													IRCd.getGroupPrefix(ircuser
 															.getTextModes()))
 											// TODO Player Highlight
@@ -4170,14 +4264,14 @@ public class IRCd implements Runnable {
 											// ,
 											// "&b" + "&r")
 											.replace(
-													"{Message}",
+													"%MESSAGE%",
 													IRCd.convertColors(
 															message,
 															true));
-							if(Config.isIrcdIngameSuffixStripEnabled()){
-								msg = msg.replace(Config.getIrcdIngameSuffix(),"");
+							if(stripIngameSuffix){
+								msg = msg.replace(IRCd.ingameSuffix,"");
 							}
-							
+
 									BukkitIRCdPlugin.thePlugin
 											.getServer()
 											.broadcastMessage(msg
@@ -4189,14 +4283,14 @@ public class IRCd implements Runnable {
 													"IRC",
 													msgtemplatedynmap
 															.replace(
-																	"{User}",
+																	"%USER%",
 																	ircuser.nick)
 															.replace(
-																	"{Message}",
+																	"%MESSAGE%",
 																	stripIRCFormatting(message)));
 							}
 						}
-					} else if (split[2].equalsIgnoreCase(Config.getIrcdConsoleChannel())) { // Messaging
+					} else if (split[2].equalsIgnoreCase(consoleChannelName)) { // Messaging
 						// the
 						// console
 						// channel
@@ -4219,11 +4313,11 @@ public class IRCd implements Runnable {
 								message = message.substring(1);
 								if (!executeCommand(message)) {
 									println(":" + serverUID + " PRIVMSG "
-											+ Config.getIrcdConsoleChannel()
+											+ IRCd.consoleChannelName
 											+ " :Failed to execute command.");
 								} else {
 									println(":" + serverUID + " PRIVMSG "
-											+ Config.getIrcdConsoleChannel()
+											+ IRCd.consoleChannelName
 											+ " :Command executed.");
 								}
 							}
@@ -4250,17 +4344,17 @@ public class IRCd implements Runnable {
 
 							if (msgtemplate.length() > 0)
 								BukkitIRCdPlugin.log.info(msgtemplate
-										.replace("{User}", ircuser.nick)
+										.replace("%USER%", ircuser.nick)
 										.replace(
-												"{Suffix}",
+												"%SUFFIX%",
 												IRCd.getGroupSuffix(ircuser
 														.getTextModes()))
 										.replace(
-												"{Prefix}",
+												"%PREFIX%",
 												IRCd.getGroupPrefix(ircuser
 														.getTextModes()))
 										.replace(
-												"{Message}",
+												"%MESSAGE%",
 												IRCd.convertColors(message,
 														true)));
 						}
@@ -4291,17 +4385,17 @@ public class IRCd implements Runnable {
 
 								if (msgtemplate.length() > 0)
 									player.sendMessage(msgtemplate
-											.replace("{User}", ircuser.nick)
+											.replace("%USER%", ircuser.nick)
 											.replace(
-													"{Suffix}",
+													"%SUFFIX%",
 													IRCd.getGroupSuffix(ircuser
 															.getTextModes()))
 											.replace(
-													"{Prefix}",
+													"%PREFIX%",
 													IRCd.getGroupPrefix(ircuser
 															.getTextModes()))
 											.replace(
-													"{Message}",
+													"%MESSAGE%",
 													IRCd.convertColors(message,
 															true)));
 							}
@@ -4311,24 +4405,1554 @@ public class IRCd implements Runnable {
 				}
 
 			} else {
-				if (Config.isDebugModeEnabled()) {
+				if (debugMode) {
 					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0]
-							+ " not found in list. Error code IRCd2336."); // Log					
+							+ " not found in list. Error code IRCd2336."); // Log
 				}
 			}
 
 
+		} else if (split[1].equalsIgnoreCase("METADATA")) {
+			// :00A METADATA 854AAAABZ accountname :glguy
+			final String target = split[2];
+			final String key = split[3];
+
+			final String value;
+			if (split[4].startsWith(":")) {
+				split[4] = split[4].substring(1);
+				value = join(split, " ", 4);
+			} else {
+				value = split[4];
+			}
+
+			final IRCUser user = uid2ircuser.get(target);
+			if (user != null) {
+				if (key.equalsIgnoreCase("accountname")) {
+					user.accountname = value;
+				}
+			}
 		}
+
 		// End of IF command check
 	}
+}
 
-    public static boolean isPlugin()
-    {
-        return isPlugin;
-    }
+class ClientConnection implements Runnable {
+	private final Socket server;
+	private String line;
+	public String nick, realname, ident, hostmask, ipaddress;
+	public String modes = "";
+	public String customWhois = ""; // Not used yet
+	public boolean isIdented = false;
+	public boolean isNickSet = false;
+	public boolean isRegistered = false;
+	public String accountname = "";
+	public boolean isOper = false;
+	public String awayMsg = "";
+	public long lastPingResponse;
+	public long signonTime;
+	public long lastActivity;
+	private BufferedReader in;
+	private PrintStream out;
+	public boolean running = true;
 
-    public static boolean isLinkcompleted()
-    {
-        return linkcompleted;
-    }
+	Server bukkitServer = null;
+	IRCCommandSender commandSender = null;
+
+	ClientConnection(Socket server) {
+		this.server = server;
+		try {
+			this.server.setSoTimeout(3000);
+		} catch (SocketException e) {
+		}
+	}
+
+	@Override
+	public void run() {
+		if (running) {
+			try {
+				nick = "";
+				in = new BufferedReader(new InputStreamReader(
+						server.getInputStream()));
+				out = new PrintStream(server.getOutputStream());
+
+				hostmask = server.getInetAddress().getHostName().toString();
+				ipaddress = server.getInetAddress().getHostAddress().toString();
+				Thread.currentThread().setName(
+						"Thread-BukkitIRCd-Connection-" + ipaddress);
+				synchronized (IRCd.csStdOut) {
+					System.out.println("[BukkitIRCd] Got connection from "
+							+ ipaddress);
+				}
+
+				lastPingResponse = System.currentTimeMillis();
+				lastActivity = lastPingResponse;
+
+				if ((IRCd.isBanned(nick + "!" + ident + "@" + hostmask))
+						|| (IRCd.isBanned(nick + "!" + ident + "@" + ipaddress))) {
+					writeln("ERROR :Closing Link: [" + ipaddress
+							+ "] (You are banned from this server)");
+					disconnect();
+					synchronized (IRCd.csStdOut) {
+						System.out
+								.println("[BukkitIRCd] Cleaning up connection from "
+										+ getFullHost() + " (banned)");
+					}
+					if (isIdented && isNickSet)
+						IRCd.writeAll(":" + getFullHost()
+								+ " QUIT :You are banned from this server");
+					IRCd.removeIRCUser(nick, "Banned", true);
+				} else
+					while (server.isConnected() && (!server.isClosed())) {
+						try {
+							if (lastPingResponse
+									+ (IRCd.timeoutInterval * 1000) < System
+										.currentTimeMillis()) {
+								writeln("ERROR :Closing Link: [" + ipaddress
+										+ "] (Ping timeout)");
+								writeln("ERROR :Closing Link: [" + ipaddress
+										+ "] (Ping timeout)");
+								disconnect();
+								;
+								synchronized (IRCd.csStdOut) {
+									System.out
+											.println("[BukkitIRCd] Cleaning up connection from "
+													+ getFullHost()
+													+ " (ping timeout)");
+								}
+								if (isIdented && isNickSet)
+									IRCd.writeAll(":" + getFullHost()
+											+ " QUIT :Ping timeout");
+								IRCd.removeIRCUser(nick, "Ping timeout", true);
+							} else {
+								// Get input from the client
+								while ((line = in.readLine()) != null
+										&& !line.equals(".")) {
+									parseMessage(line);
+								}
+							}
+						} catch (SocketTimeoutException e) {
+						}
+						try {
+							Thread.currentThread();
+							Thread.sleep(1);
+						} catch (InterruptedException e) {
+						}
+					}
+			} catch (IOException ioe) {
+				synchronized (IRCd.csStdOut) {
+					System.out
+							.println("[BukkitIRCd] IOException on socket connection: "
+									+ ioe);
+				}
+			}
+
+			synchronized (IRCd.csStdOut) {
+				System.out.println("[BukkitIRCd] Cleaning up connection from "
+						+ getFullHost() + " (client quit)");
+			}
+			IRCd.removeIRCUser(nick);
+			running = false;
+			synchronized (IRCd.csStdOut) {
+				System.out.println("[BukkitIRCd] Lost connection from "
+						+ getFullHost());
+			}
+		}
+	}
+
+	private void parseMessage(String line) {
+		String[] split = line.split(" ");
+		if (split[0].equalsIgnoreCase("NICK")) {
+			if (split.length >= 2) {
+				if (split[1].indexOf(":") == 0) {
+					split[1] = split[1].substring(1);
+				}
+			}
+			if (split.length < 2) {
+				writeln(IRCd.serverMessagePrefix + " 431  :No nickname given");
+			} else if (!split[1]
+					.matches("\\A[a-zA-Z_\\-\\[\\]\\\\^{}|`][a-zA-Z0-9_\\-\\[\\]\\\\^{}|`]*\\z")) {
+				writeln(IRCd.serverMessagePrefix + " 432 " + nick + " "
+						+ split[1] + " :Erroneous Nickname: Illegal characters");
+			} else {
+				if (split[1].length() > IRCd.nickLen) {
+					split[1] = split[1].substring(0, IRCd.nickLen);
+				}
+				if ((IRCd.getIRCUser(split[1]) != null)
+						|| (split[1].equalsIgnoreCase(IRCd.serverName))) {
+					writeln(IRCd.serverMessagePrefix + " 433 * " + split[1]
+							+ " :Nickname is already in use.");
+				} else {
+					if (!isNickSet) {
+						isNickSet = true;
+						nick = split[1];
+						if (isIdented) {
+							sendWelcome();
+						}
+					} else if (isIdented) {
+						lastActivity = System.currentTimeMillis();
+
+						BukkitIRCdPlugin.thePlugin.updateLastReceived(nick,
+								split[1]);
+						if ((IRCd.isPlugin)
+								&& (BukkitIRCdPlugin.thePlugin != null)) {
+							if (IRCd.msgIRCNickChange.length() > 0)
+								BukkitIRCdPlugin.thePlugin
+										.getServer()
+										.broadcastMessage(
+												IRCd.msgIRCNickChange
+														.replace("%OLDNICK%",
+																nick)
+														.replace(
+																"%PREFIX%",
+																IRCd.getGroupPrefix(modes))
+														.replace(
+																"%SUFFIX%",
+																IRCd.getGroupSuffix(modes))
+														.replace("%NEWNICK%",
+																split[1]));
+							if ((BukkitIRCdPlugin.dynmap != null)
+									&& (IRCd.msgIRCNickChangeDynmap.length() > 0))
+								BukkitIRCdPlugin.dynmap
+										.sendBroadcastToWeb(
+												"IRC",
+												IRCd.msgIRCNickChangeDynmap
+														.replace("%OLDNICK%",
+																nick).replace(
+																"%NEWNICK%",
+																split[1]));
+						}
+						IRCd.writeAll(":" + getFullHost() + " NICK " + split[1]);
+						nick = split[1];
+					}
+				}
+			}
+		} else if (split[0].equalsIgnoreCase("USER")) {
+			if (split.length < 2) {
+				writeln(IRCd.serverMessagePrefix
+						+ " 461  USER :Not enough parameters");
+			} else {
+				if (split[4].indexOf(":") == 0) {
+					split[4] = split[4].substring(1);
+				}
+				if (!isIdented) {
+					isIdented = true;
+					ident = split[1];
+					realname = split[4];
+					if (isNickSet) {
+						sendWelcome();
+					}
+				} else {
+					writeln(IRCd.serverMessagePrefix + " 462 " + nick
+							+ " :You are already registered");
+				}
+			}
+		} else if (split[0].equalsIgnoreCase("QUIT")) {
+			String quitmsg = null;
+			if (split.length > 1) {
+				if (split[1].indexOf(":") == 0) {
+					split[1] = split[1].substring(1);
+				}
+				quitmsg = IRCd.join(split, " ", 1);
+				if (isIdented && isNickSet)
+					IRCd.writeAll(":" + getFullHost() + " QUIT :Quit: "
+							+ quitmsg);
+				synchronized (IRCd.csStdOut) {
+					System.out
+							.println("[BukkitIRCd] Cleaning up connection from "
+									+ getFullHost()
+									+ " (Quit: "
+									+ quitmsg
+									+ ")");
+				}
+			} else {
+				if (isIdented && isNickSet)
+					IRCd.writeAll(":" + getFullHost() + " QUIT :Quit");
+				synchronized (IRCd.csStdOut) {
+					System.out
+							.println("[BukkitIRCd] Cleaning up connection from "
+									+ getFullHost() + " (Quit)");
+				}
+			}
+			disconnect();
+			if (quitmsg != null)
+				IRCd.removeIRCUser(nick, quitmsg, true);
+			else
+				IRCd.removeIRCUser(nick);
+		} else if (isIdented && isNickSet) {
+			// if (split[0].equalsIgnoreCase("STOP")) {
+			// System.exit(0);
+			// }
+			if (split[0].equalsIgnoreCase("PING")) {
+				if (split.length < 2) {
+					writeln(IRCd.serverMessagePrefix + " 461  " + split[0]
+							+ " :Not enough parameters");
+				} else {
+					if (split[1].indexOf(":") == 0) {
+						split[1] = split[1].substring(1);
+					}
+					writeln("PONG :" + IRCd.join(split, " ", 1));
+				}
+			} else if (split[0].equalsIgnoreCase("PONG")) {
+				lastPingResponse = System.currentTimeMillis();
+			} else if (split[0].equalsIgnoreCase("MOTD")) {
+				lastActivity = System.currentTimeMillis();
+				sendMOTD();
+			} else if (split[0].equalsIgnoreCase("WHOIS")) {
+				lastActivity = System.currentTimeMillis();
+				if (split.length < 2) {
+					writeln(IRCd.serverMessagePrefix + " 461  " + split[0]
+							+ " :Not enough parameters");
+				} else {
+					if (split[1].indexOf(":") == 0) {
+						split[1] = split[1].substring(1);
+					}
+					sendWhois(split[1]);
+				}
+			} else if (split[0].equalsIgnoreCase("NAMES")) {
+				if (split.length > 1) {
+					if (!sendChanNames(split[1])) {
+						writeln(IRCd.serverMessagePrefix + " 366 " + nick + " "
+								+ split[1] + " :End of /NAMES list.");
+					}
+				}
+			} else if (split[0].equalsIgnoreCase("TOPIC")) {
+				lastActivity = System.currentTimeMillis();
+				if (split.length < 2) {
+					writeln(IRCd.serverMessagePrefix + " 461  " + split[0]
+							+ " :Not enough parameters");
+				} else if (split.length == 2) {
+					if (!sendChanTopic(split[1]))
+						writeln(IRCd.serverMessagePrefix + " 401 " + nick + " "
+								+ split[1] + " :No such nick/channel");
+				} else {
+					if (split[2].indexOf(":") == 0) {
+						split[2] = split[2].substring(1);
+					}
+					if (split[1].equalsIgnoreCase(IRCd.channelName)) {
+						String chantopic = IRCd.join(split, " ", 2);
+						if (modes.contains("%") || modes.contains("@")
+								|| modes.contains("&") || modes.contains("~")) {
+							IRCd.setTopic(chantopic, nick, getFullHost());
+						} else {
+							// Not op
+							writeln(IRCd.serverMessagePrefix + " 482 " + nick
+									+ " " + IRCd.channelName
+									+ " :You're not channel operator");
+						}
+					} else if (split[1]
+							.equalsIgnoreCase(IRCd.consoleChannelName)) {
+					} // Do nothing
+					else {
+						writeln(IRCd.serverMessagePrefix + " 401 " + nick + " "
+								+ split[1] + " :No such nick/channel");
+					}
+				}
+			} else if (split[0].equalsIgnoreCase("MODE")) {
+				if (split.length < 2) {
+					writeln(IRCd.serverMessagePrefix + " 461  " + split[0]
+							+ " :Not enough parameters");
+				} else if (split.length == 2) {
+					if (!sendChanModes(split[1]))
+						writeln(IRCd.serverMessagePrefix + " 401 " + nick + " "
+								+ split[1] + " :No such nick/channel");
+				} else {
+					if (split[1].equalsIgnoreCase(IRCd.consoleChannelName)) {
+					} // Do nothing
+					else if (split[1].equalsIgnoreCase(IRCd.channelName)) {
+
+						if (split[2].indexOf(":") == 0) {
+							split[2] = split[2].substring(1);
+						}
+
+						int add = -1;
+						int i = 0, i2 = 0;
+						if (split.length == 3) {
+							if ((split[2].equals("+b"))
+									|| (split[2].equals("-b"))) {
+								// Send list of bans
+								synchronized (IRCd.csIrcBans) {
+									for (IrcBan ban : IRCd.ircBans) {
+										writeln(IRCd.serverMessagePrefix
+												+ " 367 " + nick + " "
+												+ IRCd.channelName + " "
+												+ ban.fullHost + " "
+												+ ban.bannedBy + " "
+												+ ban.banTime);
+									}
+									writeln(IRCd.serverMessagePrefix + " 368 "
+											+ nick + " " + IRCd.channelName
+											+ " :End of Channel Ban List");
+								}
+							}
+						} else
+							while (i < split[2].length()) {
+								if (split[2].substring(i, i + 1).equals("+"))
+									add = 1;
+								else if (split[2].substring(i, i + 1).equals(
+										"-"))
+									add = 0;
+								else if (split[2].substring(i, i + 1).equals(
+										"b")) {
+									if (i2 + 3 < split.length) {
+										String mask = split[i2 + 3];
+										// They actually want to ban/unban
+										// someone
+										if (modes.contains("%")
+												|| modes.contains("@")
+												|| modes.contains("&")
+												|| modes.contains("~")) {
+											// User is op
+											String host;
+											if (IRCd.wildCardMatch(mask,
+													"*!*@*"))
+												host = mask;
+											else if (IRCd.wildCardMatch(mask,
+													"*!*"))
+												host = mask + "@*";
+											else if (IRCd.wildCardMatch(mask,
+													"*@*"))
+												host = "*!" + mask;
+											else
+												host = mask + "!*@*";
+											if (add == 1) {
+												if (IRCd.msgIRCBan.length() > 0)
+													BukkitIRCdPlugin.thePlugin
+															.getServer()
+															.broadcastMessage(
+																	IRCd.msgIRCBan
+																			.replace(
+																					"%BANNEDUSER%",
+																					host)
+																			.replace(
+																					"%BANNEDBY%",
+																					nick));
+												if ((BukkitIRCdPlugin.dynmap != null)
+														&& (IRCd.msgIRCBanDynmap
+																.length() > 0))
+													BukkitIRCdPlugin.dynmap
+															.sendBroadcastToWeb(
+																	"IRC",
+																	IRCd.msgIRCBanDynmap
+																			.replace(
+																					"%BANNEDUSER%",
+																					host)
+																			.replace(
+																					"%BANNEDBY%",
+																					nick));
+												IRCd.banIRCUser(host,
+														getFullHost());
+											} else if (add == 0) {
+												if (IRCd.msgIRCUnban.length() > 0)
+													BukkitIRCdPlugin.thePlugin
+															.getServer()
+															.broadcastMessage(
+																	IRCd.msgIRCUnban
+																			.replace(
+																					"%BANNEDUSER%",
+																					host)
+																			.replace(
+																					"%BANNEDBY%",
+																					nick));
+												if ((BukkitIRCdPlugin.dynmap != null)
+														&& (IRCd.msgIRCUnbanDynmap
+																.length() > 0))
+													BukkitIRCdPlugin.dynmap
+															.sendBroadcastToWeb(
+																	"IRC",
+																	IRCd.msgIRCUnbanDynmap
+																			.replace(
+																					"%BANNEDUSER%",
+																					host)
+																			.replace(
+																					"%BANNEDBY%",
+																					nick));
+												IRCd.unBanIRCUser(host,
+														getFullHost());
+											}
+
+										} else {
+											// Not op
+											writeln(IRCd.serverMessagePrefix
+													+ " 482 "
+													+ nick
+													+ " "
+													+ IRCd.channelName
+													+ " :You're not channel operator");
+											break;
+										}
+									}
+									i2++;
+								}
+								i++;
+							}
+					} else if (split[1].equalsIgnoreCase(nick)) {
+						if ((isOper) && (split[2].startsWith("-"))
+								&& (split[2].contains("o"))) {
+							// Deoper
+							isOper = false;
+							writeln(":" + nick + " MODE " + nick + " :-o");
+							IRCd.writeAll(":" + getFullHost() + " PART "
+									+ IRCd.consoleChannelName + " :De-opered");
+						}
+					} else {
+						writeln(IRCd.serverMessagePrefix + " 401 " + nick + " "
+								+ split[1] + " :No such nick/channel");
+					}
+				}
+
+			} else if (split[0].equalsIgnoreCase("USERHOST")) {
+				if (split.length < 2) {
+					writeln(IRCd.serverMessagePrefix + " 461  " + split[0]
+							+ " :Not enough parameters");
+				} else {
+					int i = 1;
+					String hosts = "";
+					while (i < split.length) {
+						if (split[i].indexOf(":") == 0) {
+							split[i] = split[i].substring(1);
+						}
+						int ID;
+						IRCUser ircuser;
+						String targethost = null, targetnick = null, targetident = null;
+						if (split[i].equalsIgnoreCase(IRCd.serverName)) {
+							targetnick = IRCd.serverName;
+							targetident = IRCd.serverName;
+							targethost = IRCd.serverHostName;
+							hosts += targetnick + "=+" + targetident + "@"
+									+ targethost + " ";
+						} else if ((ircuser = IRCd.getIRCUser(split[i])) != null) {
+							synchronized (IRCd.csIrcUsers) {
+								targetnick = ircuser.nick;
+								targetident = ircuser.ident;
+								targethost = ircuser.hostmask;
+							}
+							hosts += targetnick + "=+" + targetident + "@"
+									+ targethost + " ";
+						} else if ((ID = IRCd.getBukkitUser(split[i])) >= 0) {
+							if ((IRCd.isPlugin)
+									&& (BukkitIRCdPlugin.thePlugin != null)) {
+								synchronized (IRCd.csBukkitPlayers) {
+									BukkitPlayer p = IRCd.bukkitPlayers.get(ID);
+									targetnick = p.nick + IRCd.ingameSuffix;
+									targetident = p.nick;
+									targethost = p.host;
+								}
+							}
+							hosts += targetnick + "=+" + targetident + "@"
+									+ targethost + " ";
+						}
+						i++;
+						if (i > 5)
+							break;
+					}
+					if (hosts.length() > 0)
+						hosts = hosts.substring(0, hosts.length() - 1);
+					writeln(IRCd.serverMessagePrefix + " 302 " + nick + " :"
+							+ hosts);
+				}
+			} else if (split[0].equalsIgnoreCase("KICK")) {
+				if (split.length < 3) {
+					writeln(IRCd.serverMessagePrefix + " 461  " + split[0]
+							+ " :Not enough parameters");
+				} else {
+					// Kick someone
+					if (modes.contains("%") || modes.contains("@")
+							|| modes.contains("&") || modes.contains("~")) {
+						// User is op
+						String bannick = split[2];
+						String reason = null;
+						if (split.length > 3) {
+							if (split[3].indexOf(":") == 0) {
+								split[3] = split[3].substring(1);
+							}
+							reason = IRCd.join(split, " ", 3);
+						}
+
+						IRCUser ircuser;
+						if ((ircuser = IRCd.getIRCUser(bannick)) != null) {
+							IRCd.kickIRCUser(ircuser, nick, ident, hostmask,
+									reason, false);
+						} else if ((IRCd.getBukkitUser(bannick)) >= 0) {
+							if ((IRCd.isPlugin)
+									&& (BukkitIRCdPlugin.thePlugin != null)) {
+								if (bannick.endsWith(IRCd.ingameSuffix))
+									bannick = bannick.substring(
+											0,
+											bannick.length()
+													- IRCd.ingameSuffix
+															.length());
+								Server s = BukkitIRCdPlugin.thePlugin
+										.getServer();
+								Player p = s.getPlayer(bannick);
+								if (p != null) {
+									if (reason != null) {
+										if (IRCd.msgIRCKickReason.length() > 0)
+											s.broadcastMessage(IRCd.msgIRCKickReason
+													.replace("%KICKEDUSER%",
+															bannick)
+													.replace("%KICKEDBY%", nick)
+													.replace(
+															"%REASON%",
+															IRCd.convertColors(
+																	reason,
+																	true)));
+										IRCd.kickPlayerIngame(
+												p,
+												"Kicked by "
+														+ nick
+														+ " on IRC: "
+														+ IRCd.stripIRCFormatting(reason));
+										BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(ChatColor.GRAY + nick + ChatColor.RED + " kicked " + ChatColor.GRAY + p.getDisplayName() + ChatColor.RED + " for " + ChatColor.GRAY + reason + ChatColor.RED + ".");
+									} else {
+										if (IRCd.msgIRCKick.length() > 0)
+											s.broadcastMessage(IRCd.msgIRCKick
+													.replace("%KICKEDUSER%",
+															bannick).replace(
+															"%KICKEDBY%", nick));
+										IRCd.kickPlayerIngame(p, "Kicked by "
+												+ nick + " on IRC");
+										BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(ChatColor.GRAY + nick + ChatColor.RED + " kicked " + ChatColor.GRAY + p.getDisplayName() + ChatColor.RED + ".");
+									}
+								}
+							}
+						} else {
+							writeln(IRCd.serverMessagePrefix + " 401 " + nick
+									+ " " + bannick + " :No such nick/channel");
+						}
+					} else {
+						// Not op
+						writeln(IRCd.serverMessagePrefix + " 482 " + nick + " "
+								+ IRCd.channelName
+								+ " :You're not channel operator");
+					}
+				}
+			} else if (split[0].equalsIgnoreCase("OPER")) {
+				if (split.length < 3) {
+					writeln(IRCd.serverMessagePrefix + " 461  " + split[0]
+							+ " :Not enough parameters");
+				} else {
+					String user = split[1];
+					String pass = Hash.compute(split[2], HashType.SHA_512);
+					if ((IRCd.operUser.length() > 0)
+							&& (IRCd.operPass.length() > 0)
+							&& (user.equals(IRCd.operUser))
+							&& (pass.equals(IRCd.operPass))) {
+						// Correct login
+						isOper = true;
+						writeln(":" + nick + " MODE " + nick + " :+o");
+						writeln(IRCd.serverMessagePrefix + " 381 " + nick
+								+ " :You are now an IRC Operator");
+						if (IRCd.operModes.length() > 0) {
+							modes = IRCd.operModes;
+							String mode1 = "+", mode2 = "";
+							if (modes.contains("~")) {
+								mode1 += "q";
+								mode2 += nick + " ";
+							}
+							if (modes.contains("&")) {
+								mode1 += "a";
+								mode2 += nick + " ";
+							}
+							if (modes.contains("@")) {
+								mode1 += "o";
+								mode2 += nick + " ";
+							}
+							if (modes.contains("%")) {
+								mode1 += "h";
+								mode2 += nick + " ";
+							}
+							if (modes.contains("+")) {
+								mode1 += "v";
+								mode2 += nick + " ";
+							}
+
+							sendChanWelcome(IRCd.consoleChannelName);
+							if (!mode1.equals("+")) {
+								IRCd.writeAll(":"
+										+ IRCd.serverName
+										+ "!"
+										+ IRCd.serverName
+										+ "@"
+										+ IRCd.serverHostName
+										+ " MODE "
+										+ IRCd.channelName
+										+ " "
+										+ mode1
+										+ " "
+										+ mode2.substring(0, mode2.length() - 1));
+								IRCd.writeAll(":"
+										+ IRCd.serverName
+										+ "!"
+										+ IRCd.serverName
+										+ "@"
+										+ IRCd.serverHostName
+										+ " MODE "
+										+ IRCd.consoleChannelName
+										+ " "
+										+ mode1
+										+ " "
+										+ mode2.substring(0, mode2.length() - 1));
+							}
+						}
+					} else {
+						// Incorrect login
+						writeln(IRCd.serverMessagePrefix + " 464 " + nick
+								+ " :Password Incorrect");
+					}
+				}
+			} else if (split[0].equalsIgnoreCase("JOIN")) {
+				// Do nothing
+			} else if (split[0].equalsIgnoreCase("PART")) {
+				// Do nothing
+			} else if (split[0].equalsIgnoreCase("ISON")) {
+				if (split.length < 2) {
+					writeln(IRCd.serverMessagePrefix + " 461  " + split[0]
+							+ " :Not enough parameters");
+				} else {
+					int i = 1;
+					String nicks = "";
+					while (i < split.length) {
+						if (split[i].indexOf(":") == 0) {
+							split[i] = split[i].substring(1);
+						}
+
+						int ID;
+						IRCUser ircuser;
+						if (split[i].equalsIgnoreCase(IRCd.serverName))
+							nicks += IRCd.serverName + " ";
+						else if ((ircuser = IRCd.getIRCUser(split[i])) != null)
+							nicks += ircuser.nick + " ";
+						else if ((ID = IRCd.getBukkitUser(split[i])) >= 0)
+							nicks += IRCd.bukkitPlayers.get(ID).nick
+									+ IRCd.ingameSuffix + " ";
+						i++;
+					}
+					if (nicks.length() > 0)
+						nicks = nicks.substring(0, nicks.length() - 1);
+					writeln(IRCd.serverMessagePrefix + " 303 " + nick + " :"
+							+ nicks);
+				}
+			} else if (split[0].equalsIgnoreCase("AWAY")) {
+				if (split.length > 1) {
+					if (split[1].indexOf(":") == 0) {
+						split[1] = split[1].substring(1);
+					}
+					awayMsg = IRCd.join(split, " ", 1);
+					writeln(IRCd.serverMessagePrefix + " 306 " + nick
+							+ " :You have been marked as being away");
+				} else {
+					awayMsg = "";
+					writeln(IRCd.serverMessagePrefix + " 305 " + nick
+							+ " :You are no longer marked as being away");
+				}
+			} else if (split[0].equalsIgnoreCase("WHO")) {
+				boolean operOnly = false;
+				String pattern = "";
+				if (split.length >= 2)
+					pattern = split[1];
+				if ((split.length > 2) && (split[2].equalsIgnoreCase("o"))) {
+					operOnly = true;
+				}
+				sendWho(pattern, operOnly);
+			} else if (split[0].equalsIgnoreCase("PRIVMSG")) {
+				lastActivity = System.currentTimeMillis();
+				if (split.length < 3) {
+					writeln(IRCd.serverMessagePrefix + " 461  " + split[0]
+							+ " :Not enough parameters");
+				} else {
+					if (split[2].indexOf(":") == 0) {
+						split[2] = split[2].substring(1);
+					}
+					String message = IRCd.join(split, " ", 2);
+					boolean isCTCP = (message.startsWith((char) 1 + "") && message
+							.endsWith((char) 1 + ""));
+					boolean isAction = (message.startsWith((char) 1 + "ACTION") && message
+							.endsWith((char) 1 + ""));
+					String message2;
+					if (isAction)
+						message2 = IRCd.join(
+								message.substring(1, message.length() - 1)
+										.split(" "), " ", 1);
+					else
+						message2 = message;
+
+					if (split[1].equalsIgnoreCase(IRCd.channelName)) {
+						if (IRCd.isBanned(getFullHost())) {
+							writeln(IRCd.serverMessagePrefix + " 404 " + nick
+									+ " " + IRCd.channelName
+									+ " :You are banned (" + IRCd.channelName
+									+ ")");
+						} else {
+							if ((IRCd.isPlugin)
+									&& (BukkitIRCdPlugin.thePlugin != null)) {
+								if (message.equalsIgnoreCase("!players")
+										&& (!isCTCP)) {
+									if (IRCd.msgPlayerList.length() > 0) {
+										String s = "";
+										int count = 0;
+										for (BukkitPlayer player : IRCd.bukkitPlayers) {
+											count++;
+											s = s + player.nick + ", ";
+										}
+										if (s.length() == 0)
+											s = "None, ";
+										IRCd.writeAll(":"
+												+ IRCd.serverName
+												+ "!"
+												+ IRCd.serverName
+												+ "@"
+												+ IRCd.serverHostName
+												+ " PRIVMSG "
+												+ IRCd.channelName
+												+ " :"
+												+ IRCd.convertColors(
+														IRCd.msgPlayerList
+																.replace(
+																		"%COUNT%",
+																		Integer.toString(count))
+																.replace(
+																		"%USERS%",
+																		s.substring(
+																				0,
+																				s.length() - 2)),
+														false));
+									}
+								} else if (isAction || (!isCTCP)) {
+									if (isAction) {
+
+										if (IRCd.msgIRCAction.length() > 0)
+											BukkitIRCdPlugin.thePlugin
+													.getServer()
+													.broadcastMessage(
+															IRCd.msgIRCAction
+																	.replace(
+																			"%USER%",
+																			nick)
+																	.replace(
+																			"%SUFFIX%",
+																			IRCd.getGroupSuffix(modes))
+																	.replace(
+																			"%PREFIX%",
+																			IRCd.getGroupPrefix(modes))
+																	.replace(
+																			"%MESSAGE%",
+																			IRCd.convertColors(
+																					message2,
+																					true)));
+										if ((BukkitIRCdPlugin.dynmap != null)
+												&& (IRCd.msgIRCActionDynmap
+														.length() > 0))
+											BukkitIRCdPlugin.dynmap
+													.sendBroadcastToWeb(
+															"IRC",
+															IRCd.msgIRCActionDynmap
+																	.replace(
+																			"%USER%",
+																			nick)
+																	.replace(
+																			"%MESSAGE%",
+																			IRCd.stripIRCFormatting(message2)));
+									} else {
+
+										if (IRCd.msgIRCMessage.length() > 0)
+											BukkitIRCdPlugin.thePlugin
+													.getServer()
+													.broadcastMessage(
+															IRCd.msgIRCMessage
+																	.replace(
+																			"%USER%",
+																			nick)
+																	.replace(
+																			"%SUFFIX%",
+																			IRCd.getGroupSuffix(modes))
+																	.replace(
+																			"%PREFIX%",
+																			IRCd.getGroupPrefix(modes))
+																	.replace(
+																			"%MESSAGE%",
+																			IRCd.convertColors(
+																					message2,
+																					true)));
+										if ((BukkitIRCdPlugin.dynmap != null)
+												&& (IRCd.msgIRCMessageDynmap
+														.length() > 0))
+											BukkitIRCdPlugin.dynmap
+													.sendBroadcastToWeb(
+															"IRC",
+															IRCd.msgIRCMessageDynmap
+																	.replace(
+																			"%USER%",
+																			nick)
+																	.replace(
+																			"%MESSAGE%",
+																			IRCd.stripIRCFormatting(message2)));
+									}
+								}
+							}
+							IRCd.writeAllExcept(nick, ":" + getFullHost()
+									+ " PRIVMSG " + IRCd.channelName + " :"
+									+ message);
+						}
+					} else if (split[1].equalsIgnoreCase(IRCd.serverName)) {
+						if ((isAction || (!isCTCP)) && (IRCd.isPlugin)
+								&& (BukkitIRCdPlugin.thePlugin != null)) {
+							BukkitIRCdPlugin.thePlugin.setLastReceived(
+									"@CONSOLE@", nick);
+							if (isAction) {
+
+								if (IRCd.msgIRCPrivateAction.length() > 0)
+									BukkitIRCdPlugin.log
+											.info(IRCd.msgIRCPrivateAction
+													.replace("%USER%", nick)
+													.replace(
+															"%SUFFIX%",
+															IRCd.getGroupSuffix(modes))
+													.replace(
+															"%PREFIX%",
+															IRCd.getGroupPrefix(modes))
+													.replace(
+															"%MESSAGE%",
+															IRCd.convertColors(
+																	message2,
+																	true)));
+							} else {
+
+								if (IRCd.msgIRCPrivateMessage.length() > 0)
+									BukkitIRCdPlugin.log
+											.info(IRCd.msgIRCPrivateMessage
+													.replace("%USER%", nick)
+													.replace(
+															"%SUFFIX%",
+															IRCd.getGroupSuffix(modes))
+													.replace(
+															"%PREFIX%",
+															IRCd.getGroupPrefix(modes))
+													.replace(
+															"%MESSAGE%",
+															IRCd.convertColors(
+																	message2,
+																	true)));
+							}
+						}
+					} else if (split[1]
+							.equalsIgnoreCase(IRCd.consoleChannelName)) {
+						if ((!isAction) && (!isCTCP) && (IRCd.isPlugin)
+								&& (BukkitIRCdPlugin.thePlugin != null)) {
+							if (!isOper) {
+								writeln(":" + IRCd.serverName + "!"
+										+ IRCd.serverName + "@"
+										+ IRCd.serverHostName + " NOTICE "
+										+ nick + " :You don't have access.");
+							} else {
+								// Execute console command here
+								IRCd.writeOpersExcept(nick, ":" + getFullHost()
+										+ " PRIVMSG " + IRCd.consoleChannelName
+										+ " :" + message);
+
+								if (message.startsWith("!")) {
+									message = message.substring(1);
+									if (!IRCd.executeCommand(message)) {
+										IRCd.writeOpers(":"
+												+ IRCd.serverName
+												+ "!"
+												+ IRCd.serverName
+												+ "@"
+												+ IRCd.serverHostName
+												+ " PRIVMSG "
+												+ IRCd.consoleChannelName
+												+ " :Failed to execute command.");
+									} else {
+										IRCd.writeOpers(":" + IRCd.serverName
+												+ "!" + IRCd.serverName + "@"
+												+ IRCd.serverHostName
+												+ " PRIVMSG "
+												+ IRCd.consoleChannelName
+												+ " :Command executed.");
+									}
+								}
+							}
+						}
+					} else {
+						IRCUser ircuser = IRCd.getIRCUser(split[1]);
+						int user;
+						if (ircuser != null) {
+							IRCd.writeTo(ircuser.nick, ":" + getFullHost()
+									+ " PRIVMSG " + split[1] + " :" + message);
+						} else if ((user = IRCd.getBukkitUser(split[1])) >= 0) {
+							if ((isAction || (!isCTCP)) && (IRCd.isPlugin)
+									&& (BukkitIRCdPlugin.thePlugin != null)) {
+								synchronized (IRCd.csBukkitPlayers) {
+									String bukkitnick = BukkitIRCdPlugin.thePlugin
+											.getServer()
+											.getPlayer(
+													IRCd.bukkitPlayers
+															.get(user).nick)
+											.getName();
+									BukkitIRCdPlugin.thePlugin.setLastReceived(
+											bukkitnick, nick);
+									if (isAction) {
+										if (IRCd.msgIRCPrivateAction.length() > 0)
+											BukkitIRCdPlugin.thePlugin
+													.getServer()
+													.getPlayer(bukkitnick)
+													.sendMessage(
+															IRCd.msgIRCPrivateAction
+																	.replace(
+																			"%USER%",
+																			nick)
+																	.replace(
+																			"%SUFFIX%",
+																			IRCd.getGroupSuffix(modes))
+																	.replace(
+																			"%PREFIX%",
+																			IRCd.getGroupPrefix(modes))
+																	.replace(
+																			"%MESSAGE%",
+																			IRCd.convertColors(
+																					message2,
+																					true)));
+									} else {
+										if (IRCd.msgIRCPrivateMessage.length() > 0)
+											BukkitIRCdPlugin.thePlugin
+													.getServer()
+													.getPlayer(bukkitnick)
+													.sendMessage(
+															IRCd.msgIRCPrivateMessage
+																	.replace(
+																			"%USER%",
+																			nick)
+																	.replace(
+																			"%SUFFIX%",
+																			IRCd.getGroupSuffix(modes))
+																	.replace(
+																			"%PREFIX%",
+																			IRCd.getGroupPrefix(modes))
+																	.replace(
+																			"%MESSAGE%",
+																			IRCd.convertColors(
+																					message2,
+																					true)));
+									}
+								}
+							}
+						} else {
+							writeln(IRCd.serverMessagePrefix + " 401 " + nick
+									+ " " + split[1] + " :No such nick/channel");
+						}
+					}
+				}
+			} else if (split[0].equalsIgnoreCase("NOTICE")) {
+				lastActivity = System.currentTimeMillis();
+				if (split.length < 3) {
+					writeln(IRCd.serverMessagePrefix + " 461  " + split[0]
+							+ " :Not enough parameters");
+				} else {
+					if (split[2].indexOf(":") == 0) {
+						split[2] = split[2].substring(1);
+					}
+					String message = IRCd.join(split, " ", 2);
+					boolean isCTCP = (message.startsWith((char) 1 + "") && message
+							.endsWith((char) 1 + ""));
+					if (split[1].equalsIgnoreCase(IRCd.consoleChannelName)) {
+					} // Do nothing
+					else if (split[1].equalsIgnoreCase(IRCd.channelName)) {
+						if ((IRCd.isPlugin)
+								&& (BukkitIRCdPlugin.thePlugin != null)) {
+							if ((!isCTCP) && IRCd.enableNotices) {
+								if (IRCd.msgIRCNotice.length() > 0)
+									BukkitIRCdPlugin.thePlugin
+											.getServer()
+											.broadcastMessage(
+													IRCd.msgIRCNotice
+															.replace("%USER%",
+																	nick)
+															.replace(
+																	"%PREFIX%",
+																	IRCd.getGroupPrefix(modes))
+															.replace(
+																	"%SUFFIX%",
+																	IRCd.getGroupSuffix(modes))
+															.replace(
+																	"%MESSAGE%",
+																	IRCd.convertColors(
+																			message,
+																			true)));
+								if ((BukkitIRCdPlugin.dynmap != null)
+										&& (IRCd.msgIRCNoticeDynmap.length() > 0))
+									BukkitIRCdPlugin.dynmap
+											.sendBroadcastToWeb(
+													"IRC",
+													IRCd.msgIRCNoticeDynmap
+															.replace("%USER%",
+																	nick)
+															.replace(
+																	"%MESSAGE%",
+																	IRCd.stripIRCFormatting(message)));
+							}
+						}
+						IRCd.writeAllExcept(nick, ":" + getFullHost()
+								+ " NOTICE " + IRCd.channelName + " :"
+								+ message);
+					} else {
+						IRCUser ircuser = IRCd.getIRCUser(split[1]);
+						int user;
+						if (ircuser != null) {
+							IRCd.writeTo(ircuser.nick, ":" + getFullHost()
+									+ " NOTICE " + split[1] + " :" + message);
+						} else if ((user = IRCd.getBukkitUser(split[1])) >= 0) {
+							if ((IRCd.isPlugin)
+									&& (BukkitIRCdPlugin.thePlugin != null)
+									&& (!isCTCP) && (IRCd.enableNotices))
+								synchronized (IRCd.csBukkitPlayers) {
+									if (IRCd.msgIRCPrivateMessage.length() > 0)
+										BukkitIRCdPlugin.thePlugin
+												.getServer()
+												.getPlayer(
+														IRCd.bukkitPlayers
+																.get(user).nick)
+												.sendMessage(
+														IRCd.msgIRCPrivateAction
+																.replace(
+																		"%USER%",
+																		nick)
+																.replace(
+																		"%SUFFIX%",
+																		IRCd.getGroupSuffix(modes))
+																.replace(
+																		"%PREFIX%",
+																		IRCd.getGroupPrefix(modes))
+																.replace(
+																		"%MESSAGE%",
+																		IRCd.convertColors(
+																				message,
+																				true)));
+								}
+						} else {
+							writeln(IRCd.serverMessagePrefix + " 401 " + nick
+									+ " " + split[1] + " :No such nick/channel");
+						}
+					}
+				}
+			} else {
+				writeln(IRCd.serverMessagePrefix + " 421 " + nick + " "
+						+ split[0] + " :Unknown command");
+			}
+		} else {
+			writeln(IRCd.serverMessagePrefix + " 451 " + split[0]
+					+ " :You have not registered");
+		}
+	}
+
+	public void sendWelcome() {
+		if ((IRCd.isBanned(nick + "!" + ident + "@" + hostmask))
+				|| (IRCd.isBanned(nick + "!" + ident + "@" + ipaddress))) {
+			writeln("ERROR :Closing Link: [" + ipaddress
+					+ "] (You are banned from this server)");
+			disconnect();
+			synchronized (IRCd.csStdOut) {
+				System.out.println("[BukkitIRCd] Cleaning up connection from "
+						+ getFullHost() + " (banned)");
+			}
+			if (isIdented && isNickSet)
+				IRCd.writeAll(":" + getFullHost()
+						+ " QUIT :You are banned from this server");
+			IRCd.removeIRCUser(nick, "Banned", true);
+		} else {
+			synchronized (IRCd.csStdOut) {
+				System.out.println("[BukkitIRCd] " + ipaddress
+						+ " registered as " + getFullHost());
+			}
+			Thread.currentThread().setName(
+					"Thread-BukkitIRCd-Connection-" + nick);
+			signonTime = System.currentTimeMillis() / 1000L;
+			writeln("PING :" + signonTime);
+			writeln(IRCd.serverMessagePrefix + " 001 " + nick
+					+ " :Welcome to the " + IRCd.serverName + " IRC network "
+					+ getFullHost());
+			writeln(IRCd.serverMessagePrefix + " 002 " + nick
+					+ " :Your host is " + IRCd.serverHostName
+					+ ", running version " + IRCd.version);
+			writeln(IRCd.serverMessagePrefix + " 003 " + nick
+					+ " :This server was created " + IRCd.serverCreationDate);
+			writeln(IRCd.serverMessagePrefix + " 004 " + nick + " :"
+					+ IRCd.serverHostName + " " + IRCd.version + " - -");
+			writeln(IRCd.serverMessagePrefix
+					+ " 005 "
+					+ nick
+					+ " NICKLEN="
+					+ (IRCd.nickLen + 1)
+					+ " CHANNELLEN=50 TOPICLEN=500 PREFIX=(qaohv)~&@%+ CHANTYPES=# CHANMODES=b,k,l,imt CASEMAPPING=ascii NETWORK="
+					+ IRCd.serverName + " :are supported by this server");
+			writeln(IRCd.serverMessagePrefix + " 251 " + nick + " :There are "
+					+ IRCd.getClientCount() + " users and 0 invisible on "
+					+ (IRCd.getServerCount() + 1) + " servers");
+			writeln(IRCd.serverMessagePrefix + " 252 " + nick + " "
+					+ IRCd.getOperCount() + " :operators online");
+			writeln(IRCd.serverMessagePrefix + " 254 " + nick
+					+ " 1 :channels formed");
+			writeln(IRCd.serverMessagePrefix + " 255 " + nick + " :I have "
+					+ IRCd.getClientCount() + " clients and "
+					+ IRCd.getServerCount() + " servers.");
+			writeln(IRCd.serverMessagePrefix + " 265 " + nick
+					+ " :Current local users: " + IRCd.getClientCount()
+					+ " Max: " + IRCd.maxConnections);
+			writeln(IRCd.serverMessagePrefix + " 266 " + nick
+					+ " :Current global users: "
+					+ (IRCd.getClientCount() + IRCd.getRemoteClientCount())
+					+ " Max: "
+					+ (IRCd.maxConnections + IRCd.getRemoteMaxConnections()));
+			sendMOTD();
+			if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
+				if (IRCd.msgIRCJoin.length() > 0)
+					BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(
+							IRCd.msgIRCJoin
+									.replace("%USER%", nick)
+									.replace("%SUFFIX%",
+											IRCd.getGroupSuffix(modes))
+									.replace("%PREFIX%",
+											IRCd.getGroupPrefix(modes)));
+				if ((BukkitIRCdPlugin.dynmap != null)
+						&& (IRCd.msgIRCJoinDynmap.length() > 0))
+					BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC",
+							IRCd.msgIRCJoinDynmap.replace("%USER%", nick));
+			}
+			sendChanWelcome(IRCd.channelName);
+		}
+	}
+
+	public void sendMOTD() {
+		writeln(IRCd.serverMessagePrefix + " 375 " + nick + " :"
+				+ IRCd.serverHostName + " Message of the Day");
+		for (String motdline : IRCd.MOTD) {
+			writeln(IRCd.serverMessagePrefix + " 372 " + nick + " :- "
+					+ motdline);
+		}
+		writeln(IRCd.serverMessagePrefix + " 376 " + nick
+				+ " :End of /MOTD command.");
+	}
+
+	public void sendWhois(String whoisUser) {
+		IRCUser ircuser;
+		BukkitPlayer bp;
+		if (whoisUser.equalsIgnoreCase(IRCd.serverName)) {
+			writeln(IRCd.serverMessagePrefix + " 311 " + nick + " "
+					+ IRCd.serverName + " " + IRCd.serverName + " "
+					+ IRCd.serverHostName + " * :" + IRCd.version);
+			if (isOper) {
+				writeln(IRCd.serverMessagePrefix + " 379 " + nick + " "
+						+ IRCd.serverName + " :is using modes +oS");
+				writeln(IRCd.serverMessagePrefix + " 378 " + nick + " "
+						+ IRCd.serverName + " :is connecting from *@"
+						+ IRCd.serverHostName + " 127.0.0.1");
+			}
+			writeln(IRCd.serverMessagePrefix + " 312 " + nick + " "
+					+ IRCd.serverName + " " + IRCd.serverHostName + " :"
+					+ IRCd.serverDescription);
+			writeln(IRCd.serverMessagePrefix + " 313 " + nick + " "
+					+ IRCd.serverName + " :Is a Network Service");
+			writeln(IRCd.serverMessagePrefix + " 318 " + nick + " "
+					+ IRCd.serverName + " :End of /WHOIS list.");
+
+		} else if ((ircuser = IRCd.getIRCUser(whoisUser)) != null) {
+			synchronized (IRCd.csIrcUsers) {
+				String cmodes;
+				String modes = ircuser.getModes();
+				if (modes.length() > 0)
+					cmodes = modes.substring(0, 1);
+				else
+					cmodes = "";
+				writeln(IRCd.serverMessagePrefix + " 311 " + nick + " "
+						+ ircuser.nick + " " + ircuser.ident + " "
+						+ ircuser.hostmask + " * :" + ircuser.realname);
+				if (isOper) {
+					if (ircuser.isOper)
+						writeln(IRCd.serverMessagePrefix + " 379 " + nick + " "
+								+ ircuser.nick + " :is using modes +o");
+					writeln(IRCd.serverMessagePrefix + " 378 " + nick + " "
+							+ ircuser.nick + " :is connecting from *@"
+							+ ircuser.realhost + " " + ircuser.ipaddress);
+				}
+				if (ircuser.isRegistered)
+					writeln(IRCd.serverMessagePrefix + " 307 " + nick + " "
+							+ ircuser.nick + " :is a registered nick");
+				writeln(IRCd.serverMessagePrefix + " 319 " + nick + " "
+						+ ircuser.nick + " :" + cmodes + IRCd.channelName);
+				writeln(IRCd.serverMessagePrefix + " 312 " + nick + " "
+						+ ircuser.nick + " " + IRCd.serverHostName + " :"
+						+ IRCd.serverDescription);
+				if (ircuser.awayMsg.length() > 0)
+					writeln(IRCd.serverMessagePrefix + " 301 " + nick + " "
+							+ ircuser.nick + " :" + ircuser.awayMsg);
+				if (ircuser.isOper)
+					writeln(IRCd.serverMessagePrefix + " 313 " + nick + " "
+							+ ircuser.nick + " :is an IRC Operator.");
+				if (ircuser.customWhois.length() > 0)
+					writeln(IRCd.serverMessagePrefix + " 320 " + nick + " "
+							+ ircuser.nick + " :" + ircuser.customWhois);
+				writeln(IRCd.serverMessagePrefix + " 317 " + nick + " "
+						+ ircuser.nick + " " + ircuser.getSecondsIdle() + " "
+						+ ircuser.signonTime + " :seconds idle, signon time");
+				writeln(IRCd.serverMessagePrefix + " 318 " + nick + " "
+						+ ircuser.nick + " :End of /WHOIS list.");
+			}
+		} else if ((bp = IRCd.getBukkitUserObject(whoisUser)) != null) {
+			if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
+				if ((IRCd.ingameSuffix.length() > 0)
+						&& (whoisUser.endsWith(IRCd.ingameSuffix)))
+					whoisUser.substring(0, whoisUser.length()
+							- IRCd.ingameSuffix.length());
+				else {
+				}
+				String bukkitversion = BukkitIRCdPlugin.thePlugin.getServer()
+						.getVersion();
+
+				String playermodes;
+				long playersignon;
+				long playeridle;
+				String playerident;
+				String playernick;
+				String playerhost;
+				String playerrealhost;
+				String playerip;
+				String playerworld;
+				boolean playerisoper;
+
+				String mode = bp.getMode();
+				if (mode.length() > 0)
+					playermodes = mode.substring(0, 1);
+				else
+					playermodes = "";
+				playersignon = bp.signedOn;
+				playeridle = (System.currentTimeMillis() - bp.idleTime) / 1000L;
+				playerident = bp.nick;
+				playernick = bp.nick + IRCd.ingameSuffix;
+				playerhost = bp.host;
+				playerrealhost = bp.realhost;
+				playerip = bp.ip;
+				playerworld = bp.world;
+				playerisoper = bp.hasPermission("bukkitircd.oper");
+
+				writeln(IRCd.serverMessagePrefix + " 311 " + nick + " "
+						+ playernick + " " + playerident + " " + playerhost
+						+ " " + " * :Minecraft Player");
+				if (isOper)
+					writeln(IRCd.serverMessagePrefix + " 378 " + nick + " "
+							+ playernick + " :is connecting from *@"
+							+ playerrealhost + " " + playerip);
+				writeln(IRCd.serverMessagePrefix + " 319 " + nick + " "
+						+ playernick + " :" + playermodes + IRCd.channelName);
+				writeln(IRCd.serverMessagePrefix + " 312 " + nick + " "
+						+ playernick + " " + IRCd.serverHostName + " :Bukkit "
+						+ bukkitversion);
+				if (playerisoper)
+					writeln(IRCd.serverMessagePrefix + " 313 " + nick + " "
+							+ playernick + " :is an IRC Operator.");
+				writeln(IRCd.serverMessagePrefix + " 320 " + nick + " "
+						+ playernick + " :is currently in " + playerworld);
+				writeln(IRCd.serverMessagePrefix + " 317 " + nick + " "
+						+ playernick + " " + playeridle + " " + playersignon
+						+ " :seconds idle, signon time");
+				writeln(IRCd.serverMessagePrefix + " 318 " + nick + " "
+						+ playernick + " :End of /WHOIS list.");
+			}
+		} else {
+			writeln(IRCd.serverMessagePrefix + " 401 " + nick + " " + whoisUser
+					+ " :No such nick/channel");
+			writeln(IRCd.serverMessagePrefix + " 318 " + nick + " " + whoisUser
+					+ " :End of /WHOIS list.");
+		}
+	}
+
+	public void sendChanWelcome(String channelName) {
+		if (channelName.equalsIgnoreCase(IRCd.consoleChannelName))
+			IRCd.writeOpers(":" + getFullHost() + " JOIN " + channelName);
+		else
+			IRCd.writeAll(":" + getFullHost() + " JOIN " + channelName);
+		sendChanTopic(channelName);
+		sendChanModes(channelName);
+		sendChanNames(channelName);
+	}
+
+	public boolean sendChanTopic(String channelName) {
+		String consoleChannelTopic = "BukkitIRCd console channel - prefix commands with ! instead of /";
+		if (IRCd.channelTopic.length() > 0) {
+			if (channelName.equalsIgnoreCase(IRCd.consoleChannelName)) {
+				writeln(IRCd.serverMessagePrefix + " 332 " + nick + " "
+						+ channelName + " :" + consoleChannelTopic);
+				try {
+					writeln(IRCd.serverMessagePrefix
+							+ " 333 "
+							+ nick
+							+ " "
+							+ channelName
+							+ " "
+							+ IRCd.serverName
+							+ " "
+							+ (IRCd.dateFormat.parse(IRCd.serverCreationDate)
+									.getTime() / 1000L));
+				} catch (ParseException e) {
+					writeln(IRCd.serverMessagePrefix + " 333 " + nick + " "
+							+ channelName + " " + IRCd.serverName + " "
+							+ (System.currentTimeMillis() / 1000L));
+				}
+			} else if (channelName.equalsIgnoreCase(IRCd.channelName)) {
+				writeln(IRCd.serverMessagePrefix + " 332 " + nick + " "
+						+ channelName + " :" + IRCd.channelTopic);
+				writeln(IRCd.serverMessagePrefix + " 333 " + nick + " "
+						+ channelName + " " + IRCd.channelTopicSet + " "
+						+ IRCd.channelTopicSetDate);
+			} else
+				return false;
+		}
+		return true;
+	}
+
+	public boolean sendChanModes(String channelName) {
+		if (IRCd.channelTopic.length() > 0) {
+			if (channelName.equals(IRCd.consoleChannelName))
+				writeln(IRCd.serverMessagePrefix + " 324 " + nick + " "
+						+ channelName + " +Ont");
+			else
+				writeln(IRCd.serverMessagePrefix + " 324 " + nick + " "
+						+ channelName + " +nt");
+			try {
+				writeln(IRCd.serverMessagePrefix
+						+ " 329 "
+						+ nick
+						+ " "
+						+ channelName
+						+ " "
+						+ ((IRCd.dateFormat.parse(IRCd.serverCreationDate)
+								.getTime()) / 1000));
+			} catch (ParseException e) {
+				writeln(IRCd.serverMessagePrefix + " 329 " + nick + " "
+						+ channelName + " "
+						+ (System.currentTimeMillis() / 1000L));
+			}
+		}
+		return true;
+	}
+
+	public boolean sendChanNames(String channelName) {
+		if (channelName.equalsIgnoreCase(IRCd.consoleChannelName))
+			writeln(IRCd.serverMessagePrefix + " 353 = " + nick + " "
+					+ channelName + " :~" + IRCd.serverName + " "
+					+ IRCd.getOpers());
+		else if (channelName.equalsIgnoreCase(IRCd.channelName))
+			writeln(IRCd.serverMessagePrefix + " 353 = " + nick + " "
+					+ channelName + " :~" + IRCd.serverName + " "
+					+ IRCd.getUsers());
+		else
+			return false;
+
+		writeln(IRCd.serverMessagePrefix + " 366 " + nick + " " + channelName
+				+ " :End of /NAMES list.");
+		return true;
+	}
+
+	public void sendWho(String pattern, boolean opersOnly) {
+		boolean addAll = (pattern.equalsIgnoreCase(IRCd.channelName))
+				|| (pattern.length() == 0);
+		if (pattern.equalsIgnoreCase(IRCd.consoleChannelName)) {
+			opersOnly = true;
+			addAll = true;
+		}
+
+		String channel = IRCd.channelName;
+		List<String> users = new ArrayList<String>();
+		synchronized (IRCd.csIrcUsers) {
+			for (IRCUser user : IRCd.getIRCUsers()) {
+				String onick = user.nick;
+				String ohost = user.hostmask;
+				String oident = user.ident;
+				String away = ((user.awayMsg.length() > 0) ? "G" : "H");
+				String oper = (user.isOper ? "*" : "");
+				String name = user.realname;
+
+				if ((opersOnly && user.isOper) || (!opersOnly)) {
+					if (addAll
+							|| IRCd.wildCardMatch(onick, pattern)
+							|| IRCd.wildCardMatch(onick + "!" + oident + "@"
+									+ ohost, pattern))
+						users.add(IRCd.serverMessagePrefix + " 352 " + nick
+								+ " " + channel + " " + oident + " " + ohost
+								+ " " + IRCd.serverHostName + " " + onick + " "
+								+ away + oper + " :0 " + name);
+				}
+			}
+		}
+		if (!opersOnly) {
+			synchronized (IRCd.csBukkitPlayers) {
+				for (BukkitPlayer bukkitPlayer : IRCd.bukkitPlayers) {
+					String onick = bukkitPlayer.nick + IRCd.ingameSuffix;
+					String ohost = bukkitPlayer.host;
+					String oident = bukkitPlayer.nick;
+					String name = bukkitPlayer.nick;
+					String away = "H";
+					String oper = "";
+
+					if (addAll
+							|| IRCd.wildCardMatch(onick, pattern)
+							|| IRCd.wildCardMatch(oident, pattern)
+							|| IRCd.wildCardMatch(onick + "!" + oident + "@"
+									+ ohost, pattern)
+							|| IRCd.wildCardMatch(oident + "!" + oident + "@"
+									+ ohost, pattern))
+						users.add(IRCd.serverMessagePrefix + " 352 " + nick
+								+ " " + channel + " " + oident + " " + ohost
+								+ " " + IRCd.serverHostName + " " + onick + " "
+								+ away + oper + " :0 " + name);
+				}
+			}
+		}
+		for (String line : users)
+			writeln(line);
+		writeln(IRCd.serverMessagePrefix + " 315 " + nick + " " + pattern
+				+ " :End of /WHO list.");
+	}
+
+	public boolean isConnected() {
+		boolean result;
+		result = server.isConnected();
+		return result;
+	}
+
+	public long getSecondsIdle() {
+		return (System.currentTimeMillis() - lastActivity) / 1000L;
+	}
+
+	public String getFullHost() {
+		return nick + "!" + ident + "@" + hostmask;
+	}
+
+	public boolean writeln(String line) {
+		if (server.isConnected()) {
+			synchronized (csWrite) {
+				out.println(line);
+				return true;
+			}
+		} else {
+			return false;
+		}
+	}
+
+	public boolean disconnect() {
+		if (server.isConnected()) {
+			try {
+				server.close();
+			} catch (IOException e) {
+				return false;
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	static class CriticalSection extends Object {
+	}
+
+	static public CriticalSection csWrite = new CriticalSection();
+
 }
