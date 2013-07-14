@@ -13,6 +13,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
+import com.Jdbye.BukkitIRCd.configuration.*;
+
 /**
  * Handle events for all Player related events
  * @author Jdbye
@@ -56,7 +58,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 		
 		if (split.length > 1){
 			
-			if (BukkitIRCdPlugin.kickCommands.contains(split[0].toLowerCase())){
+			if (Config.kickCommands.contains(split[0].toLowerCase())){
 			
 				//PlayerKickEvent does not give kicker, so we listen to kick commands instead
 					StringBuilder s = new StringBuilder(300);
@@ -188,7 +190,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 			}
 			
 			
-			if (BukkitIRCdPlugin.kickCommands.contains(split[0].substring(1).toLowerCase())){
+			if (Config.kickCommands.contains(split[0].substring(1).toLowerCase())){
 				//PlayerKickEvent does not give kicker, so we listen to kick commands instead
 				if (event.getPlayer().hasPermission("bukkitircd.kick")){
 					StringBuilder s = new StringBuilder(300);

@@ -85,7 +85,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
-@SuppressWarnings("unused")
+import com.Jdbye.BukkitIRCd.configuration.*;
+
 public class IRCd implements Runnable {
 
 	// Universal settings
@@ -104,7 +105,7 @@ public class IRCd implements Runnable {
 	public static boolean enableNotices = true;
 	public static boolean convertColorCodes = true;
 	public static boolean handleAmpersandColors = true;
-	public String modestr = "standalone";
+	public static String modestr = "standalone";
 	public static boolean stripIngameSuffix = true;
 	public static boolean redundantModes = false;
 	public static Modes mode;
@@ -2867,10 +2868,10 @@ public class IRCd implements Runnable {
 			channelTopicSet = user;
 		}
 		if ((isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
-			BukkitIRCdPlugin.ircd_topic = topic;
-			BukkitIRCdPlugin.ircd_topicsetdate = System.currentTimeMillis();
+			Config.ircd_topic = topic;
+			Config.ircd_topicsetdate = System.currentTimeMillis();
 			if (user.length() > 0) {
-				BukkitIRCdPlugin.ircd_topicsetby = user;
+				Config.ircd_topicsetby = user;
 			}
 		}
 
@@ -3480,9 +3481,9 @@ public class IRCd implements Runnable {
 				}
 				channelTopicSet = user;
 				if ((isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
-					BukkitIRCdPlugin.ircd_topic = topic;
-					BukkitIRCdPlugin.ircd_topicsetdate = channelTopicSetDate * 1000;
-					BukkitIRCdPlugin.ircd_topicsetby = user;
+					Config.ircd_topic = topic;
+					Config.ircd_topicsetdate = channelTopicSetDate * 1000;
+					Config.ircd_topicsetby = user;
 				}
 			} else if (split[2].equalsIgnoreCase(consoleChannelName)) {
 				// This is of no interest to us
@@ -3515,9 +3516,9 @@ public class IRCd implements Runnable {
 					channelTopicSetDate = System.currentTimeMillis() / 1000L;
 					channelTopicSet = user;
 					if ((isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
-						BukkitIRCdPlugin.ircd_topic = topic;
-						BukkitIRCdPlugin.ircd_topicsetdate = channelTopicSetDate * 1000;
-						BukkitIRCdPlugin.ircd_topicsetby = user;
+						Config.ircd_topic = topic;
+						Config.ircd_topicsetdate = channelTopicSetDate * 1000;
+						Config.ircd_topicsetby = user;
 					}
 				} else {
 					if (debugMode) {
