@@ -1,5 +1,6 @@
 package com.Jdbye.BukkitIRCd;
 
+import com.Jdbye.BukkitIRCd.configuration.Config;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -18,11 +19,11 @@ public class BukkitIRCdDynmapListener implements Listener {
 		
 			DynmapWebChatEvent webevt = (DynmapWebChatEvent) evt;
 			if (IRCd.mode == Modes.STANDALONE) {
-				IRCd.writeAll(":" + IRCd.serverName + "!" + IRCd.serverName + "@" + IRCd.serverHostName + " PRIVMSG " + IRCd.channelName + " :[DynMap] " + webevt.getName() + ": "+webevt.getMessage());
+				IRCd.writeAll(":" + Config.getIrcdServerName() + "!" + Config.getIrcdServerName() + "@" + Config.getIrcdServerHostName() + " PRIVMSG " + Config.getIrcdChannel() + " :[DynMap] " + webevt.getName() + ": "+webevt.getMessage());
 			}
 			else {
-				if (IRCd.linkcompleted) {
-					if (IRCd.msgDynmapMessage.length() > 0) IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + IRCd.channelName+" :" + IRCd.msgDynmapMessage.replace("{User}", webevt.getName()).replace("{Message}", webevt.getMessage()));
+				if (IRCd.isLinkcompleted()) {
+					if (IRCd.msgDynmapMessage.length() > 0) IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + Config.getIrcdChannel()+" :" + IRCd.msgDynmapMessage.replace("{User}", webevt.getName()).replace("{Message}", webevt.getMessage()));
 				}
 			}
 		} catch (Exception e) {
