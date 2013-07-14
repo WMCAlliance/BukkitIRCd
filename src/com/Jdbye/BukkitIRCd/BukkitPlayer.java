@@ -38,7 +38,7 @@ public class BukkitPlayer {
 	}
 
 	public boolean hasPermission(String permission) {
-		if (IRCd.isPlugin && (BukkitIRCdPlugin.thePlugin != null)) {
+		if (IRCd.isPlugin() && (BukkitIRCdPlugin.thePlugin != null)) {
 			Player p = BukkitIRCdPlugin.thePlugin.getServer().getPlayer(nick);
 			if (p != null) return BukkitIRCdPlugin.thePlugin.hasPermission(p, permission);
 		}
@@ -46,7 +46,7 @@ public class BukkitPlayer {
 	}
 
 	public String getWorld() {
-		if (IRCd.isPlugin && (BukkitIRCdPlugin.thePlugin != null)) {
+		if (IRCd.isPlugin() && (BukkitIRCdPlugin.thePlugin != null)) {
 			Player p = BukkitIRCdPlugin.thePlugin.getServer().getPlayer(nick);
 			if (p != null) return p.getWorld().getName();
 		}

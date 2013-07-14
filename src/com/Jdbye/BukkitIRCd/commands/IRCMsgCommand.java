@@ -1,16 +1,16 @@
 package com.Jdbye.BukkitIRCd.commands;
 
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
 import com.Jdbye.BukkitIRCd.BukkitPlayer;
 import com.Jdbye.BukkitIRCd.IRCUser;
 import com.Jdbye.BukkitIRCd.IRCd;
 import com.Jdbye.BukkitIRCd.Modes;
+import com.Jdbye.BukkitIRCd.configuration.Config;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class IRCMsgCommand implements CommandExecutor {
 
@@ -30,7 +30,7 @@ public class IRCMsgCommand implements CommandExecutor {
 									ircuser.nick,
 									":"
 											+ player.getName()
-											+ IRCd.ingameSuffix
+											+ Config.getIrcdIngameSuffix()
 											+ "!"
 											+ player.getName()
 											+ "@"
@@ -65,7 +65,7 @@ public class IRCMsgCommand implements CommandExecutor {
 									.getBukkitUserObject(player.getName())) != null) {
 								String UID = IRCd.getUIDFromIRCUser(ircuser);
 								if (UID != null) {
-									if (IRCd.linkcompleted) {
+									if (IRCd.isLinkcompleted()) {
 										IRCd.println(":"
 												+ bp.getUID()
 												+ " PRIVMSG "
@@ -133,11 +133,11 @@ public class IRCMsgCommand implements CommandExecutor {
 						IRCd.writeTo(
 								ircuser.nick,
 								":"
-										+ IRCd.serverName
+										+ Config.getIrcdServerName()
 										+ "!"
-										+ IRCd.serverName
+										+ Config.getIrcdServerName()
 										+ "@"
-										+ IRCd.serverHostName
+										+ Config.getIrcdServerHostName()
 										+ " PRIVMSG "
 										+ ircuser.nick
 										+ " :"
@@ -161,7 +161,7 @@ public class IRCMsgCommand implements CommandExecutor {
 					} else if (IRCd.mode == Modes.INSPIRCD) {
 						String UID = IRCd.getUIDFromIRCUser(ircuser);
 						if (UID != null) {
-							if (IRCd.linkcompleted) {
+							if (IRCd.isLinkcompleted()) {
 								IRCd.println(":"
 										+ IRCd.serverUID
 										+ " PRIVMSG "
