@@ -12,43 +12,39 @@ import com.Jdbye.BukkitIRCd.IRCd;
 
 public class IRCWhoisCommand implements CommandExecutor{
 
-	private BukkitIRCdPlugin thePlugin;
-
 	public IRCWhoisCommand(BukkitIRCdPlugin plugin) {
-		this.thePlugin = plugin;
 	}
+	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
 			String[] args) {
+
+		final boolean oper;
+
 		if (sender instanceof Player){
-			Player player = (Player) sender;
-			if (player.hasPermission("bukkitircd.whois")) {
-				if (args.length > 0) {
-					IRCUser ircuser = IRCd.getIRCUser(args[0]);
-					if (ircuser != null) {
-						String[] whois = IRCd.getIRCWhois(ircuser);
-						if (whois != null) {
-							for (String whoisline : whois) player.sendMessage(whoisline);
-						}
-					}
-					else { player.sendMessage(ChatColor.RED + "That user is not online."); }
-				}
-				else { player.sendMessage(ChatColor.RED + "Please provide a nickname."); return false; }		}
-			else {
+			final Player player = (Player) sender;
+			if (!player.hasPermission("bukkitircd.whois")) {
 				player.sendMessage(ChatColor.RED + "You don't have access to that command.");
+				return true;
 			}
-			return true;
-		}else{
-			if (args.length > 0) {
-				IRCUser ircuser = IRCd.getIRCUser(args[0]);
-				if (ircuser != null) {
-					String[] whois = IRCd.getIRCWhois(ircuser);
-					for (String whoisline : whois) sender.sendMessage(whoisline);
-				}
-				else { sender.sendMessage(ChatColor.RED + "That user is not online."); }
-			}
-			else { sender.sendMessage(ChatColor.RED + "Please provide a nickname."); return false; }		
-			return true;
+			oper = player.hasPermission("bukkitircd.oper");
+		} else {
+			oper = true;
 		}
+
+		if (args.length > 0) {
+			final IRCUser ircuser = IRCd.getIRCUser(args[0]);
+			if (ircuser != null) {
+				for (final String whoisline : IRCd.getIRCWhois(ircuser, oper)) {
+					sender.sendMessage(whoisline);
+				}
+			} else {
+				sender.sendMessage(ChatColor.RED + "That user is not online.");
+			}
+		} else {
+			sender.sendMessage(ChatColor.RED + "Please provide a nickname.");
+		}
+		return true;
+
 	}
 
 }
