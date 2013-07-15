@@ -2,7 +2,6 @@ package com.Jdbye.BukkitIRCd.configuration;
 
 import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
 import com.Jdbye.BukkitIRCd.Hash.*;
-import com.Jdbye.BukkitIRCd.HashType;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;

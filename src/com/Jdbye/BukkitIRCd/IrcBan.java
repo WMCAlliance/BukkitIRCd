@@ -8,6 +8,7 @@ public class IrcBan {
 		this.banTime = banTime;
 	}
 	
-	String fullHost = null, bannedBy = null;
-	long banTime = 0;
+	public String fullHost = null;
+	public String bannedBy = null;
+	public long banTime = 0;
 }
