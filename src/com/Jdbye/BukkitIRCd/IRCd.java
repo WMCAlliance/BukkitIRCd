@@ -4239,7 +4239,7 @@ public class IRCd implements Runnable {
 											// ,
 											// "&b" + "&r")
 											.replace(
-													"%MESSAGE%",
+													"{Message}",
 													IRCd.convertColors(
 															message,
 															true));

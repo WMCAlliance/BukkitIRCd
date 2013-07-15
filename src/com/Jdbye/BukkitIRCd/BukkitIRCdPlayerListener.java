@@ -134,7 +134,7 @@ public class BukkitIRCdPlayerListener implements Listener {
             	}
             	mode.append("+");
             }
-            if (!Config.isIrcdRedundantModes()){ //TODO Re-add mode.length() > 0 - not sure if that would be exactly the same here
+            if (!Config.isIrcdRedundantModes() && mode.length() > 0){ //TODO Re-add mode.length() > 0 - not sure if that would be exactly the same here
             	mode.delete(1, mode.length()); //Remove all but the mode powerful mode if redundant modes are not allowed
             }
             IRCd.addBukkitUser(mode.toString(),player);
