@@ -17,8 +17,7 @@ import java.util.Random;
  */
 public final class Config
 {
-    //private static final String HashType = null;
-	private static SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
+    private static SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
     private static String serverCreationDate = dateFormat.format(new Date());
     private static String ircdOperPass = "";  // caching only
     private static BukkitIRCdPlugin plugin = BukkitIRCdPlugin.thePlugin;
@@ -342,7 +341,7 @@ public final class Config
         }
         else if (!operpass.isEmpty())
         {
-            ircdOperPass = HashType.compute(operpass, HashType.SHA_512);
+            ircdOperPass = Hash.compute(operpass, HashType.SHA_512);
         }
         return ircdOperPass;
     }
