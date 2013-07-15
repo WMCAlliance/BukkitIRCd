@@ -341,7 +341,7 @@ public final class Config
         }
         else if (!operpass.isEmpty())
         {
-            ircdOperPass = Hash.compute(operpass, HashType.SHA_512);
+            ircdOperPass = HashType.compute(operpass, HashType.SHA_512);
         }
         return ircdOperPass;
     }
