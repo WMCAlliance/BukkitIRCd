@@ -19,7 +19,7 @@ import java.util.List;
  * @author Monofraps
  */
 public class ClientConnection implements Runnable {
-    private Socket server;
+    private final Socket server;
     private String line;
     public String nick, realname, ident, hostmask, ipaddress;
     public String modes = "";
@@ -27,6 +27,7 @@ public class ClientConnection implements Runnable {
     public boolean isIdented = false;
     public boolean isNickSet = false;
     public boolean isRegistered = false;
+	pubic String accountname = "";
     public boolean isOper = false;
     public String awayMsg = "";
     public long lastPingResponse;
