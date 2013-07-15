@@ -3,7 +3,7 @@ main: com.Jdbye.BukkitIRCd.BukkitIRCdPlugin
 version: 1.2
 dev-url: http://home.wizardcm.com:8080/job/BukkitIRCd
 website: http://wma.im
-authors: [Jdbye, WizardCM, Mu5tank05, glguy, Monofraps]
+authors: [Jdbye, WizardCM, Mu5tank05, glguy, Monofraps, ron975]
 description: Powerful IRC plugin for Bukkit. Can be used on its own or alongside an InspIRCd server.
 softdepend: [dynmap]
 commands:
