@@ -43,6 +43,11 @@ strip-ingame-suffix: true
 # Whether to strip suffixes or not
 redundant-modes: false
 # Add all applicable IRC modes or just one?
+use-host-mask: true
+# Whether to enable host masking
+host-mask-prefix: Minecraft-
+host-mask-suffix: .server.ip
+host-mask-key: 0x00000000
 standalone:
     port: 6667  # Port to use for the standalone IRC server.
     max-connections: 1000  # Max number of simultaneous connections.
