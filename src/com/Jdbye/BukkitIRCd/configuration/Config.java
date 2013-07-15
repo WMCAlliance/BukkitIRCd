@@ -591,6 +591,46 @@ public final class Config
         config.set("enable-raw-send", enableRawSend);
     }
 
+    public static String getHostMaskPrefix()
+    {
+        return config.getString("host-mask-prefix");
+    }
+
+    public static void setHostMaskPrefix(final String hostMaskPrefix)
+    {
+        config.set("host-mask-prefix", hostMaskPrefix);
+    }
+
+    public static String getHostMaskSuffix()
+    {
+        return config.getString("host-mask-suffix");
+    }
+
+    public static void setHostMaskSuffix(final String hostMaskSuffix)
+    {
+        config.set("host-mask-suffix", hostMaskSuffix);
+    }
+
+    public static String getHostMaskKey()
+    {
+        return config.getString("host-mask-key");
+    }
+
+    public static void setHostMaskKey(final String hostMaskKey)
+    {
+        config.set("host-mask-key", hostMaskKey);
+    }
+
+    public static boolean isUseHostMask()
+    {
+        return config.getBoolean("use-host-mask", false);
+    }
+
+    public static void setIsHostMask(final boolean useHostMask)
+    {
+        config.set("use-host-mask", useHostMask);
+    }
+
     public static BukkitIRCdPlugin getPlugin()
     {
         return plugin;

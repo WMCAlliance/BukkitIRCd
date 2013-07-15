@@ -191,7 +191,6 @@ public class IRCd implements Runnable {
 	public static BufferedReader in;
 	public static PrintStream out;
 	public static String channelName;
-	private static String maskKey;
 
 	public IRCd() {
 	}
@@ -1816,7 +1815,7 @@ public class IRCd implements Runnable {
 		final MessageDigest md = MessageDigest.getInstance("MD5");
 
 		md.update(itemId);
-		md.update(maskKey.getBytes());
+		md.update(Config.getHostMaskKey().getBytes());
 		md.update((byte)0);
 		md.update(item, 0, itemLen);
 
@@ -1833,12 +1832,11 @@ public class IRCd implements Runnable {
 	}
 
 	public static String maskHost(InetAddress ip) {
-		boolean useHostMask = true;
-		if (useHostMask ) {
+		if (Config.isUseHostMask()) {
 			final byte[] bytes = ip.getAddress();
 			try {
-				String maskPrefix = null;
-				String maskSuffix = null;
+				String maskPrefix = Config.getHostMaskPrefix();
+				String maskSuffix = Config.getHostMaskSuffix();
 				return maskPrefix + hashPart ((byte)10, bytes, 4, 3)
 						    + "." + hashPart ((byte)11, bytes, 3, 3)
 					        + "." + hashPart ((byte)13, bytes, 2, 6)
