@@ -17,7 +17,7 @@ import java.util.Random;
  */
 public final class Config
 {
-    private static final String HashType = null;
+    //private static final String HashType = null;
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
     private static String serverCreationDate = dateFormat.format(new Date());
     private static String ircdOperPass = "";  // caching only
