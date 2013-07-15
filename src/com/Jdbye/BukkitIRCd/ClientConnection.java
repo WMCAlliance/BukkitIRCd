@@ -27,7 +27,7 @@ public class ClientConnection implements Runnable {
     public boolean isIdented = false;
     public boolean isNickSet = false;
     public boolean isRegistered = false;
-	pubic String accountname = "";
+	public String accountname = "";
     public boolean isOper = false;
     public String awayMsg = "";
     public long lastPingResponse;
