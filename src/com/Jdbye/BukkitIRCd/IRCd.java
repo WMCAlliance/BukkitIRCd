@@ -140,7 +140,7 @@ public class IRCd implements Runnable {
 	public static HashMap<String, IRCServer> servers = new HashMap<String, IRCServer>();
 	public static UidGenerator ugen = new UidGenerator();
 	public static String serverUID;
-    private static boolean linkcompleted = false;
+    public static boolean linkcompleted = false;
     private static boolean burstSent = false, capabSent = false;
     private static boolean lastconnected = false;
     private static boolean isIncoming = false;
@@ -191,6 +191,7 @@ public class IRCd implements Runnable {
 
 	public static BufferedReader in;
 	public static PrintStream out;
+	public static String channelName;
 
 	public IRCd() {
 	}

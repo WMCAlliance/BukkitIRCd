@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 
 public class RawsendCommand implements CommandExecutor{
 
+	@SuppressWarnings("unused")
 	private BukkitIRCdPlugin thePlugin;
 
 	public RawsendCommand(BukkitIRCdPlugin plugin) {

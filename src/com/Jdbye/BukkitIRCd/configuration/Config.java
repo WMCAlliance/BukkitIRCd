@@ -1,8 +1,7 @@
 package com.Jdbye.BukkitIRCd.configuration;
 
 import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
-import com.Jdbye.BukkitIRCd.Hash;
-import com.Jdbye.BukkitIRCd.HashType;
+import com.Jdbye.BukkitIRCd.Hash.*;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
@@ -17,7 +16,8 @@ import java.util.Random;
  */
 public final class Config
 {
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
+    private static final String HashType = null;
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
     private static String serverCreationDate = dateFormat.format(new Date());
     private static String ircdOperPass = "";  // caching only
     private static BukkitIRCdPlugin plugin = BukkitIRCdPlugin.thePlugin;
