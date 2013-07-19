@@ -84,6 +84,7 @@ import org.bukkit.Server;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.scheduler.BukkitRunnable;
 
 @SuppressWarnings("unused")
 public class IRCd implements Runnable {
@@ -462,8 +463,7 @@ public class IRCd implements Runnable {
 								if ((IRCd.isPlugin)
 										&& (BukkitIRCdPlugin.thePlugin != null)) {
 									if (msgLinked.length() > 0)
-										BukkitIRCdPlugin.thePlugin.getServer()
-												.broadcastMessage(
+										IRCd.broadcastMessage(
 														msgLinked.replace(
 																"%LINKNAME%",
 																linkName));
@@ -553,8 +553,7 @@ public class IRCd implements Runnable {
 									&& (BukkitIRCdPlugin.thePlugin != null)
 									&& linkcompleted) {
 								if (msgDelinked.length() > 0)
-									BukkitIRCdPlugin.thePlugin.getServer()
-											.broadcastMessage(
+									IRCd.broadcastMessage(
 													msgDelinked.replace(
 															"%LINKNAME%",
 															linkName));
@@ -1044,9 +1043,7 @@ public class IRCd implements Runnable {
 										.removeLastReceivedFrom(processor.nick);
 								if (reason != null) {
 									if (msgIRCLeave.length() > 0)
-										BukkitIRCdPlugin.thePlugin
-												.getServer()
-												.broadcastMessage(
+										IRCd.broadcastMessage(
 														msgIRCLeaveReason
 																.replace(
 																		"%USER%",
@@ -1076,9 +1073,7 @@ public class IRCd implements Runnable {
 																		stripIRCFormatting(reason)));
 								} else {
 									if (msgIRCLeave.length() > 0)
-										BukkitIRCdPlugin.thePlugin
-												.getServer()
-												.broadcastMessage(
+										broadcastMessage(
 														msgIRCLeave
 																.replace(
 																		"%USER%",
@@ -1124,9 +1119,7 @@ public class IRCd implements Runnable {
 							BukkitIRCdPlugin.thePlugin
 									.removeLastReceivedFrom(processor.nick);
 							if (msgIRCLeave.length() > 0)
-								BukkitIRCdPlugin.thePlugin
-										.getServer()
-										.broadcastMessage(
+								broadcastMessage(
 												msgIRCLeave
 														.replace("%USER%",
 																processor.nick)
@@ -1171,9 +1164,7 @@ public class IRCd implements Runnable {
 					if (curUser.joined) {
 
 						if (msgIRCLeaveReason.length() > 0)
-							BukkitIRCdPlugin.thePlugin
-									.getServer()
-									.broadcastMessage(
+							broadcastMessage(
 											msgIRCLeaveReason
 													.replace("%USER%",
 															curUser.nick)
@@ -1261,9 +1252,7 @@ public class IRCd implements Runnable {
 									&& (BukkitIRCdPlugin.thePlugin != null)) {
 								if (reason != null) {
 									if (msgIRCKickReason.length() > 0)
-										BukkitIRCdPlugin.thePlugin
-												.getServer()
-												.broadcastMessage(
+										broadcastMessage(
 														msgIRCKickReason
 																.replace(
 																		"%KICKEDUSER%",
@@ -1311,9 +1300,7 @@ public class IRCd implements Runnable {
 																		stripIRCFormatting(reason)));
 								} else {
 									if (msgIRCKick.length() > 0)
-										BukkitIRCdPlugin.thePlugin
-												.getServer()
-												.broadcastMessage(
+										broadcastMessage(
 														msgIRCKick
 																.replace(
 																		"%KICKEDUSER%",
@@ -1430,9 +1417,7 @@ public class IRCd implements Runnable {
 							println(":" + sourceUID + " KICK " + channelName
 									+ " " + uid + " :" + reason);
 							if (msgIRCKickReason.length() > 0)
-								BukkitIRCdPlugin.thePlugin
-										.getServer()
-										.broadcastMessage(
+								broadcastMessage(
 												msgIRCKickReason
 														.replace(
 																"%KICKEDUSER%",
@@ -1482,9 +1467,7 @@ public class IRCd implements Runnable {
 							println(":" + sourceUID + " KICK " + channelName
 									+ " " + uid + " :" + kickedByNick);
 							if (msgIRCKick.length() > 0)
-								BukkitIRCdPlugin.thePlugin
-										.getServer()
-										.broadcastMessage(
+								broadcastMessage(
 												msgIRCKick
 														.replace(
 																"%KICKEDUSER%",
@@ -1589,9 +1572,7 @@ public class IRCd implements Runnable {
 							if ((isPlugin)
 									&& (BukkitIRCdPlugin.thePlugin != null)) {
 								if (msgIRCBan.length() > 0)
-									BukkitIRCdPlugin.thePlugin
-											.getServer()
-											.broadcastMessage(
+									broadcastMessage(
 													msgIRCBan
 															.replace(
 																	"%BANNEDUSER%",
@@ -2091,6 +2072,23 @@ public class IRCd implements Runnable {
 		} else
 			return false;
 	}
+
+	public static boolean broadcastMessage(final String msg) {
+		try {
+			if (bukkitServer != null) {
+				new BukkitRunnable() {
+                                        public void run() {
+                                                bukkitServer.broadcastMessage(msg);
+                                        }}
+					.runTaskLater(BukkitIRCdPlugin.thePlugin, 1L);
+				return true;
+			} else
+				return false;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 
 	/**
 	 * Kicks player synchronously
@@ -2963,9 +2961,7 @@ public class IRCd implements Runnable {
 					println(pre + "SQUIT " + SID + " :" + reason);
 					if (linkcompleted) {
 						if (msgDelinkedReason.length() > 0)
-							BukkitIRCdPlugin.thePlugin
-									.getServer()
-									.broadcastMessage(
+							broadcastMessage(
 											msgDelinkedReason
 													.replace("%LINKNAME%",
 															linkName)
@@ -3255,9 +3251,7 @@ public class IRCd implements Runnable {
 							if (!ircuser.joined) {
 
 								if (msgIRCJoin.length() > 0)
-									BukkitIRCdPlugin.thePlugin
-											.getServer()
-											.broadcastMessage(
+									broadcastMessage(
 													msgIRCJoin
 															.replace(
 																	"%USER%",
@@ -3426,9 +3420,7 @@ public class IRCd implements Runnable {
 								if ((ircuser = uid2ircuser.get(split[0])) != null) {
 									if (add) {
 										if (msgIRCBan.length() > 0)
-											BukkitIRCdPlugin.thePlugin
-													.getServer()
-													.broadcastMessage(
+											broadcastMessage(
 															msgIRCBan
 																	.replace(
 																			"%BANNEDUSER%",
@@ -3450,9 +3442,7 @@ public class IRCd implements Runnable {
 																			ircuser.nick));
 									} else {
 										if (msgIRCUnban.length() > 0)
-											BukkitIRCdPlugin.thePlugin
-													.getServer()
-													.broadcastMessage(
+											broadcastMessage(
 															msgIRCUnban
 																	.replace(
 																			"%BANNEDUSER%",
@@ -3602,9 +3592,7 @@ public class IRCd implements Runnable {
 				if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)
 						&& (ircuser.joined)) {
 					if (msgIRCNickChange.length() > 0)
-						BukkitIRCdPlugin.thePlugin
-								.getServer()
-								.broadcastMessage(
+						broadcastMessage(
 										msgIRCNickChange
 												.replace("%OLDNICK%",
 														ircuser.nick)
@@ -3730,9 +3718,7 @@ public class IRCd implements Runnable {
 									&& (BukkitIRCdPlugin.thePlugin != null)) {
 								if (reason != null) {
 									if (msgIRCKickReason.length() > 0)
-										BukkitIRCdPlugin.thePlugin
-												.getServer()
-												.broadcastMessage(
+										broadcastMessage(
 														msgIRCKickReason
 																.replace(
 																		"%KICKEDUSER%",
@@ -3790,9 +3776,7 @@ public class IRCd implements Runnable {
 																		IRCd.getGroupSuffix(modes)));
 								} else {
 									if (msgIRCKick.length() > 0)
-										BukkitIRCdPlugin.thePlugin
-												.getServer()
-												.broadcastMessage(
+										broadcastMessage(
 														msgIRCKick
 																.replace(
 																		"%KICKEDUSER%",
@@ -3885,9 +3869,7 @@ public class IRCd implements Runnable {
 						if (reason != null) {
 
 							if (msgIRCLeaveReason.length() > 0)
-								BukkitIRCdPlugin.thePlugin
-										.getServer()
-										.broadcastMessage(
+								broadcastMessage(
 												msgIRCLeaveReason
 														.replace("%USER%",
 																ircuser.nick)
@@ -3918,9 +3900,7 @@ public class IRCd implements Runnable {
 						} else {
 
 							if (msgIRCLeave.length() > 0)
-								BukkitIRCdPlugin.thePlugin
-										.getServer()
-										.broadcastMessage(
+								broadcastMessage(
 												msgIRCLeave
 														.replace("%USER%",
 																ircuser.nick)
@@ -3983,9 +3963,7 @@ public class IRCd implements Runnable {
 						if (reason != null) {
 
 							if (msgIRCLeaveReason.length() > 0)
-								BukkitIRCdPlugin.thePlugin
-										.getServer()
-										.broadcastMessage(
+								broadcastMessage(
 												msgIRCLeaveReason
 														.replace("%USER%",
 																ircuser.nick)
@@ -4016,9 +3994,7 @@ public class IRCd implements Runnable {
 						} else {
 
 							if (msgIRCLeave.length() > 0)
-								BukkitIRCdPlugin.thePlugin
-										.getServer()
-										.broadcastMessage(
+								broadcastMessage(
 												msgIRCLeave
 														.replace("%USER%",
 																ircuser.nick)
@@ -4135,9 +4111,7 @@ public class IRCd implements Runnable {
 						if (ircuser2.joined) {
 
 							if (msgIRCLeaveReason.length() > 0)
-								BukkitIRCdPlugin.thePlugin
-										.getServer()
-										.broadcastMessage(
+								broadcastMessage(
 												msgIRCLeaveReason
 														.replace("%USER%", user)
 														.replace(
@@ -4288,9 +4262,7 @@ public class IRCd implements Runnable {
 								msg = msg.replace(IRCd.ingameSuffix,"");
 							}
 
-									BukkitIRCdPlugin.thePlugin
-											.getServer()
-											.broadcastMessage(msg
+								broadcastMessage(msg
 													);}
 								if ((BukkitIRCdPlugin.dynmap != null)
 										&& (msgtemplatedynmap.length() > 0))
@@ -4613,9 +4585,7 @@ class ClientConnection implements Runnable {
 						if ((IRCd.isPlugin)
 								&& (BukkitIRCdPlugin.thePlugin != null)) {
 							if (IRCd.msgIRCNickChange.length() > 0)
-								BukkitIRCdPlugin.thePlugin
-										.getServer()
-										.broadcastMessage(
+								IRCd.broadcastMessage(
 												IRCd.msgIRCNickChange
 														.replace("%OLDNICK%",
 																nick)
@@ -4833,9 +4803,7 @@ class ClientConnection implements Runnable {
 												host = mask + "!*@*";
 											if (add == 1) {
 												if (IRCd.msgIRCBan.length() > 0)
-													BukkitIRCdPlugin.thePlugin
-															.getServer()
-															.broadcastMessage(
+													IRCd.broadcastMessage(
 																	IRCd.msgIRCBan
 																			.replace(
 																					"%BANNEDUSER%",
@@ -4860,9 +4828,7 @@ class ClientConnection implements Runnable {
 														getFullHost());
 											} else if (add == 0) {
 												if (IRCd.msgIRCUnban.length() > 0)
-													BukkitIRCdPlugin.thePlugin
-															.getServer()
-															.broadcastMessage(
+													IRCd.broadcastMessage(
 																	IRCd.msgIRCUnban
 																			.replace(
 																					"%BANNEDUSER%",
@@ -5004,7 +4970,7 @@ class ClientConnection implements Runnable {
 								if (p != null) {
 									if (reason != null) {
 										if (IRCd.msgIRCKickReason.length() > 0)
-											s.broadcastMessage(IRCd.msgIRCKickReason
+											IRCd.broadcastMessage(IRCd.msgIRCKickReason
 													.replace("%KICKEDUSER%",
 															bannick)
 													.replace("%KICKEDBY%", nick)
@@ -5021,7 +4987,7 @@ class ClientConnection implements Runnable {
 														+ IRCd.stripIRCFormatting(reason));
 									} else {
 										if (IRCd.msgIRCKick.length() > 0)
-											s.broadcastMessage(IRCd.msgIRCKick
+											IRCd.broadcastMessage(IRCd.msgIRCKick
 													.replace("%KICKEDUSER%",
 															bannick).replace(
 															"%KICKEDBY%", nick));
@@ -5236,9 +5202,7 @@ class ClientConnection implements Runnable {
 									if (isAction) {
 
 										if (IRCd.msgIRCAction.length() > 0)
-											BukkitIRCdPlugin.thePlugin
-													.getServer()
-													.broadcastMessage(
+											IRCd.broadcastMessage(
 															IRCd.msgIRCAction
 																	.replace(
 																			"%USER%",
@@ -5270,9 +5234,7 @@ class ClientConnection implements Runnable {
 									} else {
 
 										if (IRCd.msgIRCMessage.length() > 0)
-											BukkitIRCdPlugin.thePlugin
-													.getServer()
-													.broadcastMessage(
+											IRCd.broadcastMessage(
 															IRCd.msgIRCMessage
 																	.replace(
 																			"%USER%",
@@ -5475,9 +5437,7 @@ class ClientConnection implements Runnable {
 								&& (BukkitIRCdPlugin.thePlugin != null)) {
 							if ((!isCTCP) && IRCd.enableNotices) {
 								if (IRCd.msgIRCNotice.length() > 0)
-									BukkitIRCdPlugin.thePlugin
-											.getServer()
-											.broadcastMessage(
+									IRCd.broadcastMessage(
 													IRCd.msgIRCNotice
 															.replace("%USER%",
 																	nick)
@@ -5619,7 +5579,7 @@ class ClientConnection implements Runnable {
 			sendMOTD();
 			if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
 				if (IRCd.msgIRCJoin.length() > 0)
-					BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(
+					IRCd.broadcastMessage(
 							IRCd.msgIRCJoin
 									.replace("%USER%", nick)
 									.replace("%SUFFIX%",
