@@ -36,16 +36,16 @@ import java.util.logging.Logger;
  *
  * @author Jdbye
  */
- 
+
 public class BukkitIRCdPlugin extends JavaPlugin {
 	static class CriticalSection extends Object {
 	}
 	static public CriticalSection csLastReceived = new CriticalSection();
-	
+
 	private final BukkitIRCdPlayerListener playerListener = new BukkitIRCdPlayerListener(this);
 	private final BukkitIRCdServerListener serverListener = new BukkitIRCdServerListener(this);
 	private BukkitIRCdDynmapListener dynmapListener = null;
-	
+
 	public final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
 
 	public static BukkitIRCdPlugin thePlugin = null;
@@ -64,7 +64,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	public static final Logger log = Logger.getLogger("Minecraft");
 
 	public static DynmapAPI dynmap = null;
-	
+
 
 	static IRCd ircd = null;
 	private Thread thr = null;
@@ -72,15 +72,16 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	public BukkitIRCdPlugin() {
 		thePlugin = this;
 	}
-	
+
 	public static Config config = null;
+	@Override
 	public void onEnable() {
 		// Register our events
-		
+
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(this.playerListener, this);
 		pm.registerEvents(this.serverListener, this);
-		
+
 		PluginDescriptionFile pdfFile = getDescription();
 		ircdVersion = pdfFile.getName() + " " + pdfFile.getVersion() + " by " + pdfFile.getAuthors().get(0);
 		setupMetrics();
@@ -97,22 +98,23 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		getCommand("irclink").setExecutor(new IRCLinkCommand(this));
 		getCommand("ircreload").setExecutor(new IRCReloadCommand(this));
 		getCommand("rawsend").setExecutor(new RawsendCommand(this));
-		
+
 		log.info(ircdVersion + " is enabled!");
-		
+
 	}
-	
+
+	@Override
 	public void onDisable() {
 		if (ircd != null) {
 			ircd.running = false;
 			IRCd.disconnectAll();
-			ircd = null; 
+			ircd = null;
 		}
 		if (thr != null) {
 			thr.interrupt();
 			thr = null;
 		}
-	
+
 		dynmapEventRegistered = false;
 		//File configFile = new File(getDataFolder(), "config.yml");
 		Config.saveConfiguration();
@@ -128,43 +130,44 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			return false;
 		}
 	}
-	
+
 	private void pluginInit() {
 		pluginInit(false);
 	}
-	
+
 	public void pluginInit(boolean reload) {
 		if (reload) {
 			if (ircd != null) {
 				ircd.running = false;
 				IRCd.disconnectAll("Reloading configuration.");
-				ircd = null; 
+				ircd = null;
 			}
 			if (thr != null) {
 				thr.interrupt();
 				thr = null;
 			}
 		}
-		
+
 		Config.reloadConfiguration();
-		
+
 		Messages.saveMessages();
-		
+
 		Bans.enableBans();
-		
+
 		MOTD.enableMOTD();
 		MOTD.loadMOTD();
 
 		setupDynmap();
-		
+
 		ircd = new IRCd();
-		
+
 		Messages.loadMessages(ircd);
+		IRCd.bukkitversion = getServer().getVersion();
 
 		Bans.loadBans();
-		
+
 		IRCd.bukkitPlayers.clear();
-		
+
 		// Set players to different IRC modes based on permission
 		for (Player player : getServer().getOnlinePlayers()) {
 			StringBuffer mode = new StringBuffer();
@@ -210,8 +213,8 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	public void setDebugging(final Player player, final boolean value) {
 		debugees.put(player, value);
 	}
-	
-	
+
+
 	// check for Dynmap, and if it's installed, register events and hooks
 	private void setupDynmap() {
 		PluginManager pm = getServer().getPluginManager();
@@ -219,14 +222,14 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		if (BukkitIRCdPlugin.dynmap == null) {
 			if (plugin != null) {
 				if (dynmapListener == null) dynmapListener = new BukkitIRCdDynmapListener(this);
-				if (!dynmapEventRegistered) { 
+				if (!dynmapEventRegistered) {
 					pm.registerEvents(this.dynmapListener, this);
 				}
 				setupDynmap((DynmapAPI)plugin);
 			}
 		}
 	}
-	
+
 	public void setupDynmap(DynmapAPI plugin) {
 		if (plugin != null) {
 			dynmap = plugin;
@@ -241,7 +244,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 	}
 
-	
+
 	/**
      * Converts color codes to processed codes
      *
@@ -253,12 +256,12 @@ public class BukkitIRCdPlugin extends JavaPlugin {
         if (message == null) return null;
         return message.replaceAll("&([a-f0-9k-or])", "\u00a7$1");
     }
-	
-	
-   
+
+
+
 
 	// Load the bans file
-	
+
 
 
 
@@ -290,7 +293,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	{
 		List<String> update = new ArrayList<String>();
 		synchronized(csLastReceived) {
-			for (Map.Entry<String, String> lastReceivedEntry : lastReceived.entrySet()) { 
+			for (Map.Entry<String, String> lastReceivedEntry : lastReceived.entrySet()) {
 				if (lastReceivedEntry.getValue().equalsIgnoreCase(oldReceivedFrom)) update.add(lastReceivedEntry.getKey());
 			}
 			for (String toUpdate : update) lastReceived.put(toUpdate, newReceivedFrom);
@@ -322,7 +325,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			fromIndex = text.indexOf(search, fromIndex + ((count > 0) ? 1 : 0));
 		return count - 1;
 	}
-	
+
 	public static int[] convertStringArrayToIntArray(String[] sarray, int[] def) {
 		try {
 			if (sarray != null) {
@@ -335,7 +338,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		} catch (Exception e) { log.severe("[BukkitIRCd] Unable to parse string array " + IRCd.join(sarray, " ", 0) + ", invalid number. " + e); }
 		return def;
 	}
-	
+
 	/**
 	 * Setup PluginMetrics
 	 */

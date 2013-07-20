@@ -1,9 +1,6 @@
 package com.Jdbye.BukkitIRCd;
 
 import com.Jdbye.BukkitIRCd.configuration.Config;
-import org.bukkit.Server;
-import org.bukkit.entity.Player;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -45,7 +42,8 @@ public class ClientConnection implements Runnable {
         }
     }
 
-    public void run() {
+    @Override
+	public void run() {
         if (running) {
             try {
                 nick = "";
@@ -174,9 +172,7 @@ public class ClientConnection implements Runnable {
                         if ((IRCd.isPlugin())
                                 && (BukkitIRCdPlugin.thePlugin != null)) {
                             if (IRCd.msgIRCNickChange.length() > 0)
-                                BukkitIRCdPlugin.thePlugin
-                                        .getServer()
-                                        .broadcastMessage(
+                                IRCd.broadcastMessage(
                                                 IRCd.msgIRCNickChange
                                                         .replace("{OldNick}",
                                                                 nick)
@@ -394,9 +390,7 @@ public class ClientConnection implements Runnable {
                                                 host = mask + "!*@*";
                                             if (add == 1) {
                                                 if (IRCd.msgIRCBan.length() > 0)
-                                                    BukkitIRCdPlugin.thePlugin
-                                                            .getServer()
-                                                            .broadcastMessage(
+                                                    IRCd.broadcastMessage(
                                                                     IRCd.msgIRCBan
                                                                             .replace(
                                                                                     "{BannedUser}",
@@ -421,9 +415,7 @@ public class ClientConnection implements Runnable {
                                                         getFullHost());
                                             } else if (add == 0) {
                                                 if (IRCd.msgIRCUnban.length() > 0)
-                                                    BukkitIRCdPlugin.thePlugin
-                                                            .getServer()
-                                                            .broadcastMessage(
+                                                    IRCd.broadcastMessage(
                                                                     IRCd.msgIRCUnban
                                                                             .replace(
                                                                                     "{BannedUser}",
@@ -559,13 +551,10 @@ public class ClientConnection implements Runnable {
                                             bannick.length()
                                                     - Config.getIrcdIngameSuffix()
                                                     .length());
-                                Server s = BukkitIRCdPlugin.thePlugin
-                                        .getServer();
-                                Player p = s.getPlayer(bannick);
-                                if (p != null) {
+
                                     if (reason != null) {
                                         if (IRCd.msgIRCKickReason.length() > 0)
-                                            s.broadcastMessage(IRCd.msgIRCKickReason
+                                            IRCd.broadcastMessage(IRCd.msgIRCKickReason
                                                     .replace("{KickedUser}",
                                                             bannick)
                                                     .replace("{KickedBy}", nick)
@@ -574,22 +563,15 @@ public class ClientConnection implements Runnable {
                                                             IRCd.convertColors(
                                                                     reason,
                                                                     true)));
-                                        IRCd.kickPlayerIngame(
-                                                p,
-                                                "Kicked by "
-                                                        + nick
-                                                        + " on IRC: "
-                                                        + IRCd.stripIRCFormatting(reason));
+                                        IRCd.kickPlayerIngame(nick, bannick, IRCd.stripIRCFormatting(reason));
                                     } else {
                                         if (IRCd.msgIRCKick.length() > 0)
-                                            s.broadcastMessage(IRCd.msgIRCKick
+                                            IRCd.broadcastMessage(IRCd.msgIRCKick
                                                     .replace("{KickedUser}",
                                                             bannick).replace(
                                                             "{KickedBy}", nick));
-                                        IRCd.kickPlayerIngame(p, "Kicked by "
-                                                + nick + " on IRC");
+                                        IRCd.kickPlayerIngame(nick, bannick, null);
                                     }
-                                }
                             }
                         } else {
                             writeln(IRCd.serverMessagePrefix + " 401 " + nick
@@ -797,9 +779,7 @@ public class ClientConnection implements Runnable {
                                     if (isAction) {
 
                                         if (IRCd.msgIRCAction.length() > 0)
-                                            BukkitIRCdPlugin.thePlugin
-                                                    .getServer()
-                                                    .broadcastMessage(
+                                            IRCd.broadcastMessage(
                                                             IRCd.msgIRCAction
                                                                     .replace(
                                                                             "{User}",
@@ -831,9 +811,7 @@ public class ClientConnection implements Runnable {
                                     } else {
 
                                         if (IRCd.msgIRCMessage.length() > 0)
-                                            BukkitIRCdPlugin.thePlugin
-                                                    .getServer()
-                                                    .broadcastMessage(
+                                            IRCd.broadcastMessage(
                                                             IRCd.msgIRCMessage
                                                                     .replace(
                                                                             "{User}",
@@ -927,24 +905,7 @@ public class ClientConnection implements Runnable {
 
                                 if (message.startsWith("!")) {
                                     message = message.substring(1);
-                                    if (!IRCd.executeCommand(message)) {
-                                        IRCd.writeOpers(":"
-                                                + Config.getIrcdServerName()
-                                                + "!"
-                                                + Config.getIrcdServerName()
-                                                + "@"
-                                                + Config.getIrcdServerHostName()
-                                                + " PRIVMSG "
-                                                + Config.getIrcdConsoleChannel()
-                                                + " :Failed to execute command.");
-                                    } else {
-                                        IRCd.writeOpers(":" + Config.getIrcdServerName()
-                                                + "!" + Config.getIrcdServerName() + "@"
-                                                + Config.getIrcdServerHostName()
-                                                + " PRIVMSG "
-                                                + Config.getIrcdConsoleChannel()
-                                                + " :Command executed.");
-                                    }
+                                    IRCd.executeCommand(message);
                                 }
                             }
                         }
@@ -958,20 +919,12 @@ public class ClientConnection implements Runnable {
                             if ((isAction || (!isCTCP)) && (IRCd.isPlugin())
                                     && (BukkitIRCdPlugin.thePlugin != null)) {
                                 synchronized (IRCd.csBukkitPlayers) {
-                                    String bukkitnick = BukkitIRCdPlugin.thePlugin
-                                            .getServer()
-                                            .getPlayer(
-                                                    IRCd.bukkitPlayers
-                                                            .get(user).nick)
-                                            .getName();
+                                    String bukkitnick = IRCd.bukkitPlayers.get(user).nick;
                                     BukkitIRCdPlugin.thePlugin.setLastReceived(
                                             bukkitnick, nick);
                                     if (isAction) {
                                         if (IRCd.msgIRCPrivateAction.length() > 0)
-                                            BukkitIRCdPlugin.thePlugin
-                                                    .getServer()
-                                                    .getPlayer(bukkitnick)
-                                                    .sendMessage(
+                                            IRCd.sendMessage(bukkitnick,
                                                             IRCd.msgIRCPrivateAction
                                                                     .replace(
                                                                             "{User}",
@@ -989,10 +942,7 @@ public class ClientConnection implements Runnable {
                                                                                     true)));
                                     } else {
                                         if (IRCd.msgIRCPrivateMessage.length() > 0)
-                                            BukkitIRCdPlugin.thePlugin
-                                                    .getServer()
-                                                    .getPlayer(bukkitnick)
-                                                    .sendMessage(
+                                        	IRCd.sendMessage(bukkitnick,
                                                             IRCd.msgIRCPrivateMessage
                                                                     .replace(
                                                                             "{User}",
@@ -1036,9 +986,7 @@ public class ClientConnection implements Runnable {
                                 && (BukkitIRCdPlugin.thePlugin != null)) {
                             if ((!isCTCP) && Config.isIrcdNoticesEnabled()) {
                                 if (IRCd.msgIRCNotice.length() > 0)
-                                    BukkitIRCdPlugin.thePlugin
-                                            .getServer()
-                                            .broadcastMessage(
+                                    IRCd.broadcastMessage(
                                                     IRCd.msgIRCNotice
                                                             .replace("{User}",
                                                                     nick)
@@ -1081,12 +1029,7 @@ public class ClientConnection implements Runnable {
                                     && (!isCTCP) && (Config.isIrcdNoticesEnabled()))
                                 synchronized (IRCd.csBukkitPlayers) {
                                     if (IRCd.msgIRCPrivateMessage.length() > 0)
-                                        BukkitIRCdPlugin.thePlugin
-                                                .getServer()
-                                                .getPlayer(
-                                                        IRCd.bukkitPlayers
-                                                                .get(user).nick)
-                                                .sendMessage(
+                                        IRCd.sendMessage(IRCd.bukkitPlayers.get(user).nick,
                                                         IRCd.msgIRCPrivateAction
                                                                 .replace(
                                                                         "{User}",
@@ -1180,7 +1123,7 @@ public class ClientConnection implements Runnable {
             sendMOTD();
             if ((IRCd.isPlugin()) && (BukkitIRCdPlugin.thePlugin != null)) {
                 if (IRCd.msgIRCJoin.length() > 0)
-                    BukkitIRCdPlugin.thePlugin.getServer().broadcastMessage(
+                    IRCd.broadcastMessage(
                             IRCd.msgIRCJoin
                                     .replace("{User}", nick)
                                     .replace("{Suffix}",
@@ -1279,8 +1222,6 @@ public class ClientConnection implements Runnable {
                             - Config.getIrcdIngameSuffix().length());
                 else {
                 }
-                String bukkitversion = BukkitIRCdPlugin.thePlugin.getServer()
-                        .getVersion();
 
                 String playermodes;
                 long playersignon;
@@ -1317,7 +1258,7 @@ public class ClientConnection implements Runnable {
                         + playernick + " :" + playermodes + Config.getIrcdChannel());
                 writeln(IRCd.serverMessagePrefix + " 312 " + nick + " "
                         + playernick + " " + Config.getIrcdServerHostName() + " :Bukkit "
-                        + bukkitversion);
+                        + IRCd.bukkitversion);
                 if (playerisoper)
                     writeln(IRCd.serverMessagePrefix + " 313 " + nick + " "
                             + playernick + " :is an IRC Operator.");

@@ -17,6 +17,7 @@ public class IRCMsgCommand implements CommandExecutor {
 	public IRCMsgCommand(BukkitIRCdPlugin plugin) {
 	}
 
+	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
 			String[] args) {
 		if (sender instanceof Player) {
@@ -44,16 +45,16 @@ public class IRCMsgCommand implements CommandExecutor {
 													false));
 							player.sendMessage(IRCd.msgSendQueryFromIngame
 									.replace(
-											"%PREFIX%",
+											"{Prefix}",
 											IRCd.getGroupPrefix(ircuser
 													.getTextModes()))
 									.replace(
-											"%SUFFIX%",
+											"{Suffix}",
 											IRCd.getGroupSuffix(ircuser
 													.getTextModes()))
-									.replace("%USER%", ircuser.nick)
+									.replace("{User}", ircuser.nick)
 									.replace(
-											"%MESSAGE%",
+											"{Message}",
 											IRCd.convertColors(
 													IRCd.join(args, " ", 1),
 													false)));
@@ -76,16 +77,16 @@ public class IRCMsgCommand implements CommandExecutor {
 														false));
 										player.sendMessage(IRCd.msgSendQueryFromIngame
 												.replace(
-														"%PREFIX%",
+														"{Prefix}",
 														IRCd.getGroupPrefix(ircuser
 																.getTextModes()))
 												.replace(
-														"%SUFFIX%",
+														"{Suffix}",
 														IRCd.getGroupSuffix(ircuser
 																.getTextModes()))
-												.replace("%USER%", ircuser.nick)
+												.replace("{User}", ircuser.nick)
 												.replace(
-														"%MESSAGE%",
+														"{Message}",
 														IRCd.convertColors(
 																IRCd.join(args,
 																		" ", 1),
@@ -145,16 +146,16 @@ public class IRCMsgCommand implements CommandExecutor {
 												IRCd.join(args, " ", 1), false));
 						sender.sendMessage(IRCd.msgSendQueryFromIngame
 								.replace(
-										"%PREFIX%",
+										"{Prefix}",
 										IRCd.getGroupPrefix(ircuser
 												.getTextModes()))
 								.replace(
-										"%SUFFIX%",
+										"{Suffix}",
 										IRCd.getGroupSuffix(ircuser
 												.getTextModes()))
-								.replace("%USER%", ircuser.nick)
+								.replace("{User}", ircuser.nick)
 								.replace(
-										"%MESSAGE%",
+										"{Message}",
 										IRCd.convertColors(
 												IRCd.join(args, " ", 0), false)));
 						;
@@ -171,16 +172,16 @@ public class IRCMsgCommand implements CommandExecutor {
 												IRCd.join(args, " ", 1), false));
 								sender.sendMessage(IRCd.msgSendQueryFromIngame
 										.replace(
-												"%PREFIX%",
+												"{Prefix}",
 												IRCd.getGroupPrefix(ircuser
 														.getTextModes()))
 										.replace(
-												"%SUFFIX%",
+												"{Suffix}",
 												IRCd.getGroupSuffix(ircuser
 														.getTextModes()))
-										.replace("%USER%", ircuser.nick)
+										.replace("{User}", ircuser.nick)
 										.replace(
-												"%MESSAGE%",
+												"{Message}",
 												IRCd.convertColors(
 														IRCd.join(args, " ", 0),
 														false)));
