@@ -171,6 +171,7 @@ public class IRCd implements Runnable {
 	public static String msgDynmapMessage = "[Dynmap] %USER%: %MESSAGE%";
 	public static String msgPlayerList = "^BOnline Players (%COUNT%):^B %USERS%";
 
+	public static String bukkitVersion = "";
 	public static final long serverStartTime = System.currentTimeMillis() / 1000L;
 	public static long channelTS = serverStartTime,
 			consoleChannelTS = serverStartTime;
@@ -2077,10 +2078,11 @@ public class IRCd implements Runnable {
 		try {
 			if (bukkitServer != null) {
 				new BukkitRunnable() {
-                                        public void run() {
+                                        @Override
+										public void run() {
                                                 bukkitServer.broadcastMessage(msg);
                                         }}
-					.runTaskLater(BukkitIRCdPlugin.thePlugin, 1L);
+					.runTask(BukkitIRCdPlugin.thePlugin);
 				return true;
 			} else
 				return false;
@@ -2089,6 +2091,24 @@ public class IRCd implements Runnable {
 		}
 	}
 
+	public static boolean sendMessage(final String playerName, final String msg) {
+		try {
+			if (bukkitServer != null) {
+
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						final Player player = bukkitServer.getPlayer(playerName);
+						if (player != null) player.sendMessage(msg);
+					}}
+					.runTask(BukkitIRCdPlugin.thePlugin);
+				return true;
+			} else
+				return false;
+		} catch (Exception e) {
+			return false;
+		}
+	}
 
 	/**
 	 * Kicks player synchronously
@@ -2096,11 +2116,11 @@ public class IRCd implements Runnable {
 	 * @param player
 	 * @param reason
 	 */
-	public static void kickPlayerIngame(Player player, String kickReason) {
-		int IRCUser = getBukkitUser(player.getName());
+	public static void kickPlayerIngame(final String playerName, String kickReason) {
+		int IRCUser = getBukkitUser(playerName);
 		IRCd.kickBukkitUser(kickReason, IRCUser);
 		new BukkitKickRunnable(
-				BukkitIRCdPlugin.thePlugin, player, kickReason).runTaskLater(
+				BukkitIRCdPlugin.thePlugin, playerName, kickReason).runTaskLater(
 				BukkitIRCdPlugin.thePlugin, 1L);
 		IRCd.removeBukkitUser(IRCUser);
 	}
@@ -3658,16 +3678,12 @@ public class IRCd implements Runnable {
 						if ((bp = getBukkitUserByUID(split[3])) != null) {
 							if ((IRCd.isPlugin)
 									&& (BukkitIRCdPlugin.thePlugin != null)) {
-								Player p = BukkitIRCdPlugin.thePlugin
-										.getServer().getPlayer(bp.nick);
-								if (p != null) {
-									if (reason != null)
-										kickPlayerIngame(p, "Kicked by " + user
-												+ " on IRC: " + reason);
-									else
-										kickPlayerIngame(p, "Kicked by " + user
-												+ " on IRC");
-								}
+
+								if (reason != null)
+									kickPlayerIngame(bp.nick, "Kicked by " + user + " on IRC: " + reason);
+								else
+									kickPlayerIngame(bp.nick, "Kicked by " + user + " on IRC");
+
 								removeBukkitUserByUID(split[3]);
 							}
 						} else {
@@ -4365,14 +4381,11 @@ public class IRCd implements Runnable {
 							}
 
 							synchronized (IRCd.csBukkitPlayers) {
-								Player player = BukkitIRCdPlugin.thePlugin
-										.getServer().getPlayer(bp.nick);
-								String bukkitnick = player.getName();
-								BukkitIRCdPlugin.thePlugin.setLastReceived(
-										bukkitnick, ircuser.nick);
+								final String bukkitnick = bp.nick;
+								BukkitIRCdPlugin.thePlugin.setLastReceived(bukkitnick, ircuser.nick);
 
 								if (msgtemplate.length() > 0)
-									player.sendMessage(msgtemplate
+									sendMessage(bp.nick, msgtemplate
 											.replace("%USER%", ircuser.nick)
 											.replace(
 													"%SUFFIX%",
@@ -4964,10 +4977,8 @@ class ClientConnection implements Runnable {
 											bannick.length()
 													- IRCd.ingameSuffix
 															.length());
-								Server s = BukkitIRCdPlugin.thePlugin
-										.getServer();
-								Player p = s.getPlayer(bannick);
-								if (p != null) {
+
+
 									if (reason != null) {
 										if (IRCd.msgIRCKickReason.length() > 0)
 											IRCd.broadcastMessage(IRCd.msgIRCKickReason
@@ -4980,7 +4991,7 @@ class ClientConnection implements Runnable {
 																	reason,
 																	true)));
 										IRCd.kickPlayerIngame(
-												p,
+												bannick,
 												"Kicked by "
 														+ nick
 														+ " on IRC: "
@@ -4991,10 +5002,9 @@ class ClientConnection implements Runnable {
 													.replace("%KICKEDUSER%",
 															bannick).replace(
 															"%KICKEDBY%", nick));
-										IRCd.kickPlayerIngame(p, "Kicked by "
+										IRCd.kickPlayerIngame(bannick, "Kicked by "
 												+ nick + " on IRC");
 									}
-								}
 							}
 						} else {
 							writeln(IRCd.serverMessagePrefix + " 401 " + nick
@@ -5359,20 +5369,11 @@ class ClientConnection implements Runnable {
 							if ((isAction || (!isCTCP)) && (IRCd.isPlugin)
 									&& (BukkitIRCdPlugin.thePlugin != null)) {
 								synchronized (IRCd.csBukkitPlayers) {
-									String bukkitnick = BukkitIRCdPlugin.thePlugin
-											.getServer()
-											.getPlayer(
-													IRCd.bukkitPlayers
-															.get(user).nick)
-											.getName();
-									BukkitIRCdPlugin.thePlugin.setLastReceived(
-											bukkitnick, nick);
+									final String bukkitnick = IRCd.bukkitPlayers.get(user).nick;
+									BukkitIRCdPlugin.thePlugin.setLastReceived(bukkitnick, nick);
 									if (isAction) {
 										if (IRCd.msgIRCPrivateAction.length() > 0)
-											BukkitIRCdPlugin.thePlugin
-													.getServer()
-													.getPlayer(bukkitnick)
-													.sendMessage(
+											IRCd.sendMessage(bukkitnick,
 															IRCd.msgIRCPrivateAction
 																	.replace(
 																			"%USER%",
@@ -5390,10 +5391,7 @@ class ClientConnection implements Runnable {
 																					true)));
 									} else {
 										if (IRCd.msgIRCPrivateMessage.length() > 0)
-											BukkitIRCdPlugin.thePlugin
-													.getServer()
-													.getPlayer(bukkitnick)
-													.sendMessage(
+											IRCd.sendMessage(bukkitnick,
 															IRCd.msgIRCPrivateMessage
 																	.replace(
 																			"%USER%",
@@ -5480,12 +5478,9 @@ class ClientConnection implements Runnable {
 									&& (!isCTCP) && (IRCd.enableNotices))
 								synchronized (IRCd.csBukkitPlayers) {
 									if (IRCd.msgIRCPrivateMessage.length() > 0)
-										BukkitIRCdPlugin.thePlugin
-												.getServer()
-												.getPlayer(
+										IRCd.sendMessage(
 														IRCd.bukkitPlayers
-																.get(user).nick)
-												.sendMessage(
+																.get(user).nick,
 														IRCd.msgIRCPrivateAction
 																.replace(
 																		"%USER%",
@@ -5678,21 +5673,20 @@ class ClientConnection implements Runnable {
 							- IRCd.ingameSuffix.length());
 				else {
 				}
-				String bukkitversion = BukkitIRCdPlugin.thePlugin.getServer()
-						.getVersion();
+				final String bukkitversion = IRCd.bukkitVersion;
 
-				String playermodes;
-				long playersignon;
-				long playeridle;
-				String playerident;
-				String playernick;
-				String playerhost;
-				String playerrealhost;
-				String playerip;
-				String playerworld;
-				boolean playerisoper;
+				final String playermodes;
+				final long playersignon;
+				final long playeridle;
+				final String playerident;
+				final String playernick;
+				final String playerhost;
+				final String playerrealhost;
+				final String playerip;
+				final String playerworld;
+				final boolean playerisoper;
 
-				String mode = bp.getMode();
+				final String mode = bp.getMode();
 				if (mode.length() > 0)
 					playermodes = mode.substring(0, 1);
 				else

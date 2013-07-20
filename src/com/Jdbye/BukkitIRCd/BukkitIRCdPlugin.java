@@ -33,16 +33,16 @@ import com.Jdbye.BukkitIRCd.commands.*;
  *
  * @author Jdbye
  */
- 
+
 public class BukkitIRCdPlugin extends JavaPlugin {
 	static class CriticalSection extends Object {
 	}
 	static public CriticalSection csLastReceived = new CriticalSection();
-	
+
 	private final BukkitIRCdPlayerListener playerListener = new BukkitIRCdPlayerListener(this);
 	private final BukkitIRCdServerListener serverListener = new BukkitIRCdServerListener(this);
 	private BukkitIRCdDynmapListener dynmapListener = null;
-	
+
 	private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
 
 	private String mode = "standalone";
@@ -86,7 +86,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	public static boolean debugmode = false;
 	public boolean dynmapEventRegistered = false;
 	private boolean ircd_strip_ingame_suffix = true;
-	
+
 	public static String link_remotehost = "localhost";
 	public static int link_remoteport = 7000;
 	public static int link_localport = 7000;
@@ -120,12 +120,13 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		thePlugin = this;
 	}
 
+	@Override
 	public void onEnable() {
 		// Register our events
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(this.playerListener, this);
 		pm.registerEvents(this.serverListener, this);
-		
+
 		PluginDescriptionFile pdfFile = getDescription();
 		ircd_version = pdfFile.getName() + " " + pdfFile.getVersion() + " by " + pdfFile.getAuthors().get(0);
 		setupMetrics();
@@ -142,16 +143,17 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		getCommand("irclink").setExecutor(new IRCLinkCommand(this));
 		getCommand("ircreload").setExecutor(new IRCReloadCommand(this));
 		getCommand("rawsend").setExecutor(new RawsendCommand(this));
-		
+
 		log.info(ircd_version + " is enabled!");
-		
+
 	}
-	
+
+	@Override
 	public void onDisable() {
 		if (ircd != null) {
 			ircd.running = false;
 			IRCd.disconnectAll();
-			ircd = null; 
+			ircd = null;
 		}
 		if (thr != null) {
 			thr.interrupt();
@@ -173,24 +175,24 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			return false;
 		}
 	}
-	
+
 	private void pluginInit() {
 		pluginInit(false);
 	}
-	
+
 	public void pluginInit(boolean reload) {
 		if (reload) {
 			if (ircd != null) {
 				ircd.running = false;
 				IRCd.disconnectAll("Reloading configuration.");
-				ircd = null; 
+				ircd = null;
 			}
 			if (thr != null) {
 				thr.interrupt();
 				thr = null;
 			}
 		}
-		
+
 		reloadConfig();
 		config = getConfig();
 		// Create default config.yml if it doesn't exist.
@@ -199,7 +201,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 		config.options().copyDefaults(true);
 		loadSettings();
-		
+
 		// Create default messages.yml if it doesn't exist.
 		File messagesFile = new File(getDataFolder(), "messages.yml");
 		messages = YamlConfiguration.loadConfiguration(messagesFile);
@@ -208,10 +210,10 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			messages.options().copyDefaults(true);
 			saveDefaultMessages(getDataFolder(),"messages.yml");
 			log.info("[BukkitIRCd] Saving initial messages file." + (IRCd.debugMode ? " Code BukkitIRCdPlugin194." : ""));
-			
+
 		}
 		messages.options().copyDefaults(true);
-		
+
 
 		if (!(new File(getDataFolder(), "motd.txt")).exists()) {
 			saveDefaultMOTD(getDataFolder(),"motd.txt");
@@ -225,9 +227,9 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 
 		setupDynmap();
-		
+
 		ircd = new IRCd();
-		
+
 		loadMessages(ircd);
 		IRCd.redundantModes = ircd_redundant_modes;
 		IRCd.port = ircd_port;
@@ -281,6 +283,8 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		IRCd.maskPrefix = mask_prefix;
 		IRCd.maskSuffix = mask_suffix;
 
+		IRCd.bukkitVersion = getServer().getVersion();
+
 		loadBans();
 		IRCd.bukkitPlayers.clear();
 
@@ -329,8 +333,8 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	public void setDebugging(final Player player, final boolean value) {
 		debugees.put(player, value);
 	}
-	
-	
+
+
 	// check for Dynmap, and if it's installed, register events and hooks
 	private void setupDynmap() {
 		PluginManager pm = getServer().getPluginManager();
@@ -338,14 +342,14 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		if (BukkitIRCdPlugin.dynmap == null) {
 			if (plugin != null) {
 				if (dynmapListener == null) dynmapListener = new BukkitIRCdDynmapListener(this);
-				if (!dynmapEventRegistered) { 
+				if (!dynmapEventRegistered) {
 					pm.registerEvents(this.dynmapListener, this);
 				}
 				setupDynmap((DynmapAPI)plugin);
 			}
 		}
 	}
-	
+
 	public void setupDynmap(DynmapAPI plugin) {
 		if (plugin != null) {
 			dynmap = plugin;
@@ -385,7 +389,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			kickCommands = config.getStringList("kick-commands");
 
 			String operpass = "";
-			
+
 			ircd_port = config.getInt("standalone.port", ircd_port);
 			ircd_maxconn = config.getInt("standalone.max-connections", ircd_maxconn);
 			ircd_pinginterval = config.getInt("standalone.ping-interval", ircd_pinginterval);
@@ -445,22 +449,22 @@ public class BukkitIRCdPlugin extends JavaPlugin {
         if (message == null) return null;
         return message.replaceAll("&([a-f0-9k-or])", "\u00a7$1");
     }
-	
+
 	// Load the messages from messages.yml
 	private void loadMessages(IRCd ircd) {
 		try {
 			IRCd.msgLinked = messages.getString("linked", IRCd.msgLinked);
-			
+
 			IRCd.msgSendQueryFromIngame = messages.getString("irc-send-pm", IRCd.msgSendQueryFromIngame);
 			IRCd.msgDelinked = messages.getString("delinked", IRCd.msgDelinked);
 			IRCd.msgDelinkedReason = messages.getString("delinked-reason", IRCd.msgDelinkedReason);
-			
+
 			IRCd.msgIRCJoin = messages.getString("irc-join", IRCd.msgIRCJoin);
 			IRCd.msgIRCJoinDynmap = messages.getString("irc-join-dynmap", IRCd.msgIRCJoinDynmap);
 
 			IRCd.groupPrefixes = messages.getConfigurationSection("group-prefixes");
 			IRCd.groupSuffixes = messages.getConfigurationSection("group-suffixes");
-			
+
 			IRCd.msgIRCLeave = messages.getString("irc-leave", IRCd.msgIRCLeave);
 			IRCd.msgIRCLeaveReason = messages.getString("irc-leave-reason", IRCd.msgIRCLeaveReason);
 			IRCd.msgIRCLeaveDynmap = messages.getString("irc-leave-dynmap", IRCd.msgIRCLeaveDynmap);
@@ -494,10 +498,10 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 			IRCd.msgDynmapMessage = messages.getString("dynmap-message", IRCd.msgDynmapMessage);
 			IRCd.msgPlayerList = messages.getString("player-list", IRCd.msgPlayerList);
-			
+
 			IRCd.consoleFilters = messages.getStringList("console-filters");
 			//** RECOLOUR ALL MESSAGES **
-			
+
 			IRCd.msgSendQueryFromIngame = colorize(IRCd.msgSendQueryFromIngame);
 			IRCd.msgLinked = colorize(IRCd.msgLinked);
 			IRCd.msgDelinked = colorize(IRCd.msgDelinked);
@@ -557,7 +561,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 		writeSettings(configFile);
 	}
-	
+
 	// Set up the MOTD for the standalone BukkitIRCd server
 	private void loadMOTD() {
 		File motdFile = new File(getDataFolder(), "motd.txt");
@@ -721,7 +725,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			bufferWriter.newLine();
 			bufferWriter.append("");
 			bufferWriter.newLine();
-			bufferWriter.append("_________        __    __   .__        ___________  _____     _"); 
+			bufferWriter.append("_________        __    __   .__        ___________  _____     _");
 			bufferWriter.newLine();
 			bufferWriter.append("\\______  \\___ __|  |  |  |  |__| __   |_   _| ___ \\/  __ \\   | |");
 			bufferWriter.newLine();
@@ -769,7 +773,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			}
 		}
 	}
-	
+
 	// Was also disabled, I'd like to know why
 	private void saveDefaultMessages(File dataFolder, String fileName)
 	{
@@ -789,8 +793,8 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 		writeMessages(msgFile);
 	}
-	
-	
+
+
 	private void writeMessages(File messagesFile)
 	{
 		try
@@ -848,7 +852,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	{
 		List<String> update = new ArrayList<String>();
 		synchronized(csLastReceived) {
-			for (Map.Entry<String, String> lastReceivedEntry : lastReceived.entrySet()) { 
+			for (Map.Entry<String, String> lastReceivedEntry : lastReceived.entrySet()) {
 				if (lastReceivedEntry.getValue().equalsIgnoreCase(oldReceivedFrom)) update.add(lastReceivedEntry.getKey());
 			}
 			for (String toUpdate : update) lastReceived.put(toUpdate, newReceivedFrom);
@@ -880,7 +884,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			fromIndex = text.indexOf(search, fromIndex + ((count > 0) ? 1 : 0));
 		return count - 1;
 	}
-	
+
 	public int[] convertStringArrayToIntArray(String[] sarray, int[] def) {
 		try {
 			if (sarray != null) {
@@ -893,7 +897,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		} catch (Exception e) { log.severe("[BukkitIRCd] Unable to parse string array " + IRCd.join(sarray, " ", 0) + ", invalid number. " + e); }
 		return def;
 	}
-	
+
 	/**
 	 * Setup PluginMetrics
 	 */
