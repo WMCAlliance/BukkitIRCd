@@ -2039,10 +2039,22 @@ public class IRCd implements Runnable {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				final Player player = Bukkit.getServer().getPlayer(kickee);
+				final Server server = Bukkit.getServer();
+				final Player player = server.getPlayer(kickee);
 				if (player != null) {
-					final String kickText;
 
+					if (kickReason == null) {
+						server.broadcastMessage(msgIRCKick
+								.replace("{KickedBy}", kicker)
+								.replace("{KickedUser}",player.getDisplayName()));
+					} else {
+						server.broadcastMessage(msgIRCKickReason
+								.replace("{KickedBy}", kicker)
+								.replace("{KickedUser}",player.getDisplayName())
+								.replace("{Reason}", kickReason));
+					}
+
+					final String kickText;
 					if (kickReason == null) {
 						kickText = "Kicked by " + kicker;
 					} else {

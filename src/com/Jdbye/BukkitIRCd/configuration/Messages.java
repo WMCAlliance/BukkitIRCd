@@ -11,8 +11,8 @@ import java.io.IOException;
 
 public class Messages extends JavaPlugin {
 	public static FileConfiguration messages;
-	
-	
+
+
 	public static void saveMessages() {
 		File messagesFile = new File(BukkitIRCdPlugin.thePlugin.getDataFolder(), "messages.yml");
 		Messages.messages = YamlConfiguration.loadConfiguration(messagesFile);
@@ -21,29 +21,29 @@ public class Messages extends JavaPlugin {
 			messages.options().copyDefaults(true);
 			saveDefaultMessages(BukkitIRCdPlugin.thePlugin.getDataFolder(),"messages.yml");
 			BukkitIRCdPlugin.log.info("[BukkitIRCd] Saving initial messages file." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin194." : ""));
-			
+
 		}
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	// Load the messages from messages.yml
 	public static void loadMessages(IRCd ircd) {
 		try {
 			IRCd.msgLinked = messages.getString("linked", IRCd.msgLinked);
-			
+
 			IRCd.msgSendQueryFromIngame = messages.getString("irc-send-pm", IRCd.msgSendQueryFromIngame);
 			IRCd.msgDelinked = messages.getString("delinked", IRCd.msgDelinked);
 			IRCd.msgDelinkedReason = messages.getString("delinked-reason", IRCd.msgDelinkedReason);
-			
+
 			IRCd.msgIRCJoin = messages.getString("irc-join", IRCd.msgIRCJoin);
 			IRCd.msgIRCJoinDynmap = messages.getString("irc-join-dynmap", IRCd.msgIRCJoinDynmap);
 
 			IRCd.groupPrefixes = messages.getConfigurationSection("group-prefixes");
 			IRCd.groupSuffixes = messages.getConfigurationSection("group-suffixes");
-			
+
 			IRCd.msgIRCLeave = messages.getString("irc-leave", IRCd.msgIRCLeave);
 			IRCd.msgIRCLeaveReason = messages.getString("irc-leave-reason", IRCd.msgIRCLeaveReason);
 			IRCd.msgIRCLeaveDynmap = messages.getString("irc-leave-dynmap", IRCd.msgIRCLeaveDynmap);
@@ -77,10 +77,10 @@ public class Messages extends JavaPlugin {
 
 			IRCd.msgDynmapMessage = messages.getString("dynmap-message", IRCd.msgDynmapMessage);
 			IRCd.msgPlayerList = messages.getString("player-list", IRCd.msgPlayerList);
-			
+
 			IRCd.consoleFilters = messages.getStringList("console-filters");
 			//** RECOLOUR ALL MESSAGES **
-			
+
 			IRCd.msgSendQueryFromIngame = BukkitIRCdPlugin.colorize(IRCd.msgSendQueryFromIngame);
 			IRCd.msgLinked = BukkitIRCdPlugin.colorize(IRCd.msgLinked);
 			IRCd.msgDelinked = BukkitIRCdPlugin.colorize(IRCd.msgDelinked);
@@ -119,7 +119,7 @@ public class Messages extends JavaPlugin {
 			BukkitIRCdPlugin.log.info("[BukkitIRCd] Failed to load messages file: " + e.toString());
 		}
 	}
-	
+
 	private static void saveDefaultMessages(File dataFolder, String fileName)
 	{
 		BukkitIRCdPlugin.log.info("[BukkitIRCd] Messages file not found, creating new one." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin705" : ""));
@@ -141,7 +141,7 @@ public class Messages extends JavaPlugin {
 
 		writeMessages(msgFile);
 	}
-	
+
 	private static void writeMessages(File messagesFile)
 	{
 		try
@@ -156,5 +156,5 @@ public class Messages extends JavaPlugin {
 		}
 	}
 
-	
+
 }
