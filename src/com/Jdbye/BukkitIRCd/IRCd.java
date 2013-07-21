@@ -2945,6 +2945,27 @@ public class IRCd implements Runnable {
 		}
 	}
 
+	/**
+	 *
+	 * @param source UID of sender
+	 * @param target name of target
+	 * @param message message to send encoded with IRC colors
+	 */
+	public static void privmsg(final String source, final String target, final String message) {
+		IRCd.println(":" + source + " PRIVMSG " + target + " :" + message);
+	}
+
+	/**
+	 *
+	 * @param source UID of sender
+	 * @param target name of target
+	 * @param message message to send with IRC colors
+	 */
+	public static void action(final String source, final String target, final String message) {
+		final String action = (char)1 + "ACTION " + message + (char)1;
+		IRCd.privmsg(source, target, action);
+	}
+
 	public static void disconnectServer(String reason) {
 		if (reason == null)
 			reason = "Disabling Plugin";
