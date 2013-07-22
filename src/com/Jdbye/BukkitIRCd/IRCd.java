@@ -215,10 +215,7 @@ public class IRCd implements Runnable {
 				}
 
 				serverMessagePrefix = ":" + Config.getIrcdServerHostName();
-                if (Config.getMode().equalsIgnoreCase("unreal")
-						|| Config.getMode().equalsIgnoreCase("unrealircd"))
-					mode = Modes.UNREALIRCD;
-				else if (Config.getMode().equalsIgnoreCase("inspire")
+				if (Config.getMode().equalsIgnoreCase("inspire")
 						|| Config.getMode().equalsIgnoreCase("inspircd"))
 					mode = Modes.INSPIRCD;
 				else
@@ -2267,15 +2264,18 @@ public class IRCd implements Runnable {
 
 	public static void disconnectAll(String reason) {
 		synchronized (csIrcUsers) {
-			if (mode == Modes.STANDALONE) {
+			switch (mode) {
+			case STANDALONE:
 				try {
 					listener.close();
 					listener = null;
 				} catch (IOException e) {
 				}
 				removeIRCUsers();
-			} else if ((mode == Modes.INSPIRCD) || (mode == Modes.UNREALIRCD)) {
+				break;
+			case INSPIRCD:
 				disconnectServer(reason);
+				break;
 			}
 		}
 	}
@@ -2943,6 +2943,27 @@ public class IRCd implements Runnable {
 			out.println(line);
 			return true;
 		}
+	}
+
+	/**
+	 *
+	 * @param source UID of sender
+	 * @param target name of target
+	 * @param message message to send encoded with IRC colors
+	 */
+	public static void privmsg(final String source, final String target, final String message) {
+		IRCd.println(":" + source + " PRIVMSG " + target + " :" + message);
+	}
+
+	/**
+	 *
+	 * @param source UID of sender
+	 * @param target name of target
+	 * @param message message to send with IRC colors
+	 */
+	public static void action(final String source, final String target, final String message) {
+		final String action = (char)1 + "ACTION " + message + (char)1;
+		IRCd.privmsg(source, target, action);
 	}
 
 	public static void disconnectServer(String reason) {

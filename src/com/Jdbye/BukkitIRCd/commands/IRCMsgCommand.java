@@ -67,14 +67,8 @@ public class IRCMsgCommand implements CommandExecutor {
 								String UID = IRCd.getUIDFromIRCUser(ircuser);
 								if (UID != null) {
 									if (IRCd.isLinkcompleted()) {
-										IRCd.println(":"
-												+ bp.getUID()
-												+ " PRIVMSG "
-												+ UID
-												+ " :"
-												+ IRCd.convertColors(
-														IRCd.join(args, " ", 1),
-														false));
+										IRCd.privmsg(bp.getUID(), UID, IRCd.convertColors(IRCd.join(args, " ", 1), false));
+
 										player.sendMessage(IRCd.msgSendQueryFromIngame
 												.replace(
 														"{Prefix}",
@@ -85,9 +79,8 @@ public class IRCMsgCommand implements CommandExecutor {
 														IRCd.getGroupSuffix(ircuser
 																.getTextModes()))
 												.replace("{User}", ircuser.nick)
-												.replace(
-														"{Message}",
-														IRCd.convertColors(
+												.replace("{Message}",
+														 IRCd.convertColors(
 																IRCd.join(args,
 																		" ", 1),
 																false)));
@@ -163,13 +156,9 @@ public class IRCMsgCommand implements CommandExecutor {
 						String UID = IRCd.getUIDFromIRCUser(ircuser);
 						if (UID != null) {
 							if (IRCd.isLinkcompleted()) {
-								IRCd.println(":"
-										+ IRCd.serverUID
-										+ " PRIVMSG "
-										+ UID
-										+ " :"
-										+ IRCd.convertColors(
-												IRCd.join(args, " ", 1), false));
+								IRCd.privmsg(IRCd.serverUID, UID,
+										IRCd.convertColors(IRCd.join(args, " ", 1), false));
+
 								sender.sendMessage(IRCd.msgSendQueryFromIngame
 										.replace(
 												"{Prefix}",

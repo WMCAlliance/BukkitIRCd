@@ -28,10 +28,10 @@ public class BukkitIRCdPlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerDeath(PlayerDeathEvent event){
 		if (!Config.isIrcdBroadCastDeathMessages()){
-			return; 
+			return;
 		}
 		String message = event.getDeathMessage().replace(event.getEntity().getName(),event.getEntity().getName()+Config.getIrcdIngameSuffix());
-		
+
 		if(!Config.isIrcdColorDeathMessagesEnabled()){
 			message = ChatColor.stripColor(message);
 		}
@@ -39,65 +39,60 @@ public class BukkitIRCdPlayerListener implements Listener {
 			message = IRCd.convertColors(message,false);
 		}
 		if(IRCd.mode == Modes.INSPIRCD){
-			if (IRCd.isLinkcompleted())  {
-				
-				IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + Config.getIrcdChannel() + " :" + message);
-				}
+			if (IRCd.isLinkcompleted()) {
+				IRCd.privmsg(IRCd.serverUID, Config.getIrcdChannel(), message);
+			}
 		}
 		else {
 			IRCd.writeAll(message);
 		}
-		
+
 	}
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onServerCommand(ServerCommandEvent event){
-		
+
 		//Console Command Listener
-		String[] split = event.getCommand().split(" ");
-		
+		final String[] split = event.getCommand().split(" ");
+
 		if (split.length > 1){
-			
+
 			if (Config.getKickCommands().contains(split[0].toLowerCase())){
-			
+
 				//PlayerKickEvent does not give kicker, so we listen to kick commands instead
-					StringBuilder s = new StringBuilder(300);
-					for(int i = 2; i < split.length;i++){
-						 s.append(split[i]).append(" ");
-					}
-					String kickMessage = s.toString();
-					String kickedPlayer = split[1];
-					plugin.removeLastReceivedBy(kickedPlayer);
-					IRCd.kickBukkitUser(kickMessage, IRCd.getBukkitUser(kickedPlayer));
+				final StringBuilder s = new StringBuilder(300);
+				for(int i = 2; i < split.length;i++){
+					 s.append(split[i]).append(" ");
+				}
+
+				final String kickMessage = s.toString();
+				final String kickedPlayer = split[1];
+				plugin.removeLastReceivedBy(kickedPlayer);
+				IRCd.kickBukkitUser(kickMessage, IRCd.getBukkitUser(kickedPlayer));
 			}
-			
+
 			if (split[0].equalsIgnoreCase("say")){
-				StringBuilder s = new StringBuilder(300);
+				final StringBuilder s = new StringBuilder(300);
 				for(int i = 1; i < split.length;i++){
 					 s.append(split[i]).append(" ");
 				}
-				
+
 				String message = s.toString();
-				
-				
+
 				message = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',message));
 				if(Config.isIrcdColorSayMessageEnabled()){
 					message = (char) 3 + "13" + message;
 				}
 				if(IRCd.mode == Modes.INSPIRCD){
-					if (IRCd.isLinkcompleted())  {
-						IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + Config.getIrcdChannel() + " :" + message);
-						}
+					if (IRCd.isLinkcompleted()) {
+						IRCd.privmsg(IRCd.serverUID, Config.getIrcdChannel(), message);
+					}
 				}else{
 					IRCd.writeAll(message);
 				}
-				
 			}
-			
 		}
-		
-		
-		
 	}
+
 	@EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event)
     {
@@ -108,7 +103,7 @@ public class BukkitIRCdPlayerListener implements Listener {
             		BukkitIRCdPlugin.log.info("Add mode +q for " + player.getName());
             	}
             	mode.append("~");
-            	
+
             }
             if (player.hasPermission("bukkitircd.mode.protect")){
             	if (Config.isDebugModeEnabled()) {
@@ -139,19 +134,18 @@ public class BukkitIRCdPlayerListener implements Listener {
             }
             IRCd.addBukkitUser(mode.toString(),player);
        }
-	
+
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerQuit(PlayerQuitEvent event)
 	{
-		String name = event.getPlayer().getName();
+		final String name = event.getPlayer().getName();
 		plugin.removeLastReceivedBy(name);
 		IRCd.removeBukkitUser(IRCd.getBukkitUser(name));
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerChat(AsyncPlayerChatEvent event)
 	{
-		if (event.isCancelled()) return;
 		IRCd.updateBukkitUserIdleTime(IRCd.getBukkitUser(event.getPlayer().getName()));
 		if (IRCd.mode == Modes.STANDALONE) {
 			IRCd.writeAll(IRCd.convertColors(event.getMessage(),false),event.getPlayer());
@@ -159,17 +153,18 @@ public class BukkitIRCdPlayerListener implements Listener {
 		else {
 			BukkitPlayer bp;
 			if ((bp = IRCd.getBukkitUserObject(event.getPlayer().getName())) != null) {
-				if (IRCd.isLinkcompleted()) IRCd.println(":" + bp.getUID() + " PRIVMSG " + Config.getIrcdChannel() + " :" + IRCd.convertColors(event.getMessage(), false));
+				if (IRCd.isLinkcompleted()) {
+					IRCd.privmsg(bp.getUID(), Config.getIrcdChannel(), IRCd.convertColors(event.getMessage(), false));
+				}
 			}
 		}
 		event.setMessage(IRCd.stripIRCFormatting(event.getMessage()));
 	}
 
-	
-	@EventHandler(priority = EventPriority.MONITOR)
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event)
 	{
-		if (event.isCancelled()) return;
 		IRCd.updateBukkitUserIdleTime(IRCd.getBukkitUser(event.getPlayer().getName()));
 
 		String[] split = event.getMessage().split(" ");
@@ -182,13 +177,15 @@ public class BukkitIRCdPlayerListener implements Listener {
 				else {
 					BukkitPlayer bp;
 					if ((bp = IRCd.getBukkitUserObject(event.getPlayer().getName())) != null) {
-						if (IRCd.isLinkcompleted()) IRCd.println(":" + bp.getUID() + " PRIVMSG " + Config.getIrcdChannel() + " :" + (char)1 + "ACTION " + IRCd.convertColors(IRCd.join(event.getMessage().split(" ")," ",1), false) + (char)1);
+						if (IRCd.isLinkcompleted()) {
+							IRCd.action(bp.getUID(), Config.getIrcdChannel(), IRCd.convertColors(IRCd.join(event.getMessage().split(" ")," ",1), false));
+						}
 					}
 				}
 				event.setMessage(IRCd.stripIRCFormatting(event.getMessage()));
 			}
-			
-			
+
+
 			if (Config.getKickCommands().contains(split[0].substring(1).toLowerCase())){
 				//PlayerKickEvent does not give kicker, so we listen to kick commands instead
 				if (event.getPlayer().hasPermission("bukkitircd.kick")){
@@ -203,45 +200,43 @@ public class BukkitIRCdPlayerListener implements Listener {
 						IRCd.kickBukkitUser(kickMessage, IRCd.getBukkitUser(kickedPlayer), IRCd.getBukkitUser(event.getPlayer().getName()));
 						IRCd.removeBukkitUser(IRCd.getBukkitUser(kickedPlayer));
 						}
-					
+
 					}
 				}
-			
+
 			if(split[0].equalsIgnoreCase("/say")){
 				if(event.getPlayer().hasPermission("bukkit.command.say")){
-					
+
 					StringBuilder s = new StringBuilder(300);
 					for(int i = 1; i < split.length;i++){
 						 s.append(split[i]).append(" ");
 					}
-					
+
 					String message = s.toString();
-					
+
 					message = ChatColor.translateAlternateColorCodes('&',ChatColor.stripColor(message));
 					if(Config.isIrcdColorSayMessageEnabled()){
 						message = (char) 3 + "13" + message;
 					}
-					
+
 					if(IRCd.mode == Modes.INSPIRCD){
-						
 						if (IRCd.isLinkcompleted()) {
-							IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + Config.getIrcdChannel() + " :" + message);
-							}
+							IRCd.privmsg(IRCd.serverUID, Config.getIrcdChannel(), message);
+						}
 					}else{
 						IRCd.writeAll(message);
 					}
 				}
 			}
-				
+
 			}
 		}
-	
-	
-	@EventHandler(priority = EventPriority.MONITOR)
+
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerMove(PlayerMoveEvent event)
 	{
-		if (event.isCancelled()) return;
-		Player p = event.getPlayer();
+		final Player p = event.getPlayer();
 		IRCd.updateBukkitUserIdleTimeAndWorld(IRCd.getBukkitUser(p.getName()), p.getWorld().getName());
 	}
 }
