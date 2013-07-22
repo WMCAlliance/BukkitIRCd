@@ -215,10 +215,7 @@ public class IRCd implements Runnable {
 				}
 
 				serverMessagePrefix = ":" + Config.getIrcdServerHostName();
-                if (Config.getMode().equalsIgnoreCase("unreal")
-						|| Config.getMode().equalsIgnoreCase("unrealircd"))
-					mode = Modes.UNREALIRCD;
-				else if (Config.getMode().equalsIgnoreCase("inspire")
+				if (Config.getMode().equalsIgnoreCase("inspire")
 						|| Config.getMode().equalsIgnoreCase("inspircd"))
 					mode = Modes.INSPIRCD;
 				else
@@ -2267,15 +2264,18 @@ public class IRCd implements Runnable {
 
 	public static void disconnectAll(String reason) {
 		synchronized (csIrcUsers) {
-			if (mode == Modes.STANDALONE) {
+			switch (mode) {
+			case STANDALONE:
 				try {
 					listener.close();
 					listener = null;
 				} catch (IOException e) {
 				}
 				removeIRCUsers();
-			} else if ((mode == Modes.INSPIRCD) || (mode == Modes.UNREALIRCD)) {
+				break;
+			case INSPIRCD:
 				disconnectServer(reason);
+				break;
 			}
 		}
 	}

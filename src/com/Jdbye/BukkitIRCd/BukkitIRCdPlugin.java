@@ -97,10 +97,9 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		getCommand("irctopic").setExecutor(new IRCTopicCommand(this));
 		getCommand("irclink").setExecutor(new IRCLinkCommand(this));
 		getCommand("ircreload").setExecutor(new IRCReloadCommand(this));
-		getCommand("rawsend").setExecutor(new RawsendCommand(this));
+		getCommand("rawsend").setExecutor(new RawsendCommand());
 
 		log.info(ircdVersion + " is enabled!");
-
 	}
 
 	@Override
