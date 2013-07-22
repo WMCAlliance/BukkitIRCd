@@ -76,15 +76,11 @@ public class IRCReplyCommand implements CommandExecutor {
 											.getUIDFromIRCUser(ircuser);
 									if (UID != null) {
 										if (IRCd.isLinkcompleted()) {
-											IRCd.println(":"
-													+ bp.getUID()
-													+ " PRIVMSG "
-													+ UID
-													+ " :"
-													+ IRCd.convertColors(
+											IRCd.privmsg(bp.getUID(), UID, IRCd.convertColors(
 															IRCd.join(args,
 																	" ", 0),
 															false));
+
 											player.sendMessage(IRCd.msgSendQueryFromIngame
 													.replace(
 															"{Prefix}",
@@ -186,14 +182,9 @@ public class IRCReplyCommand implements CommandExecutor {
 							String UID = IRCd.getUIDFromIRCUser(ircuser);
 							if (UID != null) {
 								if (IRCd.isLinkcompleted()) {
-									IRCd.println(":"
-											+ IRCd.serverUID
-											+ " PRIVMSG "
-											+ UID
-											+ " :"
-											+ IRCd.convertColors(
-													IRCd.join(args, " ", 0),
-													false));
+									IRCd.privmsg(IRCd.serverUID, UID, IRCd.convertColors(
+											IRCd.join(args, " ", 0),
+											false));
 									sender.sendMessage(IRCd.msgSendQueryFromIngame
 											.replace(
 													"{Prefix}",
