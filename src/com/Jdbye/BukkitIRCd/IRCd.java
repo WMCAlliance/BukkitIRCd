@@ -2967,14 +2967,12 @@ public class IRCd implements Runnable {
 	}
 
 	public static void disconnectServer(String reason) {
-		if (reason == null)
-			reason = "Disabling Plugin";
 		synchronized (csServer) {
 			if (mode == Modes.INSPIRCD) {
 				if ((server != null) && server.isConnected()) {
 					println(pre + "SQUIT " + Config.getLinkServerID() + " :" + reason);
 					if (linkcompleted) {
-						if (msgDelinkedReason.length() > 0)
+						if (reason != null && msgDelinkedReason.length() > 0)
 							IRCd.broadcastMessage(
 											msgDelinkedReason
 													.replace("{LinkName}",
