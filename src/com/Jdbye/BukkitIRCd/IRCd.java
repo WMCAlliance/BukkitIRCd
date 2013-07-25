@@ -665,13 +665,13 @@ public class IRCd implements Runnable {
 			bp.setUID(UID);
 			if (bp.hasPermission("bukkitircd.oper")) {
 				println(pre + "UID " + UID + " " + (bp.idleTime / 1000L) + " "
-						+ bp.nick + Config.getIrcdIngameSuffix() + " " + bp.host + " "
+						+ bp.nick + Config.getIrcdIngameSuffix() + " " + bp.realhost + " "
 						+ bp.host + " " + bp.nick + " " + bp.ip + " "
 						+ bp.signedOn + " +or :Minecraft Player");
 				println(":" + UID + " OPERTYPE IRC_Operator");
 			} else
 				println(pre + "UID " + UID + " " + (bp.idleTime / 1000L) + " "
-						+ bp.nick + Config.getIrcdIngameSuffix() + " " + bp.host + " "
+						+ bp.nick + Config.getIrcdIngameSuffix() + " " + bp.realhost + " "
 						+ bp.host + " " + bp.nick + " " + bp.ip + " "
 						+ bp.signedOn + " +r :Minecraft Player");
 
