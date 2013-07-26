@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -170,13 +171,17 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 	// check for Dynmap, and if it's installed, register events and hooks
 	private void setupDynmap() {
-		PluginManager pm = getServer().getPluginManager();
-		Plugin plugin = pm.getPlugin("dynmap");
 		if (BukkitIRCdPlugin.dynmap == null) {
+			final PluginManager pm = getServer().getPluginManager();
+			final Plugin plugin = pm.getPlugin("dynmap");
+
 			if (plugin != null) {
-				if (dynmapListener == null) dynmapListener = new BukkitIRCdDynmapListener();
+				if (dynmapListener == null) {
+					dynmapListener = new BukkitIRCdDynmapListener();
+				}
+
 				if (!dynmapEventRegistered) {
-					pm.registerEvents(this.dynmapListener, this);
+					pm.registerEvents(dynmapListener, this);
 				}
 				setupDynmap((DynmapAPI)plugin);
 			}
@@ -203,37 +208,11 @@ public class BukkitIRCdPlugin extends JavaPlugin {
      *
      * @param message Message with raw color codes
      * @return String with processed colors
-	 * Thanks to Jkcclemens (of RoyalDev) for this code
      */
     public static String colorize(final String message) {
         if (message == null) return null;
-        return message.replaceAll("&([a-f0-9k-or])", "\u00a7$1");
+        return ChatColor.translateAlternateColorCodes('&', message);
     }
-
-
-
-
-	// Load the bans file
-
-
-
-
-	public boolean hasPermission(Player player, String permission)
-	{
-		if (player.hasPermission(permission)) {
-			//log.info("[BukkitIRCd] "+player.getName()+" has permission "+permission+" (Superperms)");
-			return true;
-		}
-		//else try {
-		//	if (permissionHandler != null) {
-		//		if (this.permissionHandler.has(player, permission)) {
-		//			//log.info("[BukkitIRCd] "+player.getName()+" has permission "+permission+" (Permissions 2.x)");
-		//			return true;
-		//		}
-		//	}
-		//} catch (Exception e) { }
-		return false;
-	}
 
 	public void setLastReceived(String receivedBy, String receivedFrom)
 	{
