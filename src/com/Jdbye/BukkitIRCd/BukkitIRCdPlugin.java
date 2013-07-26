@@ -176,7 +176,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		Plugin plugin = pm.getPlugin("dynmap");
 		if (BukkitIRCdPlugin.dynmap == null) {
 			if (plugin != null) {
-				if (dynmapListener == null) dynmapListener = new BukkitIRCdDynmapListener(this);
+				if (dynmapListener == null) dynmapListener = new BukkitIRCdDynmapListener();
 				if (!dynmapEventRegistered) {
 					pm.registerEvents(this.dynmapListener, this);
 				}
