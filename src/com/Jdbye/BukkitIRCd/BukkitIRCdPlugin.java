@@ -47,8 +47,6 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	private final BukkitIRCdServerListener serverListener = new BukkitIRCdServerListener(this);
 	private BukkitIRCdDynmapListener dynmapListener = null;
 
-	public final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
-
 	public static BukkitIRCdPlugin thePlugin = null;
 
 	private static Date curDate = new Date();
@@ -123,13 +121,6 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 		log.info(ircdVersion + " is disabled!");
 	}
-	public boolean isDebugging(final Player player) {
-		if (debugees.containsKey(player)) {
-			return debugees.get(player);
-		} else {
-			return false;
-		}
-	}
 
 	private void pluginInit() {
 		pluginInit(false);
@@ -178,11 +169,6 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		thr.start();
 
 	}
-
-	public void setDebugging(final Player player, final boolean value) {
-		debugees.put(player, value);
-	}
-
 
 	// check for Dynmap, and if it's installed, register events and hooks
 	private void setupDynmap() {
