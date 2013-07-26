@@ -85,6 +85,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+
 import com.Jdbye.BukkitIRCd.configuration.Config;
 
 
@@ -1056,7 +1057,7 @@ public class IRCd implements Runnable {
 		return false;
 	}
 
-	public static boolean removeIRCUsers() {
+	public static boolean removeIRCUsers(String reason) {
 		synchronized (csIrcUsers) {
 			if (mode == Modes.STANDALONE) {
 				Iterator<ClientConnection> iter = clientConnections.iterator();
@@ -1067,9 +1068,9 @@ public class IRCd implements Runnable {
 								&& (BukkitIRCdPlugin.thePlugin != null)) {
 							BukkitIRCdPlugin.thePlugin
 									.removeLastReceivedFrom(processor.nick);
-							if (msgIRCLeave.length() > 0)
+							if (msgIRCLeave.length() > 0 && reason != null)
 								IRCd.broadcastMessage(
-												msgIRCLeave
+												msgIRCLeaveReason
 														.replace("{User}",
 																processor.nick)
 														.replace(
@@ -1077,7 +1078,10 @@ public class IRCd implements Runnable {
 																IRCd.getGroupPrefix(processor.modes))
 														.replace(
 																"{Suffix}",
-																IRCd.getGroupSuffix(processor.modes)));
+																IRCd.getGroupSuffix(processor.modes))
+														.replace(
+																"{Reason}",
+																reason));
 							if ((BukkitIRCdPlugin.dynmap != null)
 									&& (msgIRCLeaveDynmap.length() > 0))
 								BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
@@ -2271,7 +2275,7 @@ public class IRCd implements Runnable {
 					listener = null;
 				} catch (IOException e) {
 				}
-				removeIRCUsers();
+				removeIRCUsers(reason);
 				break;
 			case INSPIRCD:
 				disconnectServer(reason);
