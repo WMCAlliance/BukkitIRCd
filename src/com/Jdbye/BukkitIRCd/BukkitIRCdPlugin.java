@@ -86,7 +86,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		pluginInit();
 
 		getCommand("ircban").setExecutor(new IRCBanCommand(this));
-		getCommand("irckick").setExecutor(new IRCKickCommand(this));
+		getCommand("irckick").setExecutor(new IRCKickCommand());
 		getCommand("irclist").setExecutor(new IRCListCommand());
 		getCommand("ircunban").setExecutor(new IRCUnbanCommand(this));
 		getCommand("ircwhois").setExecutor(new IRCWhoisCommand());
