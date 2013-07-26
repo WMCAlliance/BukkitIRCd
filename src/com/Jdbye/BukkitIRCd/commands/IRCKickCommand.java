@@ -1,57 +1,54 @@
 package com.Jdbye.BukkitIRCd.commands;
 
-import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
-import com.Jdbye.BukkitIRCd.IRCUser;
-import com.Jdbye.BukkitIRCd.IRCd;
-import com.Jdbye.BukkitIRCd.configuration.Config;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.Jdbye.BukkitIRCd.IRCUser;
+import com.Jdbye.BukkitIRCd.IRCd;
+import com.Jdbye.BukkitIRCd.configuration.Config;
+
 public class IRCKickCommand implements CommandExecutor{
 
-	public IRCKickCommand(BukkitIRCdPlugin plugin) {
-	}
-	public boolean onCommand(CommandSender sender, Command cmd, String label,
-			String[] args) {
-		if (sender instanceof Player){
-			Player player = (Player) sender;
-			if (player.hasPermission("bukkitircd.kick")) {
-				if (args.length > 0) {
-					String reason = null;
-					if (args.length > 1) reason = IRCd.join(args, " ", 1);
-					IRCUser ircuser = IRCd.getIRCUser(args[0]);
-					if (ircuser != null) {
-						if (IRCd.kickIRCUser(ircuser, player.getName(), player.getName(), player.getAddress().getAddress().getHostName(), reason, true))
-							player.sendMessage(ChatColor.RED + "Player kicked.");
-						else
-							player.sendMessage(ChatColor.RED + "Failed to kick player.");
-					}
-					else { player.sendMessage(ChatColor.RED + "That user is not online."); }
-				}
-				else { player.sendMessage(ChatColor.RED + "Please provide a nickname and optionally a kick reason."); return false; }
-			}
-			else {
-				player.sendMessage(ChatColor.RED + "You don't have access to that command.");
-			}
-			return true;
-		}else{
-			if (args.length > 0) {
-				String reason = null;
-				if (args.length > 1) reason = IRCd.join(args, " ", 1);
-				IRCUser ircuser = IRCd.getIRCUser(args[0]);
-				if (ircuser != null) {
-					if (IRCd.kickIRCUser(ircuser, Config.getIrcdServerName(), Config.getIrcdServerName(), Config.getIrcdServerHostName(), reason, false)) sender.sendMessage(ChatColor.RED + "Player kicked.");
-					else sender.sendMessage(ChatColor.RED + "Failed to kick player.");
-					
-				}
-				else { sender.sendMessage(ChatColor.RED + "That user is not online."); }
-			}
-			else { sender.sendMessage(ChatColor.RED + "Please provide a nickname and optionally a kick reason."); return false; }		
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+
+		// Check arguments
+		if (args.length == 0) {
+			return false; // prints usage
+		}
+		final String targetNick = args[0];
+		final String reason = args.length > 1 ? IRCd.join(args, " ", 1) : null;
+
+		// Compute target
+		final IRCUser targetIrcUser = IRCd.getIRCUser(targetNick);
+		if (targetIrcUser == null) {
+			sender.sendMessage(ChatColor.RED + "That user is not online.");
 			return true;
 		}
+
+		// Compute kicker
+		final String kickerNick;
+		final String kickerHost;
+		if (sender instanceof Player){
+			final Player player = (Player) sender;
+			kickerNick = player.getName();
+			kickerHost = player.getAddress().getAddress().getHostName();
+		} else {
+			kickerNick = Config.getIrcdServerName();
+			kickerHost = Config.getIrcdServerHostName();
+		}
+
+		// Execute kick
+		if (IRCd.kickIRCUser(targetIrcUser, kickerNick, kickerNick, kickerHost, reason, true)) {
+			sender.sendMessage(ChatColor.RED + "Player kicked.");
+		} else {
+			sender.sendMessage(ChatColor.RED + "Failed to kick player.");
+		}
+
+		return true;
 	}
 
 }
