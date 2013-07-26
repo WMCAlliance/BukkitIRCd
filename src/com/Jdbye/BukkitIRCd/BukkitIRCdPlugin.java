@@ -44,7 +44,6 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	static public CriticalSection csLastReceived = new CriticalSection();
 
 	private final BukkitIRCdPlayerListener playerListener = new BukkitIRCdPlayerListener(this);
-	private final BukkitIRCdServerListener serverListener = new BukkitIRCdServerListener(this);
 	private BukkitIRCdDynmapListener dynmapListener = null;
 
 	public static BukkitIRCdPlugin thePlugin = null;
@@ -79,7 +78,6 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(this.playerListener, this);
-		pm.registerEvents(this.serverListener, this);
 
 		PluginDescriptionFile pdfFile = getDescription();
 		ircdVersion = pdfFile.getName() + " " + pdfFile.getVersion() + " by " + pdfFile.getAuthors().get(0);
