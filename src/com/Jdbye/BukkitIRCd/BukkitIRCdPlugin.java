@@ -1,5 +1,21 @@
 package com.Jdbye.BukkitIRCd;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.dynmap.DynmapAPI;
+
 import com.Jdbye.BukkitIRCd.commands.IRCBanCommand;
 import com.Jdbye.BukkitIRCd.commands.IRCKickCommand;
 import com.Jdbye.BukkitIRCd.commands.IRCLinkCommand;
@@ -15,21 +31,6 @@ import com.Jdbye.BukkitIRCd.configuration.Bans;
 import com.Jdbye.BukkitIRCd.configuration.Config;
 import com.Jdbye.BukkitIRCd.configuration.MOTD;
 import com.Jdbye.BukkitIRCd.configuration.Messages;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.dynmap.DynmapAPI;
-
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * BukkitIRCdPlugin for Bukkit
@@ -168,40 +169,9 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		IRCd.bukkitPlayers.clear();
 
 		// Set players to different IRC modes based on permission
-		for (Player player : getServer().getOnlinePlayers()) {
-			StringBuffer mode = new StringBuffer();
-            if (player.hasPermission("bukkitircd.mode.owner")){
-            	if (Config.isDebugModeEnabled()) {
-            		log.info("Add mode +q for " + player.getName());
-            	}
-            	mode.append("~");
-            }
-            else if (player.hasPermission("bukkitircd.mode.protect")){
-            	if (Config.isDebugModeEnabled()) {
-            		log.info("Add mode +a for " + player.getName());
-            	}
-            	mode.append("&");
-            }
-            else if (player.hasPermission("bukkitircd.mode.op")){
-            	if (Config.isDebugModeEnabled()) {
-            		log.info("Add mode +o for " + player.getName());
-            	}
-            	mode.append("@");
-            }
-            else if (player.hasPermission("bukkitircd.mode.halfop")){
-            	if (Config.isDebugModeEnabled()) {
-            		log.info("Add mode +h for " + player.getName());
-            	}
-            	mode.append("%");
-            }
-            else if (player.hasPermission("bukkitircd.mode.voice")){
-            	if (Config.isDebugModeEnabled()) {
-            		log.info("Add mode +v for " + player.getName());
-            	}
-            	mode.append("+");
-            }
-
-			IRCd.addBukkitUser(mode.toString(),player);
+		for (final Player player : getServer().getOnlinePlayers()) {
+            final String mode = computePlayerModes(player);
+			IRCd.addBukkitUser(mode, player);
 		}
 
 		thr = new Thread(ircd);
@@ -348,6 +318,34 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		} catch (IOException e) {
 		    // Failed to submit metrics
 		}
+	}
+
+	/**
+	 * @param player
+	 * @return
+	 */
+	String computePlayerModes(final Player player) {
+		final StringBuffer mode = new StringBuffer(5);
+
+		final char[] modeSigils = { '~', '&', '@', '%', '+' };
+		final String[] modeNames = { "owner", "protect", "op", "halfop", "voice" };
+		final boolean debug = Config.isDebugModeEnabled();
+
+		for (int i = 0; i < modeSigils.length; i++) {
+			if (player.hasPermission("bukkitircd.mode." + modeNames[i])) {
+				if (debug) {
+					BukkitIRCdPlugin.log.info("Add mode +" + modeSigils[i]
+							+ " for player " + player.getName());
+				}
+
+				mode.append(modeSigils[i]);
+
+				if (!Config.isIrcdRedundantModes()) {
+					break;
+				}
+			}
+		}
+		return mode.toString();
 	}
 }
 
