@@ -39,7 +39,7 @@ public class RawsendCommand implements CommandExecutor{
 			break;
 
 		case STANDALONE:
-			sender.sendMessage(ChatColor.RED + "Raw commands not support in stand-alone mode.");
+			sender.sendMessage(ChatColor.RED + "Raw commands are not supported in standalone mode.");
 			break;
 		}
 
