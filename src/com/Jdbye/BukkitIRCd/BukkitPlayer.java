@@ -1,5 +1,6 @@
 package com.Jdbye.BukkitIRCd;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class BukkitPlayer {
@@ -38,9 +39,9 @@ public class BukkitPlayer {
 	}
 
 	public boolean hasPermission(String permission) {
-		if (IRCd.isPlugin() && (BukkitIRCdPlugin.thePlugin != null)) {
-			Player p = BukkitIRCdPlugin.thePlugin.getServer().getPlayer(nick);
-			if (p != null) return BukkitIRCdPlugin.thePlugin.hasPermission(p, permission);
+		if (IRCd.isPlugin()) {
+			final Player p = Bukkit.getServer().getPlayer(nick);
+			if (p != null) return p.hasPermission(permission);
 		}
 		return false;
 	}
