@@ -80,7 +80,6 @@ import java.util.Map.Entry;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.server.ServerCommandEvent;
@@ -152,6 +151,10 @@ public class IRCd implements Runnable {
 
     private static boolean isPlugin = false;
 
+    // This object registers itself as a console target and needs to be
+    // long lived.
+    private static IRCCommandSender commandSender = null;
+
 	//private static Date curDate = new Date();
 	public static SimpleDateFormat dateFormat = new SimpleDateFormat(
 			"EEE MMM dd HH:mm:ss yyyy");
@@ -207,7 +210,13 @@ public class IRCd implements Runnable {
 				isPlugin = false;
 			}
 
+
+
 			try {
+				if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
+					commandSender = new IRCCommandSender(Bukkit.getServer());
+				}
+
 				try {
 					serverCreationDateLong = dateFormat.parse(
 							Config.getServerCreationDate()).getTime() / 1000L;
@@ -2924,13 +2933,13 @@ public class IRCd implements Runnable {
 			@Override
 			public void run() {
 				final Server server = Bukkit.getServer();
-				final CommandSender sender = new IRCCommandSender(server);
 				try {
-					final ServerCommandEvent commandEvent = new ServerCommandEvent(sender,command);
+					final ServerCommandEvent commandEvent = new ServerCommandEvent(commandSender,command);
 					server.getPluginManager().callEvent(commandEvent);
 					server.dispatchCommand(commandEvent.getSender(), commandEvent.getCommand());
+					commandSender.sendMessage("Command Executed");
 				} catch (Exception e) {
-					sender.sendMessage("Exception in command \"" + command + "\": " + e);
+					commandSender.sendMessage("Exception in command \"" + command + "\": " + e);
 				}
 			}
 		}.runTask(BukkitIRCdPlugin.thePlugin);
