@@ -80,7 +80,6 @@ import java.util.Map.Entry;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.server.ServerCommandEvent;
@@ -152,6 +151,10 @@ public class IRCd implements Runnable {
 
     private static boolean isPlugin = false;
 
+    // This object registers itself as a console target and needs to be
+    // long lived.
+    private static IRCCommandSender commandSender = null;
+
 	//private static Date curDate = new Date();
 	public static SimpleDateFormat dateFormat = new SimpleDateFormat(
 			"EEE MMM dd HH:mm:ss yyyy");
@@ -207,7 +210,13 @@ public class IRCd implements Runnable {
 				isPlugin = false;
 			}
 
+
+
 			try {
+				if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
+					commandSender = new IRCCommandSender(Bukkit.getServer());
+				}
+
 				try {
 					serverCreationDateLong = dateFormat.parse(
 							Config.getServerCreationDate()).getTime() / 1000L;
@@ -686,33 +695,33 @@ public class IRCd implements Runnable {
 		}
 
 		println(pre + "FJOIN " + Config.getIrcdConsoleChannel() + " " + consoleChannelTS
-				+ " +nt :," + serverUID);
-		println(":" + serverUID + " FMODE " + Config.getIrcdConsoleChannel() + " "
-				+ consoleChannelTS + " +qaohv " + serverUID + " " + serverUID
-				+ " " + serverUID + " " + serverUID + " " + serverUID);
-		println(pre + "FJOIN " + Config.getIrcdChannel() + " " + channelTS + " +nt :,"
-				+ serverUID);
-		println(":" + serverUID + " FMODE " + Config.getIrcdChannel() + " " + channelTS
-				+ " +qaohv " + serverUID + " " + serverUID + " " + serverUID
-				+ " " + serverUID + " " + serverUID);
+				+ " +nt :qaohv," + serverUID);
+		println(pre + "FJOIN " + Config.getIrcdChannel() + " " + channelTS + " +nt :qaohv," + serverUID);
 
+		int avail = 0;
+		StringBuilder sb = null;
 		for (BukkitPlayer bp : bukkitPlayers) {
-			String UID = bp.getUID();
-			String textMode = bp.getTextMode();
-			println(pre + "FJOIN " + Config.getIrcdChannel() + " " + channelTS + " +nt :,"
-					+ UID);
-			if (textMode.length() > 0) {
-				String modestr = "";
-				for (int i = 0; i < textMode.length(); i++) {
-					modestr += UID + " ";
-				}
-				modestr = modestr.substring(0, modestr.length()-1);
-				println(":" + serverUID + " FMODE " + Config.getIrcdChannel() + " " + channelTS + " + " + textMode + " " + modestr);
 
-				modestr = modestr.substring(0, modestr.length() - 1);
-				println(":" + serverUID + " FMODE " + Config.getIrcdChannel() + " "
-						+ channelTS + " + " + textMode + " " + modestr);
+			final String nextPart = bp.getTextMode() + "," + bp.getUID();
+
+			if (nextPart.length() > avail) {
+				//flush
+				if (sb != null) {
+					println(sb.toString());
+				}
+
+				sb = new StringBuilder(400);
+				sb.append(pre).append("FJOIN ").append(Config.getIrcdChannel()).append(' ').append(channelTS) .append(" +nt :").append(nextPart);
+				avail = 409 - sb.length();
+			} else {
+				sb.append(' ').append(nextPart);
+				avail -= nextPart.length();
 			}
+		}
+
+		//flush
+		if (sb != null) {
+			println(sb.toString());
 		}
 
 		println(pre + "ENDBURST");
@@ -2924,13 +2933,13 @@ public class IRCd implements Runnable {
 			@Override
 			public void run() {
 				final Server server = Bukkit.getServer();
-				final CommandSender sender = new IRCCommandSender(server);
 				try {
-					final ServerCommandEvent commandEvent = new ServerCommandEvent(sender,command);
+					final ServerCommandEvent commandEvent = new ServerCommandEvent(commandSender,command);
 					server.getPluginManager().callEvent(commandEvent);
 					server.dispatchCommand(commandEvent.getSender(), commandEvent.getCommand());
+					commandSender.sendMessage("Command Executed");
 				} catch (Exception e) {
-					sender.sendMessage("Exception in command \"" + command + "\": " + e);
+					commandSender.sendMessage("Exception in command \"" + command + "\": " + e);
 				}
 			}
 		}.runTask(BukkitIRCdPlugin.thePlugin);
