@@ -695,33 +695,33 @@ public class IRCd implements Runnable {
 		}
 
 		println(pre + "FJOIN " + Config.getIrcdConsoleChannel() + " " + consoleChannelTS
-				+ " +nt :," + serverUID);
-		println(":" + serverUID + " FMODE " + Config.getIrcdConsoleChannel() + " "
-				+ consoleChannelTS + " +qaohv " + serverUID + " " + serverUID
-				+ " " + serverUID + " " + serverUID + " " + serverUID);
-		println(pre + "FJOIN " + Config.getIrcdChannel() + " " + channelTS + " +nt :,"
-				+ serverUID);
-		println(":" + serverUID + " FMODE " + Config.getIrcdChannel() + " " + channelTS
-				+ " +qaohv " + serverUID + " " + serverUID + " " + serverUID
-				+ " " + serverUID + " " + serverUID);
+				+ " +nt :qaohv," + serverUID);
+		println(pre + "FJOIN " + Config.getIrcdChannel() + " " + channelTS + " +nt :qaohv," + serverUID);
 
+		int avail = 0;
+		StringBuilder sb = null;
 		for (BukkitPlayer bp : bukkitPlayers) {
-			String UID = bp.getUID();
-			String textMode = bp.getTextMode();
-			println(pre + "FJOIN " + Config.getIrcdChannel() + " " + channelTS + " +nt :,"
-					+ UID);
-			if (textMode.length() > 0) {
-				String modestr = "";
-				for (int i = 0; i < textMode.length(); i++) {
-					modestr += UID + " ";
-				}
-				modestr = modestr.substring(0, modestr.length()-1);
-				println(":" + serverUID + " FMODE " + Config.getIrcdChannel() + " " + channelTS + " + " + textMode + " " + modestr);
 
-				modestr = modestr.substring(0, modestr.length() - 1);
-				println(":" + serverUID + " FMODE " + Config.getIrcdChannel() + " "
-						+ channelTS + " + " + textMode + " " + modestr);
+			final String nextPart = bp.getTextMode() + "," + bp.getUID();
+
+			if (nextPart.length() > avail) {
+				//flush
+				if (sb != null) {
+					println(sb.toString());
+				}
+
+				sb = new StringBuilder(400);
+				sb.append(pre).append("FJOIN ").append(Config.getIrcdChannel()).append(' ').append(channelTS) .append(" +nt :").append(nextPart);
+				avail = 409 - sb.length();
+			} else {
+				sb.append(' ').append(nextPart);
+				avail -= nextPart.length();
 			}
+		}
+
+		//flush
+		if (sb != null) {
+			println(sb.toString());
 		}
 
 		println(pre + "ENDBURST");
