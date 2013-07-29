@@ -1885,45 +1885,39 @@ public class IRCd implements Runnable {
 					String UID = ugen.generateUID(Config.getLinkServerID());
 					bp.setUID(UID);
 					synchronized (csBukkitPlayers) {
-						String textMode = bp.getTextMode();
-						if (bp.hasPermission("bukkitircd.oper")) {
-							println(pre + "UID " + UID + " "
-									+ (bp.idleTime / 1000L) + " " + bp.nick
-									+ Config.getIrcdIngameSuffix() + " " + bp.host + " "
-									+ bp.host + " " + bp.nick + " " + bp.ip
-									+ " " + bp.signedOn
-									+ " +or :Minecraft Player");
-							println(":" + UID + " OPERTYPE IRC_Operator");
-						} else
-							println(pre + "UID " + UID + " "
-									+ (bp.idleTime / 1000L) + " " + bp.nick
-									+ Config.getIrcdIngameSuffix() + " " + bp.host + " "
-									+ bp.host + " " + bp.nick + " " + bp.ip
-									+ " " + bp.signedOn
-									+ " +r :Minecraft Player");
 
-						println(pre + "FJOIN " + Config.getIrcdChannel() + " " + channelTS
-								+ " +nt :," + UID);
-						if (textMode.length() > 0) {
-							String modestr = "";
-							for (int i = 0; i < textMode.length(); i++) {
-								modestr += UID + " ";
-							}
-							modestr = modestr
-									.substring(0, modestr.length() - 1);
+						final boolean isOper = bp.hasPermission("bukkitircd.oper");
 
-							println(":" + serverUID + " FMODE " + Config.getIrcdChannel()
-									+ " " + channelTS + " +" + textMode + " "
-									+ modestr);
+						// Register new UID
+						final String userModes = isOper ? "+or" : "+r";
+						println(pre + "UID",
+								UID,
+								Long.toString(bp.idleTime / 1000L),
+								bp.nick+Config.getIrcdIngameSuffix(),
+								bp.realhost,
+								bp.host,
+								bp.nick, // user
+								bp.ip,
+								Long.toString(bp.signedOn),
+								userModes,
+								":Minecraft Player");
+
+						// Set oper type if appropriate
+						if (isOper) {
+							println(":" + UID, "OPERTYPE", "IRC_Operator");
 						}
-						if (world != null)
-							println(pre + "METADATA " + UID
-									+ " swhois :is currently in " + world);
-						else
-							println(pre
-									+ "METADATA "
-									+ UID
-									+ " swhois :is currently in an unknown world");
+
+						// Game client uses encrypted connection
+						println(pre + "METADATA", UID, "ssl_cert", ":vtrsE The peer did not send any certificate.");
+
+						// Join in-game channel with modes set
+						println(pre + "FJOIN", Config.getIrcdChannel(), Long.toString(channelTS),
+								"+nt",
+								":" + bp.getTextMode() + "," + UID);
+
+						// Send swhois field (extra metadata used for current world here)
+						final String worldString = world == null ? "an unknown world" : world;
+						println(pre + "METADATA ", UID, "swhois" , ":is currently in " + worldString);
 					}
 				}
 				return true;
@@ -2945,7 +2939,8 @@ public class IRCd implements Runnable {
 		}.runTask(BukkitIRCdPlugin.thePlugin);
 	}
 
-	public static boolean println(String line) {
+	public static boolean println(String ... parts) {
+		final String line = IRCd.join(parts, " ", 0);
 		if ((server == null) || (!server.isConnected()) || (server.isClosed())
 				|| (out == null))
 			return false;
