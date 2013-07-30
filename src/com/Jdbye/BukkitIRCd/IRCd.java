@@ -80,6 +80,7 @@ import java.util.Map.Entry;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
+import org.bukkit.command.CommandException;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.server.ServerCommandEvent;
@@ -94,7 +95,7 @@ public class IRCd implements Runnable {
 	public static String channelTopic = "Welcome to a Bukkit server!";
 	public static String channelTopicSet = Config.getIrcdServerName();
 	public static long channelTopicSetDate = System.currentTimeMillis() / 1000L;
-	public static Modes mode;
+	public static Modes mode = Modes.STANDALONE;
 
 	// Custom messages
 	public static String msgSendQueryFromIngame = "&r[IRC] [me -> &7{Prefix}{User}{Suffix}&r] {Message}";
@@ -213,6 +214,12 @@ public class IRCd implements Runnable {
 
 
 			try {
+				if (Config.getMode().equalsIgnoreCase("inspire") || Config.getMode().equalsIgnoreCase("inspircd")) {
+					mode = Modes.INSPIRCD;
+				} else {
+					mode = Modes.STANDALONE;
+				}
+
 				if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
 					commandSender = new IRCCommandSender(Bukkit.getServer());
 				}
@@ -225,11 +232,7 @@ public class IRCd implements Runnable {
 				}
 
 				serverMessagePrefix = ":" + Config.getIrcdServerHostName();
-				if (Config.getMode().equalsIgnoreCase("inspire")
-						|| Config.getMode().equalsIgnoreCase("inspircd"))
-					mode = Modes.INSPIRCD;
-				else
-					mode = Modes.STANDALONE;
+
 
 				if (MOTD.size() == 0) {
 					MOTD.add("_________        __    __   .__        ___________  _____     _");
@@ -2932,8 +2935,23 @@ public class IRCd implements Runnable {
 					server.getPluginManager().callEvent(commandEvent);
 					server.dispatchCommand(commandEvent.getSender(), commandEvent.getCommand());
 					commandSender.sendMessage("Command Executed");
+				} catch (CommandException c) {
+					Throwable e = c.getCause();
+
+					commandSender.sendMessage("Exception in command \"" + command + "\": " + e);
+					if (Config.isDebugModeEnabled()) {
+						for (final StackTraceElement s : e.getStackTrace()) {
+							commandSender.sendMessage(s.toString());
+						}
+					}
 				} catch (Exception e) {
 					commandSender.sendMessage("Exception in command \"" + command + "\": " + e);
+
+					if (Config.isDebugModeEnabled()) {
+						for (final StackTraceElement s : e.getStackTrace()) {
+							commandSender.sendMessage(s.toString());
+						}
+					}
 				}
 			}
 		}.runTask(BukkitIRCdPlugin.thePlugin);
