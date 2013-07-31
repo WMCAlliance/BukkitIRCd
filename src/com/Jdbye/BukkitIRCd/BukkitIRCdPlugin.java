@@ -139,7 +139,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 
 		Config.reloadConfiguration();
-
+		Config.saveConfiguration();
 		Messages.saveMessages();
 
 		Bans.enableBans();
