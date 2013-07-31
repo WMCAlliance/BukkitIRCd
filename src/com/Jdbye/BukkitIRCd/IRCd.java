@@ -236,21 +236,6 @@ public class IRCd implements Runnable {
 
 				serverMessagePrefix = ":" + Config.getIrcdServerHostName();
 
-
-				if (MOTD.size() == 0) {
-					MOTD.add("_________        __    __   .__        ___________  _____     _");
-					MOTD.add("\\______  \\___ __|  |  |  |  |__| __   |_   _| ___ \\/  __ \\   | |");
-					MOTD.add(" |   |_\\  \\  |  |  | _|  | _____/  |_   | | | |_/ /| /  \\/ __| |");
-					MOTD.add(" |    __ _/  |  \\  |/ /  |/ /  \\   __\\  | | |    / | |    / _` |");
-					MOTD.add(" |   |_/  \\  |  /    <|    <|  ||  |   _| |_| |\\ \\ | \\__/\\ (_| |");
-					MOTD.add(" |______  /____/|__|_ \\__|_ \\__||__|   \\___/\\_| \\_| \\____/\\__,_|");
-					MOTD.add("        \\/           \\/    \\/");
-					MOTD.add("");
-					MOTD.add("Welcome to " + Config.getIrcdServerName() + ", running "
-							+ BukkitIRCdPlugin.ircdVersion + ".");
-					MOTD.add("Enjoy your stay!");
-				}
-
 				if (mode == Modes.STANDALONE) {
 					Thread.currentThread().setName(
 							"Thread-BukkitIRCd-StandaloneIRCd");
