@@ -3,35 +3,6 @@ package com.Jdbye.BukkitIRCd;
 // BukkitIRCd by Jdbye and WMCAlliance
 // A standalone IRC server plugin for Bukkit
 
-// Last changes
-// - Minecraft 1.4.6 compatible
-// - Changed messages.yml to use & signs
-// - Removed unused includes
-// - Check our github
-
-/* TODO: (this list was made by Jdbye, we may or may not do this)
- * HeroChat/Towny compatibility.
- * UnrealIRCd/TS5 links
- */
-
-// Features:
-// - Standalone IRC server with ingame chat, easily integrated with website using a IRC widget or applet.
-// - Whois for both IRC and ingame players, shows current world. Also works ingame.
-// - Nickname suffix for ingame players to differentiate between IRC and normal players.
-// - Nick changing on IRC, shows up ingame.
-// - Public chat from IRC to game, and game to IRC.
-// - Private messaging from game to IRC, IRC to game, and IRC to IRC.
-// - Kicking, banning and listing IRC users and setting topic from IRC and ingame.
-// - Executing server commands from IRC
-// - Ingame users show as separate users on IRC.
-// - IRC notices from IRC to game, and IRC to IRC.
-// - IRC joins/quits show up ingame, and vice versa.
-// - Customizable MOTD read from motd.txt
-// - User modes (op, protect, voice, etc.) based on permissions nodes.
-// - Color code conversion between IRC<->Game.
-// - IRC formatting codes are supported ingame using ^B for bold, ^I for italic, ^U for underline, ^O for normal and ^K for color, and are stripped from ingame chat.
-// - InspIRCd linking support
-
 // Commands:
 // - /irckick nick (reason) - Kicks someone from IRC
 // - /ircban (host/ip/ident/nick) nick/ip/fullhost (reason) - Bans a online user from IRC by their host, IP, nick or ident and offline user by IP or full hostmask
