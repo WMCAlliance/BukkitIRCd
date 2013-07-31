@@ -2053,7 +2053,7 @@ public class IRCd implements Runnable {
 					final Player player = server.getPlayer(kickee);
 					if (player != null) {
 
-						if (kickReason == null) {
+						if (kickReason == null || kickReason == kicker) {
 							server.broadcastMessage(msgIRCKick.replace(
 									"{KickedBy}", kicker).replace(
 									"{KickedUser}", player.getDisplayName()));
@@ -2066,7 +2066,7 @@ public class IRCd implements Runnable {
 						}
 
 						final String kickText;
-						if (kickReason == null) {
+						if (kickReason == null || kickReason == kicker) {
 							kickText = msgIRCKickDisplay
 									.replace("{KickedBy}", kicker)
 									.replace("{Reason}", kickReason);
