@@ -41,17 +41,17 @@ public class IRCCommandSender implements CommandSender {
 					continue;
 				}
 			}
-		}
 
-		switch (IRCd.mode) {
-		case STANDALONE:
-			IRCd.writeOpers(":" + Config.getIrcdServerName() + "!" + Config.getIrcdServerName() + "@" + Config.getIrcdServerHostName() + " PRIVMSG " + Config.getIrcdConsoleChannel() + " :" + IRCd.convertColors(message, false));
-			break;
-		case INSPIRCD:
-			if (IRCd.isLinkcompleted()) {
-				IRCd.privmsg(IRCd.serverUID, Config.getIrcdConsoleChannel(), IRCd.convertColors(message, false));
+			switch (IRCd.mode) {
+			case STANDALONE:
+				IRCd.writeOpers(":" + Config.getIrcdServerName() + "!" + Config.getIrcdServerName() + "@" + Config.getIrcdServerHostName() + " PRIVMSG " + Config.getIrcdConsoleChannel() + " :" + IRCd.convertColors(message, false));
+				break;
+			case INSPIRCD:
+				if (IRCd.isLinkcompleted()) {
+					IRCd.privmsg(IRCd.serverUID, Config.getIrcdConsoleChannel(), IRCd.convertColors(message, false));
+				}
+				break;
 			}
-			break;
 		}
     }
 
