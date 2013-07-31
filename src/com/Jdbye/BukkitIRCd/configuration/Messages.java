@@ -78,7 +78,7 @@ public class Messages extends JavaPlugin {
 			IRCd.msgIRCNoticeDynmap = messages.getString("irc-notice-dynmap", IRCd.msgIRCNoticeDynmap);
 
 			IRCd.msgDynmapMessage = messages.getString("dynmap-message", IRCd.msgDynmapMessage);
-			IRCd.msgDisconnectQuitting = messages.getString("leave", IRCd.msgDisconnectQuitting);
+			IRCd.msgDisconnectQuitting = messages.getString("disconnect-quitting", IRCd.msgDisconnectQuitting);
 			IRCd.msgPlayerList = messages.getString("player-list", IRCd.msgPlayerList);
 
 			IRCd.consoleFilters = messages.getStringList("console-filters");
