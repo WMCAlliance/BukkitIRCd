@@ -51,6 +51,8 @@ public class Messages extends JavaPlugin {
 
 			IRCd.msgIRCKick = messages.getString("irc-kick", IRCd.msgIRCKick);
 			IRCd.msgIRCKickReason = messages.getString("irc-kick-reason", IRCd.msgIRCKickReason);
+			IRCd.msgIRCKickDisplay = messages.getString("irc-kick-display", IRCd.msgIRCKickDisplay);
+			IRCd.msgIRCKickDisplayReason = messages.getString("irc-kick-display-reason", IRCd.msgIRCKickDisplayReason);
 			IRCd.msgIRCKickDynmap = messages.getString("irc-kick-dynmap", IRCd.msgIRCKickDynmap);
 			IRCd.msgIRCKickReasonDynmap = messages.getString("irc-kick-reason-dynmap", IRCd.msgIRCKickReasonDynmap);
 
@@ -93,6 +95,8 @@ public class Messages extends JavaPlugin {
 			IRCd.msgIRCLeaveReasonDynmap = BukkitIRCdPlugin.colorize(IRCd.msgIRCLeaveReasonDynmap);
 			IRCd.msgIRCKick = BukkitIRCdPlugin.colorize(IRCd.msgIRCKick);
 			IRCd.msgIRCKickReason = BukkitIRCdPlugin.colorize(IRCd.msgIRCKickReason);
+			IRCd.msgIRCKickDisplay = BukkitIRCdPlugin.colorize(IRCd.msgIRCKickDisplay);
+			IRCd.msgIRCKickDisplayReason = BukkitIRCdPlugin.colorize(IRCd.msgIRCKickDisplayReason);
 			IRCd.msgIRCKickDynmap = BukkitIRCdPlugin.colorize(IRCd.msgIRCKickDynmap);
 			IRCd.msgIRCKickReasonDynmap = BukkitIRCdPlugin.colorize(IRCd.msgIRCKickReasonDynmap);
 			IRCd.msgIRCBan = BukkitIRCdPlugin.colorize(IRCd.msgIRCBan);

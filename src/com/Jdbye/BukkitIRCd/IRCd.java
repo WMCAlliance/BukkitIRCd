@@ -110,6 +110,8 @@ public class IRCd implements Runnable {
 	public static String msgIRCLeaveReasonDynmap = "{User} left IRC ({Reason})";
 	public static String msgIRCKick = "&e[IRC] {KickedUser} was kicked by {KickedBy}";
 	public static String msgIRCKickReason = "&e[IRC] {KickedUser} was kicked by {KickedBy} ({Reason})";
+	public static String msgIRCKickDisplay = "Kicked by {KickedBy}.";
+	public static String msgIRCKickDisplayReason = "Kicked by {KickedBy} for {Reason}.";
 	public static String msgIRCKickDynmap = "{KickedUser} was kicked by {KickedBy}";
 	public static String msgIRCKickReasonDynmap = "{KickedUser} was kicked by {KickedBy} ({Reason})";
 	public static String msgIRCBan = "&e[IRC] {BannedUser} was banned by {BannedBy}";
@@ -2065,10 +2067,14 @@ public class IRCd implements Runnable {
 
 						final String kickText;
 						if (kickReason == null) {
-							kickText = "Kicked by " + kicker;
+							kickText = msgIRCKickDisplay
+									.replace("{KickedBy}", kicker)
+									.replace("{Reason}", kickReason);
+									
 						} else {
-							kickText = "Kicked by " + kicker + ": "
-									+ kickReason;
+							kickText = msgIRCKickDisplayReason
+									.replace("{KickedBy}", kicker)
+									.replace("{Reason}", kickReason);
 						}
 						player.kickPlayer(kickText);
 					}
