@@ -78,6 +78,7 @@ public class Messages extends JavaPlugin {
 			IRCd.msgIRCNoticeDynmap = messages.getString("irc-notice-dynmap", IRCd.msgIRCNoticeDynmap);
 
 			IRCd.msgDynmapMessage = messages.getString("dynmap-message", IRCd.msgDynmapMessage);
+			IRCd.msgDisconnectQuitting = messages.getString("leave", IRCd.msgDisconnectQuitting);
 			IRCd.msgPlayerList = messages.getString("player-list", IRCd.msgPlayerList);
 
 			IRCd.consoleFilters = messages.getStringList("console-filters");
@@ -115,6 +116,7 @@ public class Messages extends JavaPlugin {
 			IRCd.msgIRCMessageDynmap = BukkitIRCdPlugin.colorize(IRCd.msgIRCMessageDynmap);
 			IRCd.msgIRCNoticeDynmap = BukkitIRCdPlugin.colorize(IRCd.msgIRCNoticeDynmap);
 			IRCd.msgDynmapMessage = BukkitIRCdPlugin.colorize(IRCd.msgDynmapMessage);
+			IRCd.msgDisconnectQuitting = BukkitIRCdPlugin.colorize(IRCd.msgDisconnectQuitting);
 			IRCd.msgPlayerList = BukkitIRCdPlugin.colorize(IRCd.msgPlayerList);
 
 			BukkitIRCdPlugin.log.info("[BukkitIRCd] Loaded messages file." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin464." : ""));

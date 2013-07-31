@@ -130,6 +130,7 @@ public class IRCd implements Runnable {
 	public static String msgIRCMessageDynmap = "<{User}> {Message}";
 	public static String msgIRCNoticeDynmap = "-{User}- {Message}";
 	public static String msgDynmapMessage = "[Dynmap] {User}: {Message}";
+	public static String msgDisconnectQuitting = "Left the server";
 	public static String msgPlayerList = "^BOnline Players ({Count}):^B {Users}";
 
 	public static final long serverStartTime = System.currentTimeMillis() / 1000L;
@@ -1938,9 +1939,9 @@ public class IRCd implements Runnable {
 				BukkitPlayer bp = bukkitPlayers.get(ID);
 				if (mode == Modes.STANDALONE) {
 					writeAll(":" + bp.nick + Config.getIrcdIngameSuffix() + "!" + bp.nick + "@"
-							+ bp.host + " QUIT :Left the server");
+							+ bp.host + " QUIT :" + msgDisconnectQuitting);
 				} else if (mode == Modes.INSPIRCD) {
-					println(":" + bp.getUID() + " QUIT :Left the server");
+					println(":" + bp.getUID() + " QUIT :" + msgDisconnectQuitting);
 				}
 				bukkitPlayers.remove(ID);
 				return true;
