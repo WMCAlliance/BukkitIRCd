@@ -10,7 +10,9 @@ irc-leave-reason: "&3[IRC] &e{Prefix}{User}{Suffix}&r left IRC ({Reason})"  # Di
 irc-leave-dynmap: "{User} left IRC"  # Displays on dynmap when someone leaves IRC.
 irc-leave-reason-dynmap: "{User} left IRC ({Reason})"  # Displays on dynmap when someone leaves IRC with a reason.
 irc-kick: "&3[IRC] &r{KickedPrefix}{KickedUser}{KickedSuffix}&r was kicked by &r{KickerPrefix}{KickedBy}{KickerSuffix}&r"  # Displays ingame when someone is kicked from IRC.
-irc-kick-reason: "&3[IRC] &r{KickedPrefix}{KickedUser}{KickedSuffix}&r was kicked by {KickerPrefix}{KickedBy}{KickerSuffix}&r ({Reason})"  # Displays ingame when someone is kicked from IRC with a reason.
+irc-kick-reason: "&3[IRC] &r{KickedPrefix}{KickedUser}{KickedSuffix}&r was kicked by {KickerPrefix}{KickedBy}{KickerSuffix}&r ({Reason})"  # Is shown to the player when they're kicked.
+irc-kick-display: "Kicked by {KickedBy}."  # Is shown to the player when they're kicked.
+irc-kick-display-reason: "Kicked by {KickedBy} for {Reason}."  # Displays ingame when someone is kicked from IRC with a reason.
 irc-kick-dynmap: "{KickedUser} was kicked by {KickedBy}"  # Displays on dynmap when someone is kicked from IRC.
 irc-kick-reason-dynmap: "{KickedUser} was kicked by {KickedBy} ({Reason})"  # Displays on dynmap when someone is kicked from IRC with a reason.
 irc-ban: "&3[IRC] &e{BannedUser} was banned by {BannedBy}"  # Displays ingame when someone is banned from IRC.
