@@ -2038,54 +2038,67 @@ public class IRCd implements Runnable {
 	 * @param player
 	 * @param kickReason
 	 */
-	public static void kickPlayerIngame(final String kicker, final String kickee, final String kickReason) {
+	public static boolean kickPlayerIngame(final String kicker, final String kickee, final String kickReason) {
 		int IRCUser = getBukkitUser(kickee);
 		IRCd.kickBukkitUser(kickReason, IRCUser);
 		IRCd.removeBukkitUser(IRCUser);
 
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				final Server server = Bukkit.getServer();
-				final Player player = server.getPlayer(kickee);
-				if (player != null) {
+		try {
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					final Server server = Bukkit.getServer();
+					final Player player = server.getPlayer(kickee);
+					if (player != null) {
 
-					if (kickReason == null) {
-						server.broadcastMessage(msgIRCKick
-								.replace("{KickedBy}", kicker)
-								.replace("{KickedUser}",player.getDisplayName()));
-					} else {
-						server.broadcastMessage(msgIRCKickReason
-								.replace("{KickedBy}", kicker)
-								.replace("{KickedUser}",player.getDisplayName())
-								.replace("{Reason}", kickReason));
-					}
+						if (kickReason == null) {
+							server.broadcastMessage(msgIRCKick.replace(
+									"{KickedBy}", kicker).replace(
+									"{KickedUser}", player.getDisplayName()));
+						} else {
+							server.broadcastMessage(msgIRCKickReason
+									.replace("{KickedBy}", kicker)
+									.replace("{KickedUser}",
+											player.getDisplayName())
+									.replace("{Reason}", kickReason));
+						}
 
-					final String kickText;
-					if (kickReason == null) {
-						kickText = "Kicked by " + kicker;
-					} else {
-						kickText = "Kicked by " + kicker + ": " + kickReason;
+						final String kickText;
+						if (kickReason == null) {
+							kickText = "Kicked by " + kicker;
+						} else {
+							kickText = "Kicked by " + kicker + ": "
+									+ kickReason;
+						}
+						player.kickPlayer(kickText);
 					}
-					player.kickPlayer(kickText);
 				}
-			}
-		}.runTask(BukkitIRCdPlugin.thePlugin);
+			}.runTask(BukkitIRCdPlugin.thePlugin);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	/**
 	 * Broadcasts a message
 	 *
 	 * @param msg
+	 * @return true if able to schedule broadcast
 	 */
-	public static void broadcastMessage(final String msg) {
+	public static boolean broadcastMessage(final String msg) {
 
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				Bukkit.getServer().broadcastMessage(msg);
-			}
-		}.runTask(BukkitIRCdPlugin.thePlugin);
+		try {
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					Bukkit.getServer().broadcastMessage(msg);
+				}
+			}.runTask(BukkitIRCdPlugin.thePlugin);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	/**
@@ -2093,8 +2106,9 @@ public class IRCd implements Runnable {
 	 *
 	 * @param msg
 	 */
-	public static void sendMessage(final String player, final String msg) {
+	public static boolean sendMessage(final String player, final String msg) {
 
+		try {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -2102,6 +2116,10 @@ public class IRCd implements Runnable {
 				if (p != null) p.sendMessage(msg);
 			}
 		}.runTask(BukkitIRCdPlugin.thePlugin);
+		return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	public static int getBukkitUser(String nick) {
@@ -2910,18 +2928,24 @@ public class IRCd implements Runnable {
 	}
 
 	public static String join(String[] strArray, String delimiter, int start) {
-		String joined = "";
-		int noOfItems = 0;
-		for (String item : strArray) {
-			if (noOfItems < start) {
-				noOfItems++;
-				continue;
-			}
-			joined += item;
-			if (++noOfItems < strArray.length)
-				joined += delimiter;
+
+		if (strArray.length <= start) {
+			return "";
 		}
-		return joined;
+
+		// Compute buffer length
+		int size = delimiter.length() * (strArray.length - start - 1);
+		for (final String s : strArray) {
+			size += s.length();
+		}
+
+		final StringBuilder builder = new StringBuilder(size);
+		builder.append(strArray[start]);
+		for (int i = start + 1; i < strArray.length; i++) {
+			builder.append(delimiter).append(strArray[i]);
+		}
+
+		return builder.toString();
 	}
 
 	public static void executeCommand(final String command) {
