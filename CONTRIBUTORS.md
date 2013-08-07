@@ -16,4 +16,4 @@ Thanks to everyone who has contributed to BukkitIRCd
 
 [Monofraps](https://github.com/Monofraps) - lots of criticism and hints leading to working code
 
-[glguy](https://github.com/glguy) - has also contributed incredible amounts of code, much of which has included new complex features that we'd never be abole to do.
+[glguy](https://github.com/glguy) - has also contributed incredible amounts of code, much of which has included new complex features that we'd never be able to do.
