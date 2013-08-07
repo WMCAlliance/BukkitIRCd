@@ -122,7 +122,7 @@ public class IRCReplyCommand implements CommandExecutor {
 			.replace("{Prefix}", IRCd.getGroupPrefix(ircuser.getTextModes()))
 			.replace("{Suffix}", IRCd.getGroupSuffix(ircuser.getTextModes()))
 			.replace("{User}", ircuser.nick)
-			.replace("{Message}", IRCd.convertColors(IRCd.join(args, " ", 0), false)));
+			.replace("{Message}", ChatColor.translateAlternateColorCodes('&', IRCd.join(args, " ", 0))));
 
 		return true;
 	}
