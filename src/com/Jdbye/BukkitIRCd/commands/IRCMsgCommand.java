@@ -24,7 +24,9 @@ public class IRCMsgCommand implements CommandExecutor {
 			return false; // prints usage
 		}
 		final String targetNick = args[0];
-		final String message    = IRCd.convertColors(IRCd.join(args, " ", 1), false);
+		final String rawMessage    = IRCd.join(args, " ", 1);
+		final String gameMessage   = ChatColor.translateAlternateColorCodes('&', rawMessage);
+		final String ircMessage    = IRCd.convertColors(rawMessage, false);
 
 		final IRCUser targetIrcUser = IRCd.getIRCUser(targetNick);
 		if (targetIrcUser == null) {
@@ -55,7 +57,7 @@ public class IRCMsgCommand implements CommandExecutor {
 									+ " PRIVMSG "
 									+ targetIrcUser.nick
 									+ " :"
-									+ message);
+									+ ircMessage);
 			break;
 
 		case INSPIRCD:
@@ -86,7 +88,7 @@ public class IRCMsgCommand implements CommandExecutor {
 				return true;
 			}
 
-			IRCd.privmsg(sourceUID, targetUID, message);
+			IRCd.privmsg(sourceUID, targetUID, ircMessage);
 			break;
 		}
 
@@ -96,7 +98,7 @@ public class IRCMsgCommand implements CommandExecutor {
 					.replace("{Prefix}", IRCd.getGroupPrefix(targetModes))
 					.replace("{Suffix}", IRCd.getGroupSuffix(targetModes))
 					.replace("{User}", targetIrcUser.nick)
-					.replace("{Message}", message));
+					.replace("{Message}", gameMessage));
 
 		return true;
 	}
