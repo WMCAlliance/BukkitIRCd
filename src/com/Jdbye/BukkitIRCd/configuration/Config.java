@@ -5,7 +5,6 @@ import com.Jdbye.BukkitIRCd.Hash;
 import com.Jdbye.BukkitIRCd.HashType;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -62,23 +61,6 @@ public final class Config
     public static void loadConfiguration()
     {
         config = plugin.getConfig();
-
-        if (!(new File(plugin.getDataFolder(), "config.yml")).exists())
-        {
-            BukkitIRCdPlugin.log.info("[BukkitIRCd] Creating default configuration file." + (isDebugModeEnabled() ? " Code BukkitIRCdPlugin183." : ""));
-            config.options().copyDefaults(true);
-        }
-
-        try
-        {
-            BukkitIRCdPlugin.ircd_creationdate = config.getString("server-creation-date", BukkitIRCdPlugin.ircd_creationdate);
-            BukkitIRCdPlugin.log.info("[BukkitIRCd] Loaded configuration file." + (isDebugModeEnabled() ? " Code BukkitIRCdPlugin363." : ""));
-        }
-        catch (Exception e)
-        {
-            BukkitIRCdPlugin.log.info("[BukkitIRCd] Failed to load configuration file: " + e.toString());
-        }
-
     }
 
     public static String getMode()

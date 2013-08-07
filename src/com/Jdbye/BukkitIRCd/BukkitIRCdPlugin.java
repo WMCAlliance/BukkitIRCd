@@ -3,7 +3,6 @@ package com.Jdbye.BukkitIRCd;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,9 +48,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 	public static BukkitIRCdPlugin thePlugin = null;
 
-	private static Date curDate = new Date();
 	public static SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
-	public static String ircd_creationdate = dateFormat.format(curDate);
 
 	public Map<String, String> lastReceived = new HashMap<String, String>();
 
