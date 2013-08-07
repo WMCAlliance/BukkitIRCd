@@ -14,8 +14,6 @@ channel-name: "#minecraft"
 # Channel name for the IRC server.
 console-channel-name: "#minecraft-staff"  
 # Name of the console channel for executing server commands (oper only)
-server-creation-date: "Tue Mar 13 03:44:06 2012"  
-# The date the IRC server was created. Should not need to be modified. However, keep it in the same format if you modify it.
 server-name: "BukkitIRCd"  
 # Name of the standalone IRC server, e.g. TempCraft. Must not contain spaces.
 server-description: "Minecraft BukkitIRCd Server"  
