@@ -75,8 +75,9 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	public static Config config = null;
 	@Override
 	public void onEnable() {
-		// Register our events
+		saveDefaultConfig();
 
+		// Register our events
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(this.playerListener, this);
 
@@ -140,7 +141,6 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 		Config.reloadConfiguration();
 		Config.saveConfiguration();
-		Messages.saveMessages();
 
 		Bans.enableBans();
 

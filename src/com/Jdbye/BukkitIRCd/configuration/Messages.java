@@ -2,6 +2,8 @@ package com.Jdbye.BukkitIRCd.configuration;
 
 import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
 import com.Jdbye.BukkitIRCd.IRCd;
+
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -12,155 +14,88 @@ import java.io.IOException;
 public class Messages extends JavaPlugin {
 	public static FileConfiguration messages;
 
-
-	public static void saveMessages() {
-		File messagesFile = new File(BukkitIRCdPlugin.thePlugin.getDataFolder(), "messages.yml");
-		Messages.messages = YamlConfiguration.loadConfiguration(messagesFile);
-		if (!(messagesFile.exists())) {
-			BukkitIRCdPlugin.log.info("[BukkitIRCd] Creating default messages file." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin192." : ""));
-			messages.options().copyDefaults(true);
-			saveDefaultMessages(BukkitIRCdPlugin.thePlugin.getDataFolder(),"messages.yml");
-			BukkitIRCdPlugin.log.info("[BukkitIRCd] Saving initial messages file." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin194." : ""));
-
-		}
+	private static String populate(final String key, final String def) {
+		messages.addDefault(key, def);
+		final String msg = messages.getString(key);
+		final String coloredMsg = ChatColor.translateAlternateColorCodes('&', msg);
+		return coloredMsg;
 	}
-
-
-
-
 
 	// Load the messages from messages.yml
 	public static void loadMessages(IRCd ircd) {
+
+		final File dataFolder = BukkitIRCdPlugin.thePlugin.getDataFolder();
+		final File messagesFile = new File(dataFolder, "messages.yml");
+		messages = YamlConfiguration.loadConfiguration(messagesFile);
+
 		try {
-			IRCd.msgLinked = messages.getString("linked", IRCd.msgLinked);
+			IRCd.msgLinked = populate("linked", IRCd.msgLinked);
 
-			IRCd.msgSendQueryFromIngame = messages.getString("irc-send-pm", IRCd.msgSendQueryFromIngame);
-			IRCd.msgDelinked = messages.getString("delinked", IRCd.msgDelinked);
-			IRCd.msgDelinkedReason = messages.getString("delinked-reason", IRCd.msgDelinkedReason);
+			IRCd.msgSendQueryFromIngame = populate("irc-send-pm", IRCd.msgSendQueryFromIngame);
+			IRCd.msgDelinked = populate("delinked", IRCd.msgDelinked);
+			IRCd.msgDelinkedReason = populate("delinked-reason", IRCd.msgDelinkedReason);
 
-			IRCd.msgIRCJoin = messages.getString("irc-join", IRCd.msgIRCJoin);
-			IRCd.msgIRCJoinDynmap = messages.getString("irc-join-dynmap", IRCd.msgIRCJoinDynmap);
+			IRCd.msgIRCJoin = populate("irc-join", IRCd.msgIRCJoin);
+			IRCd.msgIRCJoinDynmap = populate("irc-join-dynmap", IRCd.msgIRCJoinDynmap);
+
+
+			IRCd.msgIRCLeave = populate("irc-leave", IRCd.msgIRCLeave);
+			IRCd.msgIRCLeaveReason = populate("irc-leave-reason", IRCd.msgIRCLeaveReason);
+			IRCd.msgIRCLeaveDynmap = populate("irc-leave-dynmap", IRCd.msgIRCLeaveDynmap);
+			IRCd.msgIRCLeaveReasonDynmap = populate("irc-leave-reason-dynmap", IRCd.msgIRCLeaveReasonDynmap);
+
+			IRCd.msgIRCKick = populate("irc-kick", IRCd.msgIRCKick);
+			IRCd.msgIRCKickReason = populate("irc-kick-reason", IRCd.msgIRCKickReason);
+			IRCd.msgIRCKickDisplay = populate("irc-kick-display", IRCd.msgIRCKickDisplay);
+			IRCd.msgIRCKickDisplayReason = populate("irc-kick-display-reason", IRCd.msgIRCKickDisplayReason);
+			IRCd.msgIRCKickDynmap = populate("irc-kick-dynmap", IRCd.msgIRCKickDynmap);
+			IRCd.msgIRCKickReasonDynmap = populate("irc-kick-reason-dynmap", IRCd.msgIRCKickReasonDynmap);
+
+			IRCd.msgIRCBan = populate("irc-ban", IRCd.msgIRCBan);
+			IRCd.msgIRCBanDynmap = populate("irc-ban-dynmap", IRCd.msgIRCBanDynmap);
+
+			IRCd.msgIRCUnban = populate("irc-unban", IRCd.msgIRCUnban);
+			IRCd.msgIRCUnbanDynmap = populate("irc-unban-dynmap", IRCd.msgIRCUnbanDynmap);
+
+			IRCd.msgIRCNickChange = populate("irc-nick-change", IRCd.msgIRCNickChange);
+			IRCd.msgIRCNickChangeDynmap = populate("irc-nick-change-dynmap", IRCd.msgIRCNickChangeDynmap);
+
+			IRCd.msgIRCAction = populate("irc-action", IRCd.msgIRCAction);
+			IRCd.msgIRCMessage = populate("irc-message", IRCd.msgIRCMessage);
+			IRCd.msgIRCNotice = populate("irc-notice", IRCd.msgIRCNotice);
+
+			IRCd.msgIRCPrivateAction = populate("irc-private-action", IRCd.msgIRCPrivateAction);
+			IRCd.msgIRCPrivateMessage = populate("irc-private-message", IRCd.msgIRCPrivateMessage);
+			IRCd.msgIRCPrivateNotice = populate("irc-private-notice", IRCd.msgIRCPrivateNotice);
+
+			IRCd.msgIRCActionDynmap = populate("irc-action-dynmap", IRCd.msgIRCActionDynmap);
+			IRCd.msgIRCMessageDynmap = populate("irc-message-dynmap", IRCd.msgIRCMessageDynmap);
+			IRCd.msgIRCNoticeDynmap = populate("irc-notice-dynmap", IRCd.msgIRCNoticeDynmap);
+
+			IRCd.msgDynmapMessage = populate("dynmap-message", IRCd.msgDynmapMessage);
+			IRCd.msgDisconnectQuitting = populate("disconnect-quitting", IRCd.msgDisconnectQuitting);
+			IRCd.msgPlayerList = populate("player-list", IRCd.msgPlayerList);
 
 			IRCd.groupPrefixes = messages.getConfigurationSection("group-prefixes");
 			IRCd.groupSuffixes = messages.getConfigurationSection("group-suffixes");
-
-			IRCd.msgIRCLeave = messages.getString("irc-leave", IRCd.msgIRCLeave);
-			IRCd.msgIRCLeaveReason = messages.getString("irc-leave-reason", IRCd.msgIRCLeaveReason);
-			IRCd.msgIRCLeaveDynmap = messages.getString("irc-leave-dynmap", IRCd.msgIRCLeaveDynmap);
-			IRCd.msgIRCLeaveReasonDynmap = messages.getString("irc-leave-reason-dynmap", IRCd.msgIRCLeaveReasonDynmap);
-
-			IRCd.msgIRCKick = messages.getString("irc-kick", IRCd.msgIRCKick);
-			IRCd.msgIRCKickReason = messages.getString("irc-kick-reason", IRCd.msgIRCKickReason);
-			IRCd.msgIRCKickDisplay = messages.getString("irc-kick-display", IRCd.msgIRCKickDisplay);
-			IRCd.msgIRCKickDisplayReason = messages.getString("irc-kick-display-reason", IRCd.msgIRCKickDisplayReason);
-			IRCd.msgIRCKickDynmap = messages.getString("irc-kick-dynmap", IRCd.msgIRCKickDynmap);
-			IRCd.msgIRCKickReasonDynmap = messages.getString("irc-kick-reason-dynmap", IRCd.msgIRCKickReasonDynmap);
-
-			IRCd.msgIRCBan = messages.getString("irc-ban", IRCd.msgIRCBan);
-			IRCd.msgIRCBanDynmap = messages.getString("irc-ban-dynmap", IRCd.msgIRCBanDynmap);
-
-			IRCd.msgIRCUnban = messages.getString("irc-unban", IRCd.msgIRCUnban);
-			IRCd.msgIRCUnbanDynmap = messages.getString("irc-unban-dynmap", IRCd.msgIRCUnbanDynmap);
-
-			IRCd.msgIRCNickChange = messages.getString("irc-nick-change", IRCd.msgIRCNickChange);
-			IRCd.msgIRCNickChangeDynmap = messages.getString("irc-nick-change-dynmap", IRCd.msgIRCNickChangeDynmap);
-
-			IRCd.msgIRCAction = messages.getString("irc-action", IRCd.msgIRCAction);
-			IRCd.msgIRCMessage = messages.getString("irc-message", IRCd.msgIRCMessage);
-			IRCd.msgIRCNotice = messages.getString("irc-notice", IRCd.msgIRCNotice);
-
-			IRCd.msgIRCPrivateAction = messages.getString("irc-private-action", IRCd.msgIRCPrivateAction);
-			IRCd.msgIRCPrivateMessage = messages.getString("irc-private-message", IRCd.msgIRCPrivateMessage);
-			IRCd.msgIRCPrivateNotice = messages.getString("irc-private-notice", IRCd.msgIRCPrivateNotice);
-
-			IRCd.msgIRCActionDynmap = messages.getString("irc-action-dynmap", IRCd.msgIRCActionDynmap);
-			IRCd.msgIRCMessageDynmap = messages.getString("irc-message-dynmap", IRCd.msgIRCMessageDynmap);
-			IRCd.msgIRCNoticeDynmap = messages.getString("irc-notice-dynmap", IRCd.msgIRCNoticeDynmap);
-
-			IRCd.msgDynmapMessage = messages.getString("dynmap-message", IRCd.msgDynmapMessage);
-			IRCd.msgDisconnectQuitting = messages.getString("disconnect-quitting", IRCd.msgDisconnectQuitting);
-			IRCd.msgPlayerList = messages.getString("player-list", IRCd.msgPlayerList);
-
 			IRCd.consoleFilters = messages.getStringList("console-filters");
-			//** RECOLOUR ALL MESSAGES **
-
-			IRCd.msgSendQueryFromIngame = BukkitIRCdPlugin.colorize(IRCd.msgSendQueryFromIngame);
-			IRCd.msgLinked = BukkitIRCdPlugin.colorize(IRCd.msgLinked);
-			IRCd.msgDelinked = BukkitIRCdPlugin.colorize(IRCd.msgDelinked);
-			IRCd.msgDelinkedReason = BukkitIRCdPlugin.colorize(IRCd.msgDelinked);
-			IRCd.msgIRCJoin = BukkitIRCdPlugin.colorize(IRCd.msgIRCJoin);
-			IRCd.msgIRCJoinDynmap = BukkitIRCdPlugin.colorize(IRCd.msgIRCJoinDynmap);
-			IRCd.msgIRCLeave = BukkitIRCdPlugin.colorize(IRCd.msgIRCLeave);
-			IRCd.msgIRCLeaveReason = BukkitIRCdPlugin.colorize(IRCd.msgIRCLeaveReason);
-			IRCd.msgIRCLeaveDynmap = BukkitIRCdPlugin.colorize(IRCd.msgIRCLeaveDynmap);
-			IRCd.msgIRCLeaveReasonDynmap = BukkitIRCdPlugin.colorize(IRCd.msgIRCLeaveReasonDynmap);
-			IRCd.msgIRCKick = BukkitIRCdPlugin.colorize(IRCd.msgIRCKick);
-			IRCd.msgIRCKickReason = BukkitIRCdPlugin.colorize(IRCd.msgIRCKickReason);
-			IRCd.msgIRCKickDisplay = BukkitIRCdPlugin.colorize(IRCd.msgIRCKickDisplay);
-			IRCd.msgIRCKickDisplayReason = BukkitIRCdPlugin.colorize(IRCd.msgIRCKickDisplayReason);
-			IRCd.msgIRCKickDynmap = BukkitIRCdPlugin.colorize(IRCd.msgIRCKickDynmap);
-			IRCd.msgIRCKickReasonDynmap = BukkitIRCdPlugin.colorize(IRCd.msgIRCKickReasonDynmap);
-			IRCd.msgIRCBan = BukkitIRCdPlugin.colorize(IRCd.msgIRCBan);
-			IRCd.msgIRCBanDynmap = BukkitIRCdPlugin.colorize(IRCd.msgIRCBanDynmap);
-			IRCd.msgIRCUnban = BukkitIRCdPlugin.colorize(IRCd.msgIRCUnban);
-			IRCd.msgIRCUnbanDynmap = BukkitIRCdPlugin.colorize(IRCd.msgIRCUnbanDynmap);
-			IRCd.msgIRCNickChange = BukkitIRCdPlugin.colorize(IRCd.msgIRCNickChange);
-			IRCd.msgIRCNickChangeDynmap = BukkitIRCdPlugin.colorize(IRCd.msgIRCNickChangeDynmap);
-			IRCd.msgIRCAction = BukkitIRCdPlugin.colorize(IRCd.msgIRCAction);
-			IRCd.msgIRCMessage = BukkitIRCdPlugin.colorize(IRCd.msgIRCMessage);
-			IRCd.msgIRCNotice = BukkitIRCdPlugin.colorize(IRCd.msgIRCNotice);
-			IRCd.msgIRCPrivateAction = BukkitIRCdPlugin.colorize(IRCd.msgIRCPrivateAction);
-			IRCd.msgIRCPrivateMessage = BukkitIRCdPlugin.colorize(IRCd.msgIRCPrivateMessage);
-			IRCd.msgIRCPrivateNotice = BukkitIRCdPlugin.colorize(IRCd.msgIRCPrivateNotice);
-			IRCd.msgIRCActionDynmap = BukkitIRCdPlugin.colorize(IRCd.msgIRCActionDynmap);
-			IRCd.msgIRCMessageDynmap = BukkitIRCdPlugin.colorize(IRCd.msgIRCMessageDynmap);
-			IRCd.msgIRCNoticeDynmap = BukkitIRCdPlugin.colorize(IRCd.msgIRCNoticeDynmap);
-			IRCd.msgDynmapMessage = BukkitIRCdPlugin.colorize(IRCd.msgDynmapMessage);
-			IRCd.msgDisconnectQuitting = BukkitIRCdPlugin.colorize(IRCd.msgDisconnectQuitting);
-			IRCd.msgPlayerList = BukkitIRCdPlugin.colorize(IRCd.msgPlayerList);
 
 			BukkitIRCdPlugin.log.info("[BukkitIRCd] Loaded messages file." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin464." : ""));
 		}
 		catch (Exception e) {
 			BukkitIRCdPlugin.log.info("[BukkitIRCd] Failed to load messages file: " + e.toString());
 		}
-	}
 
-	private static void saveDefaultMessages(File dataFolder, String fileName)
-	{
-		BukkitIRCdPlugin.log.info("[BukkitIRCd] Messages file not found, creating new one." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin705" : ""));
-		dataFolder.mkdirs();
+		if (!messagesFile.exists()) {
+			BukkitIRCdPlugin.log.info("[BukkitIRCd] Saving initial messages file." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin194." : ""));
 
-		File msgFile = new File(dataFolder, fileName);
-		try
-		{
-            if (!msgFile.exists())
-            {
-                if (!msgFile.createNewFile())
-                    throw new IOException("Failed file creation");
-            }
-        }
-		catch(IOException e)
-		{
-			BukkitIRCdPlugin.log.warning("[BukkitIRCd] Could not create messages file!" + (Config.isDebugModeEnabled() ? " Error code BukkitIRCdPlugin716." : ""));
-		}
-
-		writeMessages(msgFile);
-	}
-
-	private static void writeMessages(File messagesFile)
-	{
-		try
-		{
-			messages.save(messagesFile);
-			BukkitIRCdPlugin.log.info("[BukkitIRCd] Saved messages file." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin728." : ""));
-		}
-		catch(Exception e)
-		{
-			BukkitIRCdPlugin.log.warning("[BukkitIRCd] Caught exception while writing messages to file: ");
-			e.printStackTrace();
+			try	{
+				dataFolder.mkdirs();
+				messages.options().copyDefaults(true);
+				messages.save(messagesFile);
+			} catch (IOException e) {
+				BukkitIRCdPlugin.log.info("[BukkitIRCd] Failed to save messages file." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin195." : ""));
+			}
 		}
 	}
-
-
 }
