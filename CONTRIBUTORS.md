@@ -15,3 +15,5 @@ Thanks to everyone who has contributed to BukkitIRCd
 [ron975](https://github.com/ron975) - has contributed incredible amounts of code, and continues to do so - huge thanks to him
 
 [Monofraps](https://github.com/Monofraps) - lots of criticism and hints leading to working code
+
+[glguy](https://github.com/glguy) - lots of help and different code fixes
