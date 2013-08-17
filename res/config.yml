@@ -14,8 +14,6 @@ channel-name: "#minecraft"
 # Channel name for the IRC server.
 console-channel-name: "#minecraft-staff"  
 # Name of the console channel for executing server commands (oper only)
-server-creation-date: "Tue Mar 13 03:44:06 2012"  
-# The date the IRC server was created. Should not need to be modified. However, keep it in the same format if you modify it.
 server-name: "BukkitIRCd"  
 # Name of the standalone IRC server, e.g. TempCraft. Must not contain spaces.
 server-description: "Minecraft BukkitIRCd Server"  
@@ -43,6 +41,11 @@ strip-ingame-suffix: true
 # Whether to strip suffixes or not
 redundant-modes: false
 # Add all applicable IRC modes or just one?
+use-host-mask: true
+# Whether to enable host masking
+host-mask-prefix: Minecraft-
+host-mask-suffix: .server.ip
+host-mask-key: 0x00000000
 standalone:
     port: 6667  # Port to use for the standalone IRC server.
     max-connections: 1000  # Max number of simultaneous connections.

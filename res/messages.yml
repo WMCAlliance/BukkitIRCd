@@ -10,7 +10,9 @@ irc-leave-reason: "&3[IRC] &e{Prefix}{User}{Suffix}&r left IRC ({Reason})"  # Di
 irc-leave-dynmap: "{User} left IRC"  # Displays on dynmap when someone leaves IRC.
 irc-leave-reason-dynmap: "{User} left IRC ({Reason})"  # Displays on dynmap when someone leaves IRC with a reason.
 irc-kick: "&3[IRC] &r{KickedPrefix}{KickedUser}{KickedSuffix}&r was kicked by &r{KickerPrefix}{KickedBy}{KickerSuffix}&r"  # Displays ingame when someone is kicked from IRC.
-irc-kick-reason: "&3[IRC] &r{KickedPrefix}{KickedUser}{KickedSuffix}&r was kicked by {KickerPrefix}{KickedBy}{KickerSuffix}&r ({Reason})"  # Displays ingame when someone is kicked from IRC with a reason.
+irc-kick-reason: "&3[IRC] &r{KickedPrefix}{KickedUser}{KickedSuffix}&r was kicked by {KickerPrefix}{KickedBy}{KickerSuffix}&r ({Reason})"  # Is shown to the player when they're kicked.
+irc-kick-display: "Kicked by {KickedBy}."  # Is shown to the player when they're kicked.
+irc-kick-display-reason: "Kicked by {KickedBy} for {Reason}."  # Is shown to the player when they're kicked.
 irc-kick-dynmap: "{KickedUser} was kicked by {KickedBy}"  # Displays on dynmap when someone is kicked from IRC.
 irc-kick-reason-dynmap: "{KickedUser} was kicked by {KickedBy} ({Reason})"  # Displays on dynmap when someone is kicked from IRC with a reason.
 irc-ban: "&3[IRC] &e{BannedUser} was banned by {BannedBy}"  # Displays ingame when someone is banned from IRC.
@@ -26,9 +28,9 @@ irc-send-pm: "&3[IRC] &6[me -> {Prefix}{User}{Suffix}&6]&r {Message}"  # Display
 irc-action-dynmap: "* {User} {Message}"  # Displays on dynmap when someone sends an action on IRC.
 irc-message-dynmap: "<{User}> {Message}"  # Displays on dynmap when someone sends a message on IRC.
 irc-notice-dynmap: "-{User}- {Message}"  # Displays on dynmap when someone sends a notice on IRC.
-irc-message: "&3[IRC] <&7{User}&f> {Message}" # Displays ingame when someone sends a message on IRC.
-irc-notice: "&3[IRC] -&7{User}&f- {Message}" # Displays ingame when someone sends a notice on IRC.
-irc-action: "&3[IRC] * &7{User}&f {Message}" # Displays ingame when someone sends an action on IRC.
+irc-message: "&3[IRC] <&7{User}&f> {Message}"
+irc-notice: "&3[IRC] -&7{User}&f- {Message}"
+irc-action: "&3[IRC] * &7{User}&f {Message}"
 dynmap-message: "[Map] {User}: {Message}"  # Displays on IRC when someone sends a message on Dynmap.
 player-list: "We have (&l{Count}&r) players online. They are: {Users}"  # The template used for the !players IRC command. If you make this blank, the command will be disabled.
 console-filters: # Filters messages that go into the staff channel. Format is regular expressions.

@@ -5,7 +5,6 @@ import com.Jdbye.BukkitIRCd.Hash;
 import com.Jdbye.BukkitIRCd.HashType;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -62,23 +61,6 @@ public final class Config
     public static void loadConfiguration()
     {
         config = plugin.getConfig();
-
-        if (!(new File(plugin.getDataFolder(), "config.yml")).exists())
-        {
-            BukkitIRCdPlugin.log.info("[BukkitIRCd] Creating default configuration file." + (isDebugModeEnabled() ? " Code BukkitIRCdPlugin183." : ""));
-            config.options().copyDefaults(true);
-        }
-
-        try
-        {
-            BukkitIRCdPlugin.ircd_creationdate = config.getString("server-creation-date", BukkitIRCdPlugin.ircd_creationdate);
-            BukkitIRCdPlugin.log.info("[BukkitIRCd] Loaded configuration file." + (isDebugModeEnabled() ? " Code BukkitIRCdPlugin363." : ""));
-        }
-        catch (Exception e)
-        {
-            BukkitIRCdPlugin.log.info("[BukkitIRCd] Failed to load configuration file: " + e.toString());
-        }
-
     }
 
     public static String getMode()
@@ -589,6 +571,46 @@ public final class Config
     public static void setEnableRawSend(final boolean enableRawSend)
     {
         config.set("enable-raw-send", enableRawSend);
+    }
+
+    public static String getHostMaskPrefix()
+    {
+        return config.getString("host-mask-prefix");
+    }
+
+    public static void setHostMaskPrefix(final String hostMaskPrefix)
+    {
+        config.set("host-mask-prefix", hostMaskPrefix);
+    }
+
+    public static String getHostMaskSuffix()
+    {
+        return config.getString("host-mask-suffix");
+    }
+
+    public static void setHostMaskSuffix(final String hostMaskSuffix)
+    {
+        config.set("host-mask-suffix", hostMaskSuffix);
+    }
+
+    public static String getHostMaskKey()
+    {
+        return config.getString("host-mask-key");
+    }
+
+    public static void setHostMaskKey(final String hostMaskKey)
+    {
+        config.set("host-mask-key", hostMaskKey);
+    }
+
+    public static boolean isUseHostMask()
+    {
+        return config.getBoolean("use-host-mask", false);
+    }
+
+    public static void setIsHostMask(final boolean useHostMask)
+    {
+        config.set("use-host-mask", useHostMask);
     }
 
     public static BukkitIRCdPlugin getPlugin()

@@ -1,6 +1,8 @@
 package com.Jdbye.BukkitIRCd;
 
-import com.Jdbye.BukkitIRCd.configuration.Config;
+import java.util.Set;
+import java.util.regex.PatternSyntaxException;
+
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissibleBase;
@@ -9,13 +11,12 @@ import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
-import java.util.Set;
-import java.util.regex.PatternSyntaxException;
+import com.Jdbye.BukkitIRCd.configuration.Config;
 
 // import org.bukkit.ChatColor;
 
 public class IRCCommandSender implements CommandSender {
-    private Server server;
+    private final Server server;
     private final PermissibleBase perm = new PermissibleBase(this);
     private boolean enabled = false;
     private String nick;
@@ -27,7 +28,8 @@ public class IRCCommandSender implements CommandSender {
         enabled = true;
     }
 
-    public void sendMessage(String message) {
+    @Override
+	public void sendMessage(String message) {
 		if (enabled) {
 			for (String filter : IRCd.consoleFilters) {
 				try {
@@ -39,16 +41,24 @@ public class IRCCommandSender implements CommandSender {
 					continue;
 				}
 			}
-		}
-    	
 
-    			if (IRCd.mode == Modes.STANDALONE) IRCd.writeOpers(":" + Config.getIrcdServerName() + "!" + Config.getIrcdServerName() + "@" + Config.getIrcdServerHostName() + " PRIVMSG " + Config.getIrcdConsoleChannel() + " :" + IRCd.convertColors(message, false));
-    			else if (IRCd.isLinkcompleted()) IRCd.println(":" + IRCd.serverUID + " PRIVMSG " + Config.getIrcdConsoleChannel() + " :" + IRCd.convertColors(message, false));
-    		}
-    	
-    
-    
-    public void sendMessage(String[] message) {
+			switch (IRCd.mode) {
+			case STANDALONE:
+				IRCd.writeOpers(":" + Config.getIrcdServerName() + "!" + Config.getIrcdServerName() + "@" + Config.getIrcdServerHostName() + " PRIVMSG " + Config.getIrcdConsoleChannel() + " :" + IRCd.convertColors(message, false));
+				break;
+			case INSPIRCD:
+				if (IRCd.isLinkcompleted()) {
+					IRCd.privmsg(IRCd.serverUID, Config.getIrcdConsoleChannel(), IRCd.convertColors(message, false));
+				}
+				break;
+			}
+		}
+    }
+
+
+
+    @Override
+	public void sendMessage(String[] message) {
     	for (String s : message) sendMessage(s);
     }
 
@@ -60,12 +70,14 @@ public class IRCCommandSender implements CommandSender {
     	enabled = true;
     }
 
-    public boolean isOp() {
+    @Override
+	public boolean isOp() {
         //return client.isOper;
     	return true;
     }
 
-    public void setOp(boolean value) {
+    @Override
+	public void setOp(boolean value) {
         //client.isOper = value;
     	throw new UnsupportedOperationException("Cannot change operator status of IRC users");
     }
@@ -74,55 +86,68 @@ public class IRCCommandSender implements CommandSender {
         return false;
     }
 
-    public Server getServer() {
+    @Override
+	public Server getServer() {
         return server;
     }
 
-    public boolean isPermissionSet(String name) {
+    @Override
+	public boolean isPermissionSet(String name) {
         return perm.isPermissionSet(name);
     }
 
-    public boolean isPermissionSet(Permission perm) {
+    @Override
+	public boolean isPermissionSet(Permission perm) {
         return this.perm.isPermissionSet(perm);
     }
 
-    public boolean hasPermission(String name) {
+    @Override
+	public boolean hasPermission(String name) {
         return perm.hasPermission(name);
     }
 
-    public boolean hasPermission(Permission perm) {
+    @Override
+	public boolean hasPermission(Permission perm) {
         return this.perm.hasPermission(perm);
     }
 
-    public PermissionAttachment addAttachment(Plugin plugin, String name, boolean value) {
+    @Override
+	public PermissionAttachment addAttachment(Plugin plugin, String name, boolean value) {
         return perm.addAttachment(plugin, name, value);
     }
 
-    public PermissionAttachment addAttachment(Plugin plugin) {
+    @Override
+	public PermissionAttachment addAttachment(Plugin plugin) {
         return perm.addAttachment(plugin);
     }
 
-    public PermissionAttachment addAttachment(Plugin plugin, String name, boolean value, int ticks) {
+    @Override
+	public PermissionAttachment addAttachment(Plugin plugin, String name, boolean value, int ticks) {
         return perm.addAttachment(plugin, name, value, ticks);
     }
 
-    public PermissionAttachment addAttachment(Plugin plugin, int ticks) {
+    @Override
+	public PermissionAttachment addAttachment(Plugin plugin, int ticks) {
         return perm.addAttachment(plugin, ticks);
     }
 
-    public void removeAttachment(PermissionAttachment attachment) {
+    @Override
+	public void removeAttachment(PermissionAttachment attachment) {
         perm.removeAttachment(attachment);
     }
 
-    public void recalculatePermissions() {
+    @Override
+	public void recalculatePermissions() {
         perm.recalculatePermissions();
     }
 
-    public Set<PermissionAttachmentInfo> getEffectivePermissions() {
+    @Override
+	public Set<PermissionAttachmentInfo> getEffectivePermissions() {
         return perm.getEffectivePermissions();
     }
 
-    public String getName() {
+    @Override
+	public String getName() {
         return nick;
     }
 
