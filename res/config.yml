@@ -1,41 +1,35 @@
---- 
+# Server
 ban-type: ip
 broadcast-death-messages: true
 channel-name: "#minecraft"
-color-death-messages: false
-color-say-messages: false
 console-channel-name: "#minecraft-staff"
 convert-color-codes: true
 debug-mode: false
 enable-notices: true
 enable-raw-send: false
-game-colors: "0,f,1,2,c,4,5,6,e,a,3,b,9,d,8,7,f"
-handle-ampersand-colors: true
 host-mask-key: 0
 host-mask-prefix: Minecraft-
 host-mask-suffix: .server.ip
 ingame-suffix: "-mc"
-inspircd: 
-  auto-connect: true
-  connect-delay: 60
-  connect-password: test
-  link-name: irc.localhost
-  local-port: 7000
-  ping-interval: 60
-  receive-password: test
-  remote-host: localhost
-  remote-port: 7000
-  server-id: 405
-  timeout: 180
-irc-colors: "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16"
-kick-commands: 
-  - kick
 mode: standalone
 redundant-modes: false
 server: ~
 server-description: "Minecraft BukkitIRCd Server"
 server-host: bukkitircd.localhost
 server-name: BukkitIRCd
+strip-ingame-suffix: true
+use-host-mask: true
+
+# Chat
+color-death-messages: false
+color-say-messages: false
+game-colors: "0,f,1,2,c,4,5,6,e,a,3,b,9,d,8,7,f"
+handle-ampersand-colors: true
+irc-colors: "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16"
+kick-commands: 
+  - kick
+  
+# Server Settings
 standalone: 
   channel-topic: "Minecraft Server Chatroom"
   channel-topic-set-by: BukkitIRCd
@@ -48,5 +42,16 @@ standalone:
   ping-interval: 45
   port: 6667
   timeout: 180
-strip-ingame-suffix: true
-use-host-mask: true
+  
+inspircd: 
+  auto-connect: true
+  connect-delay: 60
+  connect-password: test
+  link-name: irc.localhost
+  local-port: 7000
+  ping-interval: 60
+  receive-password: test
+  remote-host: localhost
+  remote-port: 7000
+  server-id: 405
+  timeout: 180  

@@ -1,41 +1,48 @@
 # You may leave any of these values blank to not display that type of message at all.
 
-linked: "&3[IRC] &eLinked to server {LinkName}"  # Displays when successfully linked to a remote server.
-delinked: "&3[IRC] &eSplit from server {LinkName}"  # Displays when delinked from a remote server.
-delinked-reason: "&3[IRC] &eSplit from server {LinkName} ({Reason})"  # Displays when delinked from a remote server with a reason.
-irc-join: "&3[IRC] &e{Prefix}{User}{Suffix}&r joined IRC"  # Displays ingame when someone joins IRC.
-irc-join-dynmap: "{User} joined IRC"  # Displays on dynmap when someone joins IRC.
-irc-leave: "&3[IRC] &e{Prefix}{User}{Suffix}&r left IRC"  # Displays ingame when someone leaves IRC.
-irc-leave-reason: "&3[IRC] &e{Prefix}{User}{Suffix}&r left IRC ({Reason})"  # Displays ingame when someone leaves IRC with a reason.
-irc-leave-dynmap: "{User} left IRC"  # Displays on dynmap when someone leaves IRC.
-irc-leave-reason-dynmap: "{User} left IRC ({Reason})"  # Displays on dynmap when someone leaves IRC with a reason.
-irc-kick: "&3[IRC] &r{KickedPrefix}{KickedUser}{KickedSuffix}&r was kicked by &r{KickerPrefix}{KickedBy}{KickerSuffix}&r"  # Displays ingame when someone is kicked from IRC.
-irc-kick-reason: "&3[IRC] &r{KickedPrefix}{KickedUser}{KickedSuffix}&r was kicked by {KickerPrefix}{KickedBy}{KickerSuffix}&r ({Reason})"  # Is shown to the player when they're kicked.
-irc-kick-display: "Kicked by {KickedBy}."  # Is shown to the player when they're kicked.
-irc-kick-display-reason: "Kicked by {KickedBy} for {Reason}."  # Is shown to the player when they're kicked.
-irc-kick-dynmap: "{KickedUser} was kicked by {KickedBy}"  # Displays on dynmap when someone is kicked from IRC.
-irc-kick-reason-dynmap: "{KickedUser} was kicked by {KickedBy} ({Reason})"  # Displays on dynmap when someone is kicked from IRC with a reason.
-irc-ban: "&3[IRC] &e{BannedUser} was banned by {BannedBy}"  # Displays ingame when someone is banned from IRC.
-irc-unban: "&3[IRC] &e{BannedUser} was unbanned by {BannedBy}"  # Displays ingame when someone is unbanned from IRC.
-irc-ban-dynmap: "{BannedUser} was banned by {BannedBy}"  # Displays on dynmap when someone is banned from IRC.
-irc-unban-dynmap: "{BannedUser} was unbanned by {BannedBy}"  # Displays on dynmap when someone is unbanned from IRC.
-irc-nick-change: "&3[IRC] &e{Prefix}{OldNick}{Suffix}&r is now known as {Prefix}{NewNick}{Suffix}&r"  # Displays ingame when someone changes their nick on IRC.
-irc-nick-change-dynmap: "{OldNick} is now known as {NewNick}"  # Displays on dynmap when someone changes their nick on IRC.
-irc-private-action: "&3[IRC] &6[&r{Prefix}{User}{Suffix}&r &6-> me]&r {Message}"  # Displays ingame when someone sends a private action on IRC.
-irc-private-message: "&3[IRC] &6[&r{Prefix}{User}{Suffix}&r &6-> me]&r {Message}"  # Displays ingame when someone sends a private message on IRC.
-irc-private-notice: "&3[IRC] &6[&r{Prefix}{User}{Suffix}&r &6-> me] &r{Message}"  # Displays ingame when someone sends a private notice on IRC.
-irc-send-pm: "&3[IRC] &6[me -> {Prefix}{User}{Suffix}&6]&r {Message}"  # Displays ingame when ingame player send someone a private message to IRC.
+# To Dynmap
 irc-action-dynmap: "* {User} {Message}"  # Displays on dynmap when someone sends an action on IRC.
 irc-message-dynmap: "<{User}> {Message}"  # Displays on dynmap when someone sends a message on IRC.
 irc-notice-dynmap: "-{User}- {Message}"  # Displays on dynmap when someone sends a notice on IRC.
-irc-message: "&3[IRC] <&7{User}&f> {Message}"
-irc-notice: "&3[IRC] -&7{User}&f- {Message}"
-irc-action: "&3[IRC] * &7{User}&f {Message}"
+irc-join-dynmap: "{User} joined IRC"  # Displays on dynmap when someone joins IRC.
+irc-leave-dynmap: "{User} left IRC"  # Displays on dynmap when someone leaves IRC.
+irc-leave-reason-dynmap: "{User} left IRC ({Reason})"  # Displays on dynmap when someone leaves IRC with a reason.
+irc-kick-dynmap: "{KickedUser} was kicked by {KickedBy}"  # Displays on dynmap when someone is kicked from IRC.
+irc-kick-reason-dynmap: "{KickedUser} was kicked by {KickedBy} ({Reason})"  # Displays on dynmap when someone is kicked from IRC with a reason.
+irc-nick-change-dynmap: "{OldNick} is now known as {NewNick}"  # Displays on dynmap when someone changes their nick on IRC.
+irc-ban-dynmap: "{BannedUser} was banned by {BannedBy}"  # Displays on dynmap when someone is banned from IRC.
+irc-unban-dynmap: "{BannedUser} was unbanned by {BannedBy}"  # Displays on dynmap when someone is unbanned from IRC.
+# To IRC
 dynmap-message: "[Map] {User}: {Message}"  # Displays on IRC when someone sends a message on Dynmap.
 player-list: "We have (&l{Count}&r) players online. They are: {Users}"  # The template used for the !players IRC command. If you make this blank, the command will be disabled.
 console-filters: # Filters messages that go into the staff channel. Format is regular expressions.
     - "^\\[IRC\\].+"
     - "^&3\\[IRC\\].+"
+	
+# To Game
+irc-join: "&3[IRC] &e{Prefix}{User}{Suffix}&r joined IRC"  # Displays ingame when someone joins IRC.
+irc-leave: "&3[IRC] &e{Prefix}{User}{Suffix}&r left IRC"  # Displays ingame when someone leaves IRC.
+irc-leave-reason: "&3[IRC] &e{Prefix}{User}{Suffix}&r left IRC ({Reason})"  # Displays ingame when someone leaves IRC with a reason.
+irc-kick: "&3[IRC] &r{KickedPrefix}{KickedUser}{KickedSuffix}&r was kicked by &r{KickerPrefix}{KickedBy}{KickerSuffix}&r"  # Displays ingame when someone is kicked from IRC.
+irc-kick-reason: "&3[IRC] &r{KickedPrefix}{KickedUser}{KickedSuffix}&r was kicked by {KickerPrefix}{KickedBy}{KickerSuffix}&r ({Reason})"  # Is shown to the player when they're kicked.
+irc-kick-display: "Kicked by {KickedBy}."  # Is shown to the player when they're kicked.
+irc-kick-display-reason: "Kicked by {KickedBy} for {Reason}."  # Is shown to the player when they're kicked.
+irc-ban: "&3[IRC] &e{BannedUser} was banned by {BannedBy}"  # Displays ingame when someone is banned from IRC.
+irc-unban: "&3[IRC] &e{BannedUser} was unbanned by {BannedBy}"  # Displays ingame when someone is unbanned from IRC.
+irc-nick-change: "&3[IRC] &e{Prefix}{OldNick}{Suffix}&r is now known as {Prefix}{NewNick}{Suffix}&r"  # Displays ingame when someone changes their nick on IRC.
+irc-private-action: "&3[IRC] &6[&r{Prefix}{User}{Suffix}&r &6-> me]&r {Message}"  # Displays ingame when someone sends a private action on IRC.
+irc-private-message: "&3[IRC] &6[&r{Prefix}{User}{Suffix}&r &6-> me]&r {Message}"  # Displays ingame when someone sends a private message on IRC.
+irc-private-notice: "&3[IRC] &6[&r{Prefix}{User}{Suffix}&r &6-> me] &r{Message}"  # Displays ingame when someone sends a private notice on IRC.
+irc-send-pm: "&3[IRC] &6[me -> {Prefix}{User}{Suffix}&6]&r {Message}"  # Displays ingame when ingame player send someone a private message to IRC.
+irc-message: "&3[IRC] <&7{User}&f> {Message}"
+irc-notice: "&3[IRC] -&7{User}&f- {Message}"
+irc-action: "&3[IRC] * &7{User}&f {Message}"
+
+# System
+delinked: "&3[IRC] &eSplit from server {LinkName}"  # Displays when delinked from a remote server.
+delinked-reason: "&3[IRC] &eSplit from server {LinkName} ({Reason})"  # Displays when delinked from a remote server with a reason.
+linked: "&3[IRC] &eLinked to server {LinkName}"  # Displays when successfully linked to a remote server.
+
 group-prefixes: #Prefixes 
   h: "&2"
   o: "&4"
@@ -48,3 +55,7 @@ group-suffixes: #Suffixes
   q: "|SuperAdmin"
   v: "|VIP"
   user: "|User"
+
+
+
+
