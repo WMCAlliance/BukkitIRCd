@@ -14,6 +14,7 @@ To download builds made from the development branch, you can get them at [our Je
 
 If you need to discuss anything with the team, don't hesitate to [join us on IRC](http://widget00.mibbit.com/?server=irc.echelon4.net&amp;channel=%23minecraft-dev) via irc.wma.im #minecraft-dev
 
+[![Build Status](http://ci.blny.tk/job/BukkitIRCd/badge/icon)](http://ci.blny.tk/job/BukkitIRCd/)
 #### Developer Thanks
 
 * [peerau](https://github.com/peerau) - uploaded BukkitIRCd to Github so we wouldn't have to
