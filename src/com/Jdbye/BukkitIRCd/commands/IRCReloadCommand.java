@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 
 import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
 
-public class IRCReloadCommand implements CommandExecutor{
+public class IRCReloadCommand implements CommandExecutor {
 
 	private final BukkitIRCdPlugin thePlugin;
 
@@ -16,7 +16,8 @@ public class IRCReloadCommand implements CommandExecutor{
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+	public boolean onCommand(CommandSender sender, Command cmd, String label,
+			String[] args) {
 		thePlugin.pluginInit(true);
 		BukkitIRCdPlugin.log.info("[BukkitIRCd] Configuration file reloaded.");
 		sender.sendMessage(ChatColor.RED + "Configuration file reloaded.");

@@ -9,18 +9,19 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class IRCUnbanCommand implements CommandExecutor{
+public class IRCUnbanCommand implements CommandExecutor {
 
 	private BukkitIRCdPlugin thePlugin;
 
 	public IRCUnbanCommand(BukkitIRCdPlugin plugin) {
 		this.thePlugin = plugin;
 	}
+
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
 			String[] args) {
-		if (sender instanceof Player){
+		if (sender instanceof Player) {
 			Player player = (Player) sender;
-			
+
 			if (player.hasPermission("bukkitircd.unban")) {
 				if (args.length > 0) {
 					String ban;
@@ -29,33 +30,94 @@ public class IRCUnbanCommand implements CommandExecutor{
 						IRCd.join(args, " ", 1);
 
 					if (IRCd.wildCardMatch(ban, "*!*@*")) { // Full hostmask
-						if (IRCd.unBanIRCUser(ban, player.getName() + Config.getIrcdIngameSuffix() + "!" + player.getName() + "@" + player.getAddress().getAddress().getHostName())) {
-							if (IRCd.msgIRCUnban.length() > 0) thePlugin.getServer().broadcastMessage(IRCd.msgIRCUnban.replace("{BannedUser}", ban).replace("{BannedBy}",player.getName()));
-							if ((BukkitIRCdPlugin.dynmap != null) && (IRCd.msgIRCUnbanDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCUnbanDynmap.replace("{BannedUser}", ban).replace("{BannedBy}",player.getName()));
+						if (IRCd.unBanIRCUser(ban,
+								player.getName()
+										+ Config.getIrcdIngameSuffix()
+										+ "!"
+										+ player.getName()
+										+ "@"
+										+ player.getAddress().getAddress()
+												.getHostName())) {
+							if (IRCd.msgIRCUnban.length() > 0)
+								thePlugin
+										.getServer()
+										.broadcastMessage(
+												IRCd.msgIRCUnban
+														.replace(
+																"{BannedUser}",
+																ban)
+														.replace(
+																"{BannedBy}",
+																player.getName()));
+							if ((BukkitIRCdPlugin.dynmap != null)
+									&& (IRCd.msgIRCUnbanDynmap.length() > 0))
+								BukkitIRCdPlugin.dynmap
+										.sendBroadcastToWeb(
+												"IRC",
+												IRCd.msgIRCUnbanDynmap
+														.replace(
+																"{BannedUser}",
+																ban)
+														.replace(
+																"{BannedBy}",
+																player.getName()));
 							player.sendMessage(ChatColor.RED + "User unbanned.");
-						}
-						else
-							player.sendMessage(ChatColor.RED + "User is not banned.");
-					}
-					else if (thePlugin.countStr(ban, ".") == 3) { // It's an IP
-						if (IRCd.unBanIRCUser("*!*@" + ban, player.getName() + Config.getIrcdIngameSuffix() + "!" + player.getName() + "@" + player.getAddress().getAddress().getHostName())) {
-							if (IRCd.msgIRCUnban.length() > 0) thePlugin.getServer().broadcastMessage(IRCd.msgIRCUnban.replace("{BannedUser}", ban).replace("{BannedBy}",player.getName()));
-							if ((BukkitIRCdPlugin.dynmap != null) && (IRCd.msgIRCUnbanDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCUnbanDynmap.replace("{BannedUser}", ban).replace("{BannedBy}",player.getName()));
+						} else
+							player.sendMessage(ChatColor.RED
+									+ "User is not banned.");
+					} else if (thePlugin.countStr(ban, ".") == 3) { // It's an
+																	// IP
+						if (IRCd.unBanIRCUser("*!*@" + ban,
+								player.getName()
+										+ Config.getIrcdIngameSuffix()
+										+ "!"
+										+ player.getName()
+										+ "@"
+										+ player.getAddress().getAddress()
+												.getHostName())) {
+							if (IRCd.msgIRCUnban.length() > 0)
+								thePlugin
+										.getServer()
+										.broadcastMessage(
+												IRCd.msgIRCUnban
+														.replace(
+																"{BannedUser}",
+																ban)
+														.replace(
+																"{BannedBy}",
+																player.getName()));
+							if ((BukkitIRCdPlugin.dynmap != null)
+									&& (IRCd.msgIRCUnbanDynmap.length() > 0))
+								BukkitIRCdPlugin.dynmap
+										.sendBroadcastToWeb(
+												"IRC",
+												IRCd.msgIRCUnbanDynmap
+														.replace(
+																"{BannedUser}",
+																ban)
+														.replace(
+																"{BannedBy}",
+																player.getName()));
 							player.sendMessage(ChatColor.RED + "IP unbanned.");
-						}
-						else
-							player.sendMessage(ChatColor.RED + "IP is not banned.");
-					} 
-					else { player.sendMessage(ChatColor.RED + "Invalid hostmask."); return false; }
+						} else
+							player.sendMessage(ChatColor.RED
+									+ "IP is not banned.");
+					} else {
+						player.sendMessage(ChatColor.RED + "Invalid hostmask.");
+						return false;
+					}
+				} else {
+					player.sendMessage(ChatColor.RED
+							+ "Please provide a IP/full hostmask.");
+					return false;
 				}
-				else { player.sendMessage(ChatColor.RED + "Please provide a IP/full hostmask."); return false; }
-			}
-			else {
-				player.sendMessage(ChatColor.RED + "You don't have access to that command.");
+			} else {
+				player.sendMessage(ChatColor.RED
+						+ "You don't have access to that command.");
 			}
 			return true;
-			
-		}else{
+
+		} else {
 			if (args.length > 0) {
 				String ban;
 				ban = args[0];
@@ -63,29 +125,60 @@ public class IRCUnbanCommand implements CommandExecutor{
 					IRCd.join(args, " ", 1);
 
 				if (IRCd.wildCardMatch(ban, "*!*@*")) { // Full hostmask
-					if (IRCd.unBanIRCUser(ban, Config.getIrcdServerName() + "!" + Config.getIrcdServerName() + "@" + Config.getIrcdServerHostName())) {
-						if (IRCd.msgIRCUnban.length() > 0) thePlugin.getServer().broadcastMessage(IRCd.msgIRCUnban.replace("{BannedUser}", ban).replace("{BannedBy}","console"));
-						if ((BukkitIRCdPlugin.dynmap != null) && (IRCd.msgIRCUnbanDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCUnbanDynmap.replace("{BannedUser}", ban).replace("{BannedBy}","console"));
+					if (IRCd.unBanIRCUser(
+							ban,
+							Config.getIrcdServerName() + "!"
+									+ Config.getIrcdServerName() + "@"
+									+ Config.getIrcdServerHostName())) {
+						if (IRCd.msgIRCUnban.length() > 0)
+							thePlugin.getServer().broadcastMessage(
+									IRCd.msgIRCUnban.replace("{BannedUser}",
+											ban).replace("{BannedBy}",
+											"console"));
+						if ((BukkitIRCdPlugin.dynmap != null)
+								&& (IRCd.msgIRCUnbanDynmap.length() > 0))
+							BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
+									"IRC",
+									IRCd.msgIRCUnbanDynmap.replace(
+											"{BannedUser}", ban).replace(
+											"{BannedBy}", "console"));
 						sender.sendMessage(ChatColor.RED + "User unbanned.");
-					}
-					else
-						sender.sendMessage(ChatColor.RED + "User is not banned.");
-				}
-				else if (thePlugin.countStr(ban, ".") == 3) { // It's an IP
-					if (IRCd.unBanIRCUser("*!*@" + ban, Config.getIrcdServerName()+"!" + Config.getIrcdServerName()+"@" + Config.getIrcdServerHostName())) {
-						if (IRCd.msgIRCUnban.length() > 0) thePlugin.getServer().broadcastMessage(IRCd.msgIRCUnban.replace("{BannedUser}", ban).replace("{BannedBy}","console"));
-						if ((BukkitIRCdPlugin.dynmap != null) && (IRCd.msgIRCUnbanDynmap.length() > 0)) BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", IRCd.msgIRCUnbanDynmap.replace("{BannedUser}", ban).replace("{BannedBy}","console"));
+					} else
+						sender.sendMessage(ChatColor.RED
+								+ "User is not banned.");
+				} else if (thePlugin.countStr(ban, ".") == 3) { // It's an IP
+					if (IRCd.unBanIRCUser(
+							"*!*@" + ban,
+							Config.getIrcdServerName() + "!"
+									+ Config.getIrcdServerName() + "@"
+									+ Config.getIrcdServerHostName())) {
+						if (IRCd.msgIRCUnban.length() > 0)
+							thePlugin.getServer().broadcastMessage(
+									IRCd.msgIRCUnban.replace("{BannedUser}",
+											ban).replace("{BannedBy}",
+											"console"));
+						if ((BukkitIRCdPlugin.dynmap != null)
+								&& (IRCd.msgIRCUnbanDynmap.length() > 0))
+							BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
+									"IRC",
+									IRCd.msgIRCUnbanDynmap.replace(
+											"{BannedUser}", ban).replace(
+											"{BannedBy}", "console"));
 						sender.sendMessage(ChatColor.RED + "IP unbanned.");
-					}
-					else
+					} else
 						sender.sendMessage(ChatColor.RED + "IP is not banned.");
-				} 
-				else { sender.sendMessage(ChatColor.RED + "Invalid hostmask."); return false; }
+				} else {
+					sender.sendMessage(ChatColor.RED + "Invalid hostmask.");
+					return false;
+				}
 
+			} else {
+				sender.sendMessage(ChatColor.RED
+						+ "Please provide a IP/full hostmask.");
+				return false;
 			}
-			else { sender.sendMessage(ChatColor.RED + "Please provide a IP/full hostmask."); return false; }
 			return true;
-			
+
 		}
 	}
 

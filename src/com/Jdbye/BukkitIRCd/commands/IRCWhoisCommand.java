@@ -9,14 +9,15 @@ import org.bukkit.entity.Player;
 import com.Jdbye.BukkitIRCd.IRCUser;
 import com.Jdbye.BukkitIRCd.IRCd;
 
-public class IRCWhoisCommand implements CommandExecutor{
+public class IRCWhoisCommand implements CommandExecutor {
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+	public boolean onCommand(CommandSender sender, Command cmd, String label,
+			String[] args) {
 
 		final boolean oper;
 
-		if (sender instanceof Player){
+		if (sender instanceof Player) {
 			final Player player = (Player) sender;
 			oper = player.hasPermission("bukkitircd.oper");
 		} else {

@@ -11,7 +11,7 @@ public class IRCServer {
 		this.SID = SID;
 		this.hub = hub;
 	}
-	
+
 	public String host = null, name = null, SID = null, hub = null;
 	public List<String> leaves = new ArrayList<String>();
 }

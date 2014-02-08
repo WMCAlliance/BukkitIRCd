@@ -34,24 +34,26 @@ import com.Jdbye.BukkitIRCd.configuration.Messages;
 
 /**
  * BukkitIRCdPlugin for Bukkit
- *
+ * 
  * @author Jdbye
  */
 
 public class BukkitIRCdPlugin extends JavaPlugin {
 	static class CriticalSection extends Object {
 	}
+
 	static public CriticalSection csLastReceived = new CriticalSection();
 
-	private final BukkitIRCdPlayerListener playerListener = new BukkitIRCdPlayerListener(this);
+	private final BukkitIRCdPlayerListener playerListener = new BukkitIRCdPlayerListener(
+			this);
 	private BukkitIRCdDynmapListener dynmapListener = null;
 
 	public static BukkitIRCdPlugin thePlugin = null;
 
-	public static SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
+	public static SimpleDateFormat dateFormat = new SimpleDateFormat(
+			"EEE MMM dd HH:mm:ss yyyy");
 
 	public Map<String, String> lastReceived = new HashMap<String, String>();
-
 
 	public static String ircdVersion;
 
@@ -61,7 +63,6 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 	public static DynmapAPI dynmap = null;
 
-
 	static IRCd ircd = null;
 	private Thread thr = null;
 
@@ -70,6 +71,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	}
 
 	public static Config config = null;
+
 	@Override
 	public void onEnable() {
 		saveDefaultConfig();
@@ -79,7 +81,8 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		pm.registerEvents(this.playerListener, this);
 
 		PluginDescriptionFile pdfFile = getDescription();
-		ircdVersion = pdfFile.getName() + " " + pdfFile.getVersion() + " by " + pdfFile.getAuthors().get(0);
+		ircdVersion = pdfFile.getName() + " " + pdfFile.getVersion() + " by "
+				+ pdfFile.getAuthors().get(0);
 		setupMetrics();
 		pluginInit();
 
@@ -111,7 +114,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		}
 
 		dynmapEventRegistered = false;
-		//File configFile = new File(getDataFolder(), "config.yml");
+		// File configFile = new File(getDataFolder(), "config.yml");
 		Config.saveConfiguration();
 
 		Bans.writeBans();
@@ -157,7 +160,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 		// Set players to different IRC modes based on permission
 		for (final Player player : getServer().getOnlinePlayers()) {
-            final String mode = computePlayerModes(player);
+			final String mode = computePlayerModes(player);
 			IRCd.addBukkitUser(mode, player);
 		}
 
@@ -180,7 +183,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 				if (!dynmapEventRegistered) {
 					pm.registerEvents(dynmapListener, this);
 				}
-				setupDynmap((DynmapAPI)plugin);
+				setupDynmap((DynmapAPI) plugin);
 			}
 		}
 	}
@@ -188,67 +191,75 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	public void setupDynmap(DynmapAPI plugin) {
 		if (plugin != null) {
 			dynmap = plugin;
-			log.info("[BukkitIRCd] Hooked into Dynmap." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin301." : ""));
+			log.info("[BukkitIRCd] Hooked into Dynmap."
+					+ (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin301."
+							: ""));
 		}
 	}
 
 	public void unloadDynmap() {
 		if (BukkitIRCdPlugin.dynmap != null) {
 			BukkitIRCdPlugin.dynmap = null;
-			log.info("[BukkitIRCd] Dynmap plugin lost." + (Config.isDebugModeEnabled() ? " Error Code BukkitIRCdPlugin308." : ""));
+			log.info("[BukkitIRCd] Dynmap plugin lost."
+					+ (Config.isDebugModeEnabled() ? " Error Code BukkitIRCdPlugin308."
+							: ""));
 		}
 	}
 
-
 	/**
-     * Converts color codes to processed codes
-     *
-     * @param message Message with raw color codes
-     * @return String with processed colors
-     */
-    public static String colorize(final String message) {
-        if (message == null) return null;
-        return ChatColor.translateAlternateColorCodes('&', message);
-    }
+	 * Converts color codes to processed codes
+	 * 
+	 * @param message
+	 *            Message with raw color codes
+	 * @return String with processed colors
+	 */
+	public static String colorize(final String message) {
+		if (message == null)
+			return null;
+		return ChatColor.translateAlternateColorCodes('&', message);
+	}
 
-	public void setLastReceived(String receivedBy, String receivedFrom)
-	{
-		synchronized(csLastReceived) {
+	public void setLastReceived(String receivedBy, String receivedFrom) {
+		synchronized (csLastReceived) {
 			lastReceived.put(receivedBy, receivedFrom);
 		}
 	}
 
-	public void updateLastReceived(String oldReceivedFrom, String newReceivedFrom)
-	{
+	public void updateLastReceived(String oldReceivedFrom,
+			String newReceivedFrom) {
 		List<String> update = new ArrayList<String>();
-		synchronized(csLastReceived) {
-			for (Map.Entry<String, String> lastReceivedEntry : lastReceived.entrySet()) {
-				if (lastReceivedEntry.getValue().equalsIgnoreCase(oldReceivedFrom)) update.add(lastReceivedEntry.getKey());
+		synchronized (csLastReceived) {
+			for (Map.Entry<String, String> lastReceivedEntry : lastReceived
+					.entrySet()) {
+				if (lastReceivedEntry.getValue().equalsIgnoreCase(
+						oldReceivedFrom))
+					update.add(lastReceivedEntry.getKey());
 			}
-			for (String toUpdate : update) lastReceived.put(toUpdate, newReceivedFrom);
+			for (String toUpdate : update)
+				lastReceived.put(toUpdate, newReceivedFrom);
 		}
 	}
 
-	public void removeLastReceivedBy(String receivedBy)
-	{
-		synchronized(csLastReceived) {
+	public void removeLastReceivedBy(String receivedBy) {
+		synchronized (csLastReceived) {
 			lastReceived.remove(receivedBy);
 		}
 	}
 
-	public void removeLastReceivedFrom(String receivedFrom)
-	{
+	public void removeLastReceivedFrom(String receivedFrom) {
 		List<String> remove = new ArrayList<String>();
-		synchronized(csLastReceived) {
-			for (Map.Entry<String, String> lastReceivedEntry : lastReceived.entrySet()) {
-				if (lastReceivedEntry.getValue().equalsIgnoreCase(receivedFrom)) remove.add(lastReceivedEntry.getKey());
+		synchronized (csLastReceived) {
+			for (Map.Entry<String, String> lastReceivedEntry : lastReceived
+					.entrySet()) {
+				if (lastReceivedEntry.getValue().equalsIgnoreCase(receivedFrom))
+					remove.add(lastReceivedEntry.getKey());
 			}
-			for (String toRemove : remove) lastReceived.remove(toRemove);
+			for (String toRemove : remove)
+				lastReceived.remove(toRemove);
 		}
 	}
 
-	public int countStr(String text, String search)
-	{
+	public int countStr(String text, String search) {
 		int count = 0;
 		for (int fromIndex = 0; fromIndex > -1; count++)
 			fromIndex = text.indexOf(search, fromIndex + ((count > 0) ? 1 : 0));
@@ -264,19 +275,22 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 				}
 				return intarray;
 			}
-		} catch (Exception e) { log.severe("[BukkitIRCd] Unable to parse string array " + IRCd.join(sarray, " ", 0) + ", invalid number. " + e); }
+		} catch (Exception e) {
+			log.severe("[BukkitIRCd] Unable to parse string array "
+					+ IRCd.join(sarray, " ", 0) + ", invalid number. " + e);
+		}
 		return def;
 	}
 
 	/**
 	 * Setup PluginMetrics
 	 */
-	private void setupMetrics(){
+	private void setupMetrics() {
 		try {
-		    Metrics metrics = new Metrics(this);
-		    metrics.start();
+			Metrics metrics = new Metrics(this);
+			metrics.start();
 		} catch (IOException e) {
-		    // Failed to submit metrics
+			// Failed to submit metrics
 		}
 	}
 
@@ -288,7 +302,8 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		final StringBuffer mode = new StringBuffer(5);
 
 		final char[] modeSigils = { '~', '&', '@', '%', '+' };
-		final String[] modeNames = { "owner", "protect", "op", "halfop", "voice" };
+		final String[] modeNames = { "owner", "protect", "op", "halfop",
+				"voice" };
 		final boolean debug = Config.isDebugModeEnabled();
 
 		for (int i = 0; i < modeSigils.length; i++) {
@@ -308,4 +323,3 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		return mode.toString();
 	}
 }
-

@@ -9,16 +9,17 @@ import org.bukkit.entity.Player;
 import com.Jdbye.BukkitIRCd.IRCd;
 import com.Jdbye.BukkitIRCd.configuration.Config;
 
-public class IRCTopicCommand implements CommandExecutor{
+public class IRCTopicCommand implements CommandExecutor {
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+	public boolean onCommand(CommandSender sender, Command cmd, String label,
+			String[] args) {
 
 		final String userNick;
 		final String userUser;
 		final String userHost;
 
-		if (sender instanceof Player){
+		if (sender instanceof Player) {
 			final Player player = (Player) sender;
 			final String playerName = player.getName();
 

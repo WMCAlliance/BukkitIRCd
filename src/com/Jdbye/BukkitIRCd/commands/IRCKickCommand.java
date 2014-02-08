@@ -10,10 +10,11 @@ import com.Jdbye.BukkitIRCd.IRCUser;
 import com.Jdbye.BukkitIRCd.IRCd;
 import com.Jdbye.BukkitIRCd.configuration.Config;
 
-public class IRCKickCommand implements CommandExecutor{
+public class IRCKickCommand implements CommandExecutor {
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+	public boolean onCommand(CommandSender sender, Command cmd, String label,
+			String[] args) {
 
 		// Check arguments
 		if (args.length == 0) {
@@ -32,7 +33,7 @@ public class IRCKickCommand implements CommandExecutor{
 		// Compute kicker
 		final String kickerNick;
 		final String kickerHost;
-		if (sender instanceof Player){
+		if (sender instanceof Player) {
 			final Player player = (Player) sender;
 			kickerNick = player.getName();
 			kickerHost = player.getAddress().getAddress().getHostName();
@@ -42,7 +43,8 @@ public class IRCKickCommand implements CommandExecutor{
 		}
 
 		// Execute kick
-		if (IRCd.kickIRCUser(targetIrcUser, kickerNick, kickerNick, kickerHost, reason, true)) {
+		if (IRCd.kickIRCUser(targetIrcUser, kickerNick, kickerNick, kickerHost,
+				reason, true)) {
 			sender.sendMessage(ChatColor.RED + "Player kicked.");
 		} else {
 			sender.sendMessage(ChatColor.RED + "Failed to kick player.");

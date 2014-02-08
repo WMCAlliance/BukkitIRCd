@@ -27,7 +27,7 @@ public class IRCReplyCommand implements CommandExecutor {
 			return false; // Print usage message
 		}
 
-		final Player player = sender instanceof Player ? (Player)sender : null;
+		final Player player = sender instanceof Player ? (Player) sender : null;
 
 		// Determine sender name
 		final String senderName;
@@ -42,7 +42,8 @@ public class IRCReplyCommand implements CommandExecutor {
 
 		// Verify target
 		if (lastReceivedFrom == null) {
-			sender.sendMessage(ChatColor.RED + "There are no messages to reply to!");
+			sender.sendMessage(ChatColor.RED
+					+ "There are no messages to reply to!");
 			return true;
 		}
 
@@ -58,35 +59,34 @@ public class IRCReplyCommand implements CommandExecutor {
 		case STANDALONE:
 			if (player == null) {
 				IRCd.writeTo(
-							ircuser.nick,
-							":"
-									+ Config.getIrcdServerName()
-									+ "!"
-									+ Config.getIrcdServerName()
-									+ "@"
-									+ Config.getIrcdServerHostName()
-									+ " PRIVMSG "
-									+ ircuser.nick
-									+ " :"
-									+ IRCd.convertColors(
-											IRCd.join(args, " ", 0),
-											false));
+						ircuser.nick,
+						":"
+								+ Config.getIrcdServerName()
+								+ "!"
+								+ Config.getIrcdServerName()
+								+ "@"
+								+ Config.getIrcdServerHostName()
+								+ " PRIVMSG "
+								+ ircuser.nick
+								+ " :"
+								+ IRCd.convertColors(IRCd.join(args, " ", 0),
+										false));
 			} else {
-				IRCd.writeTo(ircuser.nick, ":"
-												+ player.getName()
-												+ Config.getIrcdIngameSuffix()
-												+ "!"
-												+ player.getName()
-												+ "@"
-												+ player.getAddress()
-														.getAddress()
-														.getHostName()
-												+ " PRIVMSG "
-												+ ircuser.nick
-												+ " :"
-												+ IRCd.convertColors(
-														IRCd.join(args, " ", 0),
-														false));
+				IRCd.writeTo(
+						ircuser.nick,
+						":"
+								+ player.getName()
+								+ Config.getIrcdIngameSuffix()
+								+ "!"
+								+ player.getName()
+								+ "@"
+								+ player.getAddress().getAddress()
+										.getHostName()
+								+ " PRIVMSG "
+								+ ircuser.nick
+								+ " :"
+								+ IRCd.convertColors(IRCd.join(args, " ", 0),
+										false));
 			}
 			break;
 		case INSPIRCD:
@@ -98,20 +98,25 @@ public class IRCReplyCommand implements CommandExecutor {
 
 			final String UID = IRCd.getUIDFromIRCUser(ircuser);
 			if (UID == null) {
-				sender.sendMessage(ChatColor.RED + "Failed to reply, UID not found");
+				sender.sendMessage(ChatColor.RED
+						+ "Failed to reply, UID not found");
 				return true;
 			}
 
 			if (player == null) {
-				IRCd.privmsg(IRCd.serverUID, UID, IRCd.convertColors(IRCd.join(args, " ", 0),false));
+				IRCd.privmsg(IRCd.serverUID, UID,
+						IRCd.convertColors(IRCd.join(args, " ", 0), false));
 			} else {
-				final BukkitPlayer bp = IRCd.getBukkitUserObject(player.getName());
+				final BukkitPlayer bp = IRCd.getBukkitUserObject(player
+						.getName());
 				if (bp == null) {
-					sender.sendMessage(ChatColor.RED + "Internal error, unable to reply");
+					sender.sendMessage(ChatColor.RED
+							+ "Internal error, unable to reply");
 					return true;
 				}
 
-				IRCd.privmsg(bp.getUID(), UID, IRCd.convertColors(IRCd.join(args, " ", 0), false));
+				IRCd.privmsg(bp.getUID(), UID,
+						IRCd.convertColors(IRCd.join(args, " ", 0), false));
 			}
 
 			break;
@@ -119,10 +124,15 @@ public class IRCReplyCommand implements CommandExecutor {
 
 		// Report command to sender's chat
 		sender.sendMessage(IRCd.msgSendQueryFromIngame
-			.replace("{Prefix}", IRCd.getGroupPrefix(ircuser.getTextModes()))
-			.replace("{Suffix}", IRCd.getGroupSuffix(ircuser.getTextModes()))
-			.replace("{User}", ircuser.nick)
-			.replace("{Message}", ChatColor.translateAlternateColorCodes('&', IRCd.join(args, " ", 0))));
+				.replace("{Prefix}",
+						IRCd.getGroupPrefix(ircuser.getTextModes()))
+				.replace("{Suffix}",
+						IRCd.getGroupSuffix(ircuser.getTextModes()))
+				.replace("{User}", ircuser.nick)
+				.replace(
+						"{Message}",
+						ChatColor.translateAlternateColorCodes('&',
+								IRCd.join(args, " ", 0))));
 
 		return true;
 	}
