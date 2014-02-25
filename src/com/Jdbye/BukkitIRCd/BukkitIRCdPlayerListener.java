@@ -63,6 +63,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 
 				// PlayerKickEvent does not give kicker, so we listen to kick
 				// commands instead
+				// TODO I think kicker is provided now @Mu5
 				final StringBuilder s = new StringBuilder(300);
 				for (int i = 2; i < split.length; i++) {
 					s.append(split[i]).append(" ");

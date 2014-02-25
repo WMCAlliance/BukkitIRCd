@@ -75,7 +75,7 @@ public class IRCMsgCommand implements CommandExecutor {
 						.getName());
 				if (bp == null) {
 					sender.sendMessage(ChatColor.RED
-							+ "Failed to send message, you could not be found in the UID list. This should not happen, please report it to Jdbye.");
+							+ "Failed to send message, you could not be found in the UID list. This should not happen, please report it to http://git.io/K2XanA");
 					return true;
 				}
 				sourceUID = bp.getUID();

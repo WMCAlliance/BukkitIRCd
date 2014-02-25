@@ -98,7 +98,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		getCommand("ircreload").setExecutor(new IRCReloadCommand(this));
 		getCommand("rawsend").setExecutor(new RawsendCommand());
 
-		log.info(ircdVersion + " is enabled!");
+		log.info(ircdVersion + " is now enabled");
 	}
 
 	@Override
@@ -119,7 +119,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 		Bans.writeBans();
 
-		log.info(ircdVersion + " is disabled!");
+		log.info(ircdVersion + " is now disabled!");
 	}
 
 	private void pluginInit() {
