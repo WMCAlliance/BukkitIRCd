@@ -23,10 +23,6 @@
          <groupId>org.bukkit</groupId>
          <artifactId>bukkit</artifactId>
          <version>LATEST</version>
-         <snapshots>
-            <enabled>true</enabled>
-            <updatePolicy>daily</updatePolicy>
-         </snapshots>
       </dependency>
       <dependency>
          <groupId>org.dynmap</groupId>
