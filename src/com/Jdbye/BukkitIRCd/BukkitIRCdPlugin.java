@@ -156,12 +156,27 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			IRCd.globalNameIgnoreList = new ArrayList<String>();
 		}
 
-		Scanner ignoreListScanner = new Scanner(new File(getDataFolder(), "ignoreList.yml"));
-		while (ignoreListScanner.hasNext()){
-		    IRCd.globalNameIgnoreList.add(ignoreListScanner.next());
-		}
-		ignoreListScanner.close();
+		try
+		{
+			Scanner ignoreListScanner = new Scanner(new File(getDataFolder(), "ignoreList.yml"));
+			
+			while (ignoreListScanner.hasNext()){
+			    IRCd.globalNameIgnoreList.add(ignoreListScanner.next());
+			}
 
+			ignoreListScanner.close();
+		}
+		catch ( java.io.FileNotFoundException e )
+		{
+			// we don't care if it exists or not currently
+			// if it doesn't exist, everything carries on as normal
+
+			// this is seperated should we wish toa dd to it...
+		}
+		catch (Exception e)
+		{
+			// same as FileNotFoundException
+		}
 
 
 		Messages.loadMessages(ircd);
