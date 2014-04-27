@@ -170,7 +170,7 @@ public class IRCd implements Runnable {
 	public static PrintStream out;
 	public static String channelName;
 	public static String bukkitversion = "Unknown version";
-
+	
 	public IRCd() {
 	}
 
@@ -2476,106 +2476,25 @@ public class IRCd implements Runnable {
 			output = output.replace(MC_Color + "o", IRC_Ital + "");
 			output = output.replace(MC_Color + "l", IRC_Bold + "");
 			output = output.replace(MC_Color + "r", IRC_Reset + "");
-			output = output.replace(MC_Color + "m", ""); // IRC Does not have
-			// support for
-			// Strikethrough
-			output = output.replace(MC_Color + "k", ""); // IRC Does not have
-			// support for
-			// Garbled Text
+			output = output.replace(MC_Color + "m", ""); // IRC Does not have support for Strikethrough
+			output = output.replace(MC_Color + "k", ""); // IRC Does not have support for Garbled Text
+			output = output.replace(MC_Color + "0", IRC_Color + "01"); // Minecraft Black to IRC Black
+			output = output.replace(MC_Color + "1", IRC_Color + "02"); // Minecraft Dark Blue to IRC Dark Blue
+			output = output.replace(MC_Color + "2", IRC_Color + "03"); // Minecraft Dark Green to IRC Dark Green
+			output = output.replace(MC_Color + "3", IRC_Color + "10"); // Minecraft Dark Aqua to IRC Teal
+			output = output.replace(MC_Color + "4", IRC_Color + "05"); // Minecraft Dark Red to IRC Dark Red
+			output = output.replace(MC_Color + "5", IRC_Color + "06"); // Minecraft Purple to IRC Purple
+			output = output.replace(MC_Color + "6", IRC_Color + "07"); // Minecraft Gold to IRC Dark Yellow
+			output = output.replace(MC_Color + "7", IRC_Color + "15"); // Minecraft Grey to IRC Light Grey
+			output = output.replace(MC_Color + "8", IRC_Color + "14"); // Minecraft Dark Grey to IRC Grey
+			output = output.replace(MC_Color + "9", IRC_Color + "12"); // Minecraft Blue to IRC Light Blue
+			output = output.replace(MC_Color + "a", IRC_Color + "09"); // Minecraft Green to IRC Light Green
+			output = output.replace(MC_Color + "b", IRC_Color + "11"); // Minecraft Aqua to IRC Cyan
+			output = output.replace(MC_Color + "c", IRC_Color + "04"); // Minecraft Red to IRC Red
+			output = output.replace(MC_Color + "d", IRC_Color + "13"); // Minecraft Light Purple to IRC Pink
+			output = output.replace(MC_Color + "e", IRC_Color + "08"); // Minecraft Yellow to IRC Yellow
+			output = output.replace(MC_Color + "f", IRC_Color + "00"); // Minecraft White to IRC White
 
-			output = output.replace(MC_Color + "0", IRC_Color + "01"); // Minecraft
-			// Black
-			// to
-			// IRC
-			// Black
-			output = output.replace(MC_Color + "1", IRC_Color + "02"); // Minecraft
-			// Dark
-			// Blue
-			// to
-			// IRC
-			// Dark
-			// Blue
-			output = output.replace(MC_Color + "2", IRC_Color + "03"); // Minecraft
-			// Dark
-			// Green
-			// to
-			// IRC
-			// Dark
-			// Green
-			output = output.replace(MC_Color + "3", IRC_Color + "10"); // Minecraft
-			// Dark
-			// Aqua
-			// to
-			// IRC
-			// Teal
-			output = output.replace(MC_Color + "4", IRC_Color + "05"); // Minecraft
-			// Dark
-			// Red
-			// to
-			// IRC
-			// Dark
-			// Red
-			output = output.replace(MC_Color + "5", IRC_Color + "06"); // Minecraft
-			// Purple
-			// to
-			// IRC
-			// Purple
-			output = output.replace(MC_Color + "6", IRC_Color + "07"); // Minecraft
-			// Gold
-			// to
-			// IRC
-			// Dark
-			// Yellow
-			output = output.replace(MC_Color + "7", IRC_Color + "15"); // Minecraft
-			// Grey
-			// to
-			// IRC
-			// Light
-			// Grey
-			output = output.replace(MC_Color + "8", IRC_Color + "14"); // Minecraft
-			// Dark
-			// Grey
-			// to
-			// IRC
-			// Grey
-			output = output.replace(MC_Color + "9", IRC_Color + "12"); // Minecraft
-			// Blue
-			// to
-			// IRC
-			// Light
-			// Blue
-			output = output.replace(MC_Color + "a", IRC_Color + "09"); // Minecraft
-			// Green
-			// to
-			// IRC
-			// Light
-			// Green
-			output = output.replace(MC_Color + "b", IRC_Color + "11"); // Minecraft
-			// Aqua
-			// to
-			// IRC
-			// Cyan
-			output = output.replace(MC_Color + "c", IRC_Color + "04"); // Minecraft
-			// Red
-			// to
-			// IRC
-			// Red
-			output = output.replace(MC_Color + "d", IRC_Color + "13"); // Minecraft
-			// Light
-			// Purple
-			// to
-			// IRC
-			// Pink
-			output = output.replace(MC_Color + "e", IRC_Color + "08"); // Minecraft
-			// Yellow
-			// to
-			// IRC
-			// Yellow
-			output = output.replace(MC_Color + "f", IRC_Color + "00"); // Minecraft
-			// White
-			// to
-			// IRC
-			// White
 
 		}
 
@@ -2616,8 +2535,7 @@ public class IRCd implements Runnable {
 	 */
 	public static String getGroupPrefix(String modes) {
 		// Goes from highest rank to lowest rank
-		String prefix;
-		// Owner
+		String prefix; // Owner
 
 		if (IRCd.groupPrefixes == null) {
 			return "";
@@ -3527,25 +3445,9 @@ public class IRCd implements Runnable {
 						BukkitIRCdPlugin.log
 								.severe("[BukkitIRCd] UID/Config.getLinkServerID() "
 										+ UID
-										+ " not found in list. Error code IRCd1985."); // Log
+										+ " not found in list. Error code IRCd1985."); // Log as severe because this situation should never occur and points to a bug in the code
 					}
 				}
-				// as
-				// severe
-				// because
-				// this
-				// situation
-				// should
-				// never
-				// occur
-				// and
-				// points
-				// to
-				// a
-				// bug
-				// in
-				// the
-				// code
 			} else if (split[2]
 					.equalsIgnoreCase(Config.getIrcdConsoleChannel())) {
 				// This is of no interest to us
@@ -3575,23 +3477,7 @@ public class IRCd implements Runnable {
 			else {
 				if (Config.isDebugModeEnabled()) {
 					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + target
-							+ " not found in list. Error code IRCd1999."); // Log
-																			// as
-																			// severe
-																			// because
-																			// this
-																			// situation
-																			// should
-																			// never
-																			// occur
-																			// and
-																			// points
-																			// to
-																			// a
-																			// bug
-																			// in
-																			// the
-																			// code
+							+ " not found in list. Error code IRCd1999."); // Log as severe because this situation should never occur and points to a bug in the code															
 				}
 				success = false;
 			}
@@ -3634,16 +3520,7 @@ public class IRCd implements Runnable {
 			} else {
 				if (Config.isDebugModeEnabled()) {
 					BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[2]
-							+ " not found in list. Error code IRCd2013."); // Log
-																			// as
-																			// severe,
-																			// points
-																			// to
-																			// a
-																			// bug
-																			// in
-																			// the
-																			// code
+							+ " not found in list. Error code IRCd2013."); // Log as severe because this situation should never occur and points to a bug in the code
 				}
 			}
 

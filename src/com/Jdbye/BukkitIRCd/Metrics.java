@@ -242,33 +242,25 @@ public class Metrics {
 
 						public void run() {
 							try {
-								// This has to be synchronized or it can collide
-								// with the disable method.
+								// This has to be synchronized or it can collide with the disable method.
 								synchronized (optOutLock) {
 									// Disable Task, if it is running and the
 									// server owner decided to opt-out
 									if (isOptOut() && task != null) {
 										task.cancel();
 										task = null;
-										// Tell all plotters to stop gathering
-										// information.
+										// Tell all plotters to stop gathering information.
 										for (Graph graph : graphs) {
 											graph.onOptOut();
 										}
 									}
 								}
 
-								// We use the inverse of firstPost because if it
-								// is the first time we are posting,
-								// it is not a interval ping, so it evaluates to
-								// FALSE
-								// Each time thereafter it will evaluate to
-								// TRUE, i.e PING!
+								// We use the inverse of firstPost because if it is the first time we are posting it is not a interval ping, 
+								// so it evaluates to FALSE Each time thereafter it will evaluate to TRUE, i.e PING!
 								postPlugin(!firstPost);
 
-								// After the first post we set firstPost to
-								// false
-								// Each post thereafter will be a ping
+								// After the first post we set firstPost to false each post thereafter will be a ping
 								firstPost = false;
 							} catch (IOException e) {
 								if (debug) {
@@ -341,11 +333,9 @@ public class Metrics {
 	 * @throws java.io.IOException
 	 */
 	public void disable() throws IOException {
-		// This has to be synchronized or it can collide with the check in the
-		// task.
+		// This has to be synchronized or it can collide with the check in the task.
 		synchronized (optOutLock) {
-			// Check if the server owner has already set opt-out, if not, set
-			// it.
+			// Check if the server owner has already set opt-out, if not, set it.
 			if (!isOptOut()) {
 				configuration.set("opt-out", true);
 				configuration.save(configurationFile);
@@ -366,12 +356,8 @@ public class Metrics {
 	 * @return the File object for the config file
 	 */
 	public File getConfigFile() {
-		// I believe the easiest way to get the base folder (e.g craftbukkit set
-		// via -P) for plugins to use
-		// is to abuse the plugin object we already have
-		// plugin.getDataFolder() => base/plugins/PluginA/
-		// pluginsFolder => base/plugins/
-		// The base is not necessarily relative to the startup directory.
+		// I believe the easiest way to get the base folder (e.g craftbukkit set via -P) for plugins to use is to abuse the plugin object we already have
+		// plugin.getDataFolder() => base/plugins/PluginA/ pluginsFolder => base/plugins/ The base is not necessarily relative to the startup directory.
 		File pluginsFolder = plugin.getDataFolder().getParentFile();
 
 		// return => base/plugins/PluginMetrics/config.yml
@@ -393,14 +379,12 @@ public class Metrics {
 		String serverVersion = Bukkit.getVersion();
 		int playersOnline = Bukkit.getServer().getOnlinePlayers().length;
 
-		// END server software specific section -- all code below does not use
-		// any code outside of this class / Java
+		// END server software specific section -- all code below does not use any code outside of this class / Java
 
 		// Construct the post data
 		final StringBuilder data = new StringBuilder();
 
-		// The plugin's description file containg all of the plugin data such as
-		// name, version, author, etc
+		// The plugin's description file containg all of the plugin data such as name, version, author, etc
 		data.append(encode("guid")).append('=').append(encode(guid));
 		encodeDataPair(data, "version", pluginVersion);
 		encodeDataPair(data, "server", serverVersion);
@@ -431,9 +415,7 @@ public class Metrics {
 			encodeDataPair(data, "ping", "true");
 		}
 
-		// Acquire a lock on the graphs, which lets us make the assumption we
-		// also lock everything
-		// inside of the graph (e.g plotters)
+		// Acquire a lock on the graphs, which lets us make the assumption we also lock everything inside of the graph (e.g plotters)
 		synchronized (graphs) {
 			final Iterator<Graph> iter = graphs.iterator();
 
@@ -441,18 +423,13 @@ public class Metrics {
 				final Graph graph = iter.next();
 
 				for (Plotter plotter : graph.getPlotters()) {
-					// The key name to send to the metrics server
-					// The format is C-GRAPHNAME-PLOTTERNAME where separator -
-					// is defined at the top
-					// Legacy (R4) submitters use the format Custom%s, or
-					// CustomPLOTTERNAME
+					// The key name to send to the metrics server The format is C-GRAPHNAME-PLOTTERNAME where separator - is defined at the top
+					// Legacy (R4) submitters use the format Custom%s, or CustomPLOTTERNAME
 					final String key = String.format("C%s%s%s%s",
 							CUSTOM_DATA_SEPARATOR, graph.getName(),
 							CUSTOM_DATA_SEPARATOR, plotter.getColumnName());
 
-					// The value to send, which for the foreseeable future is
-					// just the string
-					// value of plotter.getValue()
+					// The value to send, which for the foreseeable future is just the string value of plotter.getValue()
 					final String value = Integer.toString(plotter.getValue());
 
 					// Add it to the http post data :)
@@ -468,8 +445,7 @@ public class Metrics {
 		// Connect to the website
 		URLConnection connection;
 
-		// Mineshafter creates a socks proxy, so we can safely bypass it
-		// It does not reroute POST requests so we need to go around it
+		// Mineshafter creates a socks proxy, so we can safely bypass it It does not reroute POST requests so we need to go around it
 		if (isMineshafterPresent()) {
 			connection = url.openConnection(Proxy.NO_PROXY);
 		} else {

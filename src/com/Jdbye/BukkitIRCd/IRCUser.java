@@ -94,11 +94,10 @@ public class IRCUser {
 	public String accountname = "";
 	public boolean isRegistered = false;
 	public boolean isOper = false;
-	public boolean joined = false; // Whether the user has joined the plugin
-									// channel
-	public boolean consoleJoined = false; // Whether the user has joined the
-											// console channel, only used in
-											// linking mode
+	public boolean joined = false; // Whether the user has joined the plugin channel
+
+	public boolean consoleJoined = false; // Whether the user has joined the console channel, only used in linking mode
+
 	public String awayMsg = "";
 	// public long lastPingResponse;
 	public long signonTime;
