@@ -1,5 +1,5 @@
 # BukkitIRCd
-Thanks to everyone who has contributed to BukkitIRCd, without you nothing would have been possible.
+Thanks to everyone who has contributed to BukkitIRCd, without you nothing would have ever been possible.
 
 ## Thanks to...
 [WizardCM](https://github.com/WizardCM) - It was all his idea :)
