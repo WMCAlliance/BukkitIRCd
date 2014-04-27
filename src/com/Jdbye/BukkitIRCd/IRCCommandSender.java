@@ -33,11 +33,7 @@ public class IRCCommandSender implements CommandSender {
 		if (enabled) {
 			for (String filter : IRCd.consoleFilters) {
 				try {
-					if (message.matches(filter.replace('&', '\u00A7'))) { // Replace
-																			// Ampersands
-																			// with
-																			// section
-																			// signs
+					if (message.matches(filter.replace('&', '\u00A7'))) { // Replace Ampersands with section signs																		
 						return;
 					}
 				} catch (PatternSyntaxException e) {

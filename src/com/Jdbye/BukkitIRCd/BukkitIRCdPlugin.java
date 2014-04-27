@@ -187,7 +187,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			}
 		}
 	}
-
+	// dynmap setup
 	public void setupDynmap(DynmapAPI plugin) {
 		if (plugin != null) {
 			dynmap = plugin;
@@ -196,7 +196,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 							: ""));
 		}
 	}
-
+	// dynmap unload
 	public void unloadDynmap() {
 		if (BukkitIRCdPlugin.dynmap != null) {
 			BukkitIRCdPlugin.dynmap = null;
