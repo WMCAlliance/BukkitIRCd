@@ -4,7 +4,7 @@ Thanks to everyone who has contributed to BukkitIRCd, without you nothing would 
 ## Thanks to...
 [WizardCM](https://github.com/WizardCM) - It was all his idea :)
 
-[nathanblaney](https://github.com/nathanblaney) - Not bloody much xD
+[Mu5tank05](https://github.com/Mu5tank05) - Not bloody much xD
 
 [peerau](https://github.com/peerau) - uploaded BukkitIRCd to Github so we wouldn't have to
 

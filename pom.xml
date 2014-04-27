@@ -30,11 +30,6 @@
          <version>1.3</version>
          <type>jar</type>
       </dependency>
-      <dependency>
-         <groupId>org.pircbotx</groupId>
-         <artifactId>pircbotx</artifactId>
-         <version>1.9</version>
-      </dependency>
    </dependencies>
    <name>BukkitIRCd</name>
    <url>http://wma.im</url>
