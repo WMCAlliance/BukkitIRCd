@@ -103,6 +103,9 @@ public class IRCd implements Runnable {
 	public static String msgDisconnectQuitting = "Left the server";
 	public static String msgPlayerList = "^BOnline Players ({Count}):^B {Users}";
 
+	// server 'names' to not send messages into the channel from
+	public static ArrayList<String> globalNameIgnoreList = new ArrayList<String>();
+
 	public static final long serverStartTime = System.currentTimeMillis() / 1000L;
 	public static long channelTS = serverStartTime,
 			consoleChannelTS = serverStartTime;

@@ -151,6 +151,19 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 		ircd = new IRCd();
 
+		if ( IRCd.globalNameIgnoreList == null )
+		{
+			IRCd.globalNameIgnoreList = new ArrayList<String>();
+		}
+
+		Scanner ignoreListScanner = new Scanner(new File(getDataFolder(), "ignoreList.yml"));
+		while (ignoreListScanner.hasNext()){
+		    IRCd.globalNameIgnoreList.add(ignoreListScanner.next());
+		}
+		ignoreListScanner.close();
+
+
+
 		Messages.loadMessages(ircd);
 		IRCd.bukkitversion = getServer().getVersion();
 
