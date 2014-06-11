@@ -33,322 +33,329 @@ import com.Jdbye.BukkitIRCd.configuration.MOTD;
 import com.Jdbye.BukkitIRCd.configuration.Messages;
 
 /**
- * BukkitIRCdPlugin for Bukkit
- * 
- * @author Jdbye
+ BukkitIRCdPlugin for Bukkit
+
+ @author Jdbye
  */
-
 public class BukkitIRCdPlugin extends JavaPlugin {
-	static class CriticalSection extends Object {
-	}
 
-	static public CriticalSection csLastReceived = new CriticalSection();
+    static class CriticalSection extends Object {
+    }
 
-	private final BukkitIRCdPlayerListener playerListener = new BukkitIRCdPlayerListener(
-			this);
-	private BukkitIRCdDynmapListener dynmapListener = null;
+    static public CriticalSection csLastReceived = new CriticalSection();
 
-	public static BukkitIRCdPlugin thePlugin = null;
+    private final BukkitIRCdPlayerListener playerListener = new BukkitIRCdPlayerListener(
+            this);
+    private BukkitIRCdDynmapListener dynmapListener = null;
 
-	public static SimpleDateFormat dateFormat = new SimpleDateFormat(
-			"EEE MMM dd HH:mm:ss yyyy");
+    public static BukkitIRCdPlugin thePlugin = null;
 
-	public Map<String, String> lastReceived = new HashMap<String, String>();
+    public static SimpleDateFormat dateFormat = new SimpleDateFormat(
+            "EEE MMM dd HH:mm:ss yyyy");
 
-	public static String ircdVersion;
+    public Map<String, String> lastReceived = new HashMap<String, String>();
 
-	public boolean dynmapEventRegistered = false;
+    public static String ircdVersion;
 
-	public static final Logger log = Logger.getLogger("Minecraft");
+    public boolean dynmapEventRegistered = false;
 
-	public static DynmapAPI dynmap = null;
+    public static final Logger log = Logger.getLogger("Minecraft");
 
-	static IRCd ircd = null;
-	private Thread thr = null;
+    public static DynmapAPI dynmap = null;
 
-	public BukkitIRCdPlugin() {
-		thePlugin = this;
-	}
+    static IRCd ircd = null;
+    private Thread thr = null;
 
-	public static Config config = null;
+    public BukkitIRCdPlugin() {
+        thePlugin = this;
+    }
 
-	@Override
-	public void onEnable() {
-		saveDefaultConfig();
+    public static Config config = null;
 
-		// Register our events
-		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvents(this.playerListener, this);
+    @Override
+    public void onEnable() {
+        saveDefaultConfig();
 
-		PluginDescriptionFile pdfFile = getDescription();
-		ircdVersion = pdfFile.getName() + " " + pdfFile.getVersion() + " by "
-				+ pdfFile.getAuthors().get(0);
-		setupMetrics();
-		pluginInit();
+        // Register our events
+        PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(this.playerListener, this);
 
-		getCommand("ircban").setExecutor(new IRCBanCommand(this));
-		getCommand("irckick").setExecutor(new IRCKickCommand());
-		getCommand("irclist").setExecutor(new IRCListCommand());
-		getCommand("ircunban").setExecutor(new IRCUnbanCommand(this));
-		getCommand("ircwhois").setExecutor(new IRCWhoisCommand());
-		getCommand("ircmsg").setExecutor(new IRCMsgCommand());
-		getCommand("ircreply").setExecutor(new IRCReplyCommand(this));
-		getCommand("irctopic").setExecutor(new IRCTopicCommand());
-		getCommand("irclink").setExecutor(new IRCLinkCommand(this));
-		getCommand("ircreload").setExecutor(new IRCReloadCommand(this));
-		getCommand("rawsend").setExecutor(new RawsendCommand());
+        PluginDescriptionFile pdfFile = getDescription();
+        ircdVersion = pdfFile.getName() + " " + pdfFile.getVersion() + " by " +
+                 pdfFile.getAuthors().get(0);
+        setupMetrics();
+        pluginInit();
 
-		log.info(ircdVersion + " is now enabled");
-	}
+        getCommand("ircban").setExecutor(new IRCBanCommand(this));
+        getCommand("irckick").setExecutor(new IRCKickCommand());
+        getCommand("irclist").setExecutor(new IRCListCommand());
+        getCommand("ircunban").setExecutor(new IRCUnbanCommand(this));
+        getCommand("ircwhois").setExecutor(new IRCWhoisCommand());
+        getCommand("ircmsg").setExecutor(new IRCMsgCommand());
+        getCommand("ircreply").setExecutor(new IRCReplyCommand(this));
+        getCommand("irctopic").setExecutor(new IRCTopicCommand());
+        getCommand("irclink").setExecutor(new IRCLinkCommand(this));
+        getCommand("ircreload").setExecutor(new IRCReloadCommand(this));
+        getCommand("rawsend").setExecutor(new RawsendCommand());
 
-	@Override
-	public void onDisable() {
-		if (ircd != null) {
-			ircd.running = false;
-			IRCd.disconnectAll();
-			ircd = null;
-		}
-		if (thr != null) {
-			thr.interrupt();
-			thr = null;
-		}
+        log.info(ircdVersion + " is now enabled");
+    }
 
-		dynmapEventRegistered = false;
-		// File configFile = new File(getDataFolder(), "config.yml");
-		Config.saveConfiguration();
+    @Override
+    public void onDisable() {
+        if (ircd != null) {
+            ircd.running = false;
+            IRCd.disconnectAll();
+            ircd = null;
+        }
+        if (thr != null) {
+            thr.interrupt();
+            thr = null;
+        }
 
-		Bans.writeBans();
+        dynmapEventRegistered = false;
+        // File configFile = new File(getDataFolder(), "config.yml");
+        Config.saveConfiguration();
 
-		log.info(ircdVersion + " is now disabled!");
-	}
+        Bans.writeBans();
 
-	private void pluginInit() {
-		pluginInit(false);
-	}
+        log.info(ircdVersion + " is now disabled!");
+    }
 
-	public void pluginInit(boolean reload) {
-		if (reload) {
-			if (ircd != null) {
-				ircd.running = false;
-				IRCd.disconnectAll("Reloading configuration.");
-				ircd = null;
-			}
-			if (thr != null) {
-				thr.interrupt();
-				thr = null;
-			}
-		}
+    private void pluginInit() {
+        pluginInit(false);
+    }
 
-		Config.reloadConfiguration();
-		Config.saveConfiguration();
+    public void pluginInit(boolean reload) {
+        if (reload) {
+            if (ircd != null) {
+                ircd.running = false;
+                IRCd.disconnectAll("Reloading configuration.");
+                ircd = null;
+            }
+            if (thr != null) {
+                thr.interrupt();
+                thr = null;
+            }
+        }
 
-		Bans.enableBans();
+        Config.reloadConfiguration();
+        Config.saveConfiguration();
 
-		MOTD.enableMOTD();
-		MOTD.loadMOTD();
+        Bans.enableBans();
 
-		setupDynmap();
+        MOTD.enableMOTD();
+        MOTD.loadMOTD();
 
-		ircd = new IRCd();
+        setupDynmap();
 
-		if ( IRCd.globalNameIgnoreList == null )
-		{
-			IRCd.globalNameIgnoreList = new ArrayList<String>();
-		}
+        ircd = new IRCd();
 
-                // TODO Ignore List loading
+        if (IRCd.globalNameIgnoreList == null) {
+            IRCd.globalNameIgnoreList = new ArrayList<String>();
+        }
+
+	// TODO Ignore List loading
 		/*try
-		{
-			Scanner ignoreListScanner = new Scanner(new File(getDataFolder(), "ignoreList.yml"));
+         {
+         Scanner ignoreListScanner = new Scanner(new File(getDataFolder(), "ignoreList.yml"));
 			
-			while (ignoreListScanner.hasNext()){
-			    IRCd.globalNameIgnoreList.add(ignoreListScanner.next());
-			}
+         while (ignoreListScanner.hasNext()){
+         IRCd.globalNameIgnoreList.add(ignoreListScanner.next());
+         }
 
-			ignoreListScanner.close();
-		}
-		catch ( java.io.FileNotFoundException e )
-		{
-			// we don't care if it exists or not currently
-			// if it doesn't exist, everything carries on as normal
+         ignoreListScanner.close();
+         }
+         catch ( java.io.FileNotFoundException e )
+         {
+         // we don't care if it exists or not currently
+         // if it doesn't exist, everything carries on as normal
 
-			// this is seperated should we wish to add to it...
-		}
-		catch (Exception e)
-		{
-			// same as FileNotFoundException
-		}*/
+         // this is seperated should we wish to add to it...
+         }
+         catch (Exception e)
+         {
+         // same as FileNotFoundException
+         }*/
+        Messages.loadMessages(ircd);
+        IRCd.bukkitversion = getServer().getVersion();
 
+        Bans.loadBans();
 
-		Messages.loadMessages(ircd);
-		IRCd.bukkitversion = getServer().getVersion();
+        IRCd.bukkitPlayers.clear();
 
-		Bans.loadBans();
+        // Set players to different IRC modes based on permission
+        for (final Player player : getServer().getOnlinePlayers()) {
+            final String mode = computePlayerModes(player);
+            BukkitUserManagement.addBukkitUser(mode, player);
+        }
 
-		IRCd.bukkitPlayers.clear();
+        thr = new Thread(ircd);
+        thr.start();
 
-		// Set players to different IRC modes based on permission
-		for (final Player player : getServer().getOnlinePlayers()) {
-			final String mode = computePlayerModes(player);
-			BukkitUserManagement.addBukkitUser(mode, player);
-		}
+    }
 
-		thr = new Thread(ircd);
-		thr.start();
+    // check for Dynmap, and if it's installed, register events and hooks
+    private void setupDynmap() {
+        if (BukkitIRCdPlugin.dynmap == null) {
+            final PluginManager pm = getServer().getPluginManager();
+            final Plugin plugin = pm.getPlugin("dynmap");
 
-	}
+            if (plugin != null) {
+                if (dynmapListener == null) {
+                    dynmapListener = new BukkitIRCdDynmapListener();
+                }
 
-	// check for Dynmap, and if it's installed, register events and hooks
-	private void setupDynmap() {
-		if (BukkitIRCdPlugin.dynmap == null) {
-			final PluginManager pm = getServer().getPluginManager();
-			final Plugin plugin = pm.getPlugin("dynmap");
+                if (!dynmapEventRegistered) {
+                    pm.registerEvents(dynmapListener, this);
+                }
+                setupDynmap((DynmapAPI) plugin);
+            }
+        }
+    }
 
-			if (plugin != null) {
-				if (dynmapListener == null) {
-					dynmapListener = new BukkitIRCdDynmapListener();
-				}
+    // dynmap setup
+    public void setupDynmap(DynmapAPI plugin) {
+        if (plugin != null) {
+            dynmap = plugin;
+            log.info("[BukkitIRCd] Hooked into Dynmap." +
+                     (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin301." :
+                     ""));
+        }
+    }
 
-				if (!dynmapEventRegistered) {
-					pm.registerEvents(dynmapListener, this);
-				}
-				setupDynmap((DynmapAPI) plugin);
-			}
-		}
-	}
-	// dynmap setup
-	public void setupDynmap(DynmapAPI plugin) {
-		if (plugin != null) {
-			dynmap = plugin;
-			log.info("[BukkitIRCd] Hooked into Dynmap."
-					+ (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin301."
-							: ""));
-		}
-	}
-	// dynmap unload
-	public void unloadDynmap() {
-		if (BukkitIRCdPlugin.dynmap != null) {
-			BukkitIRCdPlugin.dynmap = null;
-			log.info("[BukkitIRCd] Dynmap plugin lost."
-					+ (Config.isDebugModeEnabled() ? " Error Code BukkitIRCdPlugin308."
-							: ""));
-		}
-	}
+    // dynmap unload
+    public void unloadDynmap() {
+        if (BukkitIRCdPlugin.dynmap != null) {
+            BukkitIRCdPlugin.dynmap = null;
+            log.info("[BukkitIRCd] Dynmap plugin lost." +
+                     (Config.isDebugModeEnabled() ? " Error Code BukkitIRCdPlugin308." :
+                     ""));
+        }
+    }
 
-	/**
-	 * Converts color codes to processed codes
-	 * 
-	 * @param message
-	 *            Message with raw color codes
-	 * @return String with processed colors
-	 */
-	public static String colorize(final String message) {
-		if (message == null)
-			return null;
-		return ChatColor.translateAlternateColorCodes('&', message);
-	}
+    /**
+     Converts color codes to processed codes
 
-	public void setLastReceived(String receivedBy, String receivedFrom) {
-		synchronized (csLastReceived) {
-			lastReceived.put(receivedBy, receivedFrom);
-		}
-	}
+     @param message
+     Message with raw color codes
 
-	public void updateLastReceived(String oldReceivedFrom,
-			String newReceivedFrom) {
-		List<String> update = new ArrayList<String>();
-		synchronized (csLastReceived) {
-			for (Map.Entry<String, String> lastReceivedEntry : lastReceived
-					.entrySet()) {
-				if (lastReceivedEntry.getValue().equalsIgnoreCase(
-						oldReceivedFrom))
-					update.add(lastReceivedEntry.getKey());
-			}
-			for (String toUpdate : update)
-				lastReceived.put(toUpdate, newReceivedFrom);
-		}
-	}
+     @return String with processed colors
+     */
+    public static String colorize(final String message) {
+        if (message == null) {
+            return null;
+        }
+        return ChatColor.translateAlternateColorCodes('&', message);
+    }
 
-	public void removeLastReceivedBy(String receivedBy) {
-		synchronized (csLastReceived) {
-			lastReceived.remove(receivedBy);
-		}
-	}
+    public void setLastReceived(String receivedBy, String receivedFrom) {
+        synchronized (csLastReceived) {
+            lastReceived.put(receivedBy, receivedFrom);
+        }
+    }
 
-	public void removeLastReceivedFrom(String receivedFrom) {
-		List<String> remove = new ArrayList<String>();
-		synchronized (csLastReceived) {
-			for (Map.Entry<String, String> lastReceivedEntry : lastReceived
-					.entrySet()) {
-				if (lastReceivedEntry.getValue().equalsIgnoreCase(receivedFrom))
-					remove.add(lastReceivedEntry.getKey());
-			}
-			for (String toRemove : remove)
-				lastReceived.remove(toRemove);
-		}
-	}
+    public void updateLastReceived(String oldReceivedFrom,
+            String newReceivedFrom) {
+        List<String> update = new ArrayList<String>();
+        synchronized (csLastReceived) {
+            for (Map.Entry<String, String> lastReceivedEntry : lastReceived
+                    .entrySet()) {
+                if (lastReceivedEntry.getValue().equalsIgnoreCase(
+                        oldReceivedFrom)) {
+                    update.add(lastReceivedEntry.getKey());
+                }
+            }
+            for (String toUpdate : update) {
+                lastReceived.put(toUpdate, newReceivedFrom);
+            }
+        }
+    }
 
-	public int countStr(String text, String search) {
-		int count = 0;
-		for (int fromIndex = 0; fromIndex > -1; count++)
-			fromIndex = text.indexOf(search, fromIndex + ((count > 0) ? 1 : 0));
-		return count - 1;
-	}
+    public void removeLastReceivedBy(String receivedBy) {
+        synchronized (csLastReceived) {
+            lastReceived.remove(receivedBy);
+        }
+    }
 
-	public static int[] convertStringArrayToIntArray(String[] sarray, int[] def) {
-		try {
-			if (sarray != null) {
-				int intarray[] = new int[sarray.length];
-				for (int i = 0; i < sarray.length; i++) {
-					intarray[i] = Integer.parseInt(sarray[i]);
-				}
-				return intarray;
-			}
-		} catch (Exception e) {
-			log.severe("[BukkitIRCd] Unable to parse string array "
-					+ IRCd.join(sarray, " ", 0) + ", invalid number. " + e);
-		}
-		return def;
-	}
+    public void removeLastReceivedFrom(String receivedFrom) {
+        List<String> remove = new ArrayList<String>();
+        synchronized (csLastReceived) {
+            for (Map.Entry<String, String> lastReceivedEntry : lastReceived
+                    .entrySet()) {
+                if (lastReceivedEntry.getValue().equalsIgnoreCase(receivedFrom)) {
+                    remove.add(lastReceivedEntry.getKey());
+                }
+            }
+            for (String toRemove : remove) {
+                lastReceived.remove(toRemove);
+            }
+        }
+    }
 
-	/**
-	 * Setup PluginMetrics
-	 */
-	private void setupMetrics() {
-		try {
-			Metrics metrics = new Metrics(this);
-			metrics.start();
-		} catch (IOException e) {
-			// Failed to submit metrics
-		}
-	}
+    public int countStr(String text, String search) {
+        int count = 0;
+        for (int fromIndex = 0; fromIndex > -1; count++) {
+            fromIndex = text.indexOf(search, fromIndex + ((count > 0) ? 1 : 0));
+        }
+        return count - 1;
+    }
 
-	/**
-	 * @param player
-	 * @return
-	 */
-	String computePlayerModes(final Player player) {
-		final StringBuffer mode = new StringBuffer(5);
+    public static int[] convertStringArrayToIntArray(String[] sarray, int[] def) {
+        try {
+            if (sarray != null) {
+                int intarray[] = new int[sarray.length];
+                for (int i = 0; i < sarray.length; i++) {
+                    intarray[i] = Integer.parseInt(sarray[i]);
+                }
+                return intarray;
+            }
+        } catch (Exception e) {
+            log.severe("[BukkitIRCd] Unable to parse string array " +
+                     IRCd.join(sarray, " ", 0) + ", invalid number. " + e);
+        }
+        return def;
+    }
 
-		final char[] modeSigils = { '~', '&', '@', '%', '+' };
-		final String[] modeNames = { "owner", "protect", "op", "halfop",
-				"voice" };
-		final boolean debug = Config.isDebugModeEnabled();
+    /**
+     Setup PluginMetrics
+     */
+    private void setupMetrics() {
+        try {
+            Metrics metrics = new Metrics(this);
+            metrics.start();
+        } catch (IOException e) {
+            // Failed to submit metrics
+        }
+    }
 
-		for (int i = 0; i < modeSigils.length; i++) {
-			if (player.hasPermission("bukkitircd.mode." + modeNames[i])) {
-				if (debug) {
-					BukkitIRCdPlugin.log.info("Add mode +" + modeSigils[i]
-							+ " for player " + player.getName());
-				}
+    /**
+     @param player
 
-				mode.append(modeSigils[i]);
+     @return
+     */
+    String computePlayerModes(final Player player) {
+        final StringBuffer mode = new StringBuffer(5);
 
-				if (!Config.isIrcdRedundantModes()) {
-					break;
-				}
-			}
-		}
-		return mode.toString();
-	}
+        final char[] modeSigils = {'~', '&', '@', '%', '+'};
+        final String[] modeNames = {"owner", "protect", "op", "halfop",
+            "voice"};
+        final boolean debug = Config.isDebugModeEnabled();
+
+        for (int i = 0; i < modeSigils.length; i++) {
+            if (player.hasPermission("bukkitircd.mode." + modeNames[i])) {
+                if (debug) {
+                    BukkitIRCdPlugin.log.info("Add mode +" + modeSigils[i] +
+                             " for player " + player.getName());
+                }
+
+                mode.append(modeSigils[i]);
+
+                if (!Config.isIrcdRedundantModes()) {
+                    break;
+                }
+            }
+        }
+        return mode.toString();
+    }
 }
