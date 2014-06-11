@@ -45,13 +45,13 @@ public class BukkitIRCdPlugin extends JavaPlugin {
     static public CriticalSection csLastReceived = new CriticalSection();
 
     private final BukkitIRCdPlayerListener playerListener = new BukkitIRCdPlayerListener(
-            this);
+	    this);
     private BukkitIRCdDynmapListener dynmapListener = null;
 
     public static BukkitIRCdPlugin thePlugin = null;
 
     public static SimpleDateFormat dateFormat = new SimpleDateFormat(
-            "EEE MMM dd HH:mm:ss yyyy");
+	    "EEE MMM dd HH:mm:ss yyyy");
 
     public Map<String, String> lastReceived = new HashMap<String, String>();
 
@@ -67,171 +67,171 @@ public class BukkitIRCdPlugin extends JavaPlugin {
     private Thread thr = null;
 
     public BukkitIRCdPlugin() {
-        thePlugin = this;
+	thePlugin = this;
     }
 
     public static Config config = null;
 
     @Override
     public void onEnable() {
-        saveDefaultConfig();
+	saveDefaultConfig();
 
-        // Register our events
-        PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(this.playerListener, this);
+	// Register our events
+	PluginManager pm = getServer().getPluginManager();
+	pm.registerEvents(this.playerListener, this);
 
-        PluginDescriptionFile pdfFile = getDescription();
-        ircdVersion = pdfFile.getName() + " " + pdfFile.getVersion() + " by " +
-                 pdfFile.getAuthors().get(0);
-        setupMetrics();
-        pluginInit();
+	PluginDescriptionFile pdfFile = getDescription();
+	ircdVersion = pdfFile.getName() + " " + pdfFile.getVersion() + " by " +
+		pdfFile.getAuthors().get(0);
+	setupMetrics();
+	pluginInit();
 
-        getCommand("ircban").setExecutor(new IRCBanCommand(this));
-        getCommand("irckick").setExecutor(new IRCKickCommand());
-        getCommand("irclist").setExecutor(new IRCListCommand());
-        getCommand("ircunban").setExecutor(new IRCUnbanCommand(this));
-        getCommand("ircwhois").setExecutor(new IRCWhoisCommand());
-        getCommand("ircmsg").setExecutor(new IRCMsgCommand());
-        getCommand("ircreply").setExecutor(new IRCReplyCommand(this));
-        getCommand("irctopic").setExecutor(new IRCTopicCommand());
-        getCommand("irclink").setExecutor(new IRCLinkCommand(this));
-        getCommand("ircreload").setExecutor(new IRCReloadCommand(this));
-        getCommand("rawsend").setExecutor(new RawsendCommand());
+	getCommand("ircban").setExecutor(new IRCBanCommand(this));
+	getCommand("irckick").setExecutor(new IRCKickCommand());
+	getCommand("irclist").setExecutor(new IRCListCommand());
+	getCommand("ircunban").setExecutor(new IRCUnbanCommand(this));
+	getCommand("ircwhois").setExecutor(new IRCWhoisCommand());
+	getCommand("ircmsg").setExecutor(new IRCMsgCommand());
+	getCommand("ircreply").setExecutor(new IRCReplyCommand(this));
+	getCommand("irctopic").setExecutor(new IRCTopicCommand());
+	getCommand("irclink").setExecutor(new IRCLinkCommand(this));
+	getCommand("ircreload").setExecutor(new IRCReloadCommand(this));
+	getCommand("rawsend").setExecutor(new RawsendCommand());
 
-        log.info(ircdVersion + " is now enabled");
+	log.info(ircdVersion + " is now enabled");
     }
 
     @Override
     public void onDisable() {
-        if (ircd != null) {
-            ircd.running = false;
-            IRCd.disconnectAll();
-            ircd = null;
-        }
-        if (thr != null) {
-            thr.interrupt();
-            thr = null;
-        }
+	if (ircd != null) {
+	    ircd.running = false;
+	    IRCd.disconnectAll();
+	    ircd = null;
+	}
+	if (thr != null) {
+	    thr.interrupt();
+	    thr = null;
+	}
 
-        dynmapEventRegistered = false;
-        // File configFile = new File(getDataFolder(), "config.yml");
-        Config.saveConfiguration();
+	dynmapEventRegistered = false;
+	// File configFile = new File(getDataFolder(), "config.yml");
+	Config.saveConfiguration();
 
-        Bans.writeBans();
+	Bans.writeBans();
 
-        log.info(ircdVersion + " is now disabled!");
+	log.info(ircdVersion + " is now disabled!");
     }
 
     private void pluginInit() {
-        pluginInit(false);
+	pluginInit(false);
     }
 
     public void pluginInit(boolean reload) {
-        if (reload) {
-            if (ircd != null) {
-                ircd.running = false;
-                IRCd.disconnectAll("Reloading configuration.");
-                ircd = null;
-            }
-            if (thr != null) {
-                thr.interrupt();
-                thr = null;
-            }
-        }
+	if (reload) {
+	    if (ircd != null) {
+		ircd.running = false;
+		IRCd.disconnectAll("Reloading configuration.");
+		ircd = null;
+	    }
+	    if (thr != null) {
+		thr.interrupt();
+		thr = null;
+	    }
+	}
 
-        Config.reloadConfiguration();
-        Config.saveConfiguration();
+	Config.reloadConfiguration();
+	Config.saveConfiguration();
 
-        Bans.enableBans();
+	Bans.enableBans();
 
-        MOTD.enableMOTD();
-        MOTD.loadMOTD();
+	MOTD.enableMOTD();
+	MOTD.loadMOTD();
 
-        setupDynmap();
+	setupDynmap();
 
-        ircd = new IRCd();
+	ircd = new IRCd();
 
-        if (IRCd.globalNameIgnoreList == null) {
-            IRCd.globalNameIgnoreList = new ArrayList<String>();
-        }
+	if (IRCd.globalNameIgnoreList == null) {
+	    IRCd.globalNameIgnoreList = new ArrayList<String>();
+	}
 
 	// TODO Ignore List loading
 		/*try
-         {
-         Scanner ignoreListScanner = new Scanner(new File(getDataFolder(), "ignoreList.yml"));
+	 {
+	 Scanner ignoreListScanner = new Scanner(new File(getDataFolder(), "ignoreList.yml"));
 			
-         while (ignoreListScanner.hasNext()){
-         IRCd.globalNameIgnoreList.add(ignoreListScanner.next());
-         }
+	 while (ignoreListScanner.hasNext()){
+	 IRCd.globalNameIgnoreList.add(ignoreListScanner.next());
+	 }
 
-         ignoreListScanner.close();
-         }
-         catch ( java.io.FileNotFoundException e )
-         {
-         // we don't care if it exists or not currently
-         // if it doesn't exist, everything carries on as normal
+	 ignoreListScanner.close();
+	 }
+	 catch ( java.io.FileNotFoundException e )
+	 {
+	 // we don't care if it exists or not currently
+	 // if it doesn't exist, everything carries on as normal
 
-         // this is seperated should we wish to add to it...
-         }
-         catch (Exception e)
-         {
-         // same as FileNotFoundException
-         }*/
-        Messages.loadMessages(ircd);
-        IRCd.bukkitversion = getServer().getVersion();
+	 // this is seperated should we wish to add to it...
+	 }
+	 catch (Exception e)
+	 {
+	 // same as FileNotFoundException
+	 }*/
+	Messages.loadMessages(ircd);
+	IRCd.bukkitversion = getServer().getVersion();
 
-        Bans.loadBans();
+	Bans.loadBans();
 
-        IRCd.bukkitPlayers.clear();
+	IRCd.bukkitPlayers.clear();
 
-        // Set players to different IRC modes based on permission
-        for (final Player player : getServer().getOnlinePlayers()) {
-            final String mode = computePlayerModes(player);
-            BukkitUserManagement.addBukkitUser(mode, player);
-        }
+	// Set players to different IRC modes based on permission
+	for (final Player player : getServer().getOnlinePlayers()) {
+	    final String mode = computePlayerModes(player);
+	    BukkitUserManagement.addBukkitUser(mode, player);
+	}
 
-        thr = new Thread(ircd);
-        thr.start();
+	thr = new Thread(ircd);
+	thr.start();
 
     }
 
     // check for Dynmap, and if it's installed, register events and hooks
     private void setupDynmap() {
-        if (BukkitIRCdPlugin.dynmap == null) {
-            final PluginManager pm = getServer().getPluginManager();
-            final Plugin plugin = pm.getPlugin("dynmap");
+	if (BukkitIRCdPlugin.dynmap == null) {
+	    final PluginManager pm = getServer().getPluginManager();
+	    final Plugin plugin = pm.getPlugin("dynmap");
 
-            if (plugin != null) {
-                if (dynmapListener == null) {
-                    dynmapListener = new BukkitIRCdDynmapListener();
-                }
+	    if (plugin != null) {
+		if (dynmapListener == null) {
+		    dynmapListener = new BukkitIRCdDynmapListener();
+		}
 
-                if (!dynmapEventRegistered) {
-                    pm.registerEvents(dynmapListener, this);
-                }
-                setupDynmap((DynmapAPI) plugin);
-            }
-        }
+		if (!dynmapEventRegistered) {
+		    pm.registerEvents(dynmapListener, this);
+		}
+		setupDynmap((DynmapAPI) plugin);
+	    }
+	}
     }
 
     // dynmap setup
     public void setupDynmap(DynmapAPI plugin) {
-        if (plugin != null) {
-            dynmap = plugin;
-            log.info("[BukkitIRCd] Hooked into Dynmap." +
-                     (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin301." :
-                     ""));
-        }
+	if (plugin != null) {
+	    dynmap = plugin;
+	    log.info("[BukkitIRCd] Hooked into Dynmap." +
+		    (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin301." :
+		    ""));
+	}
     }
 
     // dynmap unload
     public void unloadDynmap() {
-        if (BukkitIRCdPlugin.dynmap != null) {
-            BukkitIRCdPlugin.dynmap = null;
-            log.info("[BukkitIRCd] Dynmap plugin lost." +
-                     (Config.isDebugModeEnabled() ? " Error Code BukkitIRCdPlugin308." :
-                     ""));
-        }
+	if (BukkitIRCdPlugin.dynmap != null) {
+	    BukkitIRCdPlugin.dynmap = null;
+	    log.info("[BukkitIRCd] Dynmap plugin lost." +
+		    (Config.isDebugModeEnabled() ? " Error Code BukkitIRCdPlugin308." :
+		    ""));
+	}
     }
 
     /**
@@ -243,90 +243,90 @@ public class BukkitIRCdPlugin extends JavaPlugin {
      @return String with processed colors
      */
     public static String colorize(final String message) {
-        if (message == null) {
-            return null;
-        }
-        return ChatColor.translateAlternateColorCodes('&', message);
+	if (message == null) {
+	    return null;
+	}
+	return ChatColor.translateAlternateColorCodes('&', message);
     }
 
     public void setLastReceived(String receivedBy, String receivedFrom) {
-        synchronized (csLastReceived) {
-            lastReceived.put(receivedBy, receivedFrom);
-        }
+	synchronized (csLastReceived) {
+	    lastReceived.put(receivedBy, receivedFrom);
+	}
     }
 
     public void updateLastReceived(String oldReceivedFrom,
-            String newReceivedFrom) {
-        List<String> update = new ArrayList<String>();
-        synchronized (csLastReceived) {
-            for (Map.Entry<String, String> lastReceivedEntry : lastReceived
-                    .entrySet()) {
-                if (lastReceivedEntry.getValue().equalsIgnoreCase(
-                        oldReceivedFrom)) {
-                    update.add(lastReceivedEntry.getKey());
-                }
-            }
-            for (String toUpdate : update) {
-                lastReceived.put(toUpdate, newReceivedFrom);
-            }
-        }
+	    String newReceivedFrom) {
+	List<String> update = new ArrayList<String>();
+	synchronized (csLastReceived) {
+	    for (Map.Entry<String, String> lastReceivedEntry : lastReceived
+		    .entrySet()) {
+		if (lastReceivedEntry.getValue().equalsIgnoreCase(
+			oldReceivedFrom)) {
+		    update.add(lastReceivedEntry.getKey());
+		}
+	    }
+	    for (String toUpdate : update) {
+		lastReceived.put(toUpdate, newReceivedFrom);
+	    }
+	}
     }
 
     public void removeLastReceivedBy(String receivedBy) {
-        synchronized (csLastReceived) {
-            lastReceived.remove(receivedBy);
-        }
+	synchronized (csLastReceived) {
+	    lastReceived.remove(receivedBy);
+	}
     }
 
     public void removeLastReceivedFrom(String receivedFrom) {
-        List<String> remove = new ArrayList<String>();
-        synchronized (csLastReceived) {
-            for (Map.Entry<String, String> lastReceivedEntry : lastReceived
-                    .entrySet()) {
-                if (lastReceivedEntry.getValue().equalsIgnoreCase(receivedFrom)) {
-                    remove.add(lastReceivedEntry.getKey());
-                }
-            }
-            for (String toRemove : remove) {
-                lastReceived.remove(toRemove);
-            }
-        }
+	List<String> remove = new ArrayList<String>();
+	synchronized (csLastReceived) {
+	    for (Map.Entry<String, String> lastReceivedEntry : lastReceived
+		    .entrySet()) {
+		if (lastReceivedEntry.getValue().equalsIgnoreCase(receivedFrom)) {
+		    remove.add(lastReceivedEntry.getKey());
+		}
+	    }
+	    for (String toRemove : remove) {
+		lastReceived.remove(toRemove);
+	    }
+	}
     }
 
     public int countStr(String text, String search) {
-        int count = 0;
-        for (int fromIndex = 0; fromIndex > -1; count++) {
-            fromIndex = text.indexOf(search, fromIndex + ((count > 0) ? 1 : 0));
-        }
-        return count - 1;
+	int count = 0;
+	for (int fromIndex = 0; fromIndex > -1; count++) {
+	    fromIndex = text.indexOf(search, fromIndex + ((count > 0) ? 1 : 0));
+	}
+	return count - 1;
     }
 
     public static int[] convertStringArrayToIntArray(String[] sarray, int[] def) {
-        try {
-            if (sarray != null) {
-                int intarray[] = new int[sarray.length];
-                for (int i = 0; i < sarray.length; i++) {
-                    intarray[i] = Integer.parseInt(sarray[i]);
-                }
-                return intarray;
-            }
-        } catch (Exception e) {
-            log.severe("[BukkitIRCd] Unable to parse string array " +
-                     IRCd.join(sarray, " ", 0) + ", invalid number. " + e);
-        }
-        return def;
+	try {
+	    if (sarray != null) {
+		int intarray[] = new int[sarray.length];
+		for (int i = 0; i < sarray.length; i++) {
+		    intarray[i] = Integer.parseInt(sarray[i]);
+		}
+		return intarray;
+	    }
+	} catch (Exception e) {
+	    log.severe("[BukkitIRCd] Unable to parse string array " +
+		    IRCd.join(sarray, " ", 0) + ", invalid number. " + e);
+	}
+	return def;
     }
 
     /**
      Setup PluginMetrics
      */
     private void setupMetrics() {
-        try {
-            Metrics metrics = new Metrics(this);
-            metrics.start();
-        } catch (IOException e) {
-            // Failed to submit metrics
-        }
+	try {
+	    Metrics metrics = new Metrics(this);
+	    metrics.start();
+	} catch (IOException e) {
+	    // Failed to submit metrics
+	}
     }
 
     /**
@@ -335,27 +335,27 @@ public class BukkitIRCdPlugin extends JavaPlugin {
      @return
      */
     String computePlayerModes(final Player player) {
-        final StringBuffer mode = new StringBuffer(5);
+	final StringBuffer mode = new StringBuffer(5);
 
-        final char[] modeSigils = {'~', '&', '@', '%', '+'};
-        final String[] modeNames = {"owner", "protect", "op", "halfop",
-            "voice"};
-        final boolean debug = Config.isDebugModeEnabled();
+	final char[] modeSigils = {'~', '&', '@', '%', '+'};
+	final String[] modeNames = {"owner", "protect", "op", "halfop",
+	    "voice"};
+	final boolean debug = Config.isDebugModeEnabled();
 
-        for (int i = 0; i < modeSigils.length; i++) {
-            if (player.hasPermission("bukkitircd.mode." + modeNames[i])) {
-                if (debug) {
-                    BukkitIRCdPlugin.log.info("Add mode +" + modeSigils[i] +
-                             " for player " + player.getName());
-                }
+	for (int i = 0; i < modeSigils.length; i++) {
+	    if (player.hasPermission("bukkitircd.mode." + modeNames[i])) {
+		if (debug) {
+		    BukkitIRCdPlugin.log.info("Add mode +" + modeSigils[i] +
+			    " for player " + player.getName());
+		}
 
-                mode.append(modeSigils[i]);
+		mode.append(modeSigils[i]);
 
-                if (!Config.isIrcdRedundantModes()) {
-                    break;
-                }
-            }
-        }
-        return mode.toString();
+		if (!Config.isIrcdRedundantModes()) {
+		    break;
+		}
+	    }
+	}
+	return mode.toString();
     }
 }

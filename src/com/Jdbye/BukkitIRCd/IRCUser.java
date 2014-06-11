@@ -3,86 +3,86 @@ package com.Jdbye.BukkitIRCd;
 public class IRCUser {
 
     public IRCUser(String nick, String realname, String ident, String hostmask,
-            String ipaddress, String modes, String customWhois,
-            boolean isRegistered, boolean isOper, String awayMsg,
-            long signonTime, long lastActivity, String accountname) {
-        this.nick = nick;
-        this.realname = realname;
-        this.ident = ident;
-        this.hostmask = hostmask;
-        this.realhost = hostmask;
-        this.ipaddress = ipaddress;
-        this.modes = modes;
-        this.textModes = modes.replace("~", "q").replace("&", "a")
-                .replace("@", "o").replace("%", "h").replace("+", "v");
-        this.customWhois = customWhois;
-        this.isRegistered = isRegistered;
-        this.accountname = accountname;
-        this.isOper = isOper;
-        this.awayMsg = awayMsg;
-        this.signonTime = signonTime;
-        this.lastActivity = lastActivity;
-        this.joined = true;
-        this.consoleJoined = false;
+	    String ipaddress, String modes, String customWhois,
+	    boolean isRegistered, boolean isOper, String awayMsg,
+	    long signonTime, long lastActivity, String accountname) {
+	this.nick = nick;
+	this.realname = realname;
+	this.ident = ident;
+	this.hostmask = hostmask;
+	this.realhost = hostmask;
+	this.ipaddress = ipaddress;
+	this.modes = modes;
+	this.textModes = modes.replace("~", "q").replace("&", "a")
+		.replace("@", "o").replace("%", "h").replace("+", "v");
+	this.customWhois = customWhois;
+	this.isRegistered = isRegistered;
+	this.accountname = accountname;
+	this.isOper = isOper;
+	this.awayMsg = awayMsg;
+	this.signonTime = signonTime;
+	this.lastActivity = lastActivity;
+	this.joined = true;
+	this.consoleJoined = false;
     }
 
     public IRCUser(String nick, String realname, String ident, String hostmask,
-            String vhost, String ipaddress, String modes, String customWhois,
-            boolean isRegistered, boolean isOper, String awayMsg,
-            long signonTime, long lastActivity, String accountname) {
-        this.nick = nick;
-        this.realname = realname;
-        this.ident = ident;
-        this.hostmask = vhost;
-        this.realhost = hostmask;
-        this.ipaddress = ipaddress;
-        this.textModes = modes.replace("~", "q").replace("&", "a")
-                .replace("@", "o").replace("%", "h").replace("+", "v")
-                .replaceAll("[^A-Za-z0-9 ]", "");
-        this.modes = textModes.replace("q", "~").replace("a", "&")
-                .replace("o", "@").replace("h", "%").replace("v", "+");
-        this.customWhois = customWhois;
-        this.isRegistered = isRegistered;
-        this.accountname = accountname;
-        this.isOper = isOper;
-        this.awayMsg = awayMsg;
-        this.signonTime = signonTime;
-        this.lastActivity = lastActivity;
-        this.joined = false;
-        this.consoleJoined = false;
+	    String vhost, String ipaddress, String modes, String customWhois,
+	    boolean isRegistered, boolean isOper, String awayMsg,
+	    long signonTime, long lastActivity, String accountname) {
+	this.nick = nick;
+	this.realname = realname;
+	this.ident = ident;
+	this.hostmask = vhost;
+	this.realhost = hostmask;
+	this.ipaddress = ipaddress;
+	this.textModes = modes.replace("~", "q").replace("&", "a")
+		.replace("@", "o").replace("%", "h").replace("+", "v")
+		.replaceAll("[^A-Za-z0-9 ]", "");
+	this.modes = textModes.replace("q", "~").replace("a", "&")
+		.replace("o", "@").replace("h", "%").replace("v", "+");
+	this.customWhois = customWhois;
+	this.isRegistered = isRegistered;
+	this.accountname = accountname;
+	this.isOper = isOper;
+	this.awayMsg = awayMsg;
+	this.signonTime = signonTime;
+	this.lastActivity = lastActivity;
+	this.joined = false;
+	this.consoleJoined = false;
     }
 
     public void setModes(String mode) {
-        this.textModes = mode.replace("~", "q").replace("&", "a")
-                .replace("@", "o").replace("%", "h").replace("+", "v")
-                .replaceAll("[^A-Za-z0-9 ]", "");
-        this.modes = textModes.replace("q", "~").replace("a", "&")
-                .replace("o", "@").replace("h", "%").replace("v", "+");
+	this.textModes = mode.replace("~", "q").replace("&", "a")
+		.replace("@", "o").replace("%", "h").replace("+", "v")
+		.replaceAll("[^A-Za-z0-9 ]", "");
+	this.modes = textModes.replace("q", "~").replace("a", "&")
+		.replace("o", "@").replace("h", "%").replace("v", "+");
     }
 
     public String getModes() {
-        return this.modes;
+	return this.modes;
     }
 
     public String getTextModes() {
-        return this.textModes;
+	return this.textModes;
     }
 
     public void setConsoleModes(String mode) {
-        this.consoleTextModes = mode.replace("~", "q").replace("&", "a")
-                .replace("@", "o").replace("%", "h").replace("+", "v")
-                .replaceAll("[^A-Za-z0-9 ]", "");
-        this.consoleModes = consoleTextModes.replace("q", "~")
-                .replace("a", "&").replace("o", "@").replace("h", "%")
-                .replace("v", "+");
+	this.consoleTextModes = mode.replace("~", "q").replace("&", "a")
+		.replace("@", "o").replace("%", "h").replace("+", "v")
+		.replaceAll("[^A-Za-z0-9 ]", "");
+	this.consoleModes = consoleTextModes.replace("q", "~")
+		.replace("a", "&").replace("o", "@").replace("h", "%")
+		.replace("v", "+");
     }
 
     public String getConsoleModes() {
-        return this.consoleModes;
+	return this.consoleModes;
     }
 
     public String getConsoleTextModes() {
-        return this.consoleTextModes;
+	return this.consoleTextModes;
     }
 
     public String nick, realname, ident, hostmask, realhost, ipaddress;
@@ -104,6 +104,6 @@ public class IRCUser {
     public long lastActivity;
 
     public long getSecondsIdle() {
-        return (System.currentTimeMillis() - lastActivity) / 1000L;
+	return (System.currentTimeMillis() - lastActivity) / 1000L;
     }
 }

@@ -3,9 +3,9 @@ package com.Jdbye.BukkitIRCd;
 public class IrcBan {
 
     public IrcBan(String fullHost, String bannedBy, long banTime) {
-        this.fullHost = fullHost;
-        this.bannedBy = bannedBy;
-        this.banTime = banTime;
+	this.fullHost = fullHost;
+	this.bannedBy = bannedBy;
+	this.banTime = banTime;
     }
 
     public String fullHost = null;

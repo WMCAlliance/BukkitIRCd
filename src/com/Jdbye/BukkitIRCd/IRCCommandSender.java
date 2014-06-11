@@ -22,151 +22,151 @@ public class IRCCommandSender implements CommandSender {
     private String nick;
 
     public IRCCommandSender(Server server) {
-        super();
-        this.server = server;
-        this.nick = Config.getIrcdServerName();
-        enabled = true;
+	super();
+	this.server = server;
+	this.nick = Config.getIrcdServerName();
+	enabled = true;
     }
 
     @Override
     public void sendMessage(String message) {
-        if (enabled) {
-            for (String filter : IRCd.consoleFilters) {
-                try {
-                    if (message.matches(filter.replace('&', '\u00A7'))) { // Replace Ampersands with section signs																		
-                        return;
-                    }
-                } catch (PatternSyntaxException e) {
-                    BukkitIRCdPlugin.thePlugin.getLogger().warning(
-                            "Invalid Regex Found at console-filters");
-                    continue;
-                }
-            }
+	if (enabled) {
+	    for (String filter : IRCd.consoleFilters) {
+		try {
+		    if (message.matches(filter.replace('&', '\u00A7'))) { // Replace Ampersands with section signs																		
+			return;
+		    }
+		} catch (PatternSyntaxException e) {
+		    BukkitIRCdPlugin.thePlugin.getLogger().warning(
+			    "Invalid Regex Found at console-filters");
+		    continue;
+		}
+	    }
 
 	    // TODO Ignore List
 			/*for (String nameToIngnore : IRCd.globalNameIgnoreList ) {
-             if ( !(IRCd.serverName.equals(nameToIngnore)) ) {
-             switch (IRCd.mode) {
-             case STANDALONE:
-             IRCd.writeOpers(":" + Config.getIrcdServerName() + "!"
-             + Config.getIrcdServerName() + "@"
-             + Config.getIrcdServerHostName() + " PRIVMSG "
-             + Config.getIrcdConsoleChannel() + " :"
-             + IRCd.convertColors(message, false));
-             break;
-             case INSPIRCD:
-             if (IRCd.isLinkcompleted()) {
-             IRCd.privmsg(IRCd.serverUID,
-             Config.getIrcdConsoleChannel(),
-             IRCd.convertColors(message, false));
-             }
-             break;
-             }
-             }
-             }*/
-        }
+	     if ( !(IRCd.serverName.equals(nameToIngnore)) ) {
+	     switch (IRCd.mode) {
+	     case STANDALONE:
+	     IRCd.writeOpers(":" + Config.getIrcdServerName() + "!"
+	     + Config.getIrcdServerName() + "@"
+	     + Config.getIrcdServerHostName() + " PRIVMSG "
+	     + Config.getIrcdConsoleChannel() + " :"
+	     + IRCd.convertColors(message, false));
+	     break;
+	     case INSPIRCD:
+	     if (IRCd.isLinkcompleted()) {
+	     IRCd.privmsg(IRCd.serverUID,
+	     Config.getIrcdConsoleChannel(),
+	     IRCd.convertColors(message, false));
+	     }
+	     break;
+	     }
+	     }
+	     }*/
+	}
     }
 
     @Override
     public void sendMessage(String[] message) {
-        for (String s : message) {
-            sendMessage(s);
-        }
+	for (String s : message) {
+	    sendMessage(s);
+	}
     }
 
     public void disable() {
-        enabled = false;
+	enabled = false;
     }
 
     public void enable() {
-        enabled = true;
+	enabled = true;
     }
 
     @Override
     public boolean isOp() {
-        // return client.isOper;
-        return true;
+	// return client.isOper;
+	return true;
     }
 
     @Override
     public void setOp(boolean value) {
-        // client.isOper = value;
-        throw new UnsupportedOperationException(
-                "Cannot change operator status of IRC users");
+	// client.isOper = value;
+	throw new UnsupportedOperationException(
+		"Cannot change operator status of IRC users");
     }
 
     public boolean isPlayer() {
-        return false;
+	return false;
     }
 
     @Override
     public Server getServer() {
-        return server;
+	return server;
     }
 
     @Override
     public boolean isPermissionSet(String name) {
-        return perm.isPermissionSet(name);
+	return perm.isPermissionSet(name);
     }
 
     @Override
     public boolean isPermissionSet(Permission perm) {
-        return this.perm.isPermissionSet(perm);
+	return this.perm.isPermissionSet(perm);
     }
 
     @Override
     public boolean hasPermission(String name) {
-        return perm.hasPermission(name);
+	return perm.hasPermission(name);
     }
 
     @Override
     public boolean hasPermission(Permission perm) {
-        return this.perm.hasPermission(perm);
+	return this.perm.hasPermission(perm);
     }
 
     @Override
     public PermissionAttachment addAttachment(Plugin plugin, String name,
-            boolean value) {
-        return perm.addAttachment(plugin, name, value);
+	    boolean value) {
+	return perm.addAttachment(plugin, name, value);
     }
 
     @Override
     public PermissionAttachment addAttachment(Plugin plugin) {
-        return perm.addAttachment(plugin);
+	return perm.addAttachment(plugin);
     }
 
     @Override
     public PermissionAttachment addAttachment(Plugin plugin, String name,
-            boolean value, int ticks) {
-        return perm.addAttachment(plugin, name, value, ticks);
+	    boolean value, int ticks) {
+	return perm.addAttachment(plugin, name, value, ticks);
     }
 
     @Override
     public PermissionAttachment addAttachment(Plugin plugin, int ticks) {
-        return perm.addAttachment(plugin, ticks);
+	return perm.addAttachment(plugin, ticks);
     }
 
     @Override
     public void removeAttachment(PermissionAttachment attachment) {
-        perm.removeAttachment(attachment);
+	perm.removeAttachment(attachment);
     }
 
     @Override
     public void recalculatePermissions() {
-        perm.recalculatePermissions();
+	perm.recalculatePermissions();
     }
 
     @Override
     public Set<PermissionAttachmentInfo> getEffectivePermissions() {
-        return perm.getEffectivePermissions();
+	return perm.getEffectivePermissions();
     }
 
     @Override
     public String getName() {
-        return nick;
+	return nick;
     }
 
     public void setName(String name) {
-        nick = name;
+	nick = name;
     }
 }
