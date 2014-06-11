@@ -2,6 +2,7 @@ package com.Jdbye.BukkitIRCd.commands;
 
 import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
 import com.Jdbye.BukkitIRCd.IRCUser;
+import com.Jdbye.BukkitIRCd.IRCUserManagement;
 import com.Jdbye.BukkitIRCd.IRCd;
 import com.Jdbye.BukkitIRCd.configuration.Config;
 import org.bukkit.ChatColor;
@@ -32,20 +33,20 @@ public class IRCBanCommand implements CommandExecutor {
 							|| (args[0].equalsIgnoreCase("host"))
 							|| (args[0].equalsIgnoreCase("ident"))
 							|| (args[0].equalsIgnoreCase("nick"))) {
-						ircuser = IRCd.getIRCUser(args[1]);
+						ircuser = IRCUserManagement.getIRCUser(args[1]);
 						ban = args[1];
 						banType = args[0];
 						if (args.length > 2)
 							reason = IRCd.join(args, " ", 2);
 					} else {
-						ircuser = IRCd.getIRCUser(args[0]);
+						ircuser = IRCUserManagement.getIRCUser(args[0]);
 						ban = args[0];
 						if (args.length > 1)
 							reason = IRCd.join(args, " ", 1);
 					}
 					if (IRCd.wildCardMatch(ban, "*!*@*")) {
 						// Full hostmask
-						if (IRCd.banIRCUser(ban,
+						if (IRCUserManagement.banIRCUser(ban,
 								player.getName()
 										+ Config.getIrcdIngameSuffix()
 										+ "!"
@@ -76,7 +77,7 @@ public class IRCBanCommand implements CommandExecutor {
 									+ "User is already banned.");
 					} else if (thePlugin.countStr(ban, ".") == 3) { // It's an
 																	// IP
-						if (IRCd.banIRCUser("*!*@" + ban, player.getName()
+						if (IRCUserManagement.banIRCUser("*!*@" + ban, player.getName()
 								+ "!"
 								+ player.getName()
 								+ "@"
@@ -105,7 +106,7 @@ public class IRCBanCommand implements CommandExecutor {
 									+ "IP is already banned.");
 					} else {
 						if (ircuser != null) {
-							if (IRCd.kickBanIRCUser(ircuser, player.getName(),
+							if (IRCUserManagement.kickBanIRCUser(ircuser, player.getName(),
 									player.getName()
 											+ "!"
 											+ player.getName()
@@ -143,20 +144,20 @@ public class IRCBanCommand implements CommandExecutor {
 						|| (args[0].equalsIgnoreCase("host"))
 						|| (args[0].equalsIgnoreCase("ident"))
 						|| (args[0].equalsIgnoreCase("nick"))) {
-					ircuser = IRCd.getIRCUser(args[1]);
+					ircuser = IRCUserManagement.getIRCUser(args[1]);
 					ban = args[1];
 					banType = args[0];
 					if (args.length > 2)
 						reason = IRCd.join(args, " ", 2);
 				} else {
-					ircuser = IRCd.getIRCUser(args[0]);
+					ircuser = IRCUserManagement.getIRCUser(args[0]);
 					ban = args[0];
 					if (args.length > 1)
 						reason = IRCd.join(args, " ", 1);
 				}
 				if (IRCd.wildCardMatch(ban, "*!*@*")) {
 					// Full hostmask
-					if (IRCd.banIRCUser(
+					if (IRCUserManagement.banIRCUser(
 							ban,
 							Config.getIrcdServerName() + "!"
 									+ Config.getIrcdServerName() + "@"
@@ -177,7 +178,7 @@ public class IRCBanCommand implements CommandExecutor {
 						sender.sendMessage(ChatColor.RED
 								+ "User is already banned.");
 				} else if (thePlugin.countStr(ban, ".") == 3) { // It's an IP
-					if (IRCd.banIRCUser(
+					if (IRCUserManagement.banIRCUser(
 							"*!*@" + ban,
 							Config.getIrcdServerName() + "!"
 									+ Config.getIrcdServerName() + "@"
@@ -199,7 +200,7 @@ public class IRCBanCommand implements CommandExecutor {
 								+ "IP is already banned.");
 				} else {
 					if (ircuser != null) {
-						if (IRCd.kickBanIRCUser(
+						if (IRCUserManagement.kickBanIRCUser(
 								ircuser,
 								"server",
 								Config.getIrcdServerName() + "!"

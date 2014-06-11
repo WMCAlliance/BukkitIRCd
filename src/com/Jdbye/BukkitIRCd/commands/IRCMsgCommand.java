@@ -8,7 +8,9 @@ import org.bukkit.entity.Player;
 
 import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
 import com.Jdbye.BukkitIRCd.BukkitPlayer;
+import com.Jdbye.BukkitIRCd.BukkitUserManagement;
 import com.Jdbye.BukkitIRCd.IRCUser;
+import com.Jdbye.BukkitIRCd.IRCUserManagement;
 import com.Jdbye.BukkitIRCd.IRCd;
 import com.Jdbye.BukkitIRCd.configuration.Config;
 
@@ -30,7 +32,7 @@ public class IRCMsgCommand implements CommandExecutor {
 				rawMessage);
 		final String ircMessage = IRCd.convertColors(rawMessage, false);
 
-		final IRCUser targetIrcUser = IRCd.getIRCUser(targetNick);
+		final IRCUser targetIrcUser = IRCUserManagement.getIRCUser(targetNick);
 		if (targetIrcUser == null) {
 			sender.sendMessage(ChatColor.RED + "That user is not online.");
 			return true;
@@ -71,7 +73,7 @@ public class IRCMsgCommand implements CommandExecutor {
 			if (player == null) {
 				sourceUID = IRCd.serverUID;
 			} else {
-				final BukkitPlayer bp = IRCd.getBukkitUserObject(player
+				final BukkitPlayer bp = BukkitUserManagement.getUserObject(player
 						.getName());
 				if (bp == null) {
 					sender.sendMessage(ChatColor.RED

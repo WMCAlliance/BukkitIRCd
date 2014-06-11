@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
 import com.Jdbye.BukkitIRCd.configuration.Config;
+import org.bukkit.Bukkit;
 
 /**
  * Handle events for all Player related events
@@ -61,8 +62,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 
 			if (Config.getKickCommands().contains(split[0].toLowerCase())) {
 
-				// PlayerKickEvent does not give kicker, so we listen to kick
-				// commands instead
+				// PlayerKickEvent does not give kicker, so we listen to kick commands instead
 				// TODO I think kicker is provided now @Mu5
 				final StringBuilder s = new StringBuilder(300);
 				for (int i = 2; i < split.length; i++) {
@@ -73,7 +73,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 				final String kickedPlayer = split[1];
 				plugin.removeLastReceivedBy(kickedPlayer);
 				IRCd.kickBukkitUser(kickMessage,
-						IRCd.getBukkitUser(kickedPlayer));
+						BukkitUserManagement.getUser(kickedPlayer));
 			}
 
 			if (split[0].equalsIgnoreCase("say")) {
@@ -106,19 +106,25 @@ public class BukkitIRCdPlayerListener implements Listener {
 		final Player player = event.getPlayer();
 		final String mode = plugin.computePlayerModes(player);
 
-		IRCd.addBukkitUser(mode, player);
+		BukkitUserManagement.addBukkitUser(mode, player);
+                /*Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
+                @Override
+                public void run() {
+                    
+                }
+                }, 20*30);*/
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		final String name = event.getPlayer().getName();
 		plugin.removeLastReceivedBy(name);
-		IRCd.removeBukkitUser(IRCd.getBukkitUser(name));
+		BukkitUserManagement.removeBukkitUser(BukkitUserManagement.getUser(name));
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
-		IRCd.updateBukkitUserIdleTime(IRCd.getBukkitUser(event.getPlayer()
+		BukkitUserManagement.updateUserIdleTime(BukkitUserManagement.getUser(event.getPlayer()
 				.getName()));
 
 		switch (IRCd.mode) {
@@ -128,7 +134,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 			break;
 
 		case INSPIRCD:
-			final BukkitPlayer bp = IRCd.getBukkitUserObject(event.getPlayer()
+			final BukkitPlayer bp = BukkitUserManagement.getUserObject(event.getPlayer()
 					.getName());
 			if (bp != null && IRCd.isLinkcompleted()) {
 				IRCd.privmsg(bp.getUID(), Config.getIrcdChannel(),
@@ -142,7 +148,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-		IRCd.updateBukkitUserIdleTime(IRCd.getBukkitUser(event.getPlayer()
+		BukkitUserManagement.updateUserIdleTime(BukkitUserManagement.getUser(event.getPlayer()
 				.getName()));
 
 		String[] split = event.getMessage().split(" ");
@@ -163,7 +169,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 					break;
 
 				case INSPIRCD:
-					final BukkitPlayer bp = IRCd.getBukkitUserObject(event
+					final BukkitPlayer bp = BukkitUserManagement.getUserObject(event
 							.getPlayer().getName());
 					if (bp != null && IRCd.isLinkcompleted()) {
 						IRCd.action(bp.getUID(), Config.getIrcdChannel(), IRCd
@@ -186,12 +192,12 @@ public class BukkitIRCdPlayerListener implements Listener {
 					}
 					final String kickMessage = s.toString();
 					final String kickedPlayer = split[1];
-					if ((IRCd.getBukkitUserObject(event.getPlayer().getName())) != null) {
+					if ((BukkitUserManagement.getUserObject(event.getPlayer().getName())) != null) {
 						plugin.removeLastReceivedBy(kickedPlayer);
 						IRCd.kickBukkitUser(kickMessage,
-								IRCd.getBukkitUser(kickedPlayer),
-								IRCd.getBukkitUser(event.getPlayer().getName()));
-						IRCd.removeBukkitUser(IRCd.getBukkitUser(kickedPlayer));
+								BukkitUserManagement.getUser(kickedPlayer),
+								BukkitUserManagement.getUser(event.getPlayer().getName()));
+						BukkitUserManagement.removeBukkitUser(BukkitUserManagement.getUser(kickedPlayer));
 					}
 
 				}
@@ -232,7 +238,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerMove(PlayerMoveEvent event) {
 		final Player p = event.getPlayer();
-		IRCd.updateBukkitUserIdleTimeAndWorld(IRCd.getBukkitUser(p.getName()),
+		BukkitUserManagement.updateUserIdleTimeAndWorld(BukkitUserManagement.getUser(p.getName()),
 				p.getWorld().getName());
 	}
 }

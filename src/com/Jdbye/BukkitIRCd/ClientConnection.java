@@ -63,8 +63,8 @@ public class ClientConnection implements Runnable {
 				lastPingResponse = System.currentTimeMillis();
 				lastActivity = lastPingResponse;
 
-				if ((IRCd.isBanned(nick + "!" + ident + "@" + hostmask))
-						|| (IRCd.isBanned(nick + "!" + ident + "@" + ipaddress))) {
+				if ((IRCUserManagement.isBanned(nick + "!" + ident + "@" + hostmask))
+						|| (IRCUserManagement.isBanned(nick + "!" + ident + "@" + ipaddress))) {
 					writeln("ERROR :Closing Link: [" + ipaddress
 							+ "] (You are banned from this server)");
 					disconnect();
@@ -76,7 +76,7 @@ public class ClientConnection implements Runnable {
 					if (isIdented && isNickSet)
 						IRCd.writeAll(":" + getFullHost()
 								+ " QUIT :You are banned from this server");
-					IRCd.removeIRCUser(nick, "Banned", true);
+					IRCUserManagement.removeIRCUser(nick, "Banned", true);
 				} else
 					while (server.isConnected() && (!server.isClosed())) {
 						try {
@@ -98,7 +98,7 @@ public class ClientConnection implements Runnable {
 								if (isIdented && isNickSet)
 									IRCd.writeAll(":" + getFullHost()
 											+ " QUIT :Ping timeout");
-								IRCd.removeIRCUser(nick, "Ping timeout", true);
+								IRCUserManagement.removeIRCUser(nick, "Ping timeout", true);
 							} else {
 								// Get input from the client
 								while ((line = in.readLine()) != null
@@ -126,7 +126,7 @@ public class ClientConnection implements Runnable {
 				System.out.println("[BukkitIRCd] Cleaning up connection from "
 						+ getFullHost() + " (client quit)");
 			}
-			IRCd.removeIRCUser(nick);
+			IRCUserManagement.removeIRCUser(nick);
 			running = false;
 			synchronized (IRCd.csStdOut) {
 				System.out.println("[BukkitIRCd] Lost connection from "
@@ -154,7 +154,7 @@ public class ClientConnection implements Runnable {
 					split[1] = split[1].substring(0,
 							Config.getIrcdMaxNickLength());
 				}
-				if ((IRCd.getIRCUser(split[1]) != null)
+				if ((IRCUserManagement.getIRCUser(split[1]) != null)
 						|| (split[1].equalsIgnoreCase(Config
 								.getIrcdServerName()))) {
 					writeln(IRCd.serverMessagePrefix + " 433 * " + split[1]
@@ -246,9 +246,9 @@ public class ClientConnection implements Runnable {
 			}
 			disconnect();
 			if (quitmsg != null)
-				IRCd.removeIRCUser(nick, quitmsg, true);
+				IRCUserManagement.removeIRCUser(nick, quitmsg, true);
 			else
-				IRCd.removeIRCUser(nick);
+				IRCUserManagement.removeIRCUser(nick);
 		} else if (isIdented && isNickSet) {
 			// if (split[0].equalsIgnoreCase("STOP")) {
 			// System.exit(0);
@@ -409,7 +409,7 @@ public class ClientConnection implements Runnable {
 																			.replace(
 																					"{BannedBy}",
 																					nick));
-												IRCd.banIRCUser(host,
+												IRCUserManagement.banIRCUser(host,
 														getFullHost());
 											} else if (add == 0) {
 												if (IRCd.msgIRCUnban.length() > 0)
@@ -433,7 +433,7 @@ public class ClientConnection implements Runnable {
 																			.replace(
 																					"{BannedBy}",
 																					nick));
-												IRCd.unBanIRCUser(host,
+												IRCUserManagement.unBanIRCUser(host,
 														getFullHost());
 											}
 
@@ -489,7 +489,7 @@ public class ClientConnection implements Runnable {
 							targethost = Config.getIrcdServerHostName();
 							hosts += targetnick + "=+" + targetident + "@"
 									+ targethost + " ";
-						} else if ((ircuser = IRCd.getIRCUser(split[i])) != null) {
+						} else if ((ircuser = IRCUserManagement.getIRCUser(split[i])) != null) {
 							synchronized (IRCd.csIrcUsers) {
 								targetnick = ircuser.nick;
 								targetident = ircuser.ident;
@@ -497,7 +497,7 @@ public class ClientConnection implements Runnable {
 							}
 							hosts += targetnick + "=+" + targetident + "@"
 									+ targethost + " ";
-						} else if ((ID = IRCd.getBukkitUser(split[i])) >= 0) {
+						} else if ((ID = BukkitUserManagement.getUser(split[i])) >= 0) {
 							if ((IRCd.isPlugin())
 									&& (BukkitIRCdPlugin.thePlugin != null)) {
 								synchronized (IRCd.csBukkitPlayers) {
@@ -539,10 +539,10 @@ public class ClientConnection implements Runnable {
 						}
 
 						IRCUser ircuser;
-						if ((ircuser = IRCd.getIRCUser(bannick)) != null) {
-							IRCd.kickIRCUser(ircuser, nick, ident, hostmask,
+						if ((ircuser = IRCUserManagement.getIRCUser(bannick)) != null) {
+							IRCUserManagement.kickIRCUser(ircuser, nick, ident, hostmask,
 									reason, false);
-						} else if ((IRCd.getBukkitUser(bannick)) >= 0) {
+						} else if ((BukkitUserManagement.getUser(bannick)) >= 0) {
 							if ((IRCd.isPlugin())
 									&& (BukkitIRCdPlugin.thePlugin != null)) {
 								if (bannick.endsWith(Config
@@ -681,9 +681,9 @@ public class ClientConnection implements Runnable {
 						if (split[i].equalsIgnoreCase(Config
 								.getIrcdServerName()))
 							nicks += Config.getIrcdServerName() + " ";
-						else if ((ircuser = IRCd.getIRCUser(split[i])) != null)
+						else if ((ircuser = IRCUserManagement.getIRCUser(split[i])) != null)
 							nicks += ircuser.nick + " ";
-						else if ((ID = IRCd.getBukkitUser(split[i])) >= 0)
+						else if ((ID = BukkitUserManagement.getUser(split[i])) >= 0)
 							nicks += IRCd.bukkitPlayers.get(ID).nick
 									+ Config.getIrcdIngameSuffix() + " ";
 						i++;
@@ -738,7 +738,7 @@ public class ClientConnection implements Runnable {
 						message2 = message;
 
 					if (split[1].equalsIgnoreCase(Config.getIrcdChannel())) {
-						if (IRCd.isBanned(getFullHost())) {
+						if (IRCUserManagement.isBanned(getFullHost())) {
 							writeln(IRCd.serverMessagePrefix + " 404 " + nick
 									+ " " + Config.getIrcdChannel()
 									+ " :You are banned ("
@@ -913,12 +913,12 @@ public class ClientConnection implements Runnable {
 							}
 						}
 					} else {
-						IRCUser ircuser = IRCd.getIRCUser(split[1]);
+						IRCUser ircuser = IRCUserManagement.getIRCUser(split[1]);
 						int user;
 						if (ircuser != null) {
 							IRCd.writeTo(ircuser.nick, ":" + getFullHost()
 									+ " PRIVMSG " + split[1] + " :" + message);
-						} else if ((user = IRCd.getBukkitUser(split[1])) >= 0) {
+						} else if ((user = BukkitUserManagement.getUser(split[1])) >= 0) {
 							if ((isAction || (!isCTCP)) && (IRCd.isPlugin())
 									&& (BukkitIRCdPlugin.thePlugin != null)) {
 								synchronized (IRCd.csBukkitPlayers) {
@@ -1018,12 +1018,12 @@ public class ClientConnection implements Runnable {
 								+ " NOTICE " + Config.getIrcdChannel() + " :"
 								+ message);
 					} else {
-						IRCUser ircuser = IRCd.getIRCUser(split[1]);
+						IRCUser ircuser = IRCUserManagement.getIRCUser(split[1]);
 						int user;
 						if (ircuser != null) {
 							IRCd.writeTo(ircuser.nick, ":" + getFullHost()
 									+ " NOTICE " + split[1] + " :" + message);
-						} else if ((user = IRCd.getBukkitUser(split[1])) >= 0) {
+						} else if ((user = BukkitUserManagement.getUser(split[1])) >= 0) {
 							if ((IRCd.isPlugin())
 									&& (BukkitIRCdPlugin.thePlugin != null)
 									&& (!isCTCP)
@@ -1063,8 +1063,8 @@ public class ClientConnection implements Runnable {
 	}
 
 	public void sendWelcome() {
-		if ((IRCd.isBanned(nick + "!" + ident + "@" + hostmask))
-				|| (IRCd.isBanned(nick + "!" + ident + "@" + ipaddress))) {
+		if ((IRCUserManagement.isBanned(nick + "!" + ident + "@" + hostmask))
+				|| (IRCUserManagement.isBanned(nick + "!" + ident + "@" + ipaddress))) {
 			writeln("ERROR :Closing Link: [" + ipaddress
 					+ "] (You are banned from this server)");
 			disconnect();
@@ -1075,7 +1075,7 @@ public class ClientConnection implements Runnable {
 			if (isIdented && isNickSet)
 				IRCd.writeAll(":" + getFullHost()
 						+ " QUIT :You are banned from this server");
-			IRCd.removeIRCUser(nick, "Banned", true);
+			IRCUserManagement.removeIRCUser(nick, "Banned", true);
 		} else {
 			synchronized (IRCd.csStdOut) {
 				System.out.println("[BukkitIRCd] " + ipaddress
@@ -1180,7 +1180,7 @@ public class ClientConnection implements Runnable {
 			writeln(IRCd.serverMessagePrefix + " 318 " + nick + " "
 					+ Config.getIrcdServerName() + " :End of /WHOIS list.");
 
-		} else if ((ircuser = IRCd.getIRCUser(whoisUser)) != null) {
+		} else if ((ircuser = IRCUserManagement.getIRCUser(whoisUser)) != null) {
 			synchronized (IRCd.csIrcUsers) {
 				String cmodes;
 				String modes = ircuser.getModes();
@@ -1223,7 +1223,7 @@ public class ClientConnection implements Runnable {
 				writeln(IRCd.serverMessagePrefix + " 318 " + nick + " "
 						+ ircuser.nick + " :End of /WHOIS list.");
 			}
-		} else if ((bp = IRCd.getBukkitUserObject(whoisUser)) != null) {
+		} else if ((bp = BukkitUserManagement.getUserObject(whoisUser)) != null) {
 			if ((IRCd.isPlugin()) && (BukkitIRCdPlugin.thePlugin != null)) {
 				if ((Config.getIrcdIngameSuffix().length() > 0)
 						&& (whoisUser.endsWith(Config.getIrcdIngameSuffix())))
@@ -1362,11 +1362,11 @@ public class ClientConnection implements Runnable {
 		if (channelName.equalsIgnoreCase(Config.getIrcdConsoleChannel()))
 			writeln(IRCd.serverMessagePrefix + " 353 = " + nick + " "
 					+ channelName + " :~" + Config.getIrcdServerName() + " "
-					+ IRCd.getOpers());
+					+ IRCUserManagement.getOpers());
 		else if (channelName.equalsIgnoreCase(Config.getIrcdChannel()))
 			writeln(IRCd.serverMessagePrefix + " 353 = " + nick + " "
 					+ channelName + " :~" + Config.getIrcdServerName() + " "
-					+ IRCd.getUsers());
+					+ IRCUserManagement.getUsers());
 		else
 			return false;
 
@@ -1386,7 +1386,7 @@ public class ClientConnection implements Runnable {
 		String channel = Config.getIrcdChannel();
 		List<String> users = new ArrayList<String>();
 		synchronized (IRCd.csIrcUsers) {
-			for (IRCUser user : IRCd.getIRCUsers()) {
+			for (IRCUser user : IRCUserManagement.getIRCUsers()) {
 				String onick = user.nick;
 				String ohost = user.hostmask;
 				String oident = user.ident;

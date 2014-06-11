@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.Jdbye.BukkitIRCd.IRCUser;
+import com.Jdbye.BukkitIRCd.IRCUserManagement;
 import com.Jdbye.BukkitIRCd.IRCd;
 import com.Jdbye.BukkitIRCd.configuration.Config;
 
@@ -24,7 +25,7 @@ public class IRCKickCommand implements CommandExecutor {
 		final String reason = args.length > 1 ? IRCd.join(args, " ", 1) : null;
 
 		// Compute target
-		final IRCUser targetIrcUser = IRCd.getIRCUser(targetNick);
+		final IRCUser targetIrcUser = IRCUserManagement.getIRCUser(targetNick);
 		if (targetIrcUser == null) {
 			sender.sendMessage(ChatColor.RED + "That user is not online.");
 			return true;
@@ -43,7 +44,7 @@ public class IRCKickCommand implements CommandExecutor {
 		}
 
 		// Execute kick
-		if (IRCd.kickIRCUser(targetIrcUser, kickerNick, kickerNick, kickerHost,
+		if (IRCUserManagement.kickIRCUser(targetIrcUser, kickerNick, kickerNick, kickerHost,
 				reason, true)) {
 			sender.sendMessage(ChatColor.RED + "Player kicked.");
 		} else {

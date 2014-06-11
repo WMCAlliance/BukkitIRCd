@@ -156,7 +156,8 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			IRCd.globalNameIgnoreList = new ArrayList<String>();
 		}
 
-		try
+                // TODO Ignore List loading
+		/*try
 		{
 			Scanner ignoreListScanner = new Scanner(new File(getDataFolder(), "ignoreList.yml"));
 			
@@ -171,12 +172,12 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			// we don't care if it exists or not currently
 			// if it doesn't exist, everything carries on as normal
 
-			// this is seperated should we wish toa dd to it...
+			// this is seperated should we wish to add to it...
 		}
 		catch (Exception e)
 		{
 			// same as FileNotFoundException
-		}
+		}*/
 
 
 		Messages.loadMessages(ircd);
@@ -189,7 +190,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		// Set players to different IRC modes based on permission
 		for (final Player player : getServer().getOnlinePlayers()) {
 			final String mode = computePlayerModes(player);
-			IRCd.addBukkitUser(mode, player);
+			BukkitUserManagement.addBukkitUser(mode, player);
 		}
 
 		thr = new Thread(ircd);

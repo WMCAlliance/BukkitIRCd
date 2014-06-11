@@ -1,5 +1,6 @@
 package com.Jdbye.BukkitIRCd.commands;
 
+import com.Jdbye.BukkitIRCd.IRCUserManagement;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,7 +14,7 @@ public class IRCListCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
 			String[] args) {
 
-		final String players[] = IRCd.getIRCNicks();
+		final String players[] = IRCUserManagement.getIRCNicks();
 
 		sender.sendMessage(ChatColor.BLUE + "There are " + ChatColor.RED
 				+ players.length + ChatColor.BLUE + " users on IRC.");

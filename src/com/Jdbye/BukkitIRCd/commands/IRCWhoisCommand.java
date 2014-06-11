@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.Jdbye.BukkitIRCd.IRCUser;
+import com.Jdbye.BukkitIRCd.IRCUserManagement;
 import com.Jdbye.BukkitIRCd.IRCd;
 
 public class IRCWhoisCommand implements CommandExecutor {
@@ -25,9 +26,9 @@ public class IRCWhoisCommand implements CommandExecutor {
 		}
 
 		if (args.length > 0) {
-			final IRCUser ircuser = IRCd.getIRCUser(args[0]);
+			final IRCUser ircuser = IRCUserManagement.getIRCUser(args[0]);
 			if (ircuser != null) {
-				for (final String whoisline : IRCd.getIRCWhois(ircuser, oper)) {
+				for (final String whoisline : IRCUserManagement.getIRCWhois(ircuser, oper)) {
 					sender.sendMessage(whoisline);
 				}
 			} else {

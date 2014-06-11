@@ -1,6 +1,7 @@
 package com.Jdbye.BukkitIRCd.commands;
 
 import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
+import com.Jdbye.BukkitIRCd.IRCUserManagement;
 import com.Jdbye.BukkitIRCd.IRCd;
 import com.Jdbye.BukkitIRCd.configuration.Config;
 import org.bukkit.ChatColor;
@@ -30,7 +31,7 @@ public class IRCUnbanCommand implements CommandExecutor {
 						IRCd.join(args, " ", 1);
 
 					if (IRCd.wildCardMatch(ban, "*!*@*")) { // Full hostmask
-						if (IRCd.unBanIRCUser(ban,
+						if (IRCUserManagement.unBanIRCUser(ban,
 								player.getName()
 										+ Config.getIrcdIngameSuffix()
 										+ "!"
@@ -67,7 +68,7 @@ public class IRCUnbanCommand implements CommandExecutor {
 									+ "User is not banned.");
 					} else if (thePlugin.countStr(ban, ".") == 3) { // It's an
 																	// IP
-						if (IRCd.unBanIRCUser("*!*@" + ban,
+						if (IRCUserManagement.unBanIRCUser("*!*@" + ban,
 								player.getName()
 										+ Config.getIrcdIngameSuffix()
 										+ "!"
@@ -125,7 +126,7 @@ public class IRCUnbanCommand implements CommandExecutor {
 					IRCd.join(args, " ", 1);
 
 				if (IRCd.wildCardMatch(ban, "*!*@*")) { // Full hostmask
-					if (IRCd.unBanIRCUser(
+					if (IRCUserManagement.unBanIRCUser(
 							ban,
 							Config.getIrcdServerName() + "!"
 									+ Config.getIrcdServerName() + "@"
@@ -147,7 +148,7 @@ public class IRCUnbanCommand implements CommandExecutor {
 						sender.sendMessage(ChatColor.RED
 								+ "User is not banned.");
 				} else if (thePlugin.countStr(ban, ".") == 3) { // It's an IP
-					if (IRCd.unBanIRCUser(
+					if (IRCUserManagement.unBanIRCUser(
 							"*!*@" + ban,
 							Config.getIrcdServerName() + "!"
 									+ Config.getIrcdServerName() + "@"

@@ -43,7 +43,8 @@ public class IRCCommandSender implements CommandSender {
 				}
 			}
 
-			for (String nameToIngnore : IRCd.globalNameIgnoreList ) {
+                        // TODO Ignore List
+			/*for (String nameToIngnore : IRCd.globalNameIgnoreList ) {
 				if ( !(IRCd.serverName.equals(nameToIngnore)) ) {
 					switch (IRCd.mode) {
 					case STANDALONE:
@@ -62,7 +63,7 @@ public class IRCCommandSender implements CommandSender {
 						break;
 					}
 				}
-			}
+			}*/
 		}
 	}
 

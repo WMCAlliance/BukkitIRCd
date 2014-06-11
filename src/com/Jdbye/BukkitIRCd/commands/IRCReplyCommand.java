@@ -2,7 +2,9 @@ package com.Jdbye.BukkitIRCd.commands;
 
 import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
 import com.Jdbye.BukkitIRCd.BukkitPlayer;
+import com.Jdbye.BukkitIRCd.BukkitUserManagement;
 import com.Jdbye.BukkitIRCd.IRCUser;
+import com.Jdbye.BukkitIRCd.IRCUserManagement;
 import com.Jdbye.BukkitIRCd.IRCd;
 import com.Jdbye.BukkitIRCd.configuration.Config;
 import org.bukkit.ChatColor;
@@ -48,7 +50,7 @@ public class IRCReplyCommand implements CommandExecutor {
 		}
 
 		// Lookup target's user object
-		final IRCUser ircuser = IRCd.getIRCUser(lastReceivedFrom);
+		final IRCUser ircuser = IRCUserManagement.getIRCUser(lastReceivedFrom);
 		if (ircuser == null) {
 			sender.sendMessage(ChatColor.RED + "Player offline");
 			return true;
@@ -107,7 +109,7 @@ public class IRCReplyCommand implements CommandExecutor {
 				IRCd.privmsg(IRCd.serverUID, UID,
 						IRCd.convertColors(IRCd.join(args, " ", 0), false));
 			} else {
-				final BukkitPlayer bp = IRCd.getBukkitUserObject(player
+				final BukkitPlayer bp = BukkitUserManagement.getUserObject(player
 						.getName());
 				if (bp == null) {
 					sender.sendMessage(ChatColor.RED
