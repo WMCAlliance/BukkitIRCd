@@ -12,6 +12,7 @@ import com.Jdbye.BukkitIRCd.BukkitUserManagement;
 import com.Jdbye.BukkitIRCd.IRCUser;
 import com.Jdbye.BukkitIRCd.IRCUserManagement;
 import com.Jdbye.BukkitIRCd.IRCd;
+import com.Jdbye.BukkitIRCd.Utils;
 import com.Jdbye.BukkitIRCd.configuration.Config;
 
 public class IRCMsgCommand implements CommandExecutor {
@@ -30,7 +31,7 @@ public class IRCMsgCommand implements CommandExecutor {
 	final String rawMessage = IRCd.join(args, " ", 1);
 	final String gameMessage = ChatColor.translateAlternateColorCodes('&',
 		rawMessage);
-	final String ircMessage = IRCd.convertColors(rawMessage, false);
+	final String ircMessage = Utils.convertColors(rawMessage, false);
 
 	final IRCUser targetIrcUser = IRCUserManagement.getIRCUser(targetNick);
 	if (targetIrcUser == null) {

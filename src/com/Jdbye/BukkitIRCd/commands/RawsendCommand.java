@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 
 import com.Jdbye.BukkitIRCd.IRCd;
+import com.Jdbye.BukkitIRCd.Utils;
 import com.Jdbye.BukkitIRCd.configuration.Config;
 
 public class RawsendCommand implements CommandExecutor {
@@ -33,7 +34,7 @@ public class RawsendCommand implements CommandExecutor {
 
 	switch (IRCd.mode) {
 	    case INSPIRCD:
-		if (IRCd.println(IRCd.join(args, " ", 0))) {
+		if (Utils.println(IRCd.join(args, " ", 0))) {
 		    sender.sendMessage(ChatColor.RED +
 			    "Command sent to IRC server link.");
 		} else {

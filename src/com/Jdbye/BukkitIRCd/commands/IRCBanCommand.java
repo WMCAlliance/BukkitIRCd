@@ -4,6 +4,7 @@ import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
 import com.Jdbye.BukkitIRCd.IRCUser;
 import com.Jdbye.BukkitIRCd.IRCUserManagement;
 import com.Jdbye.BukkitIRCd.IRCd;
+import com.Jdbye.BukkitIRCd.Utils;
 import com.Jdbye.BukkitIRCd.configuration.Config;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -46,7 +47,7 @@ public class IRCBanCommand implements CommandExecutor {
 			    reason = IRCd.join(args, " ", 1);
 			}
 		    }
-		    if (IRCd.wildCardMatch(ban, "*!*@*")) {
+		    if (Utils.wildCardMatch(ban, "*!*@*")) {
 			// Full hostmask
 			if (IRCUserManagement.banIRCUser(ban,
 				player.getName() +
@@ -166,7 +167,7 @@ public class IRCBanCommand implements CommandExecutor {
 			reason = IRCd.join(args, " ", 1);
 		    }
 		}
-		if (IRCd.wildCardMatch(ban, "*!*@*")) {
+		if (Utils.wildCardMatch(ban, "*!*@*")) {
 		    // Full hostmask
 		    if (IRCUserManagement.banIRCUser(
 			    ban,

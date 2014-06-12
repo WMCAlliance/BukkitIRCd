@@ -6,6 +6,7 @@ import com.Jdbye.BukkitIRCd.BukkitUserManagement;
 import com.Jdbye.BukkitIRCd.IRCUser;
 import com.Jdbye.BukkitIRCd.IRCUserManagement;
 import com.Jdbye.BukkitIRCd.IRCd;
+import com.Jdbye.BukkitIRCd.Utils;
 import com.Jdbye.BukkitIRCd.configuration.Config;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -71,7 +72,7 @@ public class IRCReplyCommand implements CommandExecutor {
 			    " PRIVMSG " +
 			    ircuser.nick +
 			    " :" +
-			    IRCd.convertColors(IRCd.join(args, " ", 0),
+			    Utils.convertColors(IRCd.join(args, " ", 0),
 				    false));
 		} else {
 		    IRCd.writeTo(
@@ -87,7 +88,7 @@ public class IRCReplyCommand implements CommandExecutor {
 			    " PRIVMSG " +
 			    ircuser.nick +
 			    " :" +
-			    IRCd.convertColors(IRCd.join(args, " ", 0),
+			    Utils.convertColors(IRCd.join(args, " ", 0),
 				    false));
 		}
 		break;
@@ -107,7 +108,7 @@ public class IRCReplyCommand implements CommandExecutor {
 
 		if (player == null) {
 		    IRCd.privmsg(IRCd.serverUID, UID,
-			    IRCd.convertColors(IRCd.join(args, " ", 0), false));
+			    Utils.convertColors(IRCd.join(args, " ", 0), false));
 		} else {
 		    final BukkitPlayer bp = BukkitUserManagement.getUserObject(player
 			    .getName());
@@ -118,7 +119,7 @@ public class IRCReplyCommand implements CommandExecutor {
 		    }
 
 		    IRCd.privmsg(bp.getUID(), UID,
-			    IRCd.convertColors(IRCd.join(args, " ", 0), false));
+			    Utils.convertColors(IRCd.join(args, " ", 0), false));
 		}
 
 		break;

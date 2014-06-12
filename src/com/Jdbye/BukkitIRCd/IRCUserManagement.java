@@ -2,7 +2,6 @@ package com.Jdbye.BukkitIRCd;
 
 import static com.Jdbye.BukkitIRCd.IRCd.bukkitPlayers;
 import static com.Jdbye.BukkitIRCd.IRCd.channelTS;
-import static com.Jdbye.BukkitIRCd.IRCd.convertColors;
 import static com.Jdbye.BukkitIRCd.IRCd.csBukkitPlayers;
 import static com.Jdbye.BukkitIRCd.IRCd.csIrcBans;
 import static com.Jdbye.BukkitIRCd.IRCd.csIrcUsers;
@@ -19,11 +18,8 @@ import static com.Jdbye.BukkitIRCd.IRCd.msgIRCLeave;
 import static com.Jdbye.BukkitIRCd.IRCd.msgIRCLeaveDynmap;
 import static com.Jdbye.BukkitIRCd.IRCd.msgIRCLeaveReason;
 import static com.Jdbye.BukkitIRCd.IRCd.msgIRCLeaveReasonDynmap;
-import static com.Jdbye.BukkitIRCd.IRCd.println;
 import static com.Jdbye.BukkitIRCd.IRCd.serverUID;
 import static com.Jdbye.BukkitIRCd.IRCd.servers;
-import static com.Jdbye.BukkitIRCd.IRCd.stripIRCFormatting;
-import static com.Jdbye.BukkitIRCd.IRCd.wildCardMatch;
 import static com.Jdbye.BukkitIRCd.IRCd.writeAll;
 import com.Jdbye.BukkitIRCd.configuration.Config;
 import java.util.ArrayList;
@@ -327,7 +323,7 @@ public class IRCUserManagement {
 							IRCd.getGroupPrefix(processor.modes))
 						.replace(
 							"{Reason}",
-							convertColors(reason,
+							Utils.convertColors(reason,
 								IRCToGame)));
 				    }
 				    if ((BukkitIRCdPlugin.dynmap != null) &&
@@ -341,7 +337,7 @@ public class IRCUserManagement {
 								processor.nick)
 							.replace(
 								"{Reason}",
-								stripIRCFormatting(reason)));
+								Utils.stripIRCFormatting(reason)));
 				    }
 				} else {
 				    if (msgIRCLeave.length() > 0) {
@@ -538,7 +534,7 @@ public class IRCUserManagement {
 							kickedByNick)
 						.replace(
 							"{Reason}",
-							convertColors(reason,
+							Utils.convertColors(reason,
 								true))
 						.replace(
 							"{KickedPrefix}",
@@ -571,7 +567,7 @@ public class IRCUserManagement {
 								kickedByNick)
 							.replace(
 								"{Reason}",
-								stripIRCFormatting(reason)));
+								Utils.stripIRCFormatting(reason)));
 				    }
 				} else {
 				    if (msgIRCKick.length() > 0) {
@@ -616,7 +612,7 @@ public class IRCUserManagement {
 			if (isIngame) {
 			    kickedByNick += Config.getIrcdIngameSuffix();
 			    if (reason != null) {
-				reason = convertColors(reason, false);
+				reason = Utils.convertColors(reason, false);
 			    }
 			}
 			if (reason != null) {
@@ -675,11 +671,11 @@ public class IRCUserManagement {
 		    boolean returnVal = false;
 		    if (iuser.consoleJoined) {
 			if (reason != null) {
-			    println(":" + sourceUID + " KICK " +
+			    Utils.println(":" + sourceUID + " KICK " +
 				    Config.getIrcdConsoleChannel() + " " +
 				    uid + " :" + reason);
 			} else {
-			    println(":" + sourceUID + " KICK " +
+			    Utils.println(":" + sourceUID + " KICK " +
 				    Config.getIrcdConsoleChannel() + " " +
 				    uid + " :" + kickedByNick);
 			}
@@ -688,7 +684,7 @@ public class IRCUserManagement {
 		    }
 		    if (iuser.joined) {
 			if (reason != null) {
-			    println(":" + sourceUID + " KICK " +
+			    Utils.println(":" + sourceUID + " KICK " +
 				    Config.getIrcdChannel() + " " + uid +
 				    " :" + reason);
 			    if (msgIRCKickReason.length() > 0) {
@@ -696,7 +692,7 @@ public class IRCUserManagement {
 					.replace("{KickedUser}", iuser.nick)
 					.replace("{KickedBy}", kickedByNick)
 					.replace("{Reason}",
-						convertColors(reason, true))
+						Utils.convertColors(reason, true))
 					.replace(
 						"{KickedPrefix}",
 						IRCd.getGroupPrefix(iuser
@@ -729,10 +725,10 @@ public class IRCUserManagement {
 							kickedByNick)
 						.replace(
 							"{Reason}",
-							stripIRCFormatting(reason)));
+							Utils.stripIRCFormatting(reason)));
 			    }
 			} else {
-			    println(":" + sourceUID + " KICK " +
+			    Utils.println(":" + sourceUID + " KICK " +
 				    Config.getIrcdChannel() + " " + uid +
 				    " :" + kickedByNick);
 			    if (msgIRCKick.length() > 0) {
@@ -889,7 +885,7 @@ public class IRCUserManagement {
 			} else if (UID == null) {
 			    UID = bp.getUID();
 			}
-			println(":" + UID + " FMODE " + Config.getIrcdChannel() +
+			Utils.println(":" + UID + " FMODE " + Config.getIrcdChannel() +
 				" " + channelTS + " + b :" + banHost);
 			return true;
 		    } else {
@@ -935,7 +931,7 @@ public class IRCUserManagement {
 		    } else if (UID == null) {
 			UID = bp.getUID();
 		    }
-		    println(":" + UID + " FMODE " + Config.getIrcdChannel() +
+		    Utils.println(":" + UID + " FMODE " + Config.getIrcdChannel() +
 			    " " + channelTS + " -b :" + banHost);
 		    return true;
 		} else {
@@ -956,7 +952,7 @@ public class IRCUserManagement {
     public static boolean isBanned(String fullHost) {
 	synchronized (csIrcBans) {
 	    for (IrcBan ircBan : ircBans) {
-		if (wildCardMatch(fullHost, ircBan.fullHost)) {
+		if (Utils.wildCardMatch(fullHost, ircBan.fullHost)) {
 		    return true;
 		}
 	    }

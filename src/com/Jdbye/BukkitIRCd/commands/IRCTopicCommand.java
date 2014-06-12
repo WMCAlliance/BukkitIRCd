@@ -1,5 +1,6 @@
 package com.Jdbye.BukkitIRCd.commands;
 
+import com.Jdbye.BukkitIRCd.IRCFunctionality;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -7,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.Jdbye.BukkitIRCd.IRCd;
+import com.Jdbye.BukkitIRCd.Utils;
 import com.Jdbye.BukkitIRCd.configuration.Config;
 
 public class IRCTopicCommand implements CommandExecutor {
@@ -34,7 +36,7 @@ public class IRCTopicCommand implements CommandExecutor {
 
 	final String topic = IRCd.join(args, " ", 0);
 	final String hostmask = userNick + "!" + userUser + "@" + userHost;
-	IRCd.setTopic(IRCd.convertColors(topic, false), userNick, hostmask);
+	IRCFunctionality.setTopic(Utils.convertColors(topic, false), userNick, hostmask);
 
 	if (topic.length() > 0) {
 	    sender.sendMessage(ChatColor.RED + "Topic set to " + topic);

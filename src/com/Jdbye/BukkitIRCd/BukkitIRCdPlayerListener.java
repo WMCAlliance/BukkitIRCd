@@ -41,7 +41,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 	if (!Config.isIrcdColorDeathMessagesEnabled()) {
 	    message = ChatColor.stripColor(message);
 	} else {
-	    message = IRCd.convertColors(message, false);
+	    message = Utils.convertColors(message, false);
 	}
 	if (IRCd.mode == Modes.INSPIRCD) {
 	    if (IRCd.isLinkcompleted()) {
@@ -130,7 +130,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 
 	switch (IRCd.mode) {
 	    case STANDALONE:
-		IRCd.writeAll(IRCd.convertColors(event.getMessage(), false),
+		IRCd.writeAll(Utils.convertColors(event.getMessage(), false),
 			event.getPlayer());
 		break;
 
@@ -139,12 +139,12 @@ public class BukkitIRCdPlayerListener implements Listener {
 			.getName());
 		if (bp != null && IRCd.isLinkcompleted()) {
 		    IRCd.privmsg(bp.getUID(), Config.getIrcdChannel(),
-			    IRCd.convertColors(event.getMessage(), false));
+			    Utils.convertColors(event.getMessage(), false));
 		}
 		break;
 	}
 
-	event.setMessage(IRCd.stripIRCFormatting(event.getMessage()));
+	event.setMessage(Utils.stripIRCFormatting(event.getMessage()));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -161,7 +161,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 			IRCd.writeAll(
 				(char) 1 +
 				"ACTION " +
-				IRCd.convertColors(
+				Utils.convertColors(
 					IRCd.join(
 						event.getMessage().split(
 							" "), " ", 1),
@@ -173,13 +173,13 @@ public class BukkitIRCdPlayerListener implements Listener {
 			final BukkitPlayer bp = BukkitUserManagement.getUserObject(event
 				.getPlayer().getName());
 			if (bp != null && IRCd.isLinkcompleted()) {
-			    IRCd.action(bp.getUID(), Config.getIrcdChannel(), IRCd
+			    IRCd.action(bp.getUID(), Config.getIrcdChannel(), Utils
 				    .convertColors(IRCd.join(event.getMessage()
 						    .split(" "), " ", 1), false));
 			}
 			break;
 		}
-		event.setMessage(IRCd.stripIRCFormatting(event.getMessage()));
+		event.setMessage(Utils.stripIRCFormatting(event.getMessage()));
 	    }
 
 	    if (Config.getKickCommands().contains(

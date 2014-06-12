@@ -2,7 +2,6 @@ package com.Jdbye.BukkitIRCd;
 
 import static com.Jdbye.BukkitIRCd.IRCd.bukkitPlayers;
 import static com.Jdbye.BukkitIRCd.IRCd.channelTS;
-import static com.Jdbye.BukkitIRCd.IRCd.convertColors;
 import static com.Jdbye.BukkitIRCd.IRCd.csBukkitPlayers;
 import static com.Jdbye.BukkitIRCd.IRCd.mode;
 import static com.Jdbye.BukkitIRCd.IRCd.msgDisconnectQuitting;
@@ -11,7 +10,6 @@ import static com.Jdbye.BukkitIRCd.IRCd.msgIRCKickDisplay;
 import static com.Jdbye.BukkitIRCd.IRCd.msgIRCKickDisplayReason;
 import static com.Jdbye.BukkitIRCd.IRCd.msgIRCKickReason;
 import static com.Jdbye.BukkitIRCd.IRCd.pre;
-import static com.Jdbye.BukkitIRCd.IRCd.println;
 import static com.Jdbye.BukkitIRCd.IRCd.serverUID;
 import static com.Jdbye.BukkitIRCd.IRCd.ugen;
 import static com.Jdbye.BukkitIRCd.IRCd.writeAll;
@@ -58,7 +56,7 @@ public class BukkitUserManagement {
 	    synchronized (csBukkitPlayers) {
 		BukkitPlayer kickedBukkitPlayer = bukkitPlayers.get(kickedID);
 		if (!kickReason.isEmpty()) {
-		    kickReason = " :" + convertColors(kickReason, false);
+		    kickReason = " :" + Utils.convertColors(kickReason, false);
 		}
 		if (mode == Modes.STANDALONE) {
 		    writeAll(":" + Config.getIrcdServerName() + "!" +
@@ -70,7 +68,7 @@ public class BukkitUserManagement {
 		} else {
 
 		    // KICK
-		    println(":" + serverUID + " KICK " +
+		    Utils.println(":" + serverUID + " KICK " +
 			    Config.getIrcdChannel() + " " +
 			    kickedBukkitPlayer.nick +
 			    Config.getIrcdIngameSuffix() + kickReason);
@@ -102,7 +100,7 @@ public class BukkitUserManagement {
 		String kickerName = kickerBukkitPlayer.nick;
 
 		if (!kickReason.isEmpty()) {
-		    kickReason = " :" + convertColors(kickReason, false);
+		    kickReason = " :" + Utils.convertColors(kickReason, false);
 		}
 		if (mode == Modes.STANDALONE) {
 		    writeAll(":" + kickerName + Config.getIrcdIngameSuffix() +
@@ -110,15 +108,15 @@ public class BukkitUserManagement {
 			    Config.getIrcdChannel() + " " +
 			    kickedBukkitPlayer.nick +
 			    Config.getIrcdIngameSuffix() +
-			    convertColors(kickReason, false));
+			    Utils.convertColors(kickReason, false));
 		} else {
 
 		    // KICK
-		    println(":" + kickerBukkitPlayer.getUID() + " KICK " +
+		    Utils.println(":" + kickerBukkitPlayer.getUID() + " KICK " +
 			    Config.getIrcdChannel() + " " +
 			    kickedBukkitPlayer.nick +
 			    Config.getIrcdIngameSuffix() +
-			    convertColors(kickReason, false));
+			    Utils.convertColors(kickReason, false));
 		}
 		return true;
 	    }
@@ -221,7 +219,7 @@ public class BukkitUserManagement {
 		if (!bp.world.equals(world)) {
 		    bp.world = world;
 		    if (mode == Modes.INSPIRCD) {
-			println(pre + "METADATA " + bp.getUID() +
+			Utils.println(pre + "METADATA " + bp.getUID() +
 				" swhois :is currently in " + world);
 		    }
 		}
@@ -347,7 +345,7 @@ public class BukkitUserManagement {
 
 			// Register new UID
 			final String userModes = isOper ? "+or" : "+r";
-			println(pre + "UID", UID,
+			Utils.println(pre + "UID", UID,
 				Long.toString(bp.idleTime / 1000L), bp.nick +
 				Config.getIrcdIngameSuffix(),
 				bp.realhost, bp.host,
@@ -357,15 +355,15 @@ public class BukkitUserManagement {
 
 			// Set oper type if appropriate
 			if (isOper) {
-			    println(":" + UID, "OPERTYPE", "IRC_Operator");
+			    Utils.println(":" + UID, "OPERTYPE", "IRC_Operator");
 			}
 
 			// Game client uses encrypted connection
-			println(pre + "METADATA", UID, "ssl_cert",
+			Utils.println(pre + "METADATA", UID, "ssl_cert",
 				":vtrsE The peer did not send any certificate.");
 
 			// Join in-game channel with modes set
-			println(pre + "FJOIN", Config.getIrcdChannel(),
+			Utils.println(pre + "FJOIN", Config.getIrcdChannel(),
 				Long.toString(channelTS), "+nt",
 				":" + bp.getTextMode() + "," + UID);
 
@@ -373,7 +371,7 @@ public class BukkitUserManagement {
 			// world here)
 			final String worldString = world == null ? "an unknown world" :
 				world;
-			println(pre + "METADATA ", UID, "swhois",
+			Utils.println(pre + "METADATA ", UID, "swhois",
 				":is currently in " + worldString);
 		    }
 		}
@@ -394,7 +392,7 @@ public class BukkitUserManagement {
 			    bp.nick + "@" + bp.host + " QUIT :" +
 			    msgDisconnectQuitting);
 		} else if (mode == Modes.INSPIRCD) {
-		    println(":" + bp.getUID() + " QUIT :" +
+		    Utils.println(":" + bp.getUID() + " QUIT :" +
 			    msgDisconnectQuitting);
 		}
 		bukkitPlayers.remove(ID);
