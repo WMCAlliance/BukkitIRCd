@@ -3,7 +3,13 @@ package com.Jdbye.BukkitIRCd;
 import static com.Jdbye.BukkitIRCd.IRCd.csServer;
 import static com.Jdbye.BukkitIRCd.IRCd.out;
 import com.Jdbye.BukkitIRCd.configuration.Config;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Server;
+import org.bukkit.command.CommandException;
+import org.bukkit.entity.Player;
+import org.bukkit.event.server.ServerCommandEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class Utils {
     
@@ -235,7 +241,7 @@ public class Utils {
 	return output;
     }
     public static boolean println(String... parts) {
-	final String line = IRCd.join(parts, " ", 0);
+	final String line = Utils.join(parts, " ", 0);
 	if ((IRCd.server == null) || (!IRCd.server.isConnected()) || (IRCd.server.isClosed()) ||
 		(out == null)) {
 	    return false;
@@ -309,4 +315,109 @@ public class Utils {
 	}
 	return res;
     }
+    
+    public static void executeCommand(final String command) {
+	new BukkitRunnable() {
+
+	    @Override
+	    public void run() {
+		final Server server = Bukkit.getServer();
+		try {
+		    final ServerCommandEvent commandEvent = new ServerCommandEvent(
+			    IRCd.commandSender, command);
+		    server.getPluginManager().callEvent(commandEvent);
+		    server.dispatchCommand(commandEvent.getSender(),
+			    commandEvent.getCommand());
+		    IRCd.commandSender.sendMessage("Command Executed");
+		} catch (CommandException c) {
+		    Throwable e = c.getCause();
+
+		    IRCd.commandSender.sendMessage("Exception in command \"" +
+			    command + "\": " + e);
+		    if (Config.isDebugModeEnabled()) {
+			for (final StackTraceElement s : e.getStackTrace()) {
+			    IRCd.commandSender.sendMessage(s.toString());
+			}
+		    }
+		} catch (Exception e) {
+		    IRCd.commandSender.sendMessage("Exception in command \"" +
+			    command + "\": " + e);
+
+		    if (Config.isDebugModeEnabled()) {
+			for (final StackTraceElement s : e.getStackTrace()) {
+			    IRCd.commandSender.sendMessage(s.toString());
+			}
+		    }
+		}
+	    }
+	}.runTask(BukkitIRCdPlugin.thePlugin);
+    }
+
+    public static String join(String[] strArray, String delimiter, int start) {
+
+	if (strArray.length <= start) {
+	    return "";
+	}
+
+	// Compute buffer length
+	int size = delimiter.length() * (strArray.length - start - 1);
+	for (final String s : strArray) {
+	    size += s.length();
+	}
+
+	final StringBuilder builder = new StringBuilder(size);
+	builder.append(strArray[start]);
+	for (int i = start + 1; i < strArray.length; i++) {
+	    builder.append(delimiter).append(strArray[i]);
+	}
+
+	return builder.toString();
+    }
+    
+    
+    /**
+     Broadcasts a message
+
+     @param msg
+
+     @return true if able to schedule broadcast
+     */
+    public static boolean broadcastMessage(final String msg) {
+
+	try {
+	    new BukkitRunnable() {
+		@Override
+		public void run() {
+		    Bukkit.getServer().broadcastMessage(msg);
+		}
+	    }.runTask(BukkitIRCdPlugin.thePlugin);
+	    return true;
+	} catch (Exception e) {
+	    return false;
+	}
+    }
+
+    /**
+     Send a message to a player
+
+     @param msg
+     */
+    public static boolean sendMessage(final String player, final String msg) {
+
+	try {
+	    new BukkitRunnable() {
+		@Override
+		public void run() {
+		    final Player p = Bukkit.getServer().getPlayer(player);
+		    if (p != null) {
+			p.sendMessage(msg);
+		    }
+		}
+	    }.runTask(BukkitIRCdPlugin.thePlugin);
+	    return true;
+	} catch (Exception e) {
+	    return false;
+	}
+    }
+
 }

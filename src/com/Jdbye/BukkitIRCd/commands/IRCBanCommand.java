@@ -38,13 +38,13 @@ public class IRCBanCommand implements CommandExecutor {
 			ban = args[1];
 			banType = args[0];
 			if (args.length > 2) {
-			    reason = IRCd.join(args, " ", 2);
+			    reason = Utils.join(args, " ", 2);
 			}
 		    } else {
 			ircuser = IRCUserManagement.getIRCUser(args[0]);
 			ban = args[0];
 			if (args.length > 1) {
-			    reason = IRCd.join(args, " ", 1);
+			    reason = Utils.join(args, " ", 1);
 			}
 		    }
 		    if (Utils.wildCardMatch(ban, "*!*@*")) {
@@ -158,13 +158,13 @@ public class IRCBanCommand implements CommandExecutor {
 		    ban = args[1];
 		    banType = args[0];
 		    if (args.length > 2) {
-			reason = IRCd.join(args, " ", 2);
+			reason = Utils.join(args, " ", 2);
 		    }
 		} else {
 		    ircuser = IRCUserManagement.getIRCUser(args[0]);
 		    ban = args[0];
 		    if (args.length > 1) {
-			reason = IRCd.join(args, " ", 1);
+			reason = Utils.join(args, " ", 1);
 		    }
 		}
 		if (Utils.wildCardMatch(ban, "*!*@*")) {

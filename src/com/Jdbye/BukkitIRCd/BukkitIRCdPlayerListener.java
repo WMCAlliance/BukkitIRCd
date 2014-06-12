@@ -162,7 +162,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 				(char) 1 +
 				"ACTION " +
 				Utils.convertColors(
-					IRCd.join(
+					Utils.join(
 						event.getMessage().split(
 							" "), " ", 1),
 					false) + (char) 1, event
@@ -174,7 +174,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 				.getPlayer().getName());
 			if (bp != null && IRCd.isLinkcompleted()) {
 			    IRCd.action(bp.getUID(), Config.getIrcdChannel(), Utils
-				    .convertColors(IRCd.join(event.getMessage()
+				    .convertColors(Utils.join(event.getMessage()
 						    .split(" "), " ", 1), false));
 			}
 			break;

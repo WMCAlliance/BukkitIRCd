@@ -312,7 +312,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	    }
 	} catch (Exception e) {
 	    log.severe("[BukkitIRCd] Unable to parse string array " +
-		    IRCd.join(sarray, " ", 0) + ", invalid number. " + e);
+		    Utils.join(sarray, " ", 0) + ", invalid number. " + e);
 	}
 	return def;
     }

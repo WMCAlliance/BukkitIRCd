@@ -29,7 +29,7 @@ public class IRCUnbanCommand implements CommandExecutor {
 		    String ban;
 		    ban = args[0];
 		    if (args.length > 1) {
-			IRCd.join(args, " ", 1);
+			Utils.join(args, " ", 1);
 		    }
 
 		    if (Utils.wildCardMatch(ban, "*!*@*")) { // Full hostmask
@@ -131,7 +131,7 @@ public class IRCUnbanCommand implements CommandExecutor {
 		String ban;
 		ban = args[0];
 		if (args.length > 1) {
-		    IRCd.join(args, " ", 1);
+		    Utils.join(args, " ", 1);
 		}
 
 		if (Utils.wildCardMatch(ban, "*!*@*")) { // Full hostmask

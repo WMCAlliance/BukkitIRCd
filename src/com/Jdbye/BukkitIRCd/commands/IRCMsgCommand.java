@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
 import com.Jdbye.BukkitIRCd.BukkitPlayer;
 import com.Jdbye.BukkitIRCd.BukkitUserManagement;
+import com.Jdbye.BukkitIRCd.IRCFunctionality;
 import com.Jdbye.BukkitIRCd.IRCUser;
 import com.Jdbye.BukkitIRCd.IRCUserManagement;
 import com.Jdbye.BukkitIRCd.IRCd;
@@ -28,7 +29,7 @@ public class IRCMsgCommand implements CommandExecutor {
 	    return false; // prints usage
 	}
 	final String targetNick = args[0];
-	final String rawMessage = IRCd.join(args, " ", 1);
+	final String rawMessage = Utils.join(args, " ", 1);
 	final String gameMessage = ChatColor.translateAlternateColorCodes('&',
 		rawMessage);
 	final String ircMessage = Utils.convertColors(rawMessage, false);
@@ -102,8 +103,8 @@ public class IRCMsgCommand implements CommandExecutor {
 
 	final String targetModes = targetIrcUser.getTextModes();
 	sender.sendMessage(IRCd.msgSendQueryFromIngame
-		.replace("{Prefix}", IRCd.getGroupPrefix(targetModes))
-		.replace("{Suffix}", IRCd.getGroupSuffix(targetModes))
+		.replace("{Prefix}", IRCFunctionality.getGroupPrefix(targetModes))
+		.replace("{Suffix}", IRCFunctionality.getGroupSuffix(targetModes))
 		.replace("{User}", targetIrcUser.nick)
 		.replace("{Message}", gameMessage));
 

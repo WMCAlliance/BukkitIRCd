@@ -34,7 +34,7 @@ public class IRCTopicCommand implements CommandExecutor {
 	    userHost = Config.getIrcdServerHostName();
 	}
 
-	final String topic = IRCd.join(args, " ", 0);
+	final String topic = Utils.join(args, " ", 0);
 	final String hostmask = userNick + "!" + userUser + "@" + userHost;
 	IRCFunctionality.setTopic(Utils.convertColors(topic, false), userNick, hostmask);
 

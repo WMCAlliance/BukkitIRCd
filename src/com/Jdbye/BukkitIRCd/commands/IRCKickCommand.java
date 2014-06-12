@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import com.Jdbye.BukkitIRCd.IRCUser;
 import com.Jdbye.BukkitIRCd.IRCUserManagement;
 import com.Jdbye.BukkitIRCd.IRCd;
+import com.Jdbye.BukkitIRCd.Utils;
 import com.Jdbye.BukkitIRCd.configuration.Config;
 
 public class IRCKickCommand implements CommandExecutor {
@@ -22,7 +23,7 @@ public class IRCKickCommand implements CommandExecutor {
 	    return false; // prints usage
 	}
 	final String targetNick = args[0];
-	final String reason = args.length > 1 ? IRCd.join(args, " ", 1) : null;
+	final String reason = args.length > 1 ? Utils.join(args, " ", 1) : null;
 
 	// Compute target
 	final IRCUser targetIrcUser = IRCUserManagement.getIRCUser(targetNick);

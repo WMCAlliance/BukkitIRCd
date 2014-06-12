@@ -1,6 +1,7 @@
 package com.Jdbye.BukkitIRCd.commands;
 
 import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
+import com.Jdbye.BukkitIRCd.IRCFunctionality;
 import com.Jdbye.BukkitIRCd.IRCd;
 import com.Jdbye.BukkitIRCd.configuration.Config;
 import org.bukkit.ChatColor;
@@ -30,7 +31,7 @@ public class IRCLinkCommand implements CommandExecutor {
 	switch (IRCd.mode) {
 	    case INSPIRCD:
 		if ((!IRCd.isLinkcompleted()) && (!IRCd.isConnected())) {
-		    if (IRCd.connect()) {
+		    if (IRCFunctionality.connect()) {
 			sender.sendMessage(ChatColor.RED +
 				"Successfully connected to " +
 				Config.getLinkRemoteHost() + " on port " +

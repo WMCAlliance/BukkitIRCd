@@ -312,15 +312,15 @@ public class IRCUserManagement {
 					.removeLastReceivedFrom(processor.nick);
 				if (reason != null) {
 				    if (msgIRCLeave.length() > 0) {
-					IRCd.broadcastMessage(msgIRCLeaveReason
+					Utils.broadcastMessage(msgIRCLeaveReason
 						.replace("{User}",
 							processor.nick)
 						.replace(
 							"{Suffix}",
-							IRCd.getGroupSuffix(processor.modes))
+							IRCFunctionality.getGroupSuffix(processor.modes))
 						.replace(
 							"{Prefix}",
-							IRCd.getGroupPrefix(processor.modes))
+							IRCFunctionality.getGroupPrefix(processor.modes))
 						.replace(
 							"{Reason}",
 							Utils.convertColors(reason,
@@ -341,15 +341,15 @@ public class IRCUserManagement {
 				    }
 				} else {
 				    if (msgIRCLeave.length() > 0) {
-					IRCd.broadcastMessage(msgIRCLeave
+					Utils.broadcastMessage(msgIRCLeave
 						.replace("{User}",
 							processor.nick)
 						.replace(
 							"{Suffix}",
-							IRCd.getGroupSuffix(processor.modes))
+							IRCFunctionality.getGroupSuffix(processor.modes))
 						.replace(
 							"{Prefix}",
-							IRCd.getGroupPrefix(processor.modes)));
+							IRCFunctionality.getGroupPrefix(processor.modes)));
 				    }
 				    if ((BukkitIRCdPlugin.dynmap != null) &&
 					    (msgIRCLeaveDynmap.length() > 0)) {
@@ -388,14 +388,14 @@ public class IRCUserManagement {
 			    BukkitIRCdPlugin.thePlugin
 				    .removeLastReceivedFrom(processor.nick);
 			    if (msgIRCLeave.length() > 0 && reason != null) {
-				IRCd.broadcastMessage(msgIRCLeaveReason
+				Utils.broadcastMessage(msgIRCLeaveReason
 					.replace("{User}", processor.nick)
 					.replace(
 						"{Prefix}",
-						IRCd.getGroupPrefix(processor.modes))
+						IRCFunctionality.getGroupPrefix(processor.modes))
 					.replace(
 						"{Suffix}",
-						IRCd.getGroupSuffix(processor.modes))
+						IRCFunctionality.getGroupSuffix(processor.modes))
 					.replace("{Reason}", reason));
 			    }
 			    if ((BukkitIRCdPlugin.dynmap != null) &&
@@ -437,15 +437,15 @@ public class IRCUserManagement {
 		    if (curUser.joined) {
 
 			if (msgIRCLeaveReason.length() > 0) {
-			    IRCd.broadcastMessage(msgIRCLeaveReason
+			    Utils.broadcastMessage(msgIRCLeaveReason
 				    .replace("{User}", curUser.nick)
 				    .replace(
 					    "{Prefix}",
-					    IRCd.getGroupPrefix(curUser
+					    IRCFunctionality.getGroupPrefix(curUser
 						    .getTextModes()))
 				    .replace(
 					    "{Suffix}",
-					    IRCd.getGroupSuffix(curUser
+					    IRCFunctionality.getGroupSuffix(curUser
 						    .getTextModes()))
 				    .replace("{Reason}", is.host + " split"));
 			}
@@ -527,7 +527,7 @@ public class IRCUserManagement {
 				    (BukkitIRCdPlugin.thePlugin != null)) {
 				if (reason != null) {
 				    if (msgIRCKickReason.length() > 0) {
-					IRCd.broadcastMessage(msgIRCKickReason
+					Utils.broadcastMessage(msgIRCKickReason
 						.replace("{KickedUser}",
 							processor.nick)
 						.replace("{KickedBy}",
@@ -538,18 +538,18 @@ public class IRCUserManagement {
 								true))
 						.replace(
 							"{KickedPrefix}",
-							IRCd.getGroupPrefix(processor.modes))
+							IRCFunctionality.getGroupPrefix(processor.modes))
 						.replace(
 							"{KickedSuffix}",
-							IRCd.getGroupSuffix(processor.modes))
+							IRCFunctionality.getGroupSuffix(processor.modes))
 						.replace(
 							"{KickerPrefix}",
-							IRCd.getGroupPrefix(getIRCUser(
+							IRCFunctionality.getGroupPrefix(getIRCUser(
 									kickedByNick)
 								.getTextModes()))
 						.replace(
 							"{KickerSuffix}",
-							IRCd.getGroupSuffix(getIRCUser(
+							IRCFunctionality.getGroupSuffix(getIRCUser(
 									kickedByNick)
 								.getTextModes())));
 				    }
@@ -571,25 +571,25 @@ public class IRCUserManagement {
 				    }
 				} else {
 				    if (msgIRCKick.length() > 0) {
-					IRCd.broadcastMessage(msgIRCKick
+					Utils.broadcastMessage(msgIRCKick
 						.replace("{KickedUser}",
 							processor.nick)
 						.replace("{KickedBy}",
 							kickedByNick)
 						.replace(
 							"{KickedPrefix}",
-							IRCd.getGroupPrefix(processor.modes))
+							IRCFunctionality.getGroupPrefix(processor.modes))
 						.replace(
 							"{KickedSuffix}",
-							IRCd.getGroupSuffix(processor.modes))
+							IRCFunctionality.getGroupSuffix(processor.modes))
 						.replace(
 							"{KickerPrefix}",
-							IRCd.getGroupPrefix(getIRCUser(
+							IRCFunctionality.getGroupPrefix(getIRCUser(
 									kickedByNick)
 								.getTextModes()))
 						.replace(
 							"{KickerSuffix}",
-							IRCd.getGroupSuffix(getIRCUser(
+							IRCFunctionality.getGroupSuffix(getIRCUser(
 									kickedByNick)
 								.getTextModes())));
 				    }
@@ -688,27 +688,27 @@ public class IRCUserManagement {
 				    Config.getIrcdChannel() + " " + uid +
 				    " :" + reason);
 			    if (msgIRCKickReason.length() > 0) {
-				IRCd.broadcastMessage(msgIRCKickReason
+				Utils.broadcastMessage(msgIRCKickReason
 					.replace("{KickedUser}", iuser.nick)
 					.replace("{KickedBy}", kickedByNick)
 					.replace("{Reason}",
 						Utils.convertColors(reason, true))
 					.replace(
 						"{KickedPrefix}",
-						IRCd.getGroupPrefix(iuser
+						IRCFunctionality.getGroupPrefix(iuser
 							.getTextModes()))
 					.replace(
 						"{KickedSuffix}",
-						IRCd.getGroupSuffix(iuser
+						IRCFunctionality.getGroupSuffix(iuser
 							.getTextModes()))
 					.replace(
 						"{KickerPrefix}",
-						IRCd.getGroupPrefix(getIRCUser(
+						IRCFunctionality.getGroupPrefix(getIRCUser(
 								kickedByNick)
 							.getTextModes()))
 					.replace(
 						"{KickerSuffix}",
-						IRCd.getGroupSuffix(getIRCUser(
+						IRCFunctionality.getGroupSuffix(getIRCUser(
 								kickedByNick)
 							.getTextModes())));
 			    }
@@ -732,25 +732,25 @@ public class IRCUserManagement {
 				    Config.getIrcdChannel() + " " + uid +
 				    " :" + kickedByNick);
 			    if (msgIRCKick.length() > 0) {
-				IRCd.broadcastMessage(msgIRCKick
+				Utils.broadcastMessage(msgIRCKick
 					.replace("{KickedUser}", iuser.nick)
 					.replace("{KickedBy}", kickedByNick)
 					.replace(
 						"{KickedPrefix}",
-						IRCd.getGroupPrefix(iuser
+						IRCFunctionality.getGroupPrefix(iuser
 							.getTextModes()))
 					.replace(
 						"{KickedSuffix}",
-						IRCd.getGroupSuffix(iuser
+						IRCFunctionality.getGroupSuffix(iuser
 							.getTextModes()))
 					.replace(
 						"{KickerPrefix}",
-						IRCd.getGroupPrefix(getIRCUser(
+						IRCFunctionality.getGroupPrefix(getIRCUser(
 								kickedByNick)
 							.getTextModes()))
 					.replace(
 						"{KickerSuffix}",
-						IRCd.getGroupSuffix(getIRCUser(
+						IRCFunctionality.getGroupSuffix(getIRCUser(
 								kickedByNick)
 							.getTextModes())));
 			    }
@@ -835,7 +835,7 @@ public class IRCUserManagement {
 			    if ((IRCd.isPlugin) &&
 				    (BukkitIRCdPlugin.thePlugin != null)) {
 				if (msgIRCBan.length() > 0) {
-				    IRCd.broadcastMessage(msgIRCBan.replace(
+				    Utils.broadcastMessage(msgIRCBan.replace(
 					    "{BannedUser}", ircuser.nick)
 					    .replace("{BannedBy}", bannedBy));
 				}

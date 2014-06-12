@@ -3,6 +3,7 @@ package com.Jdbye.BukkitIRCd.commands;
 import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
 import com.Jdbye.BukkitIRCd.BukkitPlayer;
 import com.Jdbye.BukkitIRCd.BukkitUserManagement;
+import com.Jdbye.BukkitIRCd.IRCFunctionality;
 import com.Jdbye.BukkitIRCd.IRCUser;
 import com.Jdbye.BukkitIRCd.IRCUserManagement;
 import com.Jdbye.BukkitIRCd.IRCd;
@@ -72,7 +73,7 @@ public class IRCReplyCommand implements CommandExecutor {
 			    " PRIVMSG " +
 			    ircuser.nick +
 			    " :" +
-			    Utils.convertColors(IRCd.join(args, " ", 0),
+			    Utils.convertColors(Utils.join(args, " ", 0),
 				    false));
 		} else {
 		    IRCd.writeTo(
@@ -88,7 +89,7 @@ public class IRCReplyCommand implements CommandExecutor {
 			    " PRIVMSG " +
 			    ircuser.nick +
 			    " :" +
-			    Utils.convertColors(IRCd.join(args, " ", 0),
+			    Utils.convertColors(Utils.join(args, " ", 0),
 				    false));
 		}
 		break;
@@ -108,7 +109,7 @@ public class IRCReplyCommand implements CommandExecutor {
 
 		if (player == null) {
 		    IRCd.privmsg(IRCd.serverUID, UID,
-			    Utils.convertColors(IRCd.join(args, " ", 0), false));
+			    Utils.convertColors(Utils.join(args, " ", 0), false));
 		} else {
 		    final BukkitPlayer bp = BukkitUserManagement.getUserObject(player
 			    .getName());
@@ -119,7 +120,7 @@ public class IRCReplyCommand implements CommandExecutor {
 		    }
 
 		    IRCd.privmsg(bp.getUID(), UID,
-			    Utils.convertColors(IRCd.join(args, " ", 0), false));
+			    Utils.convertColors(Utils.join(args, " ", 0), false));
 		}
 
 		break;
@@ -128,14 +129,14 @@ public class IRCReplyCommand implements CommandExecutor {
 	// Report command to sender's chat
 	sender.sendMessage(IRCd.msgSendQueryFromIngame
 		.replace("{Prefix}",
-			IRCd.getGroupPrefix(ircuser.getTextModes()))
+			IRCFunctionality.getGroupPrefix(ircuser.getTextModes()))
 		.replace("{Suffix}",
-			IRCd.getGroupSuffix(ircuser.getTextModes()))
+			IRCFunctionality.getGroupSuffix(ircuser.getTextModes()))
 		.replace("{User}", ircuser.nick)
 		.replace(
 			"{Message}",
 			ChatColor.translateAlternateColorCodes('&',
-				IRCd.join(args, " ", 0))));
+				Utils.join(args, " ", 0))));
 
 	return true;
     }

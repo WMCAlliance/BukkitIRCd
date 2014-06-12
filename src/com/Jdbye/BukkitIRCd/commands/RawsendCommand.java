@@ -34,7 +34,7 @@ public class RawsendCommand implements CommandExecutor {
 
 	switch (IRCd.mode) {
 	    case INSPIRCD:
-		if (Utils.println(IRCd.join(args, " ", 0))) {
+		if (Utils.println(Utils.join(args, " ", 0))) {
 		    sender.sendMessage(ChatColor.RED +
 			    "Command sent to IRC server link.");
 		} else {
