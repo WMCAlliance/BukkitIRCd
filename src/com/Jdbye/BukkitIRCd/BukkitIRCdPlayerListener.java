@@ -106,7 +106,7 @@ public class BukkitIRCdPlayerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
 	final Player player = event.getPlayer();
 	final String mode = plugin.computePlayerModes(player);
-
+	// TODO add ability to disable hosts and IP lookups altogether to minimise network traffic
 	BukkitUserManagement.addBukkitUser(mode, player);
 	/*Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
 	 @Override

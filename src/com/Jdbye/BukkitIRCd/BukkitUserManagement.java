@@ -18,6 +18,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import org.bukkit.Bukkit;
+import static org.bukkit.Bukkit.getLogger;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -287,23 +288,40 @@ public class BukkitUserManagement {
     }
 
     public static boolean addBukkitUser(String modes, Player player) {
+	StringBuilder maskedrealhost = new StringBuilder();
+	//getLogger().info("Player joining: getting nick");
 	String nick = player.getName();
+	//getLogger().info("Player joining: getting masked host");
 	String host = maskHost(player.getAddress().getAddress());
-	String realhost = player.getAddress().getAddress().getHostName();
+	//getLogger().info("Player joining: getting real hostname");
+	
+	// TODO This right here is the primary cause of login lag
+	//String realhost = player.getAddress().getAddress().getHostName();
+	
+	// TODO This is a temporary solution
+	maskedrealhost.append("Masked-to-avoid-lag-" + host);
+	String realhost = maskedrealhost.toString();
+	
+	//getLogger().info("Player joining: getting ip");
 	String ip = player.getAddress().getAddress().getHostAddress();
+	//getLogger().info("Player joining: world");
 	String world = player.getWorld().getName();
 	if (getUser(nick) < 0) {
 	    synchronized (csBukkitPlayers) {
+		//getLogger().info("Player joining: creating BukkitPlayer");
 		BukkitPlayer bp = new BukkitPlayer(nick, world, modes,
 			realhost, host, ip, System.currentTimeMillis() / 1000L,
 			System.currentTimeMillis());
+		//getLogger().info("Player joining: adding bukkit player");
 		bukkitPlayers.add(bp);
 		if (mode == Modes.STANDALONE) {
 		    IRCFunctionality.writeAll(":" + nick + Config.getIrcdIngameSuffix() + "!" +
 			    nick + "@" + host + " JOIN " +
 			    Config.getIrcdChannel());
 		}
+		//getLogger().info("Player joining: voicing user");
 		String mode1 = "+", mode2 = "";
+		//getLogger().info("Player joining: adding more modes if needed");
 		if (modes.contains("~")) {
 		    mode1 += "q";
 		    mode2 += nick + Config.getIrcdIngameSuffix() + " ";
@@ -335,15 +353,18 @@ public class BukkitUserManagement {
 		}
 
 		if (mode == Modes.INSPIRCD) {
+		    //getLogger().info("Player joining: generating user's UID");
 		    String UID = ugen.generateUID(Config.getLinkServerID());
+		    //getLogger().info("Player joining: setting user's UID (" + UID + ")");
 		    bp.setUID(UID);
 		    synchronized (csBukkitPlayers) {
-
+			//getLogger().info("Player joining: checking for oper perm");
 			final boolean isOper = bp
 				.hasPermission("bukkitircd.oper");
 
 			// Register new UID
 			final String userModes = isOper ? "+or" : "+r";
+			//getLogger().info("Player joining: connecting user to IRC");
 			Utils.println(pre + "UID", UID,
 				Long.toString(bp.idleTime / 1000L), bp.nick +
 				Config.getIrcdIngameSuffix(),
@@ -353,21 +374,25 @@ public class BukkitUserManagement {
 				":Minecraft Player");
 
 			// Set oper type if appropriate
+			//getLogger().info("Player joining: setting oper type if needed");
 			if (isOper) {
 			    Utils.println(":" + UID, "OPERTYPE", "IRC_Operator");
 			}
 
 			// Game client uses encrypted connection
+			//getLogger().info("Player joining: providing connection encryption");
 			Utils.println(pre + "METADATA", UID, "ssl_cert",
 				":vtrsE The peer did not send any certificate.");
 
 			// Join in-game channel with modes set
+			//getLogger().info("Player joining: joining channel");
 			Utils.println(pre + "FJOIN", Config.getIrcdChannel(),
 				Long.toString(channelTS), "+nt",
 				":" + bp.getTextMode() + "," + UID);
 
 			// Send swhois field (extra metadata used for current
 			// world here)
+			//getLogger().info("Player joining: setting extra whois data (world");
 			final String worldString = world == null ? "an unknown world" :
 				world;
 			Utils.println(pre + "METADATA ", UID, "swhois",
