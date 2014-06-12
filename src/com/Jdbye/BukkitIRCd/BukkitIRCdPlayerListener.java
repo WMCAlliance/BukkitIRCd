@@ -45,10 +45,10 @@ public class BukkitIRCdPlayerListener implements Listener {
 	}
 	if (IRCd.mode == Modes.INSPIRCD) {
 	    if (IRCd.isLinkcompleted()) {
-		IRCd.privmsg(IRCd.serverUID, Config.getIrcdChannel(), message);
+		IRCFunctionality.privmsg(IRCd.serverUID, Config.getIrcdChannel(), message);
 	    }
 	} else {
-	    IRCd.writeAll(message);
+	    IRCFunctionality.writeAll(message);
 	}
 
     }
@@ -92,11 +92,11 @@ public class BukkitIRCdPlayerListener implements Listener {
 		}
 		if (IRCd.mode == Modes.INSPIRCD) {
 		    if (IRCd.isLinkcompleted()) {
-			IRCd.privmsg(IRCd.serverUID, Config.getIrcdChannel(),
+			IRCFunctionality.privmsg(IRCd.serverUID, Config.getIrcdChannel(),
 				message);
 		    }
 		} else {
-		    IRCd.writeAll(message);
+		    IRCFunctionality.writeAll(message);
 		}
 	    }
 	}
@@ -130,7 +130,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 
 	switch (IRCd.mode) {
 	    case STANDALONE:
-		IRCd.writeAll(Utils.convertColors(event.getMessage(), false),
+		IRCFunctionality.writeAll(Utils.convertColors(event.getMessage(), false),
 			event.getPlayer());
 		break;
 
@@ -138,7 +138,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 		final BukkitPlayer bp = BukkitUserManagement.getUserObject(event.getPlayer()
 			.getName());
 		if (bp != null && IRCd.isLinkcompleted()) {
-		    IRCd.privmsg(bp.getUID(), Config.getIrcdChannel(),
+		    IRCFunctionality.privmsg(bp.getUID(), Config.getIrcdChannel(),
 			    Utils.convertColors(event.getMessage(), false));
 		}
 		break;
@@ -158,7 +158,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 	    if (split[0].equalsIgnoreCase("/me")) {
 		switch (IRCd.mode) {
 		    case STANDALONE:
-			IRCd.writeAll(
+			IRCFunctionality.writeAll(
 				(char) 1 +
 				"ACTION " +
 				Utils.convertColors(
@@ -173,7 +173,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 			final BukkitPlayer bp = BukkitUserManagement.getUserObject(event
 				.getPlayer().getName());
 			if (bp != null && IRCd.isLinkcompleted()) {
-			    IRCd.action(bp.getUID(), Config.getIrcdChannel(), Utils
+			    IRCFunctionality.action(bp.getUID(), Config.getIrcdChannel(), Utils
 				    .convertColors(Utils.join(event.getMessage()
 						    .split(" "), " ", 1), false));
 			}
@@ -223,12 +223,12 @@ public class BukkitIRCdPlayerListener implements Listener {
 		    switch (IRCd.mode) {
 			case INSPIRCD:
 			    if (IRCd.isLinkcompleted()) {
-				IRCd.privmsg(IRCd.serverUID,
+				IRCFunctionality.privmsg(IRCd.serverUID,
 					Config.getIrcdChannel(), message);
 			    }
 			    break;
 			case STANDALONE:
-			    IRCd.writeAll(message);
+			    IRCFunctionality.writeAll(message);
 			    break;
 		    }
 		}

@@ -62,7 +62,7 @@ public class IRCReplyCommand implements CommandExecutor {
 	switch (IRCd.mode) {
 	    case STANDALONE:
 		if (player == null) {
-		    IRCd.writeTo(
+		    IRCFunctionality.writeTo(
 			    ircuser.nick,
 			    ":" +
 			    Config.getIrcdServerName() +
@@ -76,7 +76,7 @@ public class IRCReplyCommand implements CommandExecutor {
 			    Utils.convertColors(Utils.join(args, " ", 0),
 				    false));
 		} else {
-		    IRCd.writeTo(
+		    IRCFunctionality.writeTo(
 			    ircuser.nick,
 			    ":" +
 			    player.getName() +
@@ -108,7 +108,7 @@ public class IRCReplyCommand implements CommandExecutor {
 		}
 
 		if (player == null) {
-		    IRCd.privmsg(IRCd.serverUID, UID,
+		    IRCFunctionality.privmsg(IRCd.serverUID, UID,
 			    Utils.convertColors(Utils.join(args, " ", 0), false));
 		} else {
 		    final BukkitPlayer bp = BukkitUserManagement.getUserObject(player
@@ -119,7 +119,7 @@ public class IRCReplyCommand implements CommandExecutor {
 			return true;
 		    }
 
-		    IRCd.privmsg(bp.getUID(), UID,
+		    IRCFunctionality.privmsg(bp.getUID(), UID,
 			    Utils.convertColors(Utils.join(args, " ", 0), false));
 		}
 

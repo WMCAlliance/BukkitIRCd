@@ -20,7 +20,6 @@ import static com.Jdbye.BukkitIRCd.IRCd.msgIRCLeaveReason;
 import static com.Jdbye.BukkitIRCd.IRCd.msgIRCLeaveReasonDynmap;
 import static com.Jdbye.BukkitIRCd.IRCd.serverUID;
 import static com.Jdbye.BukkitIRCd.IRCd.servers;
-import static com.Jdbye.BukkitIRCd.IRCd.writeAll;
 import com.Jdbye.BukkitIRCd.configuration.Config;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -616,7 +615,7 @@ public class IRCUserManagement {
 			    }
 			}
 			if (reason != null) {
-			    writeAll(":" + processor.getFullHost() +
+			    IRCFunctionality.writeAll(":" + processor.getFullHost() +
 				    " QUIT :Kicked by " + kickedByNick + ": " +
 				    reason);
 			    processor.writeln(":" + kickedByNick + "!" +
@@ -629,7 +628,7 @@ public class IRCUserManagement {
 				    "] " + kickedByNick + " (Kicked by " +
 				    kickedByNick + " (" + reason + "))");
 			} else {
-			    writeAll(":" + processor.getFullHost() +
+			    IRCFunctionality.writeAll(":" + processor.getFullHost() +
 				    " QUIT :Kicked by " + kickedByNick);
 			    processor.writeln(":" + kickedByNick + "!" +
 				    kickedByIdent + "@" + kickedByHost +
@@ -866,7 +865,7 @@ public class IRCUserManagement {
 		if (mode == Modes.STANDALONE) {
 		    ircBans.add(new IrcBan(banHost, bannedByHost, System
 			    .currentTimeMillis() / 1000L));
-		    writeAll(":" + bannedByHost + " MODE " +
+		    IRCFunctionality.writeAll(":" + bannedByHost + " MODE " +
 			    Config.getIrcdChannel() + " + b " + banHost);
 		    return true;
 		} else if (mode == Modes.INSPIRCD) {
@@ -912,7 +911,7 @@ public class IRCUserManagement {
 		    return false;
 		}
 		ircBans.remove(ban);
-		IRCd.writeAll(":" + bannedByHost + " MODE " +
+		IRCFunctionality.writeAll(":" + bannedByHost + " MODE " +
 			Config.getIrcdChannel() + " -b " + banHost);
 		return true;
 	    } else if (mode == Modes.INSPIRCD) {

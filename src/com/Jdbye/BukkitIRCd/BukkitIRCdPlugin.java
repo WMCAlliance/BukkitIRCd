@@ -105,7 +105,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
     public void onDisable() {
 	if (ircd != null) {
 	    ircd.running = false;
-	    IRCd.disconnectAll();
+	    IRCFunctionality.disconnectAll();
 	    ircd = null;
 	}
 	if (thr != null) {
@@ -130,7 +130,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	if (reload) {
 	    if (ircd != null) {
 		ircd.running = false;
-		IRCd.disconnectAll("Reloading configuration.");
+		IRCFunctionality.disconnectAll("Reloading configuration.");
 		ircd = null;
 	    }
 	    if (thr != null) {

@@ -59,7 +59,7 @@ public class IRCMsgCommand implements CommandExecutor {
 		final String sourceHostmask = sourceNick + "!" + sourceUser + "@" +
 			sourceHost;
 
-		IRCd.writeTo(targetIrcUser.nick, ":" + sourceHostmask + " PRIVMSG " +
+		IRCFunctionality.writeTo(targetIrcUser.nick, ":" + sourceHostmask + " PRIVMSG " +
 			targetIrcUser.nick + " :" + ircMessage);
 		break;
 
@@ -97,7 +97,7 @@ public class IRCMsgCommand implements CommandExecutor {
 		    return true;
 		}
 
-		IRCd.privmsg(sourceUID, targetUID, ircMessage);
+		IRCFunctionality.privmsg(sourceUID, targetUID, ircMessage);
 		break;
 	}
 

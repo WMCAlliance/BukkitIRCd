@@ -6,9 +6,11 @@ import static com.Jdbye.BukkitIRCd.IRCd.channelTopic;
 import static com.Jdbye.BukkitIRCd.IRCd.channelTopicSet;
 import static com.Jdbye.BukkitIRCd.IRCd.channelTopicSetDate;
 import static com.Jdbye.BukkitIRCd.IRCd.consoleChannelTS;
+import static com.Jdbye.BukkitIRCd.IRCd.csIrcUsers;
 import static com.Jdbye.BukkitIRCd.IRCd.csServer;
 import static com.Jdbye.BukkitIRCd.IRCd.isPlugin;
 import static com.Jdbye.BukkitIRCd.IRCd.linkcompleted;
+import static com.Jdbye.BukkitIRCd.IRCd.listener;
 import static com.Jdbye.BukkitIRCd.IRCd.mode;
 import static com.Jdbye.BukkitIRCd.IRCd.msgDelinkedReason;
 import static com.Jdbye.BukkitIRCd.IRCd.pre;
@@ -16,12 +18,12 @@ import static com.Jdbye.BukkitIRCd.IRCd.server;
 import static com.Jdbye.BukkitIRCd.IRCd.serverStartTime;
 import static com.Jdbye.BukkitIRCd.IRCd.serverUID;
 import static com.Jdbye.BukkitIRCd.IRCd.ugen;
-import static com.Jdbye.BukkitIRCd.IRCd.writeAll;
-import static com.Jdbye.BukkitIRCd.IRCd.writeOpers;
 import com.Jdbye.BukkitIRCd.configuration.Config;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Iterator;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 public class IRCFunctionality {
     
@@ -409,5 +411,222 @@ public class IRCFunctionality {
 	}
 	return "";
 
+    }
+    
+    
+    /**
+     @param source
+     UID of sender
+     @param target
+     name of target
+     @param message
+     message to send encoded with IRC colors
+     */
+    public static void privmsg(final String source, final String target,
+	    final String message) {
+	Utils.println(":" + source + " PRIVMSG " + target + " :" + message);
+    }
+
+    /**
+     @param source
+     UID of sender
+     @param target
+     name of target
+     @param message
+     message to send with IRC colors
+     */
+    public static void action(final String source, final String target,
+	    final String message) {
+	final String action = (char) 1 + "ACTION " + message + (char) 1;
+	privmsg(source, target, action);
+    }
+
+    
+    public static boolean writeTo(String nick, String line) {
+	synchronized (csIrcUsers) {
+	    if (mode == Modes.STANDALONE) {
+		Iterator<ClientConnection> iter = IRCUserManagement.clientConnections.iterator();
+		while (iter.hasNext()) {
+		    ClientConnection processor = iter.next();
+		    if (processor.nick.equalsIgnoreCase(nick)) {
+			processor.writeln(line);
+			return true;
+		    }
+		}
+	    }
+	}
+	return false;
+    }
+    
+    public static void disconnectAll() {
+	disconnectAll(null);
+    }
+
+    public static void disconnectAll(String reason) {
+	synchronized (csIrcUsers) {
+	    switch (mode) {
+		case STANDALONE:
+		    try {
+			listener.close();
+			listener = null;
+		    } catch (IOException e) {
+		    }
+		    IRCUserManagement.removeIRCUsers(reason);
+		    break;
+		case INSPIRCD:
+		    IRCFunctionality.disconnectServer(reason);
+		    break;
+	    }
+	}
+    }
+
+    
+    public static void writeAll(String message, Player sender) {
+	int i = 0;
+	String line = "", host = "unknown", nick = "Unknown";
+
+	synchronized (IRCd.csBukkitPlayers) {
+	    int ID = BukkitUserManagement.getUser(sender.getName());
+	    if (ID >= 0) {
+		BukkitPlayer bp = bukkitPlayers.get(ID);
+		host = bp.host;
+		nick = bp.nick;
+	    }
+	}
+
+	line = ":" + nick + Config.getIrcdIngameSuffix() + "!" + nick + "@" +
+		host + " PRIVMSG " + Config.getIrcdChannel() + " :" + message;
+
+	synchronized (csIrcUsers) {
+	    if (mode == Modes.STANDALONE) {
+		ClientConnection processor;
+		while (i < IRCUserManagement.clientConnections.size()) {
+		    processor = IRCUserManagement.clientConnections.get(i);
+		    if ((processor.isConnected()) &&
+			    processor.isIdented &&
+			    processor.isNickSet &&
+			    (processor.lastPingResponse +
+			    (Config.getIrcdPinkTimeoutInterval() * 1000) > System
+			    .currentTimeMillis())) {
+			processor.writeln(line);
+			i++;
+		    } else if (!processor.running) {
+			IRCUserManagement.removeIRCUser(processor.nick);
+		    } else {
+			i++;
+		    }
+		}
+	    }
+	}
+    }
+
+    public static void writeAll(String line) {
+	int i = 0;
+	synchronized (csIrcUsers) {
+	    if (mode == Modes.STANDALONE) {
+		ClientConnection processor;
+		while (i < IRCUserManagement.clientConnections.size()) {
+		    processor = IRCUserManagement.clientConnections.get(i);
+		    if ((processor.isConnected()) &&
+			    processor.isIdented &&
+			    processor.isNickSet &&
+			    (processor.lastPingResponse +
+			    (Config.getIrcdPinkTimeoutInterval() * 1000) > System
+			    .currentTimeMillis())) {
+			processor.writeln(line);
+			i++;
+		    } else if (!processor.running) {
+			IRCUserManagement.removeIRCUser(processor.nick);
+		    } else {
+			i++;
+		    }
+		}
+	    }
+	}
+    }
+
+    public static void writeOpers(String line) {
+	int i = 0;
+	synchronized (csIrcUsers) {
+	    if (mode == Modes.STANDALONE) {
+		ClientConnection processor;
+		while (i < IRCUserManagement.clientConnections.size()) {
+		    processor = IRCUserManagement.clientConnections.get(i);
+		    if ((processor.isConnected()) &&
+			    processor.isIdented &&
+			    processor.isNickSet &&
+			    processor.isOper &&
+			    (processor.lastPingResponse +
+			    (Config.getIrcdPinkTimeoutInterval() * 1000) > System
+			    .currentTimeMillis())) {
+			processor.writeln(line);
+			i++;
+		    } else if (!processor.running) {
+			IRCUserManagement.removeIRCUser(processor.nick);
+		    } else {
+			i++;
+		    }
+		}
+	    }
+	}
+    }
+
+    public static void writeAllExcept(String nick, String line) {
+	int i = 0;
+	synchronized (csIrcUsers) {
+	    if (mode == Modes.STANDALONE) {
+		ClientConnection processor;
+		while (i < IRCUserManagement.clientConnections.size()) {
+		    processor = IRCUserManagement.clientConnections.get(i);
+		    if (processor.nick.equalsIgnoreCase(nick)) {
+			i++;
+			continue;
+		    }
+		    if ((processor.isConnected()) &&
+			    processor.isIdented &&
+			    processor.isNickSet &&
+			    (processor.lastPingResponse +
+			    (Config.getIrcdPinkTimeoutInterval() * 1000) > System
+			    .currentTimeMillis())) {
+			processor.writeln(line);
+			i++;
+		    } else if (!processor.running) {
+			IRCUserManagement.removeIRCUser(processor.nick);
+		    } else {
+			i++;
+		    }
+		}
+	    }
+	}
+    }
+
+    public static void writeOpersExcept(String nick, String line) {
+	int i = 0;
+	synchronized (csIrcUsers) {
+	    if (mode == Modes.STANDALONE) {
+		ClientConnection processor;
+		while (i < IRCUserManagement.clientConnections.size()) {
+		    processor = IRCUserManagement.clientConnections.get(i);
+		    if (processor.nick.equalsIgnoreCase(nick)) {
+			i++;
+			continue;
+		    }
+		    if ((processor.isConnected()) &&
+			    processor.isIdented &&
+			    processor.isNickSet &&
+			    processor.isOper &&
+			    (processor.lastPingResponse +
+			    (Config.getIrcdPinkTimeoutInterval() * 1000) > System
+			    .currentTimeMillis())) {
+			processor.writeln(line);
+			i++;
+		    } else if (!processor.running) {
+			IRCUserManagement.removeIRCUser(processor.nick);
+		    } else {
+			i++;
+		    }
+		}
+	    }
+	}
     }
 }

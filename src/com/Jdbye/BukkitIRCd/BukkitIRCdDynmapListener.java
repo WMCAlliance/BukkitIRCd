@@ -18,7 +18,7 @@ public class BukkitIRCdDynmapListener implements Listener {
 
 	    switch (IRCd.mode) {
 		case STANDALONE:
-		    IRCd.writeAll(":" + Config.getIrcdServerName() + "!" +
+		    IRCFunctionality.writeAll(":" + Config.getIrcdServerName() + "!" +
 			    Config.getIrcdServerName() + "@" +
 			    Config.getIrcdServerHostName() + " PRIVMSG " +
 			    Config.getIrcdChannel() + " :[DynMap] " +
@@ -31,7 +31,7 @@ public class BukkitIRCdDynmapListener implements Listener {
 				"{User}", webevt.getName()).replace("{Message}",
 					webevt.getMessage());
 
-			IRCd.privmsg(IRCd.serverUID, Config.getIrcdChannel(),
+			IRCFunctionality.privmsg(IRCd.serverUID, Config.getIrcdChannel(),
 				message);
 		    }
 		    break;

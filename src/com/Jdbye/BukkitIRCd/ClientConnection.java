@@ -75,7 +75,7 @@ public class ClientConnection implements Runnable {
 					getFullHost() + " (banned)");
 		    }
 		    if (isIdented && isNickSet) {
-			IRCd.writeAll(":" + getFullHost() +
+			IRCFunctionality.writeAll(":" + getFullHost() +
 				" QUIT :You are banned from this server");
 		    }
 		    IRCUserManagement.removeIRCUser(nick, "Banned", true);
@@ -98,7 +98,7 @@ public class ClientConnection implements Runnable {
 						    " (ping timeout)");
 				}
 				if (isIdented && isNickSet) {
-				    IRCd.writeAll(":" + getFullHost() +
+				    IRCFunctionality.writeAll(":" + getFullHost() +
 					    " QUIT :Ping timeout");
 				}
 				IRCUserManagement.removeIRCUser(nick, "Ping timeout", true);
@@ -198,7 +198,7 @@ public class ClientConnection implements Runnable {
 							split[1]));
 			    }
 			}
-			IRCd.writeAll(":" + getFullHost() + " NICK " + split[1]);
+			IRCFunctionality.writeAll(":" + getFullHost() + " NICK " + split[1]);
 			nick = split[1];
 		    }
 		}
@@ -231,7 +231,7 @@ public class ClientConnection implements Runnable {
 		}
 		quitmsg = Utils.join(split, " ", 1);
 		if (isIdented && isNickSet) {
-		    IRCd.writeAll(":" + getFullHost() + " QUIT :Quit: " +
+		    IRCFunctionality.writeAll(":" + getFullHost() + " QUIT :Quit: " +
 			    quitmsg);
 		}
 		synchronized (IRCd.csStdOut) {
@@ -244,7 +244,7 @@ public class ClientConnection implements Runnable {
 		}
 	    } else {
 		if (isIdented && isNickSet) {
-		    IRCd.writeAll(":" + getFullHost() + " QUIT :Quit");
+		    IRCFunctionality.writeAll(":" + getFullHost() + " QUIT :Quit");
 		}
 		synchronized (IRCd.csStdOut) {
 		    System.out
@@ -475,7 +475,7 @@ public class ClientConnection implements Runnable {
 			    // Deoper
 			    isOper = false;
 			    writeln(":" + nick + " MODE " + nick + " :-o");
-			    IRCd.writeAll(":" + getFullHost() + " PART " +
+			    IRCFunctionality.writeAll(":" + getFullHost() + " PART " +
 				    Config.getIrcdConsoleChannel() +
 				    " :De-opered");
 			}
@@ -650,7 +650,7 @@ public class ClientConnection implements Runnable {
 
 			    sendChanWelcome(Config.getIrcdConsoleChannel());
 			    if (!mode1.equals("+")) {
-				IRCd.writeAll(":" +
+				IRCFunctionality.writeAll(":" +
 					Config.getIrcdServerName() +
 					"!" +
 					Config.getIrcdServerName() +
@@ -662,7 +662,7 @@ public class ClientConnection implements Runnable {
 					mode1 +
 					" " +
 					mode2.substring(0, mode2.length() - 1));
-				IRCd.writeAll(":" +
+				IRCFunctionality.writeAll(":" +
 					Config.getIrcdServerName() +
 					"!" +
 					Config.getIrcdServerName() +
@@ -784,7 +784,7 @@ public class ClientConnection implements Runnable {
 					if (s.length() == 0) {
 					    s = "None, ";
 					}
-					IRCd.writeAll(":" +
+					IRCFunctionality.writeAll(":" +
 						Config.getIrcdServerName() +
 						"!" +
 						Config.getIrcdServerName() +
@@ -871,7 +871,7 @@ public class ClientConnection implements Runnable {
 				    }
 				}
 			    }
-			    IRCd.writeAllExcept(nick, ":" + getFullHost() +
+			    IRCFunctionality.writeAllExcept(nick, ":" + getFullHost() +
 				    " PRIVMSG " + Config.getIrcdChannel() +
 				    " :" + message);
 			}
@@ -931,7 +931,7 @@ public class ClientConnection implements Runnable {
 					" :You don't have access.");
 			    } else {
 				// Execute console command here
-				IRCd.writeOpersExcept(
+				IRCFunctionality.writeOpersExcept(
 					nick,
 					":" +
 					getFullHost() +
@@ -949,7 +949,7 @@ public class ClientConnection implements Runnable {
 			IRCUser ircuser = IRCUserManagement.getIRCUser(split[1]);
 			int user;
 			if (ircuser != null) {
-			    IRCd.writeTo(ircuser.nick, ":" + getFullHost() +
+			    IRCFunctionality.writeTo(ircuser.nick, ":" + getFullHost() +
 				    " PRIVMSG " + split[1] + " :" + message);
 			} else if ((user = BukkitUserManagement.getUser(split[1])) >= 0) {
 			    if ((isAction || (!isCTCP)) && (IRCd.isPlugin()) &&
@@ -1051,14 +1051,14 @@ public class ClientConnection implements Runnable {
 				}
 			    }
 			}
-			IRCd.writeAllExcept(nick, ":" + getFullHost() +
+			IRCFunctionality.writeAllExcept(nick, ":" + getFullHost() +
 				" NOTICE " + Config.getIrcdChannel() + " :" +
 				message);
 		    } else {
 			IRCUser ircuser = IRCUserManagement.getIRCUser(split[1]);
 			int user;
 			if (ircuser != null) {
-			    IRCd.writeTo(ircuser.nick, ":" + getFullHost() +
+			    IRCFunctionality.writeTo(ircuser.nick, ":" + getFullHost() +
 				    " NOTICE " + split[1] + " :" + message);
 			} else if ((user = BukkitUserManagement.getUser(split[1])) >= 0) {
 			    if ((IRCd.isPlugin()) &&
@@ -1112,7 +1112,7 @@ public class ClientConnection implements Runnable {
 			getFullHost() + " (banned)");
 	    }
 	    if (isIdented && isNickSet) {
-		IRCd.writeAll(":" + getFullHost() +
+		IRCFunctionality.writeAll(":" + getFullHost() +
 			" QUIT :You are banned from this server");
 	    }
 	    IRCUserManagement.removeIRCUser(nick, "Banned", true);
@@ -1341,9 +1341,9 @@ public class ClientConnection implements Runnable {
 
     public void sendChanWelcome(String channelName) {
 	if (channelName.equalsIgnoreCase(Config.getIrcdConsoleChannel())) {
-	    IRCd.writeOpers(":" + getFullHost() + " JOIN " + channelName);
+	    IRCFunctionality.writeOpers(":" + getFullHost() + " JOIN " + channelName);
 	} else {
-	    IRCd.writeAll(":" + getFullHost() + " JOIN " + channelName);
+	    IRCFunctionality.writeAll(":" + getFullHost() + " JOIN " + channelName);
 	}
 	sendChanTopic(channelName);
 	sendChanModes(channelName);

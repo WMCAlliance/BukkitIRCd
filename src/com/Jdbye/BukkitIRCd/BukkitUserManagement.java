@@ -12,7 +12,6 @@ import static com.Jdbye.BukkitIRCd.IRCd.msgIRCKickReason;
 import static com.Jdbye.BukkitIRCd.IRCd.pre;
 import static com.Jdbye.BukkitIRCd.IRCd.serverUID;
 import static com.Jdbye.BukkitIRCd.IRCd.ugen;
-import static com.Jdbye.BukkitIRCd.IRCd.writeAll;
 import com.Jdbye.BukkitIRCd.configuration.Config;
 import java.net.InetAddress;
 import java.security.MessageDigest;
@@ -59,7 +58,7 @@ public class BukkitUserManagement {
 		    kickReason = " :" + Utils.convertColors(kickReason, false);
 		}
 		if (mode == Modes.STANDALONE) {
-		    writeAll(":" + Config.getIrcdServerName() + "!" +
+		    IRCFunctionality.writeAll(":" + Config.getIrcdServerName() + "!" +
 			    Config.getIrcdServerName() + "@" +
 			    Config.getIrcdServerHostName() + " KICK " +
 			    Config.getIrcdChannel() + " " +
@@ -103,7 +102,7 @@ public class BukkitUserManagement {
 		    kickReason = " :" + Utils.convertColors(kickReason, false);
 		}
 		if (mode == Modes.STANDALONE) {
-		    writeAll(":" + kickerName + Config.getIrcdIngameSuffix() +
+		    IRCFunctionality.writeAll(":" + kickerName + Config.getIrcdIngameSuffix() +
 			    "!" + kickerName + "@" + kickerHost + " KICK " +
 			    Config.getIrcdChannel() + " " +
 			    kickedBukkitPlayer.nick +
@@ -300,7 +299,7 @@ public class BukkitUserManagement {
 			System.currentTimeMillis());
 		bukkitPlayers.add(bp);
 		if (mode == Modes.STANDALONE) {
-		    writeAll(":" + nick + Config.getIrcdIngameSuffix() + "!" +
+		    IRCFunctionality.writeAll(":" + nick + Config.getIrcdIngameSuffix() + "!" +
 			    nick + "@" + host + " JOIN " +
 			    Config.getIrcdChannel());
 		}
@@ -327,7 +326,7 @@ public class BukkitUserManagement {
 		}
 		if (!mode1.equals("+")) {
 		    if (mode == Modes.STANDALONE) {
-			writeAll(":" + Config.getIrcdServerName() + "!" +
+			IRCFunctionality.writeAll(":" + Config.getIrcdServerName() + "!" +
 				Config.getIrcdServerName() + "@" +
 				Config.getIrcdServerHostName() + " MODE " +
 				Config.getIrcdChannel() + " " + mode1 + " " +
@@ -388,7 +387,7 @@ public class BukkitUserManagement {
 	    if (ID >= 0) {
 		BukkitPlayer bp = bukkitPlayers.get(ID);
 		if (mode == Modes.STANDALONE) {
-		    writeAll(":" + bp.nick + Config.getIrcdIngameSuffix() + "!" +
+		    IRCFunctionality.writeAll(":" + bp.nick + Config.getIrcdIngameSuffix() + "!" +
 			    bp.nick + "@" + bp.host + " QUIT :" +
 			    msgDisconnectQuitting);
 		} else if (mode == Modes.INSPIRCD) {
