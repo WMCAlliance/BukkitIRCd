@@ -27,11 +27,7 @@ public class Utils {
 	char IRC_Under = (char) 31; // US Control Code (^_)
 	char IRC_Reset = (char) 15; // SI Control Code (^O)
 
-	String output = input.replaceAll("\u0003[0-9]{1,2}(,[0-9]{1,2})?", ""); // Remove
-	// IRC
-	// background
-	// color
-	// code
+	String output = input.replaceAll("\u0003[0-9]{1,2}(,[0-9]{1,2})?", ""); // Remove IRC background color code
 	output = output.replace(IRC_Reset + "", "");
 	output = output.replace(IRC_Ital + "", "");
 	output = output.replace(IRC_Bold + "", "");
@@ -69,139 +65,38 @@ public class Utils {
 	    output = output.replace(IRC_Bold + "", MC_Color + "l");
 	    output = output.replace(IRC_Under + "", MC_Color + "n");
 
-	    output = output.replace(IRC_Color + "01", MC_Color + "0"); // IRC
-	    // Black
-	    // to MC
-	    // Black
-	    output = output.replace(IRC_Color + "02", MC_Color + "1");// IRC
-	    // Dark
-	    // Blue
-	    // to MC
-	    // Dark
-	    // Blue
-	    output = output.replace(IRC_Color + "03", MC_Color + "2"); // IRC
-	    // Dark
-	    // Green
-	    // to MC
-	    // Dark
-	    // Green
-	    output = output.replace(IRC_Color + "04", MC_Color + "c"); // IRC
-	    // Red
-	    // to MC
-	    // Red
-	    output = output.replace(IRC_Color + "05", MC_Color + "4"); // IRC
-	    // Dark
-	    // Red
-	    // to MC
-	    // Dark
-	    // Red
-	    output = output.replace(IRC_Color + "06", MC_Color + "5"); // IRC
-	    // Purple
-	    // to MC
-	    // Purple
-	    output = output.replace(IRC_Color + "07", MC_Color + "6"); // IRC
-	    // Dark
-	    // Yellow
-	    // to MC
-	    // Gold
-	    output = output.replace(IRC_Color + "08", MC_Color + "e"); // IRC
-	    // Yellow
-	    // to MC
-	    // Yellow
-	    output = output.replace(IRC_Color + "09", MC_Color + "a"); // IRC
-	    // Light
-	    // Green
-	    // to MC
-	    // Green
-	    output = output.replace(IRC_Color + "10", MC_Color + "3"); // IRC
-	    // Teal
-	    // to MC
-	    // Dark
-	    // Aqua
-	    output = output.replace(IRC_Color + "11", MC_Color + "b"); // IRC
-	    // Cyan
-	    // to MC
-	    // Aqua
-	    output = output.replace(IRC_Color + "12", MC_Color + "9"); // IRC
-	    // Light
-	    // Blue
-	    // to MC
-	    // Blue
-	    output = output.replace(IRC_Color + "13", MC_Color + "d"); // IRC
-	    // Light
-	    // Purple
-	    // to MC
-	    // Pink
-	    output = output.replace(IRC_Color + "14", MC_Color + "8"); // IRC
-	    // Grey
-	    // to MC
-	    // Dark
-	    // Grey
-	    output = output.replace(IRC_Color + "15", MC_Color + "7"); // IRC
-	    // Light
-	    // Grey
-	    // to MC
-	    // Grey
+	    output = output.replace(IRC_Color + "01", MC_Color + "0"); // IRC Black to MC Black
+	    output = output.replace(IRC_Color + "02", MC_Color + "1");// IRC Dark Blue to MC Dark Blue
+	    output = output.replace(IRC_Color + "03", MC_Color + "2"); // IRC Dark Green to MC Dark Green
+	    output = output.replace(IRC_Color + "04", MC_Color + "c"); // IRC Red to MC Red
+	    output = output.replace(IRC_Color + "05", MC_Color + "4"); // IRC Dark Red to MC Dark Red
+	    output = output.replace(IRC_Color + "06", MC_Color + "5"); // IRC Purple to MC Purple
+	    output = output.replace(IRC_Color + "07", MC_Color + "6"); // IRC Dark Yellow to MC Gold
+	    output = output.replace(IRC_Color + "08", MC_Color + "e"); // IRC Yellow to MC Yellow
+	    output = output.replace(IRC_Color + "09", MC_Color + "a"); // IRC Light Green to MC Green
+	    output = output.replace(IRC_Color + "10", MC_Color + "3"); // IRC Teal to MC Dark Aqua
+	    output = output.replace(IRC_Color + "11", MC_Color + "b"); // IRC Cyan to MC Aqua
+	    output = output.replace(IRC_Color + "12", MC_Color + "9"); // IRC Light Blue to MC Blue
+	    output = output.replace(IRC_Color + "13", MC_Color + "d"); // IRC Light Purple to MC Pink
+	    output = output.replace(IRC_Color + "14", MC_Color + "8"); // IRC Grey to MC Dark Grey
+	    output = output.replace(IRC_Color + "15", MC_Color + "7"); // IRC Light Grey to MC Grey
+	    output = output.replace(IRC_Color + "00", MC_Color + "f"); // IRC White to MC White
 
-	    output = output.replace(IRC_Color + "1", MC_Color + "0"); // IRC
-	    // Black
-	    // to MC
-	    // Black
-	    output = output.replace(IRC_Color + "2", MC_Color + "1");// IRC Dark
-	    // Blue
-	    // to MC
-	    // Dark
-	    // Blue
-	    output = output.replace(IRC_Color + "3", MC_Color + "2"); // IRC
-	    // Dark
-	    // Green
-	    // to MC
-	    // Dark
-	    // Green
-	    output = output.replace(IRC_Color + "4", MC_Color + "c"); // IRC Red
-	    // to MC
-	    // Red
-	    output = output.replace(IRC_Color + "5", MC_Color + "4"); // IRC
-	    // Dark
-	    // Red
-	    // to MC
-	    // Dark
-	    // Red
-	    output = output.replace(IRC_Color + "6", MC_Color + "5"); // IRC
-	    // Purple
-	    // to MC
-	    // Purple
-	    output = output.replace(IRC_Color + "7", MC_Color + "6"); // IRC
-	    // Dark
-	    // Yellow
-	    // to MC
-	    // Gold
-	    output = output.replace(IRC_Color + "8", MC_Color + "e"); // IRC
-	    // Yellow
-	    // to MC
-	    // Yellow
-	    output = output.replace(IRC_Color + "9", MC_Color + "a"); // IRC
-	    // Light
-	    // Green
-	    // to MC
-	    // Green
-	    output = output.replace(IRC_Color + "0", MC_Color + "f"); // IRC
-	    // White
-	    // to MC
-	    // White
+	    output = output.replace(IRC_Color + "1", MC_Color + "0"); // IRC Black to MC Black
+	    output = output.replace(IRC_Color + "2", MC_Color + "1");// IRC Dark Blue to MC Dark Blue
+	    output = output.replace(IRC_Color + "3", MC_Color + "2"); // IRC Dark Green to MC Dark Green
+	    output = output.replace(IRC_Color + "4", MC_Color + "c"); // IRC Red to MC Red
+	    output = output.replace(IRC_Color + "5", MC_Color + "4"); // IRC Dark Red to MC Dark Red
+	    output = output.replace(IRC_Color + "6", MC_Color + "5"); // IRC Purple to MC Purple
+	    output = output.replace(IRC_Color + "7", MC_Color + "6"); // IRC Dark Yellow to MC Gold
+	    output = output.replace(IRC_Color + "8", MC_Color + "e"); // IRC Yellow to MC Yellow
+	    output = output.replace(IRC_Color + "9", MC_Color + "a"); // IRC Light Green to MC Green
+	    output = output.replace(IRC_Color + "0", MC_Color + "f"); // IRC White to MC White
 
-	    output = output.replace(IRC_Color + "", ""); // Get rid of any
-	    // remaining ETX
-	    // Characters
-	    output = output.replace(IRC_Ital + "", ""); // Get rid of any
-	    // remaining GS
-	    // Characters
-	    output = output.replace(IRC_Bold + "", ""); // Get rid of any
-	    // remaining STX
-	    // Characters
-	    output = output.replace(IRC_Under + "", ""); // Get rid of any
-	    // remaining US
-	    // Characters
+	    output = output.replace(IRC_Color + "", ""); // Get rid of any remaining ETX Characters
+	    output = output.replace(IRC_Ital + "", ""); // Get rid of any remaining GS Characters
+	    output = output.replace(IRC_Bold + "", ""); // Get rid of any remaining STX Characters
+	    output = output.replace(IRC_Under + "", ""); // Get rid of any remaining US Characters
 
 	} else {
 	    if (!Config.isIrcdConvertColorCodes()) {
@@ -256,8 +151,7 @@ public class Utils {
 	}
     }
 
-    public static boolean wildCardMatch(String text, String pattern) {
-	// add sentinel so don't need to worry about *'s at end of pattern
+    public static boolean wildCardMatch(String text, String pattern) { add sentinel so don't need to worry about *'s at end of pattern
 	text += '\0';
 	pattern += '\0';
 
@@ -356,8 +250,7 @@ public class Utils {
 	if (strArray.length <= start) {
 	    return "";
 	}
-
-	// Compute buffer length
+ Compute buffer length
 	int size = delimiter.length() * (strArray.length - start - 1);
 	for (final String s : strArray) {
 	    size += s.length();
