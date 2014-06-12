@@ -294,14 +294,13 @@ public class BukkitUserManagement {
 	//getLogger().info("Player joining: getting masked host");
 	String host = maskHost(player.getAddress().getAddress());
 	//getLogger().info("Player joining: getting real hostname");
-	
+
 	// TODO This right here is the primary cause of login lag
 	//String realhost = player.getAddress().getAddress().getHostName();
-	
 	// TODO This is a temporary solution
 	maskedrealhost.append("Masked-to-avoid-lag-" + host);
 	String realhost = maskedrealhost.toString();
-	
+
 	//getLogger().info("Player joining: getting ip");
 	String ip = player.getAddress().getAddress().getHostAddress();
 	//getLogger().info("Player joining: world");

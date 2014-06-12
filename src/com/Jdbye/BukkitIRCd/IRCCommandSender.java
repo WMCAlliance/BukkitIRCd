@@ -43,27 +43,28 @@ public class IRCCommandSender implements CommandSender {
 		}
 	    }
 
-	    // TODO Ignore List
+	    // TODO Ignore List (this is the staff channel chat, so may be the wrong place for this to go)
 			/*for (String nameToIngnore : IRCd.globalNameIgnoreList ) {
-	     if ( !(IRCd.serverName.equals(nameToIngnore)) ) {
-	     switch (IRCd.mode) {
-	     case STANDALONE:
-	     IRCd.writeOpers(":" + Config.getIrcdServerName() + "!"
-	     + Config.getIrcdServerName() + "@"
-	     + Config.getIrcdServerHostName() + " PRIVMSG "
-	     + Config.getIrcdConsoleChannel() + " :"
-	     + IRCd.convertColors(message, false));
-	     break;
-	     case INSPIRCD:
-	     if (IRCd.isLinkcompleted()) {
-	     IRCd.privmsg(IRCd.serverUID,
-	     Config.getIrcdConsoleChannel(),
-	     IRCd.convertColors(message, false));
-	     }
-	     break;
-	     }
+	     if ( !(IRCd.serverName.equals(nameToIngnore)) ) {*/
+	    switch (IRCd.mode) {
+		case STANDALONE:
+		    IRCFunctionality.writeOpers(":" + Config.getIrcdServerName() + "!" +
+			    Config.getIrcdServerName() + "@" +
+			    Config.getIrcdServerHostName() + " PRIVMSG " +
+			    Config.getIrcdConsoleChannel() + " :" +
+			    Utils.convertColors(message, false));
+		    break;
+		case INSPIRCD:
+		    if (IRCd.isLinkcompleted()) {
+			IRCFunctionality.privmsg(IRCd.serverUID,
+				Config.getIrcdConsoleChannel(),
+				Utils.convertColors(message, false));
+		    }
+		    break;
+	    }/*
 	     }
 	     }*/
+
 	}
     }
 

@@ -38,7 +38,7 @@ public class Bans {
 	IRCd.ircBans.clear();
 
 	try {
-			// use buffering, reading one line at a time
+	    // use buffering, reading one line at a time
 	    // FileReader always assumes default encoding is OK!
 	    BufferedReader input = new BufferedReader(new FileReader(bansFile));
 	    try {

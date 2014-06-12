@@ -26,7 +26,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class IRCFunctionality {
-    
+
     // This is where the channel topic is configured
     public static void setTopic(String topic, String user, String userhost) {
 	channelTopic = topic;
@@ -412,8 +412,7 @@ public class IRCFunctionality {
 	return "";
 
     }
-    
-    
+
     /**
      @param source
      UID of sender
@@ -441,7 +440,6 @@ public class IRCFunctionality {
 	privmsg(source, target, action);
     }
 
-    
     public static boolean writeTo(String nick, String line) {
 	synchronized (csIrcUsers) {
 	    if (mode == Modes.STANDALONE) {
@@ -457,7 +455,7 @@ public class IRCFunctionality {
 	}
 	return false;
     }
-    
+
     public static void disconnectAll() {
 	disconnectAll(null);
     }
@@ -480,7 +478,6 @@ public class IRCFunctionality {
 	}
     }
 
-    
     public static void writeAll(String message, Player sender) {
 	int i = 0;
 	String line = "", host = "unknown", nick = "Unknown";

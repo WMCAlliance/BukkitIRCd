@@ -12,7 +12,7 @@ import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Utils {
-    
+
     /**
      Strips IRC Formatting
 
@@ -39,8 +39,7 @@ public class Utils {
 	output = output.replace(IRC_Color + "", "");
 	return output;
     }
-    
-    
+
     /**
      Converts colors from Minecraft to IRC, or IRC to Minecraft if specified
 
@@ -240,6 +239,7 @@ public class Utils {
 
 	return output;
     }
+
     public static boolean println(String... parts) {
 	final String line = Utils.join(parts, " ", 0);
 	if ((IRCd.server == null) || (!IRCd.server.isConnected()) || (IRCd.server.isClosed()) ||
@@ -255,8 +255,7 @@ public class Utils {
 	    return true;
 	}
     }
-    
-    
+
     public static boolean wildCardMatch(String text, String pattern) {
 	// add sentinel so don't need to worry about *'s at end of pattern
 	text += '\0';
@@ -296,7 +295,7 @@ public class Utils {
 	}
 	return states[N];
     }
-    
+
     // TODO Find out what this is supposed to be used for, as literally nothing uses it
     public static String[] split(String line) {
 	String[] sp1 = line.split(" :", 2);
@@ -315,7 +314,7 @@ public class Utils {
 	}
 	return res;
     }
-    
+
     public static void executeCommand(final String command) {
 	new BukkitRunnable() {
 
@@ -332,8 +331,7 @@ public class Utils {
 		} catch (CommandException c) {
 		    Throwable e = c.getCause();
 
-		    IRCd.commandSender.sendMessage("Exception in command \"" +
-			    command + "\": " + e);
+		    IRCd.commandSender.sendMessage("Exception in command \"" + command + "\": " + e);
 		    if (Config.isDebugModeEnabled()) {
 			for (final StackTraceElement s : e.getStackTrace()) {
 			    IRCd.commandSender.sendMessage(s.toString());
@@ -373,8 +371,7 @@ public class Utils {
 
 	return builder.toString();
     }
-    
-    
+
     /**
      Broadcasts a message
 

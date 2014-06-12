@@ -674,7 +674,6 @@ public class IRCd implements Runnable {
      * UID + " swhois :is currently in an unknown world"); } } } return true; }
      * else return false; }
      */
-
     public void parseLinkCommand(String command) throws IOException {
 	if (Config.isDebugModeEnabled()) {
 	    BukkitIRCdPlugin.log.info("[BukkitIRCd]" + ChatColor.YELLOW +
@@ -900,8 +899,7 @@ public class IRCd implements Runnable {
 		    // and
 		    // points to a bug in the code
 		    BukkitIRCdPlugin.log
-			    .severe("[BukkitIRCd] UID/Config.getLinkServerID() " +
-				    split[0] +
+			    .severe("[BukkitIRCd] UID/Config.getLinkServerID() " + split[0] +
 				    " not found in list. Error code IRCd1806.");
 		}
 
@@ -1989,13 +1987,7 @@ public class IRCd implements Runnable {
 					" NOTICE " +
 					uidfrom +
 					" :You are not a channel operator (or above). Command failed."); // Only
-			    } // let
-			    // them
-			    // execute
-			    // commands
-			    // if
-			    // they're
-			    // oper
+			    } // let them execute commands if they're oper
 			    else {
 				message = message.substring(1);
 				Utils.executeCommand(message);
