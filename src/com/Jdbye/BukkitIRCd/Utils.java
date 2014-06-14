@@ -11,14 +11,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
+/**
+ A general collection of utilities used within the plugin, sometimes for transferring data between IRC and game.
+ */
 public class Utils {
 
     /**
-     Strips IRC Formatting
-
-     @param input
-
-     @return output
+     Strips IRC formatting codes.
+     <p>
+     @param input IRC Message being send to game
+     <p>
+     @return Stripped down message
      */
     public static String stripIRCFormatting(String input) {
 	char IRC_Color = (char) 3; // ETX Control Code (^C)
@@ -37,13 +40,16 @@ public class Utils {
     }
 
     /**
-     Converts colors from Minecraft to IRC, or IRC to Minecraft if specified
-
-     @param input
-     @param fromIRCtoGame
-     Convert IRC colors to Minecraft colors?
-
-     @return
+     Converts colors in a string from Minecraft to IRC, or IRC to Minecraft if specified.
+     <p>
+     For Minecraft -> IRC, &colour codes are converted to the IRC format.
+     <p>
+     For IRC -> Minecraft, IRC codes are converted to Minecraft codes with the section sign.
+     <p>
+     @param input A string, usually a message, containing formatted text.
+     @param fromIRCtoGame If true, the string was generated in IRC and needs to be formatted for Minecraft. If false, it was generated in Minecraft and needs to be formatted for IRC.
+     <p>
+     @return Converted message
      */
     public static String convertColors(String input, boolean fromIRCtoGame) {
 
@@ -135,10 +141,16 @@ public class Utils {
 	return output;
     }
 
+    /**
+     Connects 'parts' of a String and prints them.
+     <p>
+     @param parts Incoming message
+     <p>
+     @return Whether the message was successfully sent.
+     */
     public static boolean println(String... parts) {
 	final String line = Utils.join(parts, " ", 0);
-	if ((IRCd.server == null) || (!IRCd.server.isConnected()) || (IRCd.server.isClosed()) ||
-		(out == null)) {
+	if ((IRCd.server == null) || (!IRCd.server.isConnected()) || (IRCd.server.isClosed()) || (out == null)) {
 	    return false;
 	}
 	synchronized (csServer) {
@@ -151,7 +163,15 @@ public class Utils {
 	}
     }
 
-    public static boolean wildCardMatch(String text, String pattern) { add sentinel so don't need to worry about *'s at end of pattern
+    /**
+     <p>
+     @param text Text to be checked
+     @param pattern	Regex pattern for matching
+     <p>
+     @return	Whether a match was found
+     */
+    public static boolean wildCardMatch(String text, String pattern) {
+	//add sentinel so don't need to worry about *'s at end of pattern
 	text += '\0';
 	pattern += '\0';
 
@@ -191,6 +211,13 @@ public class Utils {
     }
 
     // TODO Find out what this is supposed to be used for, as literally nothing uses it
+    /**
+     UNKNOWN
+     <p>
+     @param line
+     <p>
+     @return
+     */
     public static String[] split(String line) {
 	String[] sp1 = line.split(" :", 2);
 	String[] sp2 = sp1[0].split(" ");
@@ -209,6 +236,11 @@ public class Utils {
 	return res;
     }
 
+    /**
+     Executes a Minecraft command asynchronously for the IRC staff channel.
+     <p>
+     @param command	The command that is to be run.
+     */
     public static void executeCommand(final String command) {
 	new BukkitRunnable() {
 
@@ -216,11 +248,9 @@ public class Utils {
 	    public void run() {
 		final Server server = Bukkit.getServer();
 		try {
-		    final ServerCommandEvent commandEvent = new ServerCommandEvent(
-			    IRCd.commandSender, command);
+		    final ServerCommandEvent commandEvent = new ServerCommandEvent(IRCd.commandSender, command);
 		    server.getPluginManager().callEvent(commandEvent);
-		    server.dispatchCommand(commandEvent.getSender(),
-			    commandEvent.getCommand());
+		    server.dispatchCommand(commandEvent.getSender(), commandEvent.getCommand());
 		    IRCd.commandSender.sendMessage("Command Executed");
 		} catch (CommandException c) {
 		    Throwable e = c.getCause();
@@ -245,12 +275,21 @@ public class Utils {
 	}.runTask(BukkitIRCdPlugin.thePlugin);
     }
 
+    /**
+     UNKNOWN
+     <p>
+     @param strArray
+     @param delimiter
+     @param start
+     <p>
+     @return
+     */
     public static String join(String[] strArray, String delimiter, int start) {
 
 	if (strArray.length <= start) {
 	    return "";
 	}
- Compute buffer length
+	//Compute buffer length
 	int size = delimiter.length() * (strArray.length - start - 1);
 	for (final String s : strArray) {
 	    size += s.length();
@@ -266,10 +305,10 @@ public class Utils {
     }
 
     /**
-     Broadcasts a message
-
-     @param msg
-
+     Broadcasts a message to the game server asynchronously
+     <p>
+     @param msg	The message to be broadcast
+     <p>
      @return true if able to schedule broadcast
      */
     public static boolean broadcastMessage(final String msg) {
@@ -289,8 +328,11 @@ public class Utils {
 
     /**
      Send a message to a player
-
-     @param msg
+     <p>
+     @param player The recipient of the message.
+     @param msg	The message to be sent
+     <p>
+     @return Whether the message was successfully sent
      */
     public static boolean sendMessage(final String player, final String msg) {
 

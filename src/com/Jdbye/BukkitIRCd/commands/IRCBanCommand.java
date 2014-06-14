@@ -81,8 +81,7 @@ public class IRCBanCommand implements CommandExecutor {
 			    player.sendMessage(ChatColor.RED +
 				    "User is already banned.");
 			}
-		    } else if (thePlugin.countStr(ban, ".") == 3) { // It's an
-			// IP
+		    } else if (thePlugin.countStr(ban, ".") == 3) { // It's an IP
 			if (IRCUserManagement.banIRCUser("*!*@" + ban, player.getName() +
 				"!" +
 				player.getName() +

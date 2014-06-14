@@ -18,8 +18,7 @@ import org.bukkit.Bukkit;
 
 /**
  Handle events for all Player related events
-
- @author Jdbye
+ <p>
  */
 public class BukkitIRCdPlayerListener implements Listener {
 
@@ -29,14 +28,17 @@ public class BukkitIRCdPlayerListener implements Listener {
 	plugin = instance;
     }
 
+    /**
+     The listener for the player death event, used for displaying death messages in the IRC channel
+     <p>
+     @param event The event itself, used to get the death message
+     */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerDeath(PlayerDeathEvent event) {
 	if (!Config.isIrcdBroadCastDeathMessages()) {
 	    return;
 	}
-	String message = event.getDeathMessage().replace(
-		event.getEntity().getName(),
-		event.getEntity().getName() + Config.getIrcdIngameSuffix());
+	String message = event.getDeathMessage().replace(event.getEntity().getName(), event.getEntity().getName() + Config.getIrcdIngameSuffix());
 
 	if (!Config.isIrcdColorDeathMessagesEnabled()) {
 	    message = ChatColor.stripColor(message);
@@ -53,6 +55,11 @@ public class BukkitIRCdPlayerListener implements Listener {
 
     }
 
+    /**
+     Game command tracker, to track kicks
+     <p>
+     @param event Command event itself
+     */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onServerCommand(ServerCommandEvent event) {
 
@@ -64,7 +71,8 @@ public class BukkitIRCdPlayerListener implements Listener {
 	    if (Config.getKickCommands().contains(split[0].toLowerCase())) {
 
 		// PlayerKickEvent does not give kicker, so we listen to kick commands instead
-		// TODO I think kicker is provided now @Mu5
+		// TODO I think kicker is provided now - ~@Mu5
+		// Though it doesn't look like it - ~@WizardCM
 		final StringBuilder s = new StringBuilder(300);
 		for (int i = 2; i < split.length; i++) {
 		    s.append(split[i]).append(" ");
@@ -85,8 +93,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 
 		String message = s.toString();
 
-		message = ChatColor.stripColor(ChatColor
-			.translateAlternateColorCodes('&', message));
+		message = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', message));
 		if (Config.isIrcdColorSayMessageEnabled()) {
 		    message = (char) 3 + "13" + message;
 		}
@@ -102,6 +109,11 @@ public class BukkitIRCdPlayerListener implements Listener {
 	}
     }
 
+    /**
+     One of the two most important events to be tracked, the player join event. This creates a user and adds it to the IRC channel.
+     <p>
+     @param event The event itself containing the player and their name
+     */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
 	final Player player = event.getPlayer();
@@ -113,9 +125,14 @@ public class BukkitIRCdPlayerListener implements Listener {
 	 public void run() {
                     
 	 }
-	 }, 20*30);*/
+	 }, 20);*/
     }
 
+    /**
+     The other most important event to be tracked, the player quit event. This removes the user from IRC.
+     <p>
+     @param event The event itself containing the name of the player to remove
+     */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(PlayerQuitEvent event) {
 	final String name = event.getPlayer().getName();
@@ -123,23 +140,24 @@ public class BukkitIRCdPlayerListener implements Listener {
 	BukkitUserManagement.removeBukkitUser(BukkitUserManagement.getUser(name));
     }
 
+    /**
+     The core chat event of Minecraft, tracked to forward messages to IRC
+     <p>
+     @param event The event itself, containing the sender and message
+     */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-	BukkitUserManagement.updateUserIdleTime(BukkitUserManagement.getUser(event.getPlayer()
-		.getName()));
+	BukkitUserManagement.updateUserIdleTime(BukkitUserManagement.getUser(event.getPlayer().getName()));
 
 	switch (IRCd.mode) {
 	    case STANDALONE:
-		IRCFunctionality.writeAll(Utils.convertColors(event.getMessage(), false),
-			event.getPlayer());
+		IRCFunctionality.writeAll(Utils.convertColors(event.getMessage(), false), event.getPlayer());
 		break;
 
 	    case INSPIRCD:
-		final BukkitPlayer bp = BukkitUserManagement.getUserObject(event.getPlayer()
-			.getName());
+		final BukkitPlayer bp = BukkitUserManagement.getUserObject(event.getPlayer().getName());
 		if (bp != null && IRCd.isLinkcompleted()) {
-		    IRCFunctionality.privmsg(bp.getUID(), Config.getIrcdChannel(),
-			    Utils.convertColors(event.getMessage(), false));
+		    IRCFunctionality.privmsg(bp.getUID(), Config.getIrcdChannel(), Utils.convertColors(event.getMessage(), false));
 		}
 		break;
 	}
@@ -147,10 +165,14 @@ public class BukkitIRCdPlayerListener implements Listener {
 	event.setMessage(Utils.stripIRCFormatting(event.getMessage()));
     }
 
+    /**
+     Used instead of tracking commands themselves because it's more accurate, this is for the /me and /say ingame commands, to be forwarded to the server.
+     <p>
+     @param event The event itself, containing the command and sender
+     */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-	BukkitUserManagement.updateUserIdleTime(BukkitUserManagement.getUser(event.getPlayer()
-		.getName()));
+	BukkitUserManagement.updateUserIdleTime(BukkitUserManagement.getUser(event.getPlayer().getName()));
 
 	String[] split = event.getMessage().split(" ");
 	if (split.length > 1) {
@@ -158,24 +180,13 @@ public class BukkitIRCdPlayerListener implements Listener {
 	    if (split[0].equalsIgnoreCase("/me")) {
 		switch (IRCd.mode) {
 		    case STANDALONE:
-			IRCFunctionality.writeAll(
-				(char) 1 +
-				"ACTION " +
-				Utils.convertColors(
-					Utils.join(
-						event.getMessage().split(
-							" "), " ", 1),
-					false) + (char) 1, event
-				.getPlayer());
+			IRCFunctionality.writeAll((char) 1 + "ACTION " + Utils.convertColors(Utils.join(event.getMessage().split(" "), " ", 1), false) + (char) 1, event.getPlayer());
 			break;
 
 		    case INSPIRCD:
-			final BukkitPlayer bp = BukkitUserManagement.getUserObject(event
-				.getPlayer().getName());
+			final BukkitPlayer bp = BukkitUserManagement.getUserObject(event.getPlayer().getName());
 			if (bp != null && IRCd.isLinkcompleted()) {
-			    IRCFunctionality.action(bp.getUID(), Config.getIrcdChannel(), Utils
-				    .convertColors(Utils.join(event.getMessage()
-						    .split(" "), " ", 1), false));
+			    IRCFunctionality.action(bp.getUID(), Config.getIrcdChannel(), Utils.convertColors(Utils.join(event.getMessage().split(" "), " ", 1), false));
 			}
 			break;
 		}
@@ -184,8 +195,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 
 	    if (Config.getKickCommands().contains(
 		    split[0].substring(1).toLowerCase())) {
-		// PlayerKickEvent does not give kicker, so we listen to kick
-		// commands instead
+		// PlayerKickEvent does not give kicker, so we listen to kick // commands instead
 		if (event.getPlayer().hasPermission("bukkitircd.kick")) {
 		    final StringBuilder s = new StringBuilder(300);
 		    for (int i = 2; i < split.length; i++) {
@@ -195,9 +205,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 		    final String kickedPlayer = split[1];
 		    if ((BukkitUserManagement.getUserObject(event.getPlayer().getName())) != null) {
 			plugin.removeLastReceivedBy(kickedPlayer);
-			BukkitUserManagement.kickBukkitUser(kickMessage,
-				BukkitUserManagement.getUser(kickedPlayer),
-				BukkitUserManagement.getUser(event.getPlayer().getName()));
+			BukkitUserManagement.kickBukkitUser(kickMessage, BukkitUserManagement.getUser(kickedPlayer), BukkitUserManagement.getUser(event.getPlayer().getName()));
 			BukkitUserManagement.removeBukkitUser(BukkitUserManagement.getUser(kickedPlayer));
 		    }
 
@@ -214,8 +222,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 
 		    String message = s.toString();
 		    message = ChatColor.stripColor(message);
-		    message = ChatColor.translateAlternateColorCodes('&',
-			    message);
+		    message = ChatColor.translateAlternateColorCodes('&', message);
 		    if (Config.isIrcdColorSayMessageEnabled()) {
 			message = (char) 3 + "13" + message;
 		    }
@@ -223,8 +230,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 		    switch (IRCd.mode) {
 			case INSPIRCD:
 			    if (IRCd.isLinkcompleted()) {
-				IRCFunctionality.privmsg(IRCd.serverUID,
-					Config.getIrcdChannel(), message);
+				IRCFunctionality.privmsg(IRCd.serverUID, Config.getIrcdChannel(), message);
 			    }
 			    break;
 			case STANDALONE:
@@ -236,10 +242,14 @@ public class BukkitIRCdPlayerListener implements Listener {
 	}
     }
 
+    /**
+     Tracks player movement to notify IRC whois of whether the player is AFK
+     <p>
+     @param event The move event itself, containing the player
+     */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {
 	final Player p = event.getPlayer();
-	BukkitUserManagement.updateUserIdleTimeAndWorld(BukkitUserManagement.getUser(p.getName()),
-		p.getWorld().getName());
+	BukkitUserManagement.updateUserIdleTimeAndWorld(BukkitUserManagement.getUser(p.getName()), p.getWorld().getName());
     }
 }

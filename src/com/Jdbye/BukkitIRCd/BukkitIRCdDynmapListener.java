@@ -9,6 +9,11 @@ import com.Jdbye.BukkitIRCd.configuration.Config;
 
 public class BukkitIRCdDynmapListener implements Listener {
 
+    /**
+     Listener for the Dynmap web chat event.
+     <p>
+     @param webevt The event itself, containing the message.
+     */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onDynmapWebChatEvent(DynmapWebChatEvent webevt) {
 	try {

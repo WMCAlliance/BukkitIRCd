@@ -225,9 +225,9 @@ public class IRCFunctionality {
 
     /**
      Gets group prefix from modes
-
+     <p>
      @param modes
-
+     <p>
      @return
      */
     public static String getGroupPrefix(String modes) {
@@ -320,9 +320,9 @@ public class IRCFunctionality {
 
     /**
      Gets group suffix from modes
-
+     <p>
      @param modes
-
+     <p>
      @return
      */
     public static String getGroupSuffix(String modes) {

@@ -160,10 +160,10 @@ public class Metrics {
      Construct and create a Graph that can be used to separate specific
      plotters to their own graphs on the metrics website. Plotters can be
      added to the graph object returned.
-
+     <p>
      @param name
      The name of the graph
-
+     <p>
      @return Graph object created. Will never return NULL under normal
      circumstances unless bad parameters are given
      */
@@ -185,7 +185,7 @@ public class Metrics {
     /**
      Add a Graph object to BukkitMetrics that represents data for the plugin
      that should be sent to the backend
-
+     <p>
      @param graph
      The name of the graph
      */
@@ -199,7 +199,7 @@ public class Metrics {
 
     /**
      Adds a custom data plotter to the default graph
-
+     <p>
      @param plotter
      The plotter to use to plot custom data
      */
@@ -220,7 +220,7 @@ public class Metrics {
      repeating task as the plugin and send the initial data to the metrics
      backend, and then after that it will post in increments of PING_INTERVAL
      * * 1200 ticks.
-
+     <p>
      @return True if statistics measuring is running, otherwise false.
      */
     public boolean start() {
@@ -278,7 +278,7 @@ public class Metrics {
 
     /**
      Has the server owner denied plugin metrics?
-
+     <p>
      @return true if metrics should be opted out of it
      */
     public boolean isOptOut() {
@@ -306,7 +306,7 @@ public class Metrics {
     /**
      Enables metrics for the server by setting "opt-out" to false in the
      config file and starting the metrics task.
-
+     <p>
      @throws java.io.IOException
      */
     public void enable() throws IOException {
@@ -330,7 +330,7 @@ public class Metrics {
     /**
      Disables metrics for the server by setting "opt-out" to true in the
      config file and canceling the metrics task.
-
+     <p>
      @throws java.io.IOException
      */
     public void disable() throws IOException {
@@ -353,7 +353,7 @@ public class Metrics {
     /**
      Gets the File object of the config file that should be used to store data
      such as the GUID and opt-out status
-
+     <p>
      @return the File object for the config file
      */
     public File getConfigFile() {
@@ -492,7 +492,7 @@ public class Metrics {
     /**
      Check if mineshafter is present. If it is, we need to bypass it to send
      POST requests
-
+     <p>
      @return true if mineshafter is installed on the server
      */
     private boolean isMineshafterPresent() {
@@ -514,7 +514,7 @@ public class Metrics {
      data.append(encode("guid")).append('=').append(encode(guid));
      encodeDataPair(data, "version", description.getVersion());
      </code>
-
+     <p>
      @param buffer
      the stringbuilder to append the data pair onto
      @param key
@@ -531,10 +531,10 @@ public class Metrics {
 
     /**
      Encode text as UTF-8
-
+     <p>
      @param text
      the text to encode
-
+     <p>
      @return the encoded text, as UTF-8
      */
     private static String encode(final String text)
@@ -563,7 +563,7 @@ public class Metrics {
 
 	/**
 	 Gets the graph's name
-
+	 <p>
 	 @return the Graph's name
 	 */
 	public String getName() {
@@ -572,7 +572,7 @@ public class Metrics {
 
 	/**
 	 Add a plotter to the graph, which will be used to plot entries
-
+	 <p>
 	 @param plotter
 	 the plotter to add to the graph
 	 */
@@ -582,7 +582,7 @@ public class Metrics {
 
 	/**
 	 Remove a plotter from the graph
-
+	 <p>
 	 @param plotter
 	 the plotter to remove from the graph
 	 */
@@ -592,7 +592,7 @@ public class Metrics {
 
 	/**
 	 Gets an <b>unmodifiable</b> set of the plotter objects in the graph
-
+	 <p>
 	 @return an unmodifiable {@link java.util.Set} of the plotter objects
 	 */
 	public Set<Plotter> getPlotters() {
@@ -641,7 +641,7 @@ public class Metrics {
 
 	/**
 	 Construct a plotter with a specific plot name
-
+	 <p>
 	 @param name
 	 the name of the plotter to use, which will show up on the
 	 website
@@ -656,14 +656,14 @@ public class Metrics {
 	 thus cannot be guaranteed to be thread friendly or safe. This
 	 function can be called from any thread so care should be taken when
 	 accessing resources that need to be synchronized.
-
+	 <p>
 	 @return the current value for the point to be plotted.
 	 */
 	public abstract int getValue();
 
 	/**
 	 Get the column name for the plotted point
-
+	 <p>
 	 @return the plotted point's column name
 	 */
 	public String getColumnName() {

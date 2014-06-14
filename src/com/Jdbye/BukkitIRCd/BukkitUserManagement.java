@@ -23,6 +23,9 @@ import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+/**
+ Performs most of the heavy lifting in managing a BukkitPlayer. Mostly pulled from IRCd.java to help clean it up. Very rough-cut, needs work.
+ */
 public class BukkitUserManagement {
 
     public static int getUser(String nick) {
@@ -32,8 +35,7 @@ public class BukkitUserManagement {
 	    while (i < bukkitPlayers.size()) {
 		curnick = bukkitPlayers.get(i).nick;
 		if ((curnick.equalsIgnoreCase(nick)) ||
-			((curnick + Config.getIrcdIngameSuffix())
-			.equalsIgnoreCase(nick))) {
+			((curnick + Config.getIrcdIngameSuffix()).equalsIgnoreCase(nick))) {
 		    return i;
 		} else {
 		    i++;
@@ -45,10 +47,10 @@ public class BukkitUserManagement {
 
     /**
      Used for Console Kicks
-
+     <p>
      @param kickReason
      @param kickedID
-
+     <p>
      @return
      */
     public static boolean kickUser(String kickReason, int kickedID) {
@@ -82,11 +84,11 @@ public class BukkitUserManagement {
 
     /**
      Used for player kicks
-
+     <p>
      @param kickReason
      @param kickedID
      @param kickerID
-
+     <p>
      @return
      */
     public static boolean kickBukkitUser(String kickReason, int kickedID,
@@ -127,7 +129,7 @@ public class BukkitUserManagement {
 
     /**
      Kicks player synchronously
-
+     <p>
      @param player
      @param kickReason
      */

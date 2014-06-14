@@ -3,17 +3,21 @@ package com.Jdbye.BukkitIRCd;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+/**
+ Provides a Bukkit Player object, and everything involved.
+ */
 public class BukkitPlayer {
 
-    public BukkitPlayer(String nick, String world, String mode,
-	    String realhost, String host, String ip, long signedOn,
-	    long idleTime) {
+    String nick = null, host = null, realhost = null, ip = null, UID = null, world = null;
+    private String mode = null, textMode = null;
+    long signedOn = 0, idleTime = 0;
+
+    public BukkitPlayer(String nick, String world, String mode, String realhost, String host, String ip, long signedOn, long idleTime) {
 	this.nick = nick;
 	this.mode = mode;
 	this.world = world;
 	if (mode != null) {
-	    this.textMode = mode.replace("~", "q").replace("&", "a")
-		    .replace("@", "o").replace("%", "h").replace("+", "v");
+	    this.textMode = mode.replace("~", "q").replace("&", "a").replace("@", "o").replace("%", "h").replace("+", "v");
 	}
 	this.host = host;
 	this.realhost = realhost;
@@ -63,9 +67,4 @@ public class BukkitPlayer {
 	}
 	return null;
     }
-
-    String nick = null, host = null, realhost = null, ip = null, UID = null,
-	    world = null;
-    private String mode = null, textMode = null;
-    long signedOn = 0, idleTime = 0;
 }

@@ -877,10 +877,8 @@ public class ClientConnection implements Runnable {
 			}
 		    } else if (split[1].equalsIgnoreCase(Config
 			    .getIrcdServerName())) {
-			if ((isAction || (!isCTCP)) && (IRCd.isPlugin()) &&
-				(BukkitIRCdPlugin.thePlugin != null)) {
-			    BukkitIRCdPlugin.thePlugin.setLastReceived(
-				    "@CONSOLE@", nick);
+			if ((isAction || (!isCTCP)) && (IRCd.isPlugin()) && (BukkitIRCdPlugin.thePlugin != null)) {
+			    BukkitIRCdPlugin.thePlugin.setLastReceived("@CONSOLE@", nick);
 			    if (isAction) {
 
 				if (IRCd.msgIRCPrivateAction.length() > 0) {
