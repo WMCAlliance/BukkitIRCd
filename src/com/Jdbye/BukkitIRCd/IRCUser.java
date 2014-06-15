@@ -2,10 +2,26 @@ package com.Jdbye.BukkitIRCd;
 
 public class IRCUser {
 
-    public IRCUser(String nick, String realname, String ident, String hostmask,
-	    String ipaddress, String modes, String customWhois,
-	    boolean isRegistered, boolean isOper, String awayMsg,
-	    long signonTime, long lastActivity, String accountname) {
+    public String nick, realname, ident, hostmask, realhost, ipaddress;
+    private String modes = "", textModes = "";
+    private String consoleModes = "", consoleTextModes = "";
+    public String customWhois = ""; // Not used yet
+    // public boolean isIdented = false;
+    // public boolean isNickSet = false;
+    public String accountname = "";
+    public boolean isRegistered = false;
+    public boolean isOper = false;
+    public boolean joined = false; // Whether the user has joined the plugin channel
+
+    public boolean consoleJoined = false; // Whether the user has joined the console channel, only used in linking mode
+
+    public String awayMsg = "";
+    // public long lastPingResponse;
+    public long signonTime;
+    public long lastActivity;
+    
+    public IRCUser(String nick, String realname, String ident, String hostmask, String ipaddress, String modes, String customWhois,
+	    boolean isRegistered, boolean isOper, String awayMsg, long signonTime, long lastActivity, String accountname) {
 	this.nick = nick;
 	this.realname = realname;
 	this.ident = ident;
@@ -84,24 +100,6 @@ public class IRCUser {
     public String getConsoleTextModes() {
 	return this.consoleTextModes;
     }
-
-    public String nick, realname, ident, hostmask, realhost, ipaddress;
-    private String modes = "", textModes = "";
-    private String consoleModes = "", consoleTextModes = "";
-    public String customWhois = ""; // Not used yet
-    // public boolean isIdented = false;
-    // public boolean isNickSet = false;
-    public String accountname = "";
-    public boolean isRegistered = false;
-    public boolean isOper = false;
-    public boolean joined = false; // Whether the user has joined the plugin channel
-
-    public boolean consoleJoined = false; // Whether the user has joined the console channel, only used in linking mode
-
-    public String awayMsg = "";
-    // public long lastPingResponse;
-    public long signonTime;
-    public long lastActivity;
 
     public long getSecondsIdle() {
 	return (System.currentTimeMillis() - lastActivity) / 1000L;

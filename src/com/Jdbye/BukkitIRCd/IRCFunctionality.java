@@ -27,7 +27,12 @@ import org.bukkit.entity.Player;
 
 public class IRCFunctionality {
 
-    // This is where the channel topic is configured
+    /**
+    Configure the channel topic, both main and staff if it's standalone, only main if it's linked
+    @param topic The topic for the channel
+    @param user The username of the person setting the topic
+    @param userhost The host of the user
+    */
     public static void setTopic(String topic, String user, String userhost) {
 	channelTopic = topic;
 	channelTopicSetDate = System.currentTimeMillis() / 1000L;
@@ -43,19 +48,20 @@ public class IRCFunctionality {
 	}
 
 	if (mode == Modes.STANDALONE) {
-	    writeAll(":" + userhost + " TOPIC " + Config.getIrcdChannel() +
-		    " :" + channelTopic);
-	    writeOpers(":" + userhost + " TOPIC " +
-		    Config.getIrcdConsoleChannel() + " :" + channelTopic);
+	    writeAll(":" + userhost + " TOPIC " + Config.getIrcdChannel() + " :" + channelTopic);
+	    writeOpers(":" + userhost + " TOPIC " + Config.getIrcdConsoleChannel() + " :" + channelTopic);
 	} else if (mode == Modes.INSPIRCD) {
 	    BukkitPlayer bp;
 	    if ((bp = BukkitUserManagement.getUserObject(user)) != null) {
-		Utils.println(":" + bp.getUID() + " TOPIC " + Config.getIrcdChannel() +
-			" :" + channelTopic);
+		Utils.println(":" + bp.getUID() + " TOPIC " + Config.getIrcdChannel() + " :" + channelTopic);
 	    }
 	}
     }
 
+    /**
+    Disconnects/unlinks an Inspircd link
+    @param reason The reason for the disconnect
+    */
     public static void disconnectServer(String reason) {
 	synchronized (csServer) {
 	    if (mode == Modes.INSPIRCD) {
@@ -75,8 +81,7 @@ public class IRCFunctionality {
 		    } catch (IOException e) {
 		    }
 		} else if (Config.isDebugModeEnabled()) {
-		    System.out
-			    .println("[BukkitIRCd] Already disconnected from link, so no need to cleanup.");
+		    System.out.println("[BukkitIRCd] Already disconnected from link, so no need to cleanup.");
 		}
 	    }
 	}
@@ -89,45 +94,39 @@ public class IRCFunctionality {
 	}
     }
 
-    // Connect to InspIRCd link
+    /**
+    Connect to InspIRCd link
+    @return Whether the reconnect was successful
+    */
     public static boolean connect() {
 	if (mode == Modes.INSPIRCD) {
-	    BukkitIRCdPlugin.log.info("[BukkitIRCd] Attempting connection to " +
-		    Config.getLinkRemoteHost() + ":" +
-		    Config.getLinkRemoteHost());
+	    BukkitIRCdPlugin.log.info("[BukkitIRCd] Attempting connection to " + Config.getLinkRemoteHost() + ":" + Config.getLinkRemoteHost());
 	    try {
-		server = new Socket(Config.getLinkRemoteHost(),
-			Config.getLinkRemotePort());
+		server = new Socket(Config.getLinkRemoteHost(), Config.getLinkRemotePort());
 		if ((server != null) && server.isConnected()) {
-		    BukkitIRCdPlugin.log.info("[BukkitIRCd] Connected to " +
-			    Config.getLinkRemoteHost() + ":" +
-			    Config.getLinkRemotePort());
+		    BukkitIRCdPlugin.log.info("[BukkitIRCd] Connected to " + Config.getLinkRemoteHost() + ":" + Config.getLinkRemotePort());
 		    IRCd.isIncoming = false;
 		    return true;
 		} else {
-		    BukkitIRCdPlugin.log
-			    .info("[BukkitIRCd] Failed connection to " +
-				    Config.getLinkRemoteHost() + ":" +
-				    Config.getLinkRemotePort());
+		    BukkitIRCdPlugin.log.info("[BukkitIRCd] Failed connection to " + Config.getLinkRemoteHost() + ":" + Config.getLinkRemotePort());
 		}
 	    } catch (IOException e) {
-		BukkitIRCdPlugin.log.info("[BukkitIRCd] Failed connection to " +
-			Config.getLinkRemoteHost() + ":" +
-			Config.getLinkRemotePort() + " (" + e + ")");
+		BukkitIRCdPlugin.log.info("[BukkitIRCd] Failed connection to " + Config.getLinkRemoteHost() + ":" + Config.getLinkRemotePort() + " (" + e + ")");
 	    }
 	}
 	return false;
     }
 
-    // IRC servers are required to send a list of capabilities to the server
-    // they're linking to
+    /**
+    Sends the required list of capabilities when linking
+    @return Whether the capabilties have been sent
+    */
     public static boolean sendLinkCAPAB() {
 	if (IRCd.capabSent) {
 	    return false;
 	}
 	Utils.println("CAPAB START 1201");
-	Utils.println("CAPAB CAPABILITIES :NICKMAX=" +
-		(Config.getIrcdMaxNickLength() + 1) +
+	Utils.println("CAPAB CAPABILITIES :NICKMAX=" + (Config.getIrcdMaxNickLength() + 1) +
 		" CHANMAX=50 IDENTMAX=33 MAXTOPIC=500 MAXQUIT=500 MAXKICK=500 MAXGECOS=500 MAXAWAY=999 MAXMODES=1 HALFOP=1 PROTOCOL=1201");
 	// Utils.println("CAPAB CHANMODES :admin=&a ban=b founder=~q halfop=%h op=@o operonly=O voice=+ v");
 	// // Don't send this line, the server will complain that we don't
@@ -144,6 +143,10 @@ public class IRCFunctionality {
 	return true;
     }
 
+    /**
+    Sends the required link burst information, including the version of the plugin, UID, and the opertype (network service)
+    @return Whether the burst was sent
+    */
     public static boolean sendLinkBurst() {
 	if (IRCd.burstSent) {
 	    return false;
@@ -177,18 +180,14 @@ public class IRCFunctionality {
 
 	    String world = bp.getWorld();
 	    if (world != null) {
-		Utils.println(pre + "METADATA " + UID + " swhois :is currently in " +
-			world);
+		Utils.println(pre + "METADATA " + UID + " swhois :is currently in " + world);
 	    } else {
-		Utils.println(pre + "METADATA " + UID +
-			" swhois :is currently in an unknown world");
+		Utils.println(pre + "METADATA " + UID + " swhois :is currently in an unknown world");
 	    }
 	}
 
-	Utils.println(pre + "FJOIN " + Config.getIrcdConsoleChannel() + " " +
-		consoleChannelTS + " +nt :qaohv," + serverUID);
-	Utils.println(pre + "FJOIN " + Config.getIrcdChannel() + " " + channelTS +
-		" +nt :qaohv," + serverUID);
+	Utils.println(pre + "FJOIN " + Config.getIrcdConsoleChannel() + " " + consoleChannelTS + " +nt :qaohv," + serverUID);
+	Utils.println(pre + "FJOIN " + Config.getIrcdChannel() + " " + channelTS + " +nt :qaohv," + serverUID);
 
 	int avail = 0;
 	StringBuilder sb = null;
@@ -203,9 +202,7 @@ public class IRCFunctionality {
 		}
 
 		sb = new StringBuilder(400);
-		sb.append(pre).append("FJOIN ").append(Config.getIrcdChannel())
-			.append(' ').append(channelTS).append(" +nt :")
-			.append(nextPart);
+		sb.append(pre).append("FJOIN ").append(Config.getIrcdChannel()).append(' ').append(channelTS).append(" +nt :").append(nextPart);
 		avail = 409 - sb.length();
 	    } else {
 		sb.append(' ').append(nextPart);
@@ -427,15 +424,12 @@ public class IRCFunctionality {
     }
 
     /**
-     @param source
-     UID of sender
-     @param target
-     name of target
-     @param message
-     message to send with IRC colors
+    Performs an action (/me) to a channel
+     @param source UID of sender
+     @param target name of target
+     @param message message to send with IRC colors
      */
-    public static void action(final String source, final String target,
-	    final String message) {
+    public static void action(final String source, final String target, final String message) {
 	final String action = (char) 1 + "ACTION " + message + (char) 1;
 	privmsg(source, target, action);
     }
@@ -460,6 +454,10 @@ public class IRCFunctionality {
 	disconnectAll(null);
     }
 
+    /**
+    Disconnects all players from IRC
+    @param reason 
+    */
     public static void disconnectAll(String reason) {
 	synchronized (csIrcUsers) {
 	    switch (mode) {
@@ -491,19 +489,15 @@ public class IRCFunctionality {
 	    }
 	}
 
-	line = ":" + nick + Config.getIrcdIngameSuffix() + "!" + nick + "@" +
-		host + " PRIVMSG " + Config.getIrcdChannel() + " :" + message;
+	line = ":" + nick + Config.getIrcdIngameSuffix() + "!" + nick + "@" + host + " PRIVMSG " + Config.getIrcdChannel() + " :" + message;
 
 	synchronized (csIrcUsers) {
 	    if (mode == Modes.STANDALONE) {
 		ClientConnection processor;
 		while (i < IRCUserManagement.clientConnections.size()) {
 		    processor = IRCUserManagement.clientConnections.get(i);
-		    if ((processor.isConnected()) &&
-			    processor.isIdented &&
-			    processor.isNickSet &&
-			    (processor.lastPingResponse +
-			    (Config.getIrcdPinkTimeoutInterval() * 1000) > System
+		    if ((processor.isConnected()) && processor.isIdented && processor.isNickSet &&
+			    (processor.lastPingResponse + (Config.getIrcdPinkTimeoutInterval() * 1000) > System
 			    .currentTimeMillis())) {
 			processor.writeln(line);
 			i++;

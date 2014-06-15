@@ -13,7 +13,6 @@ import org.bukkit.plugin.Plugin;
 
 import com.Jdbye.BukkitIRCd.configuration.Config;
 
-// import org.bukkit.ChatColor;
 public class IRCCommandSender implements CommandSender {
 
     private final Server server;
@@ -28,6 +27,10 @@ public class IRCCommandSender implements CommandSender {
 	enabled = true;
     }
 
+    /**
+    Sends a message from the Minecraft console to the Staff IRC channel
+    @param message The message to be sent
+    */
     @Override
     public void sendMessage(String message) {
 	if (enabled) {
@@ -37,8 +40,7 @@ public class IRCCommandSender implements CommandSender {
 			return;
 		    }
 		} catch (PatternSyntaxException e) {
-		    BukkitIRCdPlugin.thePlugin.getLogger().warning(
-			    "Invalid Regex Found at console-filters");
+		    BukkitIRCdPlugin.thePlugin.getLogger().warning("Invalid Regex Found at console-filters");
 		    continue;
 		}
 	    }
@@ -68,38 +70,42 @@ public class IRCCommandSender implements CommandSender {
 	}
     }
 
+    /**
+    If the message to the staff channel is multi-part, it gets looped through
+    @param message The messages to be sent
+    */
     @Override
     public void sendMessage(String[] message) {
 	for (String s : message) {
 	    sendMessage(s);
 	}
     }
-
-    public void disable() {
-	enabled = false;
-    }
-
-    public void enable() {
-	enabled = true;
-    }
-
+    
+    /**
+    Overrides isOp to always return true
+    @return Always true, not sure if it should
+    */
     @Override
     public boolean isOp() {
+	// TODO Is this supposed to always return true? Why? Possibly related to setOp which cannot change operator status of IRC users.. but why?
 	// return client.isOper;
 	return true;
     }
 
+    /**
+    Supposed to set the op status, however currently returns that it can't.
+    @param value UnsupportedOperationException
+    */
     @Override
     public void setOp(boolean value) {
 	// client.isOper = value;
-	throw new UnsupportedOperationException(
-		"Cannot change operator status of IRC users");
+	throw new UnsupportedOperationException("Cannot change operator status of IRC users");
     }
 
-    public boolean isPlayer() {
-	return false;
-    }
-
+    /**
+    Gets the server in question
+    @return Server
+    */
     @Override
     public Server getServer() {
 	return server;
@@ -162,11 +168,19 @@ public class IRCCommandSender implements CommandSender {
 	return perm.getEffectivePermissions();
     }
 
+    /**
+    Gets the name of the console
+    @return IRC Nickname of the console bot
+    */
     @Override
     public String getName() {
 	return nick;
     }
 
+    /**
+    Sets the name of the console bot
+    @param name New name of the bot
+    */
     public void setName(String name) {
 	nick = name;
     }

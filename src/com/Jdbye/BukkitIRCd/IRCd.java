@@ -43,12 +43,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Server;
-import org.bukkit.command.CommandException;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
-import org.bukkit.event.server.ServerCommandEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class IRCd implements Runnable {
 
@@ -125,8 +120,7 @@ public class IRCd implements Runnable {
     public static IRCCommandSender commandSender = null;
 
     // private static Date curDate = new Date();
-    public static SimpleDateFormat dateFormat = new SimpleDateFormat(
-	    "EEE MMM dd HH:mm:ss yyyy");
+    public static SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
     // private static String serverCreationDate = dateFormat.format(curDate);
     public static long serverCreationDateLong = System.currentTimeMillis() / 1000L;
 
@@ -176,12 +170,12 @@ public class IRCd implements Runnable {
 		    isPlugin = true;
 		}
 	    } catch (ClassNotFoundException e) {
+		// TODO Be a little more helpful in this
 		isPlugin = false;
 	    }
 
 	    try {
-		if (Config.getMode().equalsIgnoreCase("inspire") ||
-			Config.getMode().equalsIgnoreCase("inspircd")) {
+		if (Config.getMode().equalsIgnoreCase("inspire") || Config.getMode().equalsIgnoreCase("inspircd")) {
 		    mode = Modes.INSPIRCD;
 		} else {
 		    mode = Modes.STANDALONE;
@@ -201,8 +195,7 @@ public class IRCd implements Runnable {
 		serverMessagePrefix = ":" + Config.getIrcdServerHostName();
 
 		if (mode == Modes.STANDALONE) {
-		    Thread.currentThread().setName(
-			    "Thread-BukkitIRCd-StandaloneIRCd");
+		    Thread.currentThread().setName("Thread-BukkitIRCd-StandaloneIRCd");
 		    IRCUserManagement.clientConnections.clear();
 		    try {
 			try {
@@ -210,30 +203,24 @@ public class IRCd implements Runnable {
 			    listener.setSoTimeout(1000);
 			    listener.setReuseAddress(true);
 			    BukkitIRCdPlugin.log
-				    .info("[BukkitIRCd] Listening for client connections on port " +
-					    Config.getIrcdPort());
+				    .info("[BukkitIRCd] Listening for client connections on port " + Config.getIrcdPort());
 			} catch (IOException e) {
-			    BukkitIRCdPlugin.log
-				    .severe("Failed to listen on port " +
-					    Config.getIrcdPort() + ": " + e);
+			    BukkitIRCdPlugin.log.severe("Failed to listen on port " + Config.getIrcdPort() + ": " + e);
 			}
 			while (running) {
-			    if ((IRCUserManagement.clientConnections.size() < Config
-				    .getIrcdMaxConnections()) ||
-				    (Config.getIrcdMaxConnections() == 0)) {
+			    if ((IRCUserManagement.clientConnections.size() < Config.getIrcdMaxConnections()) || (Config.getIrcdMaxConnections() == 0)) {
 				ClientConnection connection;
 				try {
 				    server = listener.accept();
 				    if (server.isConnected()) {
-					connection = new ClientConnection(
-						server);
-					connection.lastPingResponse = System
-						.currentTimeMillis();
+					connection = new ClientConnection(server);
+					connection.lastPingResponse = System.currentTimeMillis();
 					IRCUserManagement.clientConnections.add(connection);
 					Thread t = new Thread(connection);
 					t.start();
 				    }
 				} catch (SocketTimeoutException e) {
+				    // TODO Catch this error, my god man
 				}
 				if (tickCount +
 					(Config.getIrcdPingInterval() * 1000) < System
@@ -257,8 +244,7 @@ public class IRCd implements Runnable {
 			}
 		    }
 		} else if (mode == Modes.INSPIRCD) {
-		    Thread.currentThread()
-			    .setName("Thread-BukkitIRCd-InspIRCd");
+		    Thread.currentThread().setName("Thread-BukkitIRCd-InspIRCd");
 		    String line = null;
 		    serverUID = ugen.generateUID(Config.getLinkServerID());
 		    pre = ":" + Config.getLinkServerID() + " ";
@@ -307,10 +293,7 @@ public class IRCd implements Runnable {
 				}
 				String[] split = line.split(" ");
 				if (Config.isDebugModeEnabled()) {
-				    BukkitIRCdPlugin.log
-					    .info("[BukkitIRCd] " +
-						    ChatColor.YELLOW +
-						    "[->] " + line);
+				    BukkitIRCdPlugin.log.info("[BukkitIRCd] " + ChatColor.YELLOW + "[->] " + line);
 				}
 
 				if (!isIncoming) {
