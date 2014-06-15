@@ -28,14 +28,19 @@ import org.bukkit.scheduler.BukkitRunnable;
  */
 public class BukkitUserManagement {
 
+    /**
+
+     @param nick The current player's IRC nickname
+
+     @return Gets the numbered ID of the user
+     */
     public static int getUser(String nick) {
 	synchronized (csBukkitPlayers) {
 	    int i = 0;
 	    String curnick;
 	    while (i < bukkitPlayers.size()) {
 		curnick = bukkitPlayers.get(i).nick;
-		if ((curnick.equalsIgnoreCase(nick)) ||
-			((curnick + Config.getIrcdIngameSuffix()).equalsIgnoreCase(nick))) {
+		if ((curnick.equalsIgnoreCase(nick)) || ((curnick + Config.getIrcdIngameSuffix()).equalsIgnoreCase(nick))) {
 		    return i;
 		} else {
 		    i++;
@@ -91,8 +96,7 @@ public class BukkitUserManagement {
      <p>
      @return
      */
-    public static boolean kickBukkitUser(String kickReason, int kickedID,
-	    int kickerID) {
+    public static boolean kickBukkitUser(String kickReason, int kickedID, int kickerID) {
 	if (kickedID >= 0) {
 	    synchronized (csBukkitPlayers) {
 		BukkitPlayer kickedBukkitPlayer = bukkitPlayers.get(kickedID);
@@ -128,13 +132,13 @@ public class BukkitUserManagement {
     }
 
     /**
-     Kicks player synchronously
-     <p>
-     @param player
-     @param kickReason
-     */
-    public static boolean kickPlayerIngame(final String kicker,
-	    final String kickee, final String kickReason) {
+    Kicks player synchronously
+    @param kicker The IRC user who kicked the player
+    @param kickee The player to get kicked
+    @param kickReason The kick reason
+    @return Whether kicking the player was successful
+    */
+    public static boolean kickPlayerIngame(final String kicker, final String kickee, final String kickReason) {
 	int IRCUser = BukkitUserManagement.getUser(kickee);
 	kickUser(kickReason, IRCUser);
 	BukkitUserManagement.removeBukkitUser(IRCUser);
@@ -179,6 +183,11 @@ public class BukkitUserManagement {
 	}
     }
 
+    /**
+    Provides the BukkitPlayer object based on the nickname provided
+    @param nick Name of the person to find
+    @return BukkitPlayer of the nick found
+    */
     public static BukkitPlayer getUserObject(String nick) {
 	synchronized (csBukkitPlayers) {
 	    int i = 0;
@@ -186,9 +195,7 @@ public class BukkitUserManagement {
 	    while (i < bukkitPlayers.size()) {
 		BukkitPlayer bp = bukkitPlayers.get(i);
 		curnick = bp.nick;
-		if ((curnick.equalsIgnoreCase(nick)) ||
-			((curnick + Config.getIrcdIngameSuffix())
-			.equalsIgnoreCase(nick))) {
+		if ((curnick.equalsIgnoreCase(nick)) || ((curnick + Config.getIrcdIngameSuffix()).equalsIgnoreCase(nick))) {
 		    return bp;
 		}
 		i++;
@@ -197,6 +204,11 @@ public class BukkitUserManagement {
 	}
     }
 
+    /**
+    Returns the BukkitPlayer based on the UID provided
+    @param UID
+    @return 
+    */
     public static BukkitPlayer getUserByUID(String UID) {
 	synchronized (csBukkitPlayers) {
 	    int i = 0;
@@ -213,6 +225,12 @@ public class BukkitUserManagement {
 	}
     }
 
+    /**
+    Updates the player's idle time and world, for WHOIS.
+    @param ID The ID of the IRC user
+    @param world The player's current world
+    @return Whether updating the time and world was a success
+    */
     public static boolean updateUserIdleTimeAndWorld(int ID, String world) {
 	if (ID >= 0) {
 	    synchronized (csBukkitPlayers) {
@@ -221,8 +239,7 @@ public class BukkitUserManagement {
 		if (!bp.world.equals(world)) {
 		    bp.world = world;
 		    if (mode == Modes.INSPIRCD) {
-			Utils.println(pre + "METADATA " + bp.getUID() +
-				" swhois :is currently in " + world);
+			Utils.println(pre + "METADATA " + bp.getUID() +	" swhois :is currently in " + world);
 		    }
 		}
 		return true;
@@ -232,6 +249,11 @@ public class BukkitUserManagement {
 	}
     }
 
+    /**
+    Updates the player's idle time, for WHOIS.
+    @param ID The ID of the IRC user
+    @return Whether updating the time was a success
+    */
     public static boolean updateUserIdleTime(int ID) {
 	if (ID >= 0) {
 	    synchronized (csBukkitPlayers) {
@@ -244,8 +266,16 @@ public class BukkitUserManagement {
 	}
     }
 
-    private static String hashPart(byte itemId, byte[] item, int itemLen,
-	    int outLen) throws NoSuchAlgorithmException {
+    /**
+    Creates a has on the player, using the mask key in the configuration.
+    @param itemId
+    @param item
+    @param itemLen
+    @param outLen
+    @return The created hash
+    @throws NoSuchAlgorithmException 
+    */
+    private static String hashPart(byte itemId, byte[] item, int itemLen, int outLen) throws NoSuchAlgorithmException {
 	final MessageDigest md = MessageDigest.getInstance("MD5");
 
 	md.update(itemId);
@@ -257,12 +287,6 @@ public class BukkitUserManagement {
 
 	final String alphabet = "0123456789abcdefghijklmnopqrstuv";
 
-	// BIG NONO (as stated by @tjetson)
-		/*
-	 String output = "";
-	 for (int i = 0; i < outLen; i++) {
-	 output = output + alphabet.charAt((d[i] + 256) % 32);
-	 }*/
 	StringBuilder output = new StringBuilder();
 
 	for (int i = 0; i < outLen; i++) {
@@ -272,6 +296,11 @@ public class BukkitUserManagement {
 	return output.toString();
     }
 
+    /**
+    Masks the IP of the player into something less identifiable
+    @param ip The player's current IP address
+    @return The created masked host
+    */
     public static String maskHost(InetAddress ip) {
 	if (Config.isUseHostMask()) {
 	    final byte[] bytes = ip.getAddress();
@@ -289,13 +318,16 @@ public class BukkitUserManagement {
 	}
     }
 
+    /**
+    Adds the Bukkit user, with modes, to IRC
+    @param modes The IRC modes that the player should have
+    @param player The player in question to be added
+    @return Whether adding the player was successful
+    */
     public static boolean addBukkitUser(String modes, Player player) {
 	StringBuilder maskedrealhost = new StringBuilder();
-	//getLogger().info("Player joining: getting nick");
 	String nick = player.getName();
-	//getLogger().info("Player joining: getting masked host");
 	String host = maskHost(player.getAddress().getAddress());
-	//getLogger().info("Player joining: getting real hostname");
 
 	// TODO This right here is the primary cause of login lag
 	//String realhost = player.getAddress().getAddress().getHostName();
@@ -303,46 +335,35 @@ public class BukkitUserManagement {
 	maskedrealhost.append("Masked-to-avoid-lag-" + host);
 	String realhost = maskedrealhost.toString();
 
-	//getLogger().info("Player joining: getting ip");
 	String ip = player.getAddress().getAddress().getHostAddress();
-	//getLogger().info("Player joining: world");
 	String world = player.getWorld().getName();
 	if (getUser(nick) < 0) {
 	    synchronized (csBukkitPlayers) {
-		//getLogger().info("Player joining: creating BukkitPlayer");
 		BukkitPlayer bp = new BukkitPlayer(nick, world, modes,
-			realhost, host, ip, System.currentTimeMillis() / 1000L,
-			System.currentTimeMillis());
-		//getLogger().info("Player joining: adding bukkit player");
+			realhost, host, ip, System.currentTimeMillis() / 1000L,	System.currentTimeMillis());
 		bukkitPlayers.add(bp);
 		if (mode == Modes.STANDALONE) {
 		    IRCFunctionality.writeAll(":" + nick + Config.getIrcdIngameSuffix() + "!" +
-			    nick + "@" + host + " JOIN " +
-			    Config.getIrcdChannel());
+			    nick + "@" + host + " JOIN " + Config.getIrcdChannel());
 		}
-		//getLogger().info("Player joining: voicing user");
-		String mode1 = "+", mode2 = "";
-		//getLogger().info("Player joining: adding more modes if needed");
+		StringBuilder mode1 = new StringBuilder();
+		mode1.append("+");
 		if (modes.contains("~")) {
-		    mode1 += "q";
-		    mode2 += nick + Config.getIrcdIngameSuffix() + " ";
+		    mode1.append("q");
 		}
 		if (modes.contains("&")) {
-		    mode1 += "a";
-		    mode2 += nick + Config.getIrcdIngameSuffix() + " ";
+		    mode1.append("a");
 		}
 		if (modes.contains("@")) {
-		    mode1 += "o";
-		    mode2 += nick + Config.getIrcdIngameSuffix() + " ";
+		    mode1.append("o");
 		}
 		if (modes.contains("%")) {
-		    mode1 += "h";
-		    mode2 += nick + Config.getIrcdIngameSuffix() + " ";
+		    mode1.append("h");
 		}
 		if (modes.contains("+")) {
-		    mode1 += "v";
-		    mode2 += nick + Config.getIrcdIngameSuffix() + " ";
+		    mode1.append("v");
 		}
+		String mode2 = nick + Config.getIrcdIngameSuffix() + " ";
 		if (!mode1.equals("+")) {
 		    if (mode == Modes.STANDALONE) {
 			IRCFunctionality.writeAll(":" + Config.getIrcdServerName() + "!" +
@@ -354,18 +375,14 @@ public class BukkitUserManagement {
 		}
 
 		if (mode == Modes.INSPIRCD) {
-		    //getLogger().info("Player joining: generating user's UID");
 		    String UID = ugen.generateUID(Config.getLinkServerID());
-		    //getLogger().info("Player joining: setting user's UID (" + UID + ")");
 		    bp.setUID(UID);
 		    synchronized (csBukkitPlayers) {
-			//getLogger().info("Player joining: checking for oper perm");
 			final boolean isOper = bp
 				.hasPermission("bukkitircd.oper");
 
 			// Register new UID
 			final String userModes = isOper ? "+or" : "+r";
-			//getLogger().info("Player joining: connecting user to IRC");
 			Utils.println(pre + "UID", UID,
 				Long.toString(bp.idleTime / 1000L), bp.nick +
 				Config.getIrcdIngameSuffix(),
@@ -375,25 +392,20 @@ public class BukkitUserManagement {
 				":Minecraft Player");
 
 			// Set oper type if appropriate
-			//getLogger().info("Player joining: setting oper type if needed");
 			if (isOper) {
 			    Utils.println(":" + UID, "OPERTYPE", "IRC_Operator");
 			}
 
 			// Game client uses encrypted connection
-			//getLogger().info("Player joining: providing connection encryption");
 			Utils.println(pre + "METADATA", UID, "ssl_cert",
 				":vtrsE The peer did not send any certificate.");
 
 			// Join in-game channel with modes set
-			//getLogger().info("Player joining: joining channel");
 			Utils.println(pre + "FJOIN", Config.getIrcdChannel(),
 				Long.toString(channelTS), "+nt",
 				":" + bp.getTextMode() + "," + UID);
 
-			// Send swhois field (extra metadata used for current
-			// world here)
-			//getLogger().info("Player joining: setting extra whois data (world");
+			// Send swhois field (extra metadata used for current world here)
 			final String worldString = world == null ? "an unknown world" :
 				world;
 			Utils.println(pre + "METADATA ", UID, "swhois",
@@ -407,18 +419,21 @@ public class BukkitUserManagement {
 	}
     }
 
-    // Run when a player disconnects (maybe make the quit message configurable
+    /**
+    Removes the user from IRC and the bukkitPlayers list, based on the ID
+    @param ID ID of the user
+    @return Whether removing the user was successful
+    // TODO Make the quit message dependant on how/why they disconnect
+    */
     public static boolean removeBukkitUser(int ID) {
 	synchronized (csBukkitPlayers) {
 	    if (ID >= 0) {
 		BukkitPlayer bp = bukkitPlayers.get(ID);
 		if (mode == Modes.STANDALONE) {
 		    IRCFunctionality.writeAll(":" + bp.nick + Config.getIrcdIngameSuffix() + "!" +
-			    bp.nick + "@" + bp.host + " QUIT :" +
-			    msgDisconnectQuitting);
+			    bp.nick + "@" + bp.host + " QUIT :" + msgDisconnectQuitting);
 		} else if (mode == Modes.INSPIRCD) {
-		    Utils.println(":" + bp.getUID() + " QUIT :" +
-			    msgDisconnectQuitting);
+		    Utils.println(":" + bp.getUID() + " QUIT :" + msgDisconnectQuitting);
 		}
 		bukkitPlayers.remove(ID);
 		return true;
@@ -428,6 +443,11 @@ public class BukkitUserManagement {
 	}
     }
 
+    /**
+    Removes the user from IRC and the bukkitPlayers list, based on the UID
+    @param UID The UID of the IRC user
+    @return Whether removing the user was successful
+    */
     public static boolean removeBukkitUserByUID(String UID) {
 	synchronized (csBukkitPlayers) {
 	    Iterator<BukkitPlayer> iter = bukkitPlayers.iterator();

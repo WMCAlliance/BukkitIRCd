@@ -4,6 +4,12 @@ import java.security.*;
 
 public class Hash {
 
+    /**
+    Builds a Hash based on the hash type
+    @param input The string to hash
+    @param hashType The type of hash to be used
+    @return Hashed string
+    */
     public static String compute(String input, HashType hashType) {
 	MessageDigest md;
 	try {

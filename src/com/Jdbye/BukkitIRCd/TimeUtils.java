@@ -17,8 +17,7 @@ public class TimeUtils {
     }
 
     /**
-     converts time (in milliseconds) to human-readable format
-     "<w> days, <x> hours, <y> minutes and (z) seconds"
+     Converts time (in milliseconds) to human-readable format "<w> days, <x> hours, <y> minutes and (z) seconds"
      */
     public static String millisToLongDHMS(long duration) {
 	StringBuffer res = new StringBuffer();
