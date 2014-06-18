@@ -470,7 +470,7 @@ public class IRCFunctionality {
 		    IRCUserManagement.removeIRCUsers(reason);
 		    break;
 		case INSPIRCD:
-		    IRCFunctionality.disconnectServer(reason);
+		    disconnectServer(reason);
 		    break;
 	    }
 	}
@@ -497,8 +497,7 @@ public class IRCFunctionality {
 		while (i < IRCUserManagement.clientConnections.size()) {
 		    processor = IRCUserManagement.clientConnections.get(i);
 		    if ((processor.isConnected()) && processor.isIdented && processor.isNickSet &&
-			    (processor.lastPingResponse + (Config.getIrcdPinkTimeoutInterval() * 1000) > System
-			    .currentTimeMillis())) {
+			    (processor.lastPingResponse + (Config.getIrcdPinkTimeoutInterval() * 1000) > System.currentTimeMillis())) {
 			processor.writeln(line);
 			i++;
 		    } else if (!processor.running) {

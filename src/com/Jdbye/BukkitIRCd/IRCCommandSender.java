@@ -12,6 +12,9 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
 import com.Jdbye.BukkitIRCd.configuration.Config;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
+import java.util.ArrayList;
 
 public class IRCCommandSender implements CommandSender {
 
@@ -48,25 +51,39 @@ public class IRCCommandSender implements CommandSender {
 	    // TODO Ignore List (this is the staff channel chat, so may be the wrong place for this to go)
 			/*for (String nameToIngnore : IRCd.globalNameIgnoreList ) {
 	     if ( !(IRCd.serverName.equals(nameToIngnore)) ) {*/
+	    
+	    ArrayList<String> lns = new ArrayList<String>();
+	    lns.add(message);
+	    if((message.length() + Config.getIrcdConsoleChannel().length()) > 329) {
+		// TODO Handle console messages too long to fit
+		//Iterable<String> lns = Splitter.fixedLength(330 - Config.getIrcdConsoleChannel().length()).split(message);
+		String[] l = new String[30];
+		l = Iterables.toArray(Splitter.fixedLength(329 - Config.getIrcdConsoleChannel().length()).split(message), String.class);
+		lns.remove(message);
+		for (String i : l) {
+		    lns.add(i.toString());
+		}
+	    }
+	    for(int ln = 0; ln < lns.size(); ln++) {
 	    switch (IRCd.mode) {
 		case STANDALONE:
 		    IRCFunctionality.writeOpers(":" + Config.getIrcdServerName() + "!" +
 			    Config.getIrcdServerName() + "@" +
 			    Config.getIrcdServerHostName() + " PRIVMSG " +
 			    Config.getIrcdConsoleChannel() + " :" +
-			    Utils.convertColors(message, false));
+			    Utils.convertColors(lns.get(ln).toString(), false));
 		    break;
 		case INSPIRCD:
 		    if (IRCd.isLinkcompleted()) {
 			IRCFunctionality.privmsg(IRCd.serverUID,
 				Config.getIrcdConsoleChannel(),
-				Utils.convertColors(message, false));
+				Utils.convertColors(lns.get(ln).toString(), false));
 		    }
 		    break;
 	    }/*
 	     }
 	     }*/
-
+	    }
 	}
     }
 

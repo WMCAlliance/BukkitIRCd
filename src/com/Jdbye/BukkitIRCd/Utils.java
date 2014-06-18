@@ -15,6 +15,12 @@ import org.bukkit.scheduler.BukkitRunnable;
  A general collection of utilities used within the plugin, sometimes for transferring data between IRC and game.
  */
 public class Utils {
+	static char IRC_Color = (char) 3; // ETX Control Code (^C)
+	static char IRC_Bold = (char) 2; // STX Control Code (^B)
+	static char IRC_Ital = (char) 29; // GS Control Code
+	static char IRC_Under = (char) 31; // US Control Code (^_)
+	static char IRC_Reset = (char) 15; // SI Control Code (^O)
+	static char MC_Color = (char) 167; // Section Sign
 
     /**
      Strips IRC formatting codes.
@@ -24,11 +30,6 @@ public class Utils {
      @return Stripped down message
      */
     public static String stripIRCFormatting(String input) {
-	char IRC_Color = (char) 3; // ETX Control Code (^C)
-	char IRC_Bold = (char) 2; // STX Control Code (^B)
-	char IRC_Ital = (char) 29; // GS Control Code
-	char IRC_Under = (char) 31; // US Control Code (^_)
-	char IRC_Reset = (char) 15; // SI Control Code (^O)
 
 	String output = input.replaceAll("\u0003[0-9]{1,2}(,[0-9]{1,2})?", ""); // Remove IRC background color code
 	output = output.replace(IRC_Reset + "", "");
@@ -54,12 +55,6 @@ public class Utils {
     public static String convertColors(String input, boolean fromIRCtoGame) {
 
 	String output = null;
-	char IRC_Color = (char) 3; // ETX Control Code (^C)
-	char IRC_Bold = (char) 2; // STX Control Code (^B)
-	char IRC_Ital = (char) 29; // GS Control Code
-	char IRC_Under = (char) 31; // US Control Code (^_)
-	char IRC_Reset = (char) 15; // SI Control Code (^O)
-	char MC_Color = (char) 167; // Section Sign
 	if (fromIRCtoGame) {
 	    if (!Config.isIrcdConvertColorCodes()) {
 		return Utils.stripIRCFormatting(input);
@@ -155,8 +150,7 @@ public class Utils {
 	}
 	synchronized (csServer) {
 	    if (Config.isDebugModeEnabled()) {
-		System.out.println("[BukkitIRCd]" + ChatColor.DARK_BLUE +
-			"[<-] " + line);
+		System.out.println("[BukkitIRCd]" + ChatColor.DARK_BLUE + "[<-] " + line);
 	    }
 	    out.println(line);
 	    return true;
@@ -251,19 +245,18 @@ public class Utils {
 		    final ServerCommandEvent commandEvent = new ServerCommandEvent(IRCd.commandSender, command);
 		    server.getPluginManager().callEvent(commandEvent);
 		    server.dispatchCommand(commandEvent.getSender(), commandEvent.getCommand());
-		    IRCd.commandSender.sendMessage("Command Executed");
+		    IRCd.commandSender.sendMessage(ChatColor.ITALIC + "" + ChatColor.GRAY + "[CONSOLE: Command executed.]");
 		} catch (CommandException c) {
 		    Throwable e = c.getCause();
 
-		    IRCd.commandSender.sendMessage("Exception in command \"" + command + "\": " + e);
+		    IRCd.commandSender.sendMessage(ChatColor.RED + "Exception in command \"" + command + "\": " + e);
 		    if (Config.isDebugModeEnabled()) {
 			for (final StackTraceElement s : e.getStackTrace()) {
 			    IRCd.commandSender.sendMessage(s.toString());
 			}
 		    }
 		} catch (Exception e) {
-		    IRCd.commandSender.sendMessage("Exception in command \"" +
-			    command + "\": " + e);
+		    IRCd.commandSender.sendMessage(ChatColor.RED + "&cException in command \"" + command + "\": " + e);
 
 		    if (Config.isDebugModeEnabled()) {
 			for (final StackTraceElement s : e.getStackTrace()) {

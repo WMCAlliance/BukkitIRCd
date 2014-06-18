@@ -557,6 +557,10 @@ public class IRCd implements Runnable {
 				e.toString());
 		BukkitIRCdPlugin.log.severe("[BukkitIRCd] Error code IRCd473.");
 		e.printStackTrace();
+		if(e.toString().contains("NullPointerException")) {
+		    BukkitIRCdPlugin.log.severe("[BukkitIRCd] Shutting down due to unrecoverable error (and to avoid console spam).");
+		    running = false;
+		}
 	    }
 	}
 	BukkitIRCdPlugin.ircd = null;
