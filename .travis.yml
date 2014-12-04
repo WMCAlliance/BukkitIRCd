@@ -4,10 +4,12 @@ jdk:
   - oraclejdk7
 notifications:
     email: false
-    irc: "irc.wma.im#minecraft-dev"
+    irc:
+      channels:
+        - "irc.wma.im#minecraft-dev"
       template:
-        - "%{repository} (%{commit}) : %{message} %{foo} "
-        - "Build details: %{build_url}"
+      - "%{repository}#%{build_number} (%{branch} - %{commit} : %{author}): %{message}"
+      - "Build details : %{build_url} - Took : %{duration} to build"
 branches:
   only:
     - development
