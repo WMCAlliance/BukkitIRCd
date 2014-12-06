@@ -1,12 +1,11 @@
 package com.Jdbye.BukkitIRCd.commands;
 
-import com.Jdbye.BukkitIRCd.IRCUserManagement;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import com.Jdbye.BukkitIRCd.IRCd;
+import com.Jdbye.BukkitIRCd.IRCUserManagement;
 import com.Jdbye.BukkitIRCd.Utils;
 
 public class IRCListCommand implements CommandExecutor {

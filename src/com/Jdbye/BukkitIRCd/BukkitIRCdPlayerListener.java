@@ -14,7 +14,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
 import com.Jdbye.BukkitIRCd.configuration.Config;
-import org.bukkit.Bukkit;
 
 /**
  Handle events for all Player related events

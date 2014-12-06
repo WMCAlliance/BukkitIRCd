@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 
 import com.Jdbye.BukkitIRCd.IRCUser;
 import com.Jdbye.BukkitIRCd.IRCUserManagement;
-import com.Jdbye.BukkitIRCd.IRCd;
 
 public class IRCWhoisCommand implements CommandExecutor {
 
