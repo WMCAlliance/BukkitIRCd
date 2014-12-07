@@ -1,132 +1,154 @@
 name: BukkitIRCd
-main: com.Jdbye.BukkitIRCd.BukkitIRCdPlugin
 version: 1.2
-dev-url: http://ci.blny.tk/job/BukkitIRCd/
-website: http://wma.im
-authors: [Jdbye, WizardCM, Mu5tank05, glguy, Monofraps, ron975]
-description: Powerful IRC plugin for Bukkit. Can be used on its own or alongside an InspIRCd server.
-softdepend: [dynmap]
+description: 'Powerful IRC plugin for Bukkit. Can be used on its own or alongside an InspIRCd server.'
+website: 'http://wma.im'
+main: com.Jdbye.BukkitIRCd.BukkitIRCdPlugin
+softdepend:
+  - dynmap
+authors:
+  - Jdbye
+  - WizardCM
+  - Mu5tank05
+  - glguy
+  - Monofraps
+  - ron975
 commands:
-  irclist:
-    description: Lists the online users on IRC.
-    usage: /<command>
-    aliases: [ilist]
-    permission: bukkitircd.list
-  irckick:
-    description: Kick a user from IRC.
-    usage: /<command> nick (reason)
-    aliases: [ikick]
-    permission: bukkitircd.kick
+  irc:
+    description: 'NoCheatPlus command(s).'
+    usage: "BukkitIRCd commands list:\n/irclist - Lists the online users on IRC.\n/irckick - Kick a user from IRC.\n/ircban - Ban a user from IRC via their host, ip, ident, nick or a full hostmask.\n/ircunban - Unban a user from IRC by their IP or full hostmask.\n/ircwhois - Perform a lookup on an IRC user.\n/ircmsg - Private message a user on IRC.\n/ircreply - Reply to the last IRC private message you received.\n/irctopic - Change the IRC topic for the main channel\n/irclink - Attempt to link to the remote server if in linking mode but not currently linked.\n/ircreload - Reload the plugin configuration and MOTD, and restart the IRC server/link.\n/rawsend - Sends a raw server command to the linked server, if enabled. Only usable from console.\n"
   ircban:
-    description: Ban a user from IRC via their host, ip, ident, nick or a full hostmask.
-    usage: /<command> (host/ip/ident/nick) nick/ip/fullhost (reason)
-    aliases: [iban]
+    aliases:
+      - iban
+    description: 'Ban a user from IRC via their host, ip, ident, nick or a full hostmask.'
     permission: bukkitircd.ban
-  ircunban:
-    description: Unban a user from IRC by their IP or full hostmask.
-    usage: /<command> ip/fullhost
-    aliases: [iunban]
-    permission: bukkitircd.unban
-  ircwhois:
-    description: Perform a lookup on an IRC user.
-    usage: /<command> nick
-    aliases: [iwhois]
-    permission: bukkitircd.whois
-  ircmsg:
-    description: Private message a user on IRC.
-    usage: /<command> nick message
-    aliases: [imsg, im, itell]
-    permission: bukkitircd.msg
-  ircreply:
-    description: Reply to the last IRC private message you received.
-    usage: /<command> message
-    aliases: [ireply, ir]
-    permission: bukkitircd.reply
-  irctopic:
-    description: Change the IRC topic for the main channel
-    usage: /<command> newtopic
-    aliases: [itopic]
-    permission: bukkitircd.topic
+    usage: '/<command> (host/ip/ident/nick) nick/ip/fullhost (reason)'
+  irckick:
+    aliases:
+      - ikick
+    description: 'Kick a user from IRC.'
+    permission: bukkitircd.kick
+    usage: '/<command> nick (reason)'
   irclink:
-    description: Attempt to link to the remote server if in linking mode but not currently linked.
-    usage: /<command>
-    aliases: [ilink]
+    aliases:
+      - ilink
+    description: 'Attempt to link to the remote server if in linking mode but not currently linked.'
     permission: bukkitircd.link
-  ircreload:
-    description: Reload the plugin configuration and MOTD, and restart the IRC server/link.
     usage: /<command>
-    aliases: [ireload]
+  irclist:
+    aliases:
+      - ilist
+    description: 'Lists the online users on IRC.'
+    permission: bukkitircd.list
+    usage: /<command>
+  ircmsg:
+    aliases:
+      - imsg
+      - im
+      - itell
+    description: 'Private message a user on IRC.'
+    permission: bukkitircd.msg
+    usage: '/<command> nick message'
+  ircreload:
+    aliases:
+      - ireload
+    description: 'Reload the plugin configuration and MOTD, and restart the IRC server/link.'
     permission: bukkitircd.reload
+    usage: /<command>
+  ircreply:
+    aliases:
+      - ireply
+      - ir
+    description: 'Reply to the last IRC private message you received.'
+    permission: bukkitircd.reply
+    usage: '/<command> message'
+  irctopic:
+    aliases:
+      - itopic
+    description: 'Change the IRC topic for the main channel'
+    permission: bukkitircd.topic
+    usage: '/<command> newtopic'
+  ircunban:
+    aliases:
+      - iunban
+    description: 'Unban a user from IRC by their IP or full hostmask.'
+    permission: bukkitircd.unban
+    usage: '/<command> ip/fullhost'
+  ircwhois:
+    aliases:
+      - iwhois
+    description: 'Perform a lookup on an IRC user.'
+    permission: bukkitircd.whois
+    usage: '/<command> nick'
   rawsend:
-    description: Sends a raw server command to the linked server, if enabled. Only usable from console.
-    usage: /<command> command
+    description: 'Sends a raw server command to the linked server, if enabled. Only usable from console.'
+    usage: '/<command> command'
 permissions:
-  bukkitircd.*:
-    description: Allows you to use every /irc command
+  'bukkitircd.*':
     children:
-      bukkitircd.kick: true
       bukkitircd.ban: true
-      bukkitircd.unban: true
+      bukkitircd.kick: true
+      bukkitircd.link: true
       bukkitircd.list: true
-      bukkitircd.whois: true
       bukkitircd.msg: true
+      bukkitircd.reload: true
       bukkitircd.reply: true
       bukkitircd.topic: true
-      bukkitircd.link: true
-      bukkitircd.reload: true
-  bukkitircd.kick:
-    description: Allows you to use the /irckick command
-    default: op
+      bukkitircd.unban: true
+      bukkitircd.whois: true
+    description: 'Allows you to use every /irc command'
   bukkitircd.ban:
-    description: Allows you to use the /ircban command
     default: op
-  bukkitircd.unban:
-    description: Allows you to use the /ircunban command
+    description: 'Allows you to use the /ircban command'
+  bukkitircd.kick:
     default: op
-  bukkitircd.list:
-    description: Allows you to use the /irclist command
-    default: op
-  bukkitircd.whois:
-    description: Allows you to use the /ircwhois command
-    default: op
-  bukkitircd.msg:
-    description: Allows you to use the /ircmsg command
-    default: op
-  bukkitircd.reply:
-    description: Allows you to use the /ircreply command
-    default: op
-  bukkitircd.topic:
-    description: Allows you to use the /irctopic command
-    default: op
+    description: 'Allows you to use the /irckick command'
   bukkitircd.link:
-    description: Allows you to use the /irclink command
     default: op
-  bukkitircd.reload:
-    description: Allows you to use the /ircreload command
+    description: 'Allows you to use the /irclink command'
+  bukkitircd.list:
     default: op
-  bukkitircd.oper:
-    description: Gives you oper status on IRC
-    default: op
-  bukkitircd.mode.*:
-    description: Gives you all IRC user modes (+qaohv)
+    description: 'Allows you to use the /irclist command'
+  'bukkitircd.mode.*':
     children:
+      bukkitircd.mode.halfop: true
+      bukkitircd.mode.op: true
       bukkitircd.mode.owner: true
       bukkitircd.mode.protect: true
-      bukkitircd.mode.op: true
-      bukkitircd.mode.halfop: true
       bukkitircd.mode.voice: true
-  bukkitircd.mode.owner:
-    description: Gives you owner status on IRC (+q)
-    default: op
-  bukkitircd.mode.protect:
-    description: Gives you protected status on IRC (+a)
-    default: op
-  bukkitircd.mode.op:
-    description: Gives you op status on IRC (+o)
-    default: op
+    description: 'Gives you all IRC user modes (+qaohv)'
   bukkitircd.mode.halfop:
-    description: Gives you halfop status on IRC (+h)
     default: op
+    description: 'Gives you halfop status on IRC (+h)'
+  bukkitircd.mode.op:
+    default: op
+    description: 'Gives you op status on IRC (+o)'
+  bukkitircd.mode.owner:
+    default: op
+    description: 'Gives you owner status on IRC (+q)'
+  bukkitircd.mode.protect:
+    default: op
+    description: 'Gives you protected status on IRC (+a)'
   bukkitircd.mode.voice:
-    description: Gives you voice status on IRC (+v)
     default: op
+    description: 'Gives you voice status on IRC (+v)'
+  bukkitircd.msg:
+    default: op
+    description: 'Allows you to use the /ircmsg command'
+  bukkitircd.oper:
+    default: op
+    description: 'Gives you oper status on IRC'
+  bukkitircd.reload:
+    default: op
+    description: 'Allows you to use the /ircreload command'
+  bukkitircd.reply:
+    default: op
+    description: 'Allows you to use the /ircreply command'
+  bukkitircd.topic:
+    default: op
+    description: 'Allows you to use the /irctopic command'
+  bukkitircd.unban:
+    default: op
+    description: 'Allows you to use the /ircunban command'
+  bukkitircd.whois:
+    default: op
+    description: 'Allows you to use the /ircwhois command'

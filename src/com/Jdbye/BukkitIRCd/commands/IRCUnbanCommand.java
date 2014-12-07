@@ -19,7 +19,8 @@ public class IRCUnbanCommand implements CommandExecutor {
 	this.thePlugin = plugin;
     }
 
-    public boolean onCommand(CommandSender sender, Command cmd, String label,
+    @Override
+	public boolean onCommand(CommandSender sender, Command cmd, String label,
 	    String[] args) {
 	if (sender instanceof Player) {
 	    Player player = (Player) sender;
