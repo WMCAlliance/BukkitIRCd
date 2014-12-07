@@ -377,8 +377,7 @@ public class BukkitUserManagement {
 		    String UID = ugen.generateUID(Config.getLinkServerID());
 		    bp.setUID(UID);
 		    synchronized (csBukkitPlayers) {
-			final boolean isOper = bp
-				.hasPermission("bukkitircd.oper");
+			final boolean isOper = bp.hasPermission("bukkitircd.oper");
 
 			// Register new UID
 			final String userModes = isOper ? "+or" : "+r";

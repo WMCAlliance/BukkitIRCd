@@ -158,8 +158,8 @@ public class IRCFunctionality {
 		Config.getIrcdServerName() + " " +
 		Config.getIrcdServerHostName() + " " +
 		Config.getIrcdServerHostName() + " " +
-		Config.getIrcdServerName() + " 127.0.0.1 " + serverStartTime +
-		" +Bro :" + BukkitIRCdPlugin.ircdVersion);
+		Config.getIrcdServerName() + " 0.0.0.0 " + serverStartTime +
+		" +Brok :" + BukkitIRCdPlugin.ircdVersion);
 	Utils.println(":" + serverUID + " OPERTYPE Network_Service");
 
 	for (BukkitPlayer bp : bukkitPlayers) {
