@@ -185,8 +185,7 @@ public class IRCd implements Runnable {
 		}
 
 		try {
-		    serverCreationDateLong = dateFormat.parse(
-			    Config.getServerCreationDate()).getTime() / 1000L;
+		    serverCreationDateLong = dateFormat.parse(Config.getServerCreationDate()).getTime() / 1000L;
 		} catch (ParseException e) {
 		    serverCreationDateLong = 0;
 		}
@@ -201,8 +200,7 @@ public class IRCd implements Runnable {
 			    listener = new ServerSocket(Config.getIrcdPort());
 			    listener.setSoTimeout(1000);
 			    listener.setReuseAddress(true);
-			    BukkitIRCdPlugin.log
-				    .info("[BukkitIRCd] Listening for client connections on port " + Config.getIrcdPort());
+			    BukkitIRCdPlugin.log.info("[BukkitIRCd] Listening for client connections on port " + Config.getIrcdPort());
 			} catch (IOException e) {
 			    BukkitIRCdPlugin.log.severe("Failed to listen on port " + Config.getIrcdPort() + ": " + e);
 			}
@@ -221,9 +219,7 @@ public class IRCd implements Runnable {
 				} catch (SocketTimeoutException e) {
 				    // TODO Catch this error, my god man
 				}
-				if (tickCount +
-					(Config.getIrcdPingInterval() * 1000) < System
-					.currentTimeMillis()) {
+				if (tickCount + (Config.getIrcdPingInterval() * 1000) < System.currentTimeMillis()) {
 				    tickCount = System.currentTimeMillis();
 				    IRCFunctionality.writeAll("PING :" + tickCount);
 				}
@@ -232,14 +228,12 @@ public class IRCd implements Runnable {
 				Thread.currentThread();
 				Thread.sleep(1);
 			    } catch (InterruptedException e) {
+				//TODO Actually do something here - this is terrible
 			    }
 			}
 		    } catch (IOException e) {
 			synchronized (csStdOut) {
-			    System.out
-				    .println("[BukkitIRCd] IOException on socket listen: " +
-					    e.toString() +
-					    ". Error Code IRCd281.");
+			    System.out.println("[BukkitIRCd] IOException on socket listen: " + e.toString() + ". Error Code IRCd281.");
 			}
 		    }
 		} else if (mode == Modes.INSPIRCD) {
@@ -255,24 +249,19 @@ public class IRCd implements Runnable {
 			listener = new ServerSocket(Config.getLinkLocalPort());
 			listener.setSoTimeout(1000);
 			listener.setReuseAddress(true);
-			BukkitIRCdPlugin.log
-				.info("[BukkitIRCd] Listening for server connections on port " +
-					Config.getLinkLocalPort());
+			BukkitIRCdPlugin.log.info("[BukkitIRCd] Listening for server connections on port " + Config.getLinkLocalPort());
 		    } catch (IOException e) {
-			BukkitIRCdPlugin.log.severe("Failed to listen on port " +
-				Config.getLinkLocalPort() + ": " + e);
+			BukkitIRCdPlugin.log.severe("Failed to listen on port " + Config.getLinkLocalPort() + ": " + e);
 		    }
 
 		    try {
 			server = listener.accept();
 		    } catch (IOException e) {
+			//TODO Actually do something here - this is terrible
 		    }
-		    if ((server != null) && server.isConnected() &&
-			    (!server.isClosed())) {
+		    if ((server != null) && server.isConnected() && (!server.isClosed())) {
 			InetAddress addr = server.getInetAddress();
-			BukkitIRCdPlugin.log
-				.info("[BukkitIRCd] Got server connection from " +
-					addr.getHostAddress());
+			BukkitIRCdPlugin.log.info("[BukkitIRCd] Got server connection from " + addr.getHostAddress());
 			isIncoming = true;
 		    } else if (Config.isLinkAutoconnect()) {
 			IRCFunctionality.connect();
@@ -280,15 +269,12 @@ public class IRCd implements Runnable {
 
 		    while (running) {
 			try {
-			    if ((server != null) && server.isConnected() &&
-				    (!server.isClosed()) && (!lastconnected)) {
-				in = new BufferedReader(new InputStreamReader(
-					server.getInputStream()));
+			    if ((server != null) && server.isConnected() && (!server.isClosed()) && (!lastconnected)) {
+				in = new BufferedReader(new InputStreamReader(server.getInputStream()));
 				out = new PrintStream(server.getOutputStream());
 				line = in.readLine();
 				if (line == null) {
-				    throw new IOException(
-					    "Lost connection to server before sending handshake!");
+				    throw new IOException("Lost connection to server before sending handshake!");
 				}
 				String[] split = line.split(" ");
 				if (Config.isDebugModeEnabled()) {
@@ -300,10 +286,7 @@ public class IRCd implements Runnable {
 				    IRCFunctionality.sendLinkBurst();
 				}
 
-				while ((!split[0].equalsIgnoreCase("SERVER")) &&
-					(server != null) &&
-					(!server.isClosed()) &&
-					server.isConnected() && running) {
+				while ((!split[0].equalsIgnoreCase("SERVER")) && (server != null) && (!server.isClosed()) && server.isConnected() && running) {
 				    if (!running) {
 					break;
 				    }
@@ -320,20 +303,15 @@ public class IRCd implements Runnable {
 					try {
 					    server.close();
 					} catch (IOException e) {
+					    //TODO Actually do something here - this is terrible
 					}
-					throw new IOException(
-						"Remote host rejected connection, probably configured wrong: " +
-						Utils.join(split, " ", 1));
+					throw new IOException("Remote host rejected connection, probably configured wrong: " + Utils.join(split, " ", 1));
 				    } else {
 					line = in.readLine();
 					if (line != null) {
 					    split = line.split(" ");
 					    if (Config.isDebugModeEnabled()) {
-						BukkitIRCdPlugin.log
-							.info("[BukkitIRCd]" +
-								ChatColor.YELLOW +
-								" [->] " +
-								line);
+						BukkitIRCdPlugin.log.info("[BukkitIRCd]" + ChatColor.YELLOW + " [->] " + line);
 					    }
 					}
 				    }
@@ -341,22 +319,15 @@ public class IRCd implements Runnable {
 				if (split[0].equalsIgnoreCase("SERVER")) {
 				    // SERVER test.tempcraft.net password 0 280
 				    // :TempCraft Testing Server
-				    if ((!split[2].equals(Config
-					    .getLinkReceivePassword())) ||
-					    (!split[1].equals(Config
-						    .getLinkName()))) {
-					if (!split[2].equals(Config
-						.getLinkReceivePassword())) {
+				    if ((!split[2].equals(Config.getLinkReceivePassword())) || (!split[1].equals(Config.getLinkName()))) {
+					if (!split[2].equals(Config.getLinkReceivePassword())) {
 					    Utils.println("ERROR :Invalid password.");
-					} else if (!split[1].equals(Config
-						.getLinkName())) {
-					    Utils.println("ERROR :No configuration for hostname " +
-						    split[1]);
+					} else if (!split[1].equals(Config.getLinkName())) {
+					    Utils.println("ERROR :No configuration for hostname " + split[1]);
 					}
 					server.close();
 
-					if (!split[1].equals(Config
-						.getLinkName())) {
+					if (!split[1].equals(Config.getLinkName())) {
 					    throw new IOException(
 						    "Rejected connection from remote host: Invalid link name.");
 					} else {
@@ -370,12 +341,9 @@ public class IRCd implements Runnable {
 				linkLastPingPong = System.currentTimeMillis();
 				linkLastPingSent = System.currentTimeMillis();
 
-				if ((IRCd.isPlugin) &&
-					(BukkitIRCdPlugin.thePlugin != null)) {
+				if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
 				    if (msgLinked.length() > 0) {
-					Utils.broadcastMessage(msgLinked
-						.replace("{LinkName}",
-							Config.getLinkName()));
+					Utils.broadcastMessage(msgLinked.replace("{LinkName}", Config.getLinkName()));
 				    }
 				}
 				server.setSoTimeout(500);
@@ -383,93 +351,70 @@ public class IRCd implements Runnable {
 				linkcompleted = true;
 			    }
 
-			    while (running && (server != null) &&
-				    server.isConnected() &&
-				    (!server.isClosed())) {
+			    while (running && (server != null) && server.isConnected() && (!server.isClosed())) {
 				try {
-				    if (linkLastPingPong +
-					    (Config.getLinkTimeout() * 1000) < System
-					    .currentTimeMillis()) {
+				    if (linkLastPingPong + (Config.getLinkTimeout() * 1000) < System.currentTimeMillis()) {
 					// Link ping timeout, disconnect and
 					// notify remote server
 					Utils.println("ERROR :Ping timeout");
 					server.close();
 				    } else {
-					if (linkLastPingSent +
-						(Config.getLinkPingInterval() * 1000) < System
-						.currentTimeMillis()) {
-					    Utils.println(pre + "PING " +
-						    Config.getLinkServerID() +
-						    " " + remoteSID);
-					    linkLastPingSent = System
-						    .currentTimeMillis();
+					if (linkLastPingSent + (Config.getLinkPingInterval() * 1000) < System.currentTimeMillis()) {
+					    Utils.println(pre + "PING " + Config.getLinkServerID() + " " + remoteSID);
+					    linkLastPingSent = System.currentTimeMillis();
 					}
 					line = in.readLine();
 
-					if ((line != null) &&
-						(line.trim().length() > 0)) {
+					if ((line != null) && (line.trim().length() > 0)) {
 					    if (line.startsWith("ERROR ")) {
 						// ERROR :Invalid password.
 						if (Config.isDebugModeEnabled()) {
-						    BukkitIRCdPlugin.log
-							    .info("[BukkitIRCd]" +
-								    ChatColor.YELLOW +
-								    "[->] " +
-								    line);
+						    BukkitIRCdPlugin.log.info("[BukkitIRCd]" + ChatColor.YELLOW + "[->] " + line);
 						}
-						String[] split = line
-							.split(" ");
+						String[] split = line.split(" ");
 						if (split[1].startsWith(":")) {
-						    split[1] = split[1]
-							    .substring(1);
+						    split[1] = split[1].substring(1);
 						}
 						try {
 						    server.close();
 						} catch (IOException e) {
+						    //TODO Actually do something here - this is terrible
 						}
 						throw new IOException(
-							"Remote host rejected connection, probably configured wrong: " +
-							Utils.join(split,
-								" ", 1));
+							"Remote host rejected connection, probably configured wrong: " + Utils.join(split, " ", 1));
 					    } else {
 						parseLinkCommand(line);
 					    }
 					}
 				    }
 				} catch (SocketTimeoutException e) {
+				    //TODO Actually do something here - this is terrible
 				}
 				try {
 				    Thread.currentThread();
 				    Thread.sleep(1);
 				} catch (InterruptedException e) {
+				    //TODO Actually do something here - this is terrible
 				}
 			    }
 			    try {
 				Thread.currentThread();
 				Thread.sleep(1);
 			    } catch (InterruptedException e) {
+				//TODO Actually do something here - this is terrible
 			    }
 			} catch (IOException e) {
 			    synchronized (csStdOut) {
-				BukkitIRCdPlugin.log
-					.warning("[BukkitIRCd] Server link failed: " +
-						e);
+				BukkitIRCdPlugin.log.warning("[BukkitIRCd] Server link failed: " + e);
 			    }
 			}
 
-			// We exited the while loop so assume the connection was
-			// lost.
+			// We exited the while loop so assume the connection was lost.
 			if (lastconnected) {
-			    BukkitIRCdPlugin.log
-				    .info("[BukkitIRCd] Lost connection to " +
-					    Config.getLinkRemoteHost() + ":" +
-					    Config.getLinkRemoteHost());
-			    if ((IRCd.isPlugin) &&
-				    (BukkitIRCdPlugin.thePlugin != null) &&
-				    linkcompleted) {
+			    BukkitIRCdPlugin.log.info("[BukkitIRCd] Lost connection to " + Config.getLinkRemoteHost() + ":" + Config.getLinkRemoteHost());
+			    if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null) && linkcompleted) {
 				if (msgDelinked.length() > 0) {
-				    Utils.broadcastMessage(msgDelinked.replace(
-					    "{LinkName}", Config.getLinkName()));
+				    Utils.broadcastMessage(msgDelinked.replace("{LinkName}", Config.getLinkName()));
 				}
 			    }
 			    lastconnected = false;
@@ -479,6 +424,7 @@ public class IRCd implements Runnable {
 			    try {
 				server.close();
 			    } catch (IOException e) {
+				//TODO Actually do something here - this is terrible
 			    }
 			}
 			linkcompleted = false;
@@ -490,11 +436,8 @@ public class IRCd implements Runnable {
 			if (running) {
 			    if (Config.isLinkAutoconnect()) {
 				BukkitIRCdPlugin.log
-					.info("[BukkitIRCd] Waiting " +
-						Config.getLinkDelay() +
-						" seconds before retrying...");
-				long endTime = System.currentTimeMillis() +
-					(Config.getLinkDelay() * 1000);
+					.info("[BukkitIRCd] Waiting " + Config.getLinkDelay() + " seconds before retrying...");
+				long endTime = System.currentTimeMillis() + (Config.getLinkDelay() * 1000);
 				while (System.currentTimeMillis() < endTime) {
 				    if ((!running) || isConnected()) {
 					break;
@@ -503,38 +446,29 @@ public class IRCd implements Runnable {
 				    Thread.sleep(10);
 				    try {
 					server = listener.accept();
-					if ((server != null) &&
-						server.isConnected() &&
-						(!server.isClosed())) {
-					    InetAddress addr = server
-						    .getInetAddress();
-					    BukkitIRCdPlugin.log
-						    .info("[BukkitIRCd] Got server connection from " +
-							    addr.getHostAddress());
+					if ((server != null) && server.isConnected() && (!server.isClosed())) {
+					    InetAddress addr = server.getInetAddress();
+					    BukkitIRCdPlugin.log.info("[BukkitIRCd] Got server connection from " + addr.getHostAddress());
 					    isIncoming = true;
 					    break;
 					}
 				    } catch (IOException e) {
+					//TODO Actually do something here - this is terrible
 				    }
 				}
-				if ((server == null) || (!server.isConnected()) ||
-					(server.isClosed())) {
+				if ((server == null) || (!server.isConnected()) || (server.isClosed())) {
 				    IRCFunctionality.connect();
 				}
 			    } else {
 				try {
 				    server = listener.accept();
-				    if ((server != null) &&
-					    server.isConnected() &&
-					    (!server.isClosed())) {
-					InetAddress addr = server
-						.getInetAddress();
-					BukkitIRCdPlugin.log
-						.info("[BukkitIRCd] Got server connection from " +
-							addr.getHostAddress());
+				    if ((server != null) && server.isConnected() && (!server.isClosed())) {
+					InetAddress addr = server.getInetAddress();
+					BukkitIRCdPlugin.log.info("[BukkitIRCd] Got server connection from " + addr.getHostAddress());
 					isIncoming = true;
 				    }
 				} catch (IOException e) {
+				    //TODO Actually do something here - this is terrible
 				}
 			    }
 			    Thread.currentThread();
@@ -543,17 +477,13 @@ public class IRCd implements Runnable {
 		    }
 		}
 	    } catch (InterruptedException e) {
-		BukkitIRCdPlugin.log.info("[BukkitIRCd] Thread " +
-			Thread.currentThread().getName() + " interrupted.");
+		BukkitIRCdPlugin.log.info("[BukkitIRCd] Thread " + Thread.currentThread().getName() + " interrupted.");
 		if (running) {
 		    IRCFunctionality.disconnectAll("Thread interrupted.");
 		    running = false;
 		}
 	    } catch (Exception e) {
-		BukkitIRCdPlugin.log
-			.severe("[BukkitIRCd] Unexpected exception in " +
-				Thread.currentThread().getName() + ": " +
-				e.toString());
+		BukkitIRCdPlugin.log.severe("[BukkitIRCd] Unexpected exception in " + Thread.currentThread().getName() + ": " + e.toString());
 		BukkitIRCdPlugin.log.severe("[BukkitIRCd] Error code IRCd473.");
 		e.printStackTrace();
 		if(e.toString().contains("NullPointerException")) {
@@ -564,8 +494,7 @@ public class IRCd implements Runnable {
 	}
 	BukkitIRCdPlugin.ircd = null;
 	if (running) {
-	    BukkitIRCdPlugin.log
-		    .warning("[BukkitIRCd] Thread quit unexpectedly. If there are any errors above, please notify WizardCM or Mu5tank05 about them.");
+	    BukkitIRCdPlugin.log.warning("[BukkitIRCd] Thread quit unexpectedly. If there are any errors above, please notify WizardCM or Mu5tank05 about them.");
 	}
 	running = false;
     }
@@ -662,8 +591,7 @@ public class IRCd implements Runnable {
      */
     public void parseLinkCommand(String command) throws IOException {
 	if (Config.isDebugModeEnabled()) {
-	    BukkitIRCdPlugin.log.info("[BukkitIRCd]" + ChatColor.YELLOW +
-		    "[->] " + command);
+	    BukkitIRCdPlugin.log.info("[BukkitIRCd]" + ChatColor.YELLOW + "[->] " + command);
 	}
 
 	String split[] = command.split(" ");
@@ -682,10 +610,8 @@ public class IRCd implements Runnable {
 	    if (split.length == 3) {
 		Utils.println(pre + "PONG " + split[2]);
 	    } else if ((split.length == 4) &&
-		    (split[3].equalsIgnoreCase(Integer.toString(Config
-				    .getLinkServerID())))) {
-		Utils.println(pre + "PONG " + Config.getLinkServerID() + " " +
-			split[2]);
+		    (split[3].equalsIgnoreCase(Integer.toString(Config.getLinkServerID())))) {
+		Utils.println(pre + "PONG " + Config.getLinkServerID() + " " + split[2]);
 	    }
 	} else if (split[1].equalsIgnoreCase("PONG")) {
 	    // Received a pong, update the last ping pong timestamp.
@@ -698,8 +624,7 @@ public class IRCd implements Runnable {
 		split[2] = split[2].substring(1);
 	    }
 	    throw new IOException(
-		    "Remote host rejected connection, probably configured wrong: " +
-		    Utils.join(split, " ", 2));
+		    "Remote host rejected connection, probably configured wrong: " + Utils.join(split, " ", 2));
 	} else if (split[1].equalsIgnoreCase("UID")) {
 	    // New user connected, add to IRC user list by UID);
 	    // :0IJ UID 0IJAAAAAP 1321966480 qlum ip565fad97.direct-adsl.nl
@@ -744,8 +669,7 @@ public class IRCd implements Runnable {
 		}
 	    } else {
 		if (Config.isDebugModeEnabled()) {
-		    BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + UID +
-			    " not found in list. Error code IRCd1707."); // Log
+		    BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + UID + " not found in list. Error code IRCd1707."); // Log
 		}
 	    }
 
@@ -757,38 +681,28 @@ public class IRCd implements Runnable {
 	    }
 	    IRCUser iuser;
 	    if (split[2].equalsIgnoreCase(Config.getIrcdServerHostName())) { // Double
-		// check
-		// to
-		// make sure
-		// this request
-		// is for us
+		// check to make sure this request is for us
 		if ((iuser = IRCUserManagement.uid2ircuser.get(split[0])) != null) {
-		    Utils.println(pre + "PUSH " + split[0] + " ::" +
-			    Config.getIrcdServerHostName() + " 391 " +
-			    iuser.nick + " " + Config.getIrcdServerHostName() +
-			    " :" +
-			    dateFormat.format(System.currentTimeMillis()));
+		    Utils.println(pre + "PUSH " + split[0] + " ::" + Config.getIrcdServerHostName() + " 391 " + iuser.nick + " " + Config.getIrcdServerHostName() + " :" + dateFormat.format(System.currentTimeMillis()));
 		}
 	    }
 	} else if (split[1].equalsIgnoreCase("ENDBURST")) {
 	    // :280 ENDBURST
 	    if (split[0].equalsIgnoreCase(remoteSID) ||
 		    split[0].equalsIgnoreCase(Config.getLinkName())) {
-		IRCFunctionality.sendLinkBurst();
+			IRCFunctionality.sendLinkBurst();
 	    }
 	} else if (split[1].equalsIgnoreCase("SERVER")) {
 	    // :dev.tempcraft.net SERVER Esper.janus * 1 0JJ Esper
 	    String hub;
 	    try {
-		if (split[0].equalsIgnoreCase(remoteSID) ||
-			split[0].equalsIgnoreCase(Config.getLinkName())) {
+		if (split[0].equalsIgnoreCase(remoteSID) || split[0].equalsIgnoreCase(Config.getLinkName())) {
 		    hub = remoteSID;
 		} else {
 		    hub = split[0];
 		    IRCServer is = servers.get(hub);
 		    if (is == null) {
-			Iterator<Entry<String, IRCServer>> iter = servers
-				.entrySet().iterator();
+			Iterator<Entry<String, IRCServer>> iter = servers.entrySet().iterator();
 			while (iter.hasNext()) {
 			    Map.Entry<String, IRCServer> entry = iter.next();
 			    entry.getKey();
@@ -802,27 +716,21 @@ public class IRCd implements Runnable {
 		    if (is != null) {
 			is.leaves.add(split[5]);
 		    } else {
-			BukkitIRCdPlugin.log
-				.severe("[BukkitIRCd] Received invalid SERVER command, unknown hub server!");
+			BukkitIRCdPlugin.log.severe("[BukkitIRCd] Received invalid SERVER command, unknown hub server!");
 		    }
 		}
 	    } catch (NumberFormatException e) {
 		hub = remoteSID;
-		BukkitIRCdPlugin.log
-			.severe("[BukkitIRCd] Received invalid SERVER command, unknown hub server!");
+		BukkitIRCdPlugin.log.severe("[BukkitIRCd] Received invalid SERVER command, unknown hub server!");
 	    }
-	    servers.put(split[5], new IRCServer(split[2], split[6], split[5],
-		    hub));
+	    servers.put(split[5], new IRCServer(split[2], split[6], split[5], hub));
 	} else if (split[1].equalsIgnoreCase("SQUIT")) {
-	    // :test.tempcraft.net SQUIT dev.tempcraft.net :Remote host closed
-	    // connection
+	    // :test.tempcraft.net SQUIT dev.tempcraft.net :Remote host closed connection
 	    String quitServer = split[2];
-	    if (quitServer.equalsIgnoreCase(Config.getLinkName()) ||
-		    quitServer.equalsIgnoreCase(remoteSID)) {
+	    if (quitServer.equalsIgnoreCase(Config.getLinkName()) || quitServer.equalsIgnoreCase(remoteSID)) {
 		IRCFunctionality.disconnectServer("Remote server delinked");
 	    } else {
-		Iterator<Entry<String, IRCServer>> iter = servers.entrySet()
-			.iterator();
+		Iterator<Entry<String, IRCServer>> iter = servers.entrySet().iterator();
 		IRCServer is = null;
 		while (iter.hasNext()) {
 		    Map.Entry<String, IRCServer> entry = iter.next();
@@ -841,13 +749,10 @@ public class IRCd implements Runnable {
 	    if (split[2].startsWith(":")) {
 		split[2] = split[2].substring(1);
 	    }
-	    if ((ircuser = IRCUserManagement.uid2ircuser.get(split[0])) != null) {
-		ircuser.isOper = true;
+	    if ((ircuser = IRCUserManagement.uid2ircuser.get(split[0])) != null) {ircuser.isOper = true;
 	    } else {
 		if (Config.isDebugModeEnabled()) {
-		    BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0] +
-			    " not found in list. Error code IRCd1779."); // Log
-		    // as
+		    BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0] + " not found in list. Error code IRCd1779.");
 		}
 	    }
 
@@ -881,12 +786,8 @@ public class IRCd implements Runnable {
 		}
 	    } else {
 		if (Config.isDebugModeEnabled()) {
-		    // Log as severe because this situation should never occur
-		    // and
-		    // points to a bug in the code
-		    BukkitIRCdPlugin.log
-			    .severe("[BukkitIRCd] UID/Config.getLinkServerID() " + split[0] +
-				    " not found in list. Error code IRCd1806.");
+		    // Log as severe because this situation should never occur and points to a bug in the code
+		    BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID/Config.getLinkServerID() " + split[0] + " not found in list. Error code IRCd1806.");
 		}
 
 	    }
@@ -911,38 +812,22 @@ public class IRCd implements Runnable {
 		    IRCUser ircuser;
 		    if ((ircuser = IRCUserManagement.uid2ircuser.get(usersplit[1])) != null) {
 			ircuser.setModes(usersplit[0]);
-			if ((IRCd.isPlugin) &&
-				(BukkitIRCdPlugin.thePlugin != null)) {
+			if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
 			    if (!ircuser.joined) {
 
 				if (msgIRCJoin.length() > 0) // TODO I believe fix for #45 would go here
 				{
-				    Utils.broadcastMessage(msgIRCJoin
-					    .replace("{User}", ircuser.nick)
-					    .replace(
-						    "{Prefix}",
-						    IRCFunctionality.getGroupPrefix(ircuser
-							    .getTextModes()))
-					    .replace(
-						    "{Suffix}",
-						    IRCFunctionality.getGroupSuffix(ircuser
-							    .getTextModes())));
+				    Utils.broadcastMessage(msgIRCJoin.replace("{User}", ircuser.nick).replace("{Prefix}",IRCFunctionality.getGroupPrefix(ircuser.getTextModes())).replace("{Suffix}",IRCFunctionality.getGroupSuffix(ircuser.getTextModes())));
 				}
-				if ((BukkitIRCdPlugin.dynmap != null) &&
-					(msgIRCJoinDynmap.length() > 0)) {
-				    BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
-					    "IRC", msgIRCJoinDynmap.replace(
-						    "{User}", ircuser.nick));
+				if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCJoinDynmap.length() > 0)) {
+				    BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCJoinDynmap.replace("{User}", ircuser.nick));
 				}
 			    }
 			}
 			ircuser.joined = true;
 		    } else {
 			if (Config.isDebugModeEnabled()) {
-			    BukkitIRCdPlugin.log
-				    .severe("[BukkitIRCd] UID " +
-					    usersplit[1] +
-					    " not found in list. Error code IRCd1831."); // Log
+			    BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + usersplit[1] + " not found in list. Error code IRCd1831.");
 			}
 		    }
 
@@ -968,10 +853,7 @@ public class IRCd implements Runnable {
 			ircuser.consoleJoined = true;
 		    } else {
 			if (Config.isDebugModeEnabled()) {
-			    BukkitIRCdPlugin.log
-				    .severe("[BukkitIRCd] UID " +
-					    usersplit[1] +
-					    " not found in list. Error code IRCd1849."); // Log
+			    BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + usersplit[1] + " not found in list. Error code IRCd1849."); // Log
 			}
 		    }
 
@@ -988,9 +870,7 @@ public class IRCd implements Runnable {
 		ircuser.hostmask = split[2];
 	    } else {
 		if (Config.isDebugModeEnabled()) {
-		    BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0] +
-			    " not found in list. Error code IRCd1861."); // Log
-		    // as
+		    BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0] + " not found in list. Error code IRCd1861.");
 		}
 	    }
 
@@ -1004,17 +884,14 @@ public class IRCd implements Runnable {
 		ircuser.realname = Utils.join(split, " ", 2);
 	    } else {
 		if (Config.isDebugModeEnabled()) {
-		    BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0] +
-			    " not found in list. Error code IRCd1870."); // Log
-		    // as
+		    BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[0] + " not found in list. Error code IRCd1870.");
 		}
 	    }
 
 	} else if (split[1].equalsIgnoreCase("FMODE")) {
 	    // :0KJAAAAAA FMODE #tempcraft.staff 1320330110 +o 0KJAAAAAB
 	    IRCUser ircuser, ircusertarget;
-	    if (split.length >= 6) { // If it's not length 6, it's not a user
-		// mode
+	    if (split.length >= 6) { // If it's not length 6, it's not a user mode
 		if (split[0].startsWith(":")) {
 		    split[0] = split[0].substring(1);
 		}
@@ -1026,6 +903,7 @@ public class IRCd implements Runnable {
 			    channelTS = tmp;
 			}
 		    } catch (NumberFormatException e) {
+			//TODO Actually do something here - this is terrible
 		    }
 		} else if (split[2].equalsIgnoreCase(Config
 			.getIrcdConsoleChannel())) {
@@ -1035,6 +913,7 @@ public class IRCd implements Runnable {
 			    consoleChannelTS = tmp;
 			}
 		    } catch (NumberFormatException e) {
+			//TODO Actually do something here - this is terrible
 		    }
 		}
 
@@ -1058,32 +937,22 @@ public class IRCd implements Runnable {
 			    if (split[2].equalsIgnoreCase(Config.getIrcdChannel())) {
 				String textModes = ircusertarget.getTextModes();
 				if (add) {
-				    System.out.println("Adding mode " + mode +
-					    " for " + ircusertarget.nick);
+				    System.out.println("Adding mode " + mode + " for " + ircusertarget.nick);
 				    if (!textModes.contains(mode)) {
-					ircusertarget
-						.setModes(textModes + mode);
+					ircusertarget.setModes(textModes + mode);
 				    }
 				} else {
-				    System.out.println("Removing mode " + mode +
-					    " for " + ircusertarget.nick);
+				    System.out.println("Removing mode " + mode + " for " + ircusertarget.nick);
 				    if (textModes.contains(mode)) {
-					ircusertarget.setModes(textModes
-						.replace(mode, ""));
+					ircusertarget.setModes(textModes.replace(mode, ""));
 				    }
 				}
-			    } else if (split[2].equalsIgnoreCase(Config
-				    .getIrcdConsoleChannel())) {
-				String consoleTextModes = ircusertarget
-					.getConsoleTextModes();
+			    } else if (split[2].equalsIgnoreCase(Config.getIrcdConsoleChannel())) {
+				String consoleTextModes = ircusertarget.getConsoleTextModes();
 				if (add) {
-				    System.out.println("Adding console mode " +
-					    mode + " for " +
-					    ircusertarget.nick);
+				    System.out.println("Adding console mode " + mode + " for " + ircusertarget.nick);
 				    if (!consoleTextModes.contains(mode)) {
-					ircusertarget
-						.setConsoleModes(consoleTextModes +
-							mode);
+					ircusertarget.setConsoleModes(consoleTextModes + mode);
 				    }
 				} else {
 				    System.out.println("Removing console mode " +
@@ -1164,6 +1033,7 @@ public class IRCd implements Runnable {
 		try {
 		    channelTopicSetDate = Long.parseLong(split[3]);
 		} catch (NumberFormatException e) {
+		    //TODO Actually do something here - this is terrible
 		}
 		channelTopicSet = user;
 		if ((isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
