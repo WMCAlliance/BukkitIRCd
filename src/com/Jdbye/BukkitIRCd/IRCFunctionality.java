@@ -418,8 +418,7 @@ public class IRCFunctionality {
      @param message
      message to send encoded with IRC colors
      */
-    public static void privmsg(final String source, final String target,
-	    final String message) {
+    public static void privmsg(final String source, final String target, final String message) {
 	Utils.println(":" + source + " PRIVMSG " + target + " :" + message);
     }
 

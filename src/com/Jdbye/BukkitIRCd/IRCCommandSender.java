@@ -55,8 +55,7 @@ public class IRCCommandSender implements CommandSender {
 	    ArrayList<String> lns = new ArrayList<String>();
 	    lns.add(message);
 	    if((message.length() + Config.getIrcdConsoleChannel().length()) > 329) {
-		// TODO Handle console messages too long to fit
-		//Iterable<String> lns = Splitter.fixedLength(330 - Config.getIrcdConsoleChannel().length()).split(message);
+		// TODO A string[] of a random size that I've chosen is probably quite inefficient.. look into a way to improve this ~WizardCM
 		String[] l = new String[30];
 		l = Iterables.toArray(Splitter.fixedLength(329 - Config.getIrcdConsoleChannel().length()).split(message), String.class);
 		lns.remove(message);

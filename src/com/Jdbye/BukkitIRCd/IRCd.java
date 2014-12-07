@@ -115,8 +115,7 @@ public class IRCd implements Runnable {
 
     public static boolean isPlugin = false;
 
-    // This object registers itself as a console target and needs to be
-    // long lived.
+    // This object registers itself as a console target and needs to be long lived.
     public static IRCCommandSender commandSender = null;
 
     // private static Date curDate = new Date();
@@ -948,8 +947,7 @@ public class IRCd implements Runnable {
 		    }
 
 		}
-	    } else if (split[2]
-		    .equalsIgnoreCase(Config.getIrcdConsoleChannel())) {
+	    } else if (split[2].equalsIgnoreCase(Config.getIrcdConsoleChannel())) {
 		try {
 		    long tmp = Long.parseLong(split[3]);
 		    if (consoleChannelTS > tmp) {
@@ -979,8 +977,7 @@ public class IRCd implements Runnable {
 
 		}
 	    }
-	    // Ignore other channels, since this plugin only cares about the
-	    // main channel and console channel.
+	    // Ignore other channels, since this plugin only cares about the main channel and console channel.
 	} else if (split[1].equalsIgnoreCase("FHOST")) {
 	    // :0KJAAAAAA FHOST test
 	    IRCUser ircuser;
@@ -1058,8 +1055,7 @@ public class IRCd implements Runnable {
 			add = false;
 		    } else {
 			if ((ircusertarget = IRCUserManagement.uid2ircuser.get(user)) != null) {
-			    if (split[2].equalsIgnoreCase(Config
-				    .getIrcdChannel())) {
+			    if (split[2].equalsIgnoreCase(Config.getIrcdChannel())) {
 				String textModes = ircusertarget.getTextModes();
 				if (add) {
 				    System.out.println("Adding mode " + mode +
@@ -1360,8 +1356,7 @@ public class IRCd implements Runnable {
 			}
 		    }
 
-		} else if (split[2].equalsIgnoreCase(Config
-			.getIrcdConsoleChannel())) {
+		} else if (split[2].equalsIgnoreCase(Config.getIrcdConsoleChannel())) {
 		    if (split[3].equalsIgnoreCase(serverUID)) {
 			Utils.println(pre + "FJOIN " + Config.getIrcdConsoleChannel() +
 				" " + consoleChannelTS + " +nt :," +
@@ -1500,8 +1495,7 @@ public class IRCd implements Runnable {
 			}
 		    }
 
-		} else if (split[2].equalsIgnoreCase(Config
-			.getIrcdConsoleChannel())) {
+		} else if (split[2].equalsIgnoreCase(Config.getIrcdConsoleChannel())) {
 		    // Console channel
 		    // Only thing important here is to set consolemodes to blank
 		    // so they can't execute commands on the console channel
@@ -1983,14 +1977,10 @@ public class IRCd implements Runnable {
 		    } else if (split[2].equalsIgnoreCase(serverUID)) { // Messaging
 			// the
 			// console
-			if ((IRCd.isPlugin) &&
-				(BukkitIRCdPlugin.thePlugin != null)) {
+			if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
 			    if (isAction) {
 				msgtemplate = msgIRCPrivateAction;
-				message = Utils.join(
-					message.substring(1,
-						message.length() - 1)
-					.split(" "), " ", 1);
+				message = Utils.join(message.substring(1, message.length() - 1).split(" "), " ", 1);
 			    } else if (isNotice) {
 				msgtemplate = msgIRCPrivateNotice;
 			    } else {
