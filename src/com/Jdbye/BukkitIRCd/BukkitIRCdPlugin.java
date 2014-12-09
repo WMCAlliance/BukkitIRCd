@@ -24,6 +24,7 @@ import com.Jdbye.BukkitIRCd.commands.IRCReloadCommand;
 import com.Jdbye.BukkitIRCd.commands.IRCReplyCommand;
 import com.Jdbye.BukkitIRCd.commands.IRCTopicCommand;
 import com.Jdbye.BukkitIRCd.commands.IRCUnbanCommand;
+import com.Jdbye.BukkitIRCd.commands.IRCUserCommands;
 import com.Jdbye.BukkitIRCd.commands.IRCWhoisCommand;
 import com.Jdbye.BukkitIRCd.commands.RawsendCommand;
 import com.Jdbye.BukkitIRCd.configuration.Bans;
@@ -70,7 +71,8 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	ircdVersion = pdfFile.getName() + " " + pdfFile.getVersion() + " by " + pdfFile.getAuthors().get(0);
 	setupMetrics();
 	pluginInit();
-
+	
+	getCommand("irc").setExecutor(new IRCUserCommands());
 	getCommand("ircban").setExecutor(new IRCBanCommand(this));
 	getCommand("irckick").setExecutor(new IRCKickCommand());
 	getCommand("irclist").setExecutor(new IRCListCommand());
