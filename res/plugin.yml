@@ -14,11 +14,8 @@ authors:
   - ron975
 commands:
   irc:
-    aliases:
-      - bukkitircd
-      - bircd
-    description: 'BukkitIRCd command(s).'
-    usage: /irc
+    description: 'NoCheatPlus command(s).'
+    usage: "BukkitIRCd commands list:\n/irclist - Lists the online users on IRC.\n/irckick - Kick a user from IRC.\n/ircban - Ban a user from IRC via their host, ip, ident, nick or a full hostmask.\n/ircunban - Unban a user from IRC by their IP or full hostmask.\n/ircwhois - Perform a lookup on an IRC user.\n/ircmsg - Private message a user on IRC.\n/ircreply - Reply to the last IRC private message you received.\n/irctopic - Change the IRC topic for the main channel\n/irclink - Attempt to link to the remote server if in linking mode but not currently linked.\n/ircreload - Reload the plugin configuration and MOTD, and restart the IRC server/link.\n/rawsend - Sends a raw server command to the linked server, if enabled. Only usable from console.\n"
   ircban:
     aliases:
       - iban

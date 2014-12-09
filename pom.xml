@@ -69,7 +69,7 @@
    </scm>
    <description>BukkitIRCd is a comprehensive IRC plugin for Bukkit. It allows ingame server chat to be accessed in a standalone IRC channel, or to be linked to a InspIRCd network. Each Bukkit user is represented as his/her own IRC user and can have access to certain IRC privileges. As well, the plugin allows for server control through a IRC channel.</description>
    <ciManagement>
-      <system>TravisCI</system>
-      <url>https://travis-ci.org/WMCAlliance/BukkitIRCd</url>
+      <system>Jenkins</system>
+      <url>http://ci.blny.me/job/BukkitIRCd/</url>
    </ciManagement>
 </project>

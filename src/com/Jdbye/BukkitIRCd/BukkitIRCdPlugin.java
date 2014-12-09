@@ -19,7 +19,6 @@ import com.Jdbye.BukkitIRCd.commands.IRCBanCommand;
 import com.Jdbye.BukkitIRCd.commands.IRCKickCommand;
 import com.Jdbye.BukkitIRCd.commands.IRCLinkCommand;
 import com.Jdbye.BukkitIRCd.commands.IRCListCommand;
-import com.Jdbye.BukkitIRCd.commands.IRCUserCommands;
 import com.Jdbye.BukkitIRCd.commands.IRCMsgCommand;
 import com.Jdbye.BukkitIRCd.commands.IRCReloadCommand;
 import com.Jdbye.BukkitIRCd.commands.IRCReplyCommand;
@@ -34,332 +33,308 @@ import com.Jdbye.BukkitIRCd.configuration.Messages;
 
 public class BukkitIRCdPlugin extends JavaPlugin {
 
-	static class CriticalSection extends Object {
+    static class CriticalSection extends Object {
+    }
+
+    static public CriticalSection csLastReceived = new CriticalSection();
+    private final BukkitIRCdPlayerListener playerListener = new BukkitIRCdPlayerListener(this);
+    private BukkitIRCdDynmapListener dynmapListener = null;
+    public static BukkitIRCdPlugin thePlugin = null;
+    public static SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
+    public Map<String, String> lastReceived = new HashMap<String, String>();
+    public static String ircdVersion;
+    public boolean dynmapEventRegistered = false;
+    public static final Logger log = Logger.getLogger("Minecraft");
+    public static DynmapAPI dynmap = null;
+    static IRCd ircd = null;
+    private Thread thr = null;
+
+    public BukkitIRCdPlugin() {
+	thePlugin = this;
+    }
+
+    public static Config config = null;
+
+    /**
+     The core enable task, which loads configuration, registers events and commands, and depending on config, either launches an IRCd instance or connects to an external server
+     */
+    @Override
+    public void onEnable() {
+	saveDefaultConfig();
+
+	// Register our events
+	PluginManager pm = getServer().getPluginManager();
+	pm.registerEvents(this.playerListener, this);
+
+	PluginDescriptionFile pdfFile = getDescription();
+	ircdVersion = pdfFile.getName() + " " + pdfFile.getVersion() + " by " + pdfFile.getAuthors().get(0);
+	setupMetrics();
+	pluginInit();
+
+	getCommand("ircban").setExecutor(new IRCBanCommand(this));
+	getCommand("irckick").setExecutor(new IRCKickCommand());
+	getCommand("irclist").setExecutor(new IRCListCommand());
+	getCommand("ircunban").setExecutor(new IRCUnbanCommand(this));
+	getCommand("ircwhois").setExecutor(new IRCWhoisCommand());
+	getCommand("ircmsg").setExecutor(new IRCMsgCommand());
+	getCommand("ircreply").setExecutor(new IRCReplyCommand(this));
+	getCommand("irctopic").setExecutor(new IRCTopicCommand());
+	getCommand("irclink").setExecutor(new IRCLinkCommand(this));
+	getCommand("ircreload").setExecutor(new IRCReloadCommand(this));
+	getCommand("rawsend").setExecutor(new RawsendCommand());
+
+	log.info(ircdVersion + " is now enabled");
+    }
+
+    /**
+     Core disable task, shuts down IRCd instance, saves config.
+     */
+    @Override
+    public void onDisable() {
+	if (ircd != null) {
+	    ircd.running = false;
+	    IRCFunctionality.disconnectAll();
+	    ircd = null;
+	}
+	if (thr != null) {
+	    thr.interrupt();
+	    thr = null;
 	}
 
-	static public CriticalSection csLastReceived = new CriticalSection();
-	private final BukkitIRCdPlayerListener playerListener = new BukkitIRCdPlayerListener(
-			this);
-	private BukkitIRCdDynmapListener dynmapListener = null;
-	public static BukkitIRCdPlugin thePlugin = null;
-	public static SimpleDateFormat dateFormat = new SimpleDateFormat(
-			"EEE MMM dd HH:mm:ss yyyy");
-	public Map<String, String> lastReceived = new HashMap<String, String>();
-	public static String ircdVersion;
-	public boolean dynmapEventRegistered = false;
-	public static final Logger log = Logger.getLogger("Minecraft");
-	public static DynmapAPI dynmap = null;
-	static IRCd ircd = null;
-	private Thread thr = null;
+	dynmapEventRegistered = false;
+	// File configFile = new File(getDataFolder(), "config.yml");
+	Config.saveConfiguration();
 
-	public BukkitIRCdPlugin() {
-		thePlugin = this;
+	Bans.writeBans();
+
+	log.info(ircdVersion + " is now disabled!");
+    }
+
+    private void pluginInit() {
+	pluginInit(false);
+    }
+
+    /**
+     Initialises the plugin. On a reload, it restarts the IRCd.
+     <p>
+     @param reload	Whether it's a reload or it's the first initialisation of the session.
+     */
+    public void pluginInit(boolean reload) {
+	if (reload) {
+	    if (ircd != null) {
+		ircd.running = false;
+		IRCFunctionality.disconnectAll("Reloading configuration.");
+		ircd = null;
+	    }
+	    if (thr != null) {
+		thr.interrupt();
+		thr = null;
+	    }
 	}
 
-	public static Config config = null;
+	Config.reloadConfiguration();
+	Config.saveConfiguration();
 
-	/**
-	 * The core enable task, which loads configuration, registers events and
-	 * commands, and depending on config, either launches an IRCd instance or
-	 * connects to an external server
-	 */
-	@Override
-	public void onEnable() {
-		saveDefaultConfig();
+	Bans.enableBans();
 
-		// Register our events
-		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvents(this.playerListener, this);
+	MOTD.enableMOTD();
+	MOTD.loadMOTD();
 
-		PluginDescriptionFile pdfFile = getDescription();
-		ircdVersion = pdfFile.getName() + " " + pdfFile.getVersion() + " by "
-				+ pdfFile.getAuthors().get(0);
-		setupMetrics();
-		pluginInit();
+	setupDynmap();
 
-		getCommand("irc").setExecutor(new IRCUserCommands());
-		getCommand("ircban").setExecutor(new IRCBanCommand(this));
-		getCommand("irckick").setExecutor(new IRCKickCommand());
-		getCommand("irclist").setExecutor(new IRCListCommand());
-		getCommand("ircunban").setExecutor(new IRCUnbanCommand(this));
-		getCommand("ircwhois").setExecutor(new IRCWhoisCommand());
-		getCommand("ircmsg").setExecutor(new IRCMsgCommand());
-		getCommand("ircreply").setExecutor(new IRCReplyCommand(this));
-		getCommand("irctopic").setExecutor(new IRCTopicCommand());
-		getCommand("irclink").setExecutor(new IRCLinkCommand(this));
-		getCommand("ircreload").setExecutor(new IRCReloadCommand(this));
-		getCommand("rawsend").setExecutor(new RawsendCommand());
+	ircd = new IRCd();
 
-		log.info(ircdVersion + " is now enabled");
+	if (IRCd.globalNameIgnoreList == null) {
+	    IRCd.globalNameIgnoreList = new ArrayList<String>();
 	}
 
-	/**
-	 * Core disable task, shuts down IRCd instance, saves config.
-	 */
-	@Override
-	public void onDisable() {
-		if (ircd != null) {
-			ircd.running = false;
-			IRCFunctionality.disconnectAll();
-			ircd = null;
-		}
-		if (thr != null) {
-			thr.interrupt();
-			thr = null;
-		}
+	// TODO Ignore List loading
+		/*try
+	 {
+	 Scanner ignoreListScanner = new Scanner(new File(getDataFolder(), "ignoreList.yml"));
+			
+	 while (ignoreListScanner.hasNext()){
+	 IRCd.globalNameIgnoreList.add(ignoreListScanner.next());
+	 }
 
-		dynmapEventRegistered = false;
-		// File configFile = new File(getDataFolder(), "config.yml");
-		Config.saveConfiguration();
+	 ignoreListScanner.close();
+	 }
+	 catch ( java.io.FileNotFoundException e )
+	 {
+	 // we don't care if it exists or not currently
+	 // if it doesn't exist, everything carries on as normal
 
-		Bans.writeBans();
+	 // this is seperated should we wish to add to it...
+	 }
+	 catch (Exception e)
+	 {
+	 // same as FileNotFoundException
+	 }*/
+	Messages.loadMessages(ircd);
+	IRCd.bukkitversion = getServer().getVersion();
 
-		log.info(ircdVersion + " is now disabled!");
+	Bans.loadBans();
+
+	IRCd.bukkitPlayers.clear();
+
+	// Set players to different IRC modes based on permission
+	for (final Player player : getServer().getOnlinePlayers()) {
+	    final String mode = computePlayerModes(player);
+	    BukkitUserManagement.addBukkitUser(mode, player);
 	}
 
-	private void pluginInit() {
-		pluginInit(false);
+	thr = new Thread(ircd);
+	thr.start();
+
+    }
+
+    /**
+     Check for Dynmap, and if it's installed, register events and hooks.
+     */
+    private void setupDynmap() {
+	if (BukkitIRCdPlugin.dynmap == null) {
+	    final PluginManager pm = getServer().getPluginManager();
+	    final Plugin plugin = pm.getPlugin("dynmap");
+
+	    if (plugin != null) {
+		if (dynmapListener == null) {
+		    dynmapListener = new BukkitIRCdDynmapListener();
+		}
+
+		if (!dynmapEventRegistered) {
+		    pm.registerEvents(dynmapListener, this);
+		}
+		log.info("[BukkitIRCd] Hooked into Dynmap.");
+	    }
 	}
+    }
 
-	/**
-	 * Initialises the plugin. On a reload, it restarts the IRCd.
-	 * <p>
-	 * 
-	 * @param reload
-	 *            Whether it's a reload or it's the first initialisation of the
-	 *            session.
-	 */
-	public void pluginInit(boolean reload) {
-		if (reload) {
-			if (ircd != null) {
-				ircd.running = false;
-				IRCFunctionality.disconnectAll("Reloading configuration.");
-				ircd = null;
-			}
-			if (thr != null) {
-				thr.interrupt();
-				thr = null;
-			}
-		}
-
-		Config.reloadConfiguration();
-		Config.saveConfiguration();
-
-		Bans.enableBans();
-
-		MOTD.enableMOTD();
-		MOTD.loadMOTD();
-
-		setupDynmap();
-
-		ircd = new IRCd();
-
-		if (IRCd.globalNameIgnoreList == null) {
-			IRCd.globalNameIgnoreList = new ArrayList<String>();
-		}
-
-		// TODO Ignore List loading
-		/*
-		 * try { Scanner ignoreListScanner = new Scanner(new
-		 * File(getDataFolder(), "ignoreList.yml"));
-		 * 
-		 * while (ignoreListScanner.hasNext()){
-		 * IRCd.globalNameIgnoreList.add(ignoreListScanner.next()); }
-		 * 
-		 * ignoreListScanner.close(); } catch ( java.io.FileNotFoundException e
-		 * ) { // we don't care if it exists or not currently // if it doesn't
-		 * exist, everything carries on as normal
-		 * 
-		 * // this is seperated should we wish to add to it... } catch
-		 * (Exception e) { // same as FileNotFoundException }
-		 */
-		Messages.loadMessages(ircd);
-		IRCd.bukkitversion = getServer().getVersion();
-
-		Bans.loadBans();
-
-		IRCd.bukkitPlayers.clear();
-
-		// Set players to different IRC modes based on permission
-		for (final Player player : getServer().getOnlinePlayers()) {
-			final String mode = computePlayerModes(player);
-			BukkitUserManagement.addBukkitUser(mode, player);
-		}
-
-		thr = new Thread(ircd);
-		thr.start();
-
+    /**
+     Unloads Dynmap API links
+     */
+    public void unloadDynmap() {
+	if (BukkitIRCdPlugin.dynmap != null) {
+	    BukkitIRCdPlugin.dynmap = null;
+	    log.info("[BukkitIRCd] Dynmap plugin unloaded.");
 	}
+    }
 
-	/**
-	 * Check for Dynmap, and if it's installed, register events and hooks.
-	 */
-	private void setupDynmap() {
-		if (BukkitIRCdPlugin.dynmap == null) {
-			final PluginManager pm = getServer().getPluginManager();
-			final Plugin plugin = pm.getPlugin("dynmap");
-
-			if (plugin != null) {
-				if (dynmapListener == null) {
-					dynmapListener = new BukkitIRCdDynmapListener();
-				}
-
-				if (!dynmapEventRegistered) {
-					pm.registerEvents(dynmapListener, this);
-				}
-				log.info("[BukkitIRCd] Hooked into Dynmap.");
-			}
-		}
+    /**
+     Primarily used for certain console things in IRCd and ClientConnection, contains senders and receivers of messages.
+     <p>
+     @param sender The sender of a message (probably)
+     @param recipeient The recipient of a message (probably)
+     */
+    public void setLastReceived(String recipient, String sender) {
+	synchronized (csLastReceived) {
+	    lastReceived.put(recipient, sender);
 	}
+    }
 
-	/**
-	 * Unloads Dynmap API links
-	 */
-	public void unloadDynmap() {
-		if (BukkitIRCdPlugin.dynmap != null) {
-			BukkitIRCdPlugin.dynmap = null;
-			log.info("[BukkitIRCd] Dynmap plugin unloaded.");
+    /**
+     Updates the stored sender/recipient combo.
+     <p>
+     @param oldSender Old sender to search and replace
+     @param newSender The replacement sender name
+     */
+    public void updateLastReceived(String oldSender, String newSender) {
+	List<String> update = new ArrayList<String>();
+	synchronized (csLastReceived) {
+	    for (Map.Entry<String, String> lastReceivedEntry : lastReceived.entrySet()) {
+		if (lastReceivedEntry.getValue().equalsIgnoreCase(oldSender)) {
+		    update.add(lastReceivedEntry.getKey());
 		}
+	    }
+	    for (String toUpdate : update) {
+		lastReceived.put(toUpdate, newSender);
+	    }
 	}
+    }
 
-	/**
-	 * Primarily used for certain console things in IRCd and ClientConnection,
-	 * contains senders and receivers of messages.
-	 * <p>
-	 * 
-	 * @param sender
-	 *            The sender of a message (probably)
-	 * @param recipeient
-	 *            The recipient of a message (probably)
-	 */
-	public void setLastReceived(String recipient, String sender) {
-		synchronized (csLastReceived) {
-			lastReceived.put(recipient, sender);
-		}
+    /**
+     Removes the sender/recipient combo.
+     <p>
+     @param sender Name to remove
+     */
+    public void removeLastReceivedBy(String recipient) {
+	synchronized (csLastReceived) {
+	    lastReceived.remove(recipient);
 	}
+    }
 
-	/**
-	 * Updates the stored sender/recipient combo.
-	 * <p>
-	 * 
-	 * @param oldSender
-	 *            Old sender to search and replace
-	 * @param newSender
-	 *            The replacement sender name
-	 */
-	public void updateLastReceived(String oldSender, String newSender) {
-		List<String> update = new ArrayList<String>();
-		synchronized (csLastReceived) {
-			for (Map.Entry<String, String> lastReceivedEntry : lastReceived
-					.entrySet()) {
-				if (lastReceivedEntry.getValue().equalsIgnoreCase(oldSender)) {
-					update.add(lastReceivedEntry.getKey());
-				}
-			}
-			for (String toUpdate : update) {
-				lastReceived.put(toUpdate, newSender);
-			}
+    /**
+     Remove the last known sender from the sender/recipient combo
+     <p>
+     @param sender Name to remove
+     */
+    public void removeLastReceivedFrom(String sender) {
+	List<String> remove = new ArrayList<String>();
+	synchronized (csLastReceived) {
+	    for (Map.Entry<String, String> lastReceivedEntry : lastReceived.entrySet()) {
+		if (lastReceivedEntry.getValue().equalsIgnoreCase(sender)) {
+		    remove.add(lastReceivedEntry.getKey());
 		}
+	    }
+	    for (String toRemove : remove) {
+		lastReceived.remove(toRemove);
+	    }
 	}
+    }
 
-	/**
-	 * Removes the sender/recipient combo.
-	 * <p>
-	 * 
-	 * @param sender
-	 *            Name to remove
-	 */
-	public void removeLastReceivedBy(String recipient) {
-		synchronized (csLastReceived) {
-			lastReceived.remove(recipient);
-		}
+    /**
+     Counts how many times a certain character appears in a string. CURRENTLY ONLY USED FOR BANS - TO CHECK IF THE STRING IS AN IP (THOUGH ONLY LIMITED TO IPV4
+     // TODO This is gross. Only works for IPV4. Fix it.
+     <p>
+     @param text The name/IP to read
+     @param search The character to search for and count
+     <p>
+     @return
+     */
+    public int countStr(String text, String search) {
+	int count = 0;
+	for (int fromIndex = 0; fromIndex > -1; count++) {
+	    fromIndex = text.indexOf(search, fromIndex + ((count > 0) ? 1 : 0));
 	}
+	return count - 1;
+    }
 
-	/**
-	 * Remove the last known sender from the sender/recipient combo
-	 * <p>
-	 * 
-	 * @param sender
-	 *            Name to remove
-	 */
-	public void removeLastReceivedFrom(String sender) {
-		List<String> remove = new ArrayList<String>();
-		synchronized (csLastReceived) {
-			for (Map.Entry<String, String> lastReceivedEntry : lastReceived
-					.entrySet()) {
-				if (lastReceivedEntry.getValue().equalsIgnoreCase(sender)) {
-					remove.add(lastReceivedEntry.getKey());
-				}
-			}
-			for (String toRemove : remove) {
-				lastReceived.remove(toRemove);
-			}
-		}
+    /**
+     Setup PluginMetrics
+     */
+    private void setupMetrics() {
+	try {
+	    Metrics metrics = new Metrics(this);
+	    metrics.start();
+	} catch (IOException e) {
+	    // TODO Properly handle Metrics not starting
 	}
+    }
 
-	/**
-	 * Counts how many times a certain character appears in a string. CURRENTLY
-	 * ONLY USED FOR BANS - TO CHECK IF THE STRING IS AN IP (THOUGH ONLY LIMITED
-	 * TO IPV4 // TODO This is gross. Only works for IPV4. Fix it.
-	 * <p>
-	 * 
-	 * @param text
-	 *            The name/IP to read
-	 * @param search
-	 *            The character to search for and count
-	 *            <p>
-	 * @return
-	 */
-	public int countStr(String text, String search) {
-		int count = 0;
-		for (int fromIndex = 0; fromIndex > -1; count++) {
-			fromIndex = text.indexOf(search, fromIndex + ((count > 0) ? 1 : 0));
+    /**
+     Determines what IRC modes a player should have, and gives it to them. If redundant modes are disabled, only the first is stored.
+     <p>
+     @param player The player who the modes shall belong to
+     <p>
+     @return List of modes they should have, based on permissions
+     // TODO Enum modes
+     */
+    String computePlayerModes(final Player player) {
+	final StringBuffer mode = new StringBuffer(5);
+
+	final char[] modeSigils = {'~', '&', '@', '%', '+'};
+	final String[] modeNames = {"owner", "protect", "op", "halfop", "voice"};
+
+	for (int i = 0; i < modeSigils.length; i++) {
+	    if (player.hasPermission("bukkitircd.mode." + modeNames[i])) {
+		mode.append(modeSigils[i]);
+		if (!Config.isIrcdRedundantModes()) {
+		    break;
 		}
-		return count - 1;
+	    }
 	}
-
-	/**
-	 * Setup PluginMetrics
-	 */
-	private void setupMetrics() {
-		try {
-			Metrics metrics = new Metrics(this);
-			metrics.start();
-		} catch (IOException e) {
-			// TODO Properly handle Metrics not starting
-		}
+	if (Config.isDebugModeEnabled()) {
+	    BukkitIRCdPlugin.log.info("Add mode +" + mode.toString() + " for player " + player.getName());
 	}
-
-	/**
-	 * Determines what IRC modes a player should have, and gives it to them. If
-	 * redundant modes are disabled, only the first is stored.
-	 * <p>
-	 * 
-	 * @param player
-	 *            The player who the modes shall belong to
-	 *            <p>
-	 * @return List of modes they should have, based on permissions // TODO Enum
-	 *         modes
-	 */
-	String computePlayerModes(final Player player) {
-		final StringBuffer mode = new StringBuffer(5);
-
-		final char[] modeSigils = { '~', '&', '@', '%', '+' };
-		final String[] modeNames = { "owner", "protect", "op", "halfop",
-				"voice" };
-
-		for (int i = 0; i < modeSigils.length; i++) {
-			if (player.hasPermission("bukkitircd.mode." + modeNames[i])) {
-				mode.append(modeSigils[i]);
-				if (!Config.isIrcdRedundantModes()) {
-					break;
-				}
-			}
-		}
-		if (Config.isDebugModeEnabled()) {
-			BukkitIRCdPlugin.log.info("Add mode +" + mode.toString()
-					+ " for player " + player.getName());
-		}
-		return mode.toString();
-	}
+	return mode.toString();
+    }
 }
