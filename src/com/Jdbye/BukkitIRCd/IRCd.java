@@ -817,7 +817,7 @@ public class IRCd implements Runnable {
 
 				if (msgIRCJoin.length() > 0) // TODO I believe fix for #45 would go here
 				{
-				    Utils.broadcastMessage(msgIRCJoin.replace("{User}", ircuser.nick).replace("{Prefix}",IRCFunctionality.getGroupPrefix(ircuser.getTextModes())).replace("{Suffix}",IRCFunctionality.getGroupSuffix(ircuser.getTextModes())));
+				    Utils.broadcastMessage(MessageFormatter.joinIRC(msgIRCJoin, IRCFunctionality.getGroupPrefix(ircuser.getTextModes()), ircuser.nick, IRCFunctionality.getGroupSuffix(ircuser.getTextModes())));
 				}
 				if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCJoinDynmap.length() > 0)) {
 				    BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCJoinDynmap.replace("{User}", ircuser.nick));
@@ -1130,22 +1130,11 @@ public class IRCd implements Runnable {
 		split[2] = split[2].substring(1);
 	    }
 	    if ((ircuser = IRCUserManagement.uid2ircuser.get(split[0])) != null) {
-		BukkitIRCdPlugin.thePlugin.updateLastReceived(ircuser.nick,
-			split[2]);
+		BukkitIRCdPlugin.thePlugin.updateLastReceived(ircuser.nick, split[2]);
 		if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null) &&
 			(ircuser.joined)) {
 		    if (msgIRCNickChange.length() > 0) {
-			Utils.broadcastMessage(msgIRCNickChange
-				.replace("{OldNick}", ircuser.nick)
-				.replace(
-					"{Prefix}",
-					IRCFunctionality.getGroupPrefix(ircuser
-						.getTextModes()))
-				.replace(
-					"{Suffix}",
-					IRCFunctionality.getGroupSuffix(ircuser
-						.getTextModes()))
-				.replace("{NewNick}", split[2]));
+			Utils.broadcastMessage(MessageFormatter.changeNick(msgIRCNickChange, ircuser.nick, split[2], IRCFunctionality.getGroupPrefix(ircuser.getTextModes()), IRCFunctionality.getGroupSuffix(ircuser.getTextModes())));
 		    }
 		    if ((BukkitIRCdPlugin.dynmap != null) &&
 			    (msgIRCNickChangeDynmap.length() > 0)) {
@@ -1160,8 +1149,7 @@ public class IRCd implements Runnable {
 		ircuser.isRegistered = false;
 	    } else {
 		if (Config.isDebugModeEnabled()) {
-		    BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[2] +
-			    " not found in list. Error code IRCd2013."); // Log as severe because this situation should never occur and points to a bug in the code
+		    BukkitIRCdPlugin.log.severe("[BukkitIRCd] UID " + split[2] + " not found in list. Error code IRCd2013."); // Log as severe because this situation should never occur and points to a bug in the code
 		}
 	    }
 
