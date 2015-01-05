@@ -47,4 +47,4 @@ BukkitIRCd is licensed under the GNU General Public License Version 3. A copy of
 ### Plugin Statistics
 ![PluginMetrics](http://api.mcstats.org/signature/BukkitIRCd.png)
 
-More statistics available at [MCStats.org](http://mcstats.org/plugin/BukkitIRCd)
+More statistics available at [MCStats.org](http://mcstats.org/plugin/BukkitIRCd) 
