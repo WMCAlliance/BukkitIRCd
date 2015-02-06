@@ -19,6 +19,8 @@ server-host: bukkitircd.localhost
 server-name: BukkitIRCd
 strip-ingame-suffix: true
 use-host-mask: true
+user-disconnect-msg: "Left the server :("
+user-usermode-msg: "A humble Minecraft Player"
 
 # Chat
 color-death-messages: false

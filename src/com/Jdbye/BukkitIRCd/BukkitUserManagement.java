@@ -4,7 +4,6 @@ import static com.Jdbye.BukkitIRCd.IRCd.bukkitPlayers;
 import static com.Jdbye.BukkitIRCd.IRCd.channelTS;
 import static com.Jdbye.BukkitIRCd.IRCd.csBukkitPlayers;
 import static com.Jdbye.BukkitIRCd.IRCd.mode;
-import static com.Jdbye.BukkitIRCd.IRCd.msgDisconnectQuitting;
 import static com.Jdbye.BukkitIRCd.IRCd.msgIRCKick;
 import static com.Jdbye.BukkitIRCd.IRCd.msgIRCKickDisplay;
 import static com.Jdbye.BukkitIRCd.IRCd.msgIRCKickDisplayReason;
@@ -338,12 +337,10 @@ public class BukkitUserManagement {
 	String world = player.getWorld().getName();
 	if (getUser(nick) < 0) {
 	    synchronized (csBukkitPlayers) {
-		BukkitPlayer bp = new BukkitPlayer(nick, world, modes,
-			realhost, host, ip, System.currentTimeMillis() / 1000L,	System.currentTimeMillis());
+		BukkitPlayer bp = new BukkitPlayer(nick, world, modes, realhost, host, ip, System.currentTimeMillis() / 1000L,	System.currentTimeMillis());
 		bukkitPlayers.add(bp);
 		if (mode == Modes.STANDALONE) {
-		    IRCFunctionality.writeAll(":" + nick + Config.getIrcdIngameSuffix() + "!" +
-			    nick + "@" + host + " JOIN " + Config.getIrcdChannel());
+		    IRCFunctionality.writeAll(":" + nick + Config.getIrcdIngameSuffix() + "!" + nick + "@" + host + " JOIN " + Config.getIrcdChannel());
 		}
 		StringBuilder mode1 = new StringBuilder();
 		mode1.append("+");
@@ -386,8 +383,7 @@ public class BukkitUserManagement {
 				Config.getIrcdIngameSuffix(),
 				bp.realhost, bp.host,
 				bp.nick, // user
-				bp.ip, Long.toString(bp.signedOn), userModes,
-				":Minecraft Player");
+				bp.ip, Long.toString(bp.signedOn), userModes, Config.getUserModeMsg());
 
 			// Set oper type if appropriate
 			if (isOper) {
@@ -406,8 +402,7 @@ public class BukkitUserManagement {
 			// Send swhois field (extra metadata used for current world here)
 			final String worldString = world == null ? "an unknown world" :
 				world;
-			Utils.println(pre + "METADATA ", UID, "swhois",
-				":is currently in " + worldString);
+			Utils.println(pre + "METADATA ", UID, "swhois", ":is currently in " + worldString);
 		    }
 		}
 		return true;
@@ -429,9 +424,9 @@ public class BukkitUserManagement {
 		BukkitPlayer bp = bukkitPlayers.get(ID);
 		if (mode == Modes.STANDALONE) {
 		    IRCFunctionality.writeAll(":" + bp.nick + Config.getIrcdIngameSuffix() + "!" +
-			    bp.nick + "@" + bp.host + " QUIT :" + msgDisconnectQuitting);
+			    bp.nick + "@" + bp.host + " QUIT :" + Config.getUserDisconnectMsg());
 		} else if (mode == Modes.INSPIRCD) {
-		    Utils.println(":" + bp.getUID() + " QUIT :" + msgDisconnectQuitting);
+		    Utils.println(":" + bp.getUID() + " QUIT :" + Config.getUserDisconnectMsg());
 		}
 		bukkitPlayers.remove(ID);
 		return true;

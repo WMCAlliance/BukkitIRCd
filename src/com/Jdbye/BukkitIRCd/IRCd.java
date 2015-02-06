@@ -86,7 +86,6 @@ public class IRCd implements Runnable {
     public static String msgIRCMessageDynmap = "<{User}> {Message}";
     public static String msgIRCNoticeDynmap = "-{User}- {Message}";
     public static String msgDynmapMessage = "[Dynmap] {User}: {Message}";
-    public static String msgDisconnectQuitting = "Left the server";
     public static String msgPlayerList = "^BOnline Players ({Count}):^B {Users}";
 
     boolean debug = Config.isDebugModeEnabled();

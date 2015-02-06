@@ -312,7 +312,7 @@ public final class Config {
     public static void setIrcdConsoleChannel(final String ircdConsoleChannel) {
 	config.set("console-channel-name", ircdConsoleChannel);
     }
-
+   
     public static String getIrcdIrcColors() {
 	final String ircdIrcColors = "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15";
 	return config.getString("irc-colors", ircdIrcColors);
@@ -372,7 +372,6 @@ public final class Config {
     public static void setDebugModeEnabled(final boolean debugModeEnabled) {
 	config.set("debug-mode", debugModeEnabled);
     }
-
     public static boolean isIrcdIngameSuffixStripEnabled() {
 	final boolean ircdIngameSuffixStripEnabled = true;
 	return config.getBoolean("strip-ingame-suffix",
@@ -493,6 +492,26 @@ public final class Config {
 	config.set("kick-commands", kickCommands);
     }
 
+    public static String getUserDisconnectMsg() {
+	final String UserDisconnectMsg = "Left the server :(";
+	return config.getString("user-disconnect-msg", UserDisconnectMsg);
+    }
+
+    public static void getUserDisconnectMsg(
+    final String UserDisconnectMsg) {
+	config.set("user-disconnect-msg", UserDisconnectMsg);
+    }
+    
+    public static String getUserModeMsg() {
+	final String UserModeMsg = "A Minecraft Player";
+	return config.getString("user-usermode-msg", UserModeMsg);
+    }
+
+    public static void getUserModeMsg(
+    final String UserModeMsg) {
+	config.set("user-usermode-msg", UserModeMsg);
+    }
+    
     public static boolean isEnableRawSend() {
 	final boolean enableRawSend = false;
 	return config.getBoolean("enable-raw-send", enableRawSend);
