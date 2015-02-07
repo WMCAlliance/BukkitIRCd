@@ -24,6 +24,7 @@ package com.Jdbye.BukkitIRCd;
 // - bukkitircd.oper - Gives the player IRC Operator status. Currently doesn't do anything apart from show it in /whois
 // - bukkitircd.mode.owner, bukkitircd.mode.protect, bukkitircd.mode.op, bukkitircd.mode.halfop, bukkitircd.mode.voice - Gives the player the corresponding IRC user mode.
 import com.Jdbye.BukkitIRCd.configuration.Config;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -41,6 +42,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
@@ -87,6 +89,9 @@ public class IRCd implements Runnable {
     public static String msgIRCNoticeDynmap = "-{User}- {Message}";
     public static String msgDynmapMessage = "[Dynmap] {User}: {Message}";
     public static String msgPlayerList = "^BOnline Players ({Count}):^B {Users}";
+    
+    public static String userDisconnectMsg = "Left the server :(";
+    public static String userModeMsg = "Left the server :(";
 
     boolean debug = Config.isDebugModeEnabled();
 

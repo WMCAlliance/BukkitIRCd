@@ -491,26 +491,6 @@ public final class Config {
     public static void setKickCommands(final List<String> kickCommands) {
 	config.set("kick-commands", kickCommands);
     }
-
-    public static String getUserDisconnectMsg() {
-	final String UserDisconnectMsg = "Left the server :(";
-	return config.getString("user-disconnect-msg", UserDisconnectMsg);
-    }
-
-    public static void getUserDisconnectMsg(
-    final String UserDisconnectMsg) {
-	config.set("user-disconnect-msg", UserDisconnectMsg);
-    }
-    
-    public static String getUserModeMsg() {
-	final String UserModeMsg = "A Minecraft Player";
-	return config.getString("user-usermode-msg", UserModeMsg);
-    }
-
-    public static void getUserModeMsg(
-    final String UserModeMsg) {
-	config.set("user-usermode-msg", UserModeMsg);
-    }
     
     public static boolean isEnableRawSend() {
 	final boolean enableRawSend = false;

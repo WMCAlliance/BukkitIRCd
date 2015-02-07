@@ -1,3 +1,7 @@
+
+user-disconnect-msg: "left the game"
+user-usermode-msg: "A humble Minecraft Player"
+
 irc-action-dynmap: '* {User} {Message}'
 irc-message-dynmap: '<{User}> {Message}'
 irc-notice-dynmap: '-{User}- {Message}'

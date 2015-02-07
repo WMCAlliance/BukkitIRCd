@@ -11,11 +11,14 @@ import static com.Jdbye.BukkitIRCd.IRCd.msgIRCKickReason;
 import static com.Jdbye.BukkitIRCd.IRCd.pre;
 import static com.Jdbye.BukkitIRCd.IRCd.serverUID;
 import static com.Jdbye.BukkitIRCd.IRCd.ugen;
+
 import com.Jdbye.BukkitIRCd.configuration.Config;
+
 import java.net.InetAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -383,7 +386,7 @@ public class BukkitUserManagement {
 				Config.getIrcdIngameSuffix(),
 				bp.realhost, bp.host,
 				bp.nick, // user
-				bp.ip, Long.toString(bp.signedOn), userModes, Config.getUserModeMsg());
+				bp.ip, Long.toString(bp.signedOn), userModes, IRCd.userModeMsg);
 
 			// Set oper type if appropriate
 			if (isOper) {
@@ -424,9 +427,9 @@ public class BukkitUserManagement {
 		BukkitPlayer bp = bukkitPlayers.get(ID);
 		if (mode == Modes.STANDALONE) {
 		    IRCFunctionality.writeAll(":" + bp.nick + Config.getIrcdIngameSuffix() + "!" +
-			    bp.nick + "@" + bp.host + " QUIT :" + Config.getUserDisconnectMsg());
+			    bp.nick + "@" + bp.host + " QUIT :" + IRCd.userDisconnectMsg);
 		} else if (mode == Modes.INSPIRCD) {
-		    Utils.println(":" + bp.getUID() + " QUIT :" + Config.getUserDisconnectMsg());
+		    Utils.println(":" + bp.getUID() + " QUIT :" + IRCd.userDisconnectMsg);
 		}
 		bukkitPlayers.remove(ID);
 		return true;

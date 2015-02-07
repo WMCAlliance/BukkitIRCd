@@ -79,7 +79,10 @@ public class Messages extends JavaPlugin {
 			IRCd.groupSuffixes = messages.getConfigurationSection("group-suffixes");
 					
 			IRCd.consoleFilters = messages.getStringList("console-filters");
-
+			
+			IRCd.userDisconnectMsg = messages.getString("user-disconnect-msg");
+			IRCd.userModeMsg = messages.getString("user-usermode-msg");
+			
 			BukkitIRCdPlugin.log.info("[BukkitIRCd] Loaded messages file." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin464." : ""));
 		} catch (Exception e) {
 			BukkitIRCdPlugin.log.info("[BukkitIRCd] Failed to load messages file: " + e.toString());
