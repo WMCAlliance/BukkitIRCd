@@ -13,6 +13,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.dynmap.DynmapAPI;
 
 import com.Jdbye.BukkitIRCd.commands.IRCBanCommand;
@@ -86,7 +87,15 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	getCommand("rawsend").setExecutor(new RawsendCommand());
 
 	log.info(ircdVersion + " is now enabled");
-    }
+	new BukkitRunnable() {
+		 
+        @Override
+        public void run() {
+        	Utils.println("The server is still loading, so you cannot connect yet!");
+        }
+
+    }.runTaskLater(BukkitIRCdPlugin.thePlugin, 20);
+}
 
     /**
      Core disable task, shuts down IRCd instance, saves config.
