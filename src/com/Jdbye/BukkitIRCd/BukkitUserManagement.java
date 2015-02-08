@@ -143,7 +143,7 @@ public class BukkitUserManagement {
 	int IRCUser = BukkitUserManagement.getUser(kickee);
 	kickUser(kickReason, IRCUser);
 	BukkitUserManagement.removeBukkitUser(IRCUser);
-
+    // TODO Replace .getPlayer as it seems to be Deprecated. 
 	try {
 	    new BukkitRunnable() {
 		@Override

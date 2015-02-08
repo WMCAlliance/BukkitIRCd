@@ -328,7 +328,7 @@ public class Utils {
      @return Whether the message was successfully sent
      */
     public static boolean sendMessage(final String player, final String msg) {
-
+        // TODO Replace .getPlayer as it seems to be Deprecated. 
 	try {
 	    new BukkitRunnable() {
 		@Override

@@ -47,7 +47,7 @@ public class BukkitPlayer {
     public String getTextMode() {
 	return this.textMode;
     }
-
+    // TODO Replace .getPlayer as it seems to be Deprecated. 
     public boolean hasPermission(String permission) {
 	if (IRCd.isPlugin()) {
 	    final Player p = Bukkit.getServer().getPlayer(nick);
@@ -57,7 +57,7 @@ public class BukkitPlayer {
 	}
 	return false;
     }
-
+    // TODO Replace .getPlayer as it seems to be Deprecated. 
     public String getWorld() {
 	if (IRCd.isPlugin() && (BukkitIRCdPlugin.thePlugin != null)) {
 	    Player p = BukkitIRCdPlugin.thePlugin.getServer().getPlayer(nick);
