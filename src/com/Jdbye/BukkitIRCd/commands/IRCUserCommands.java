@@ -8,6 +8,7 @@ public class IRCUserCommands implements CommandExecutor {
 
 	final String[] userCommands = new String[] {
 			"All BukkitIRCd Commands:",
+			"/bircd - Shows the BukkitIRCd version",
 			"/irclist - Lists the online users on IRC.",
 			"/irckick - Kick a user from IRC.",
 			"/ircban - Ban a user from IRC via their host, ip, ident, nick or a full hostmask.",
