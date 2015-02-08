@@ -1,5 +1,5 @@
 name: BukkitIRCd
-version: 1.2
+version: ${pluginversion}
 description: 'Powerful IRC plugin for Bukkit. Can be used on its own or alongside an InspIRCd server.'
 website: 'http://wma.im'
 main: com.Jdbye.BukkitIRCd.BukkitIRCdPlugin
@@ -13,10 +13,11 @@ authors:
   - Monofraps
   - ron975
 commands:
-  irc:
+  bircd:
     aliases:
       - bukkitircd
-      - bircd
+    description: 'BukkitIRCd Version.'
+  irc:
     description: 'BukkitIRCd command(s).'
     usage: /irc
   ircban:

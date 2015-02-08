@@ -16,6 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.dynmap.DynmapAPI;
 
+import com.Jdbye.BukkitIRCd.commands.BukkitIRCdCommand;
 import com.Jdbye.BukkitIRCd.commands.IRCBanCommand;
 import com.Jdbye.BukkitIRCd.commands.IRCKickCommand;
 import com.Jdbye.BukkitIRCd.commands.IRCLinkCommand;
@@ -85,6 +86,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	getCommand("irclink").setExecutor(new IRCLinkCommand(this));
 	getCommand("ircreload").setExecutor(new IRCReloadCommand(this));
 	getCommand("rawsend").setExecutor(new RawsendCommand());
+	getCommand("bircd").setExecutor(new BukkitIRCdCommand());
 
 	log.info(ircdVersion + " is now enabled");
 	new BukkitRunnable() {
