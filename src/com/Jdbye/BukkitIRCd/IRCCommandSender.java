@@ -11,6 +11,8 @@ import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
+import Utilities.ChatUtils;
+
 import com.Jdbye.BukkitIRCd.Configuration.Config;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
@@ -71,13 +73,13 @@ public class IRCCommandSender implements CommandSender {
 			    Config.getIrcdServerName() + "@" +
 			    Config.getIrcdServerHostName() + " PRIVMSG " +
 			    Config.getIrcdConsoleChannel() + " :" +
-			    Utils.convertColors(lns.get(ln).toString(), false));
+			    ChatUtils.convertColors(lns.get(ln).toString(), false));
 		    break;
 		case INSPIRCD:
 		    if (IRCd.isLinkcompleted()) {
 			IRCFunctionality.privmsg(IRCd.serverUID,
 				Config.getIrcdConsoleChannel(),
-				Utils.convertColors(lns.get(ln).toString(), false));
+				ChatUtils.convertColors(lns.get(ln).toString(), false));
 		    }
 		    break;
 	    }/*

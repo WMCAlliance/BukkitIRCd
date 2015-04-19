@@ -1,5 +1,7 @@
 package com.Jdbye.BukkitIRCd.Commands;
 
+import Utilities.ChatUtils;
+
 import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
 import com.Jdbye.BukkitIRCd.BukkitPlayer;
 import com.Jdbye.BukkitIRCd.BukkitUserManagement;
@@ -7,7 +9,6 @@ import com.Jdbye.BukkitIRCd.IRCFunctionality;
 import com.Jdbye.BukkitIRCd.IRCUser;
 import com.Jdbye.BukkitIRCd.IRCUserManagement;
 import com.Jdbye.BukkitIRCd.IRCd;
-import com.Jdbye.BukkitIRCd.Utils;
 import com.Jdbye.BukkitIRCd.Configuration.Config;
 
 import org.bukkit.ChatColor;
@@ -74,7 +75,7 @@ public class IRCReplyCommand implements CommandExecutor {
 			    " PRIVMSG " +
 			    ircuser.nick +
 			    " :" +
-			    Utils.convertColors(Utils.join(args, " ", 0),
+			    ChatUtils.convertColors(ChatUtils.join(args, " ", 0),
 				    false));
 		} else {
 		    IRCFunctionality.writeTo(
@@ -90,7 +91,7 @@ public class IRCReplyCommand implements CommandExecutor {
 			    " PRIVMSG " +
 			    ircuser.nick +
 			    " :" +
-			    Utils.convertColors(Utils.join(args, " ", 0),
+			    ChatUtils.convertColors(ChatUtils.join(args, " ", 0),
 				    false));
 		}
 		break;
@@ -110,7 +111,7 @@ public class IRCReplyCommand implements CommandExecutor {
 
 		if (player == null) {
 		    IRCFunctionality.privmsg(IRCd.serverUID, UID,
-			    Utils.convertColors(Utils.join(args, " ", 0), false));
+			    ChatUtils.convertColors(ChatUtils.join(args, " ", 0), false));
 		} else {
 		    final BukkitPlayer bp = BukkitUserManagement.getUserObject(player
 			    .getName());
@@ -121,7 +122,7 @@ public class IRCReplyCommand implements CommandExecutor {
 		    }
 
 		    IRCFunctionality.privmsg(bp.getUID(), UID,
-			    Utils.convertColors(Utils.join(args, " ", 0), false));
+			    ChatUtils.convertColors(ChatUtils.join(args, " ", 0), false));
 		}
 
 		break;
@@ -137,7 +138,7 @@ public class IRCReplyCommand implements CommandExecutor {
 		.replace(
 			"{Message}",
 			ChatColor.translateAlternateColorCodes('&',
-				Utils.join(args, " ", 0))));
+				ChatUtils.join(args, " ", 0))));
 
 	return true;
     }

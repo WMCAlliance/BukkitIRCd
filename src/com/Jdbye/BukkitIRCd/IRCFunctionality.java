@@ -18,6 +18,7 @@ import static com.Jdbye.BukkitIRCd.IRCd.server;
 import static com.Jdbye.BukkitIRCd.IRCd.serverStartTime;
 import static com.Jdbye.BukkitIRCd.IRCd.serverUID;
 import static com.Jdbye.BukkitIRCd.IRCd.ugen;
+import Utilities.ChatUtils;
 
 import com.Jdbye.BukkitIRCd.Configuration.Config;
 
@@ -56,7 +57,7 @@ public class IRCFunctionality {
 	} else if (mode == Modes.INSPIRCD) {
 	    BukkitPlayer bp;
 	    if ((bp = BukkitUserManagement.getUserObject(user)) != null) {
-		Utils.println(":" + bp.getUID() + " TOPIC " + Config.getIrcdChannel() + " :" + channelTopic);
+		ChatUtils.println(":" + bp.getUID() + " TOPIC " + Config.getIrcdChannel() + " :" + channelTopic);
 	    }
 	}
     }
@@ -69,11 +70,11 @@ public class IRCFunctionality {
 	synchronized (csServer) {
 	    if (mode == Modes.INSPIRCD) {
 		if ((server != null) && server.isConnected()) {
-		    Utils.println(pre + "SQUIT " + Config.getLinkServerID() + " :" +
+		    ChatUtils.println(pre + "SQUIT " + Config.getLinkServerID() + " :" +
 			    reason);
 		    if (linkcompleted) {
 			if (reason != null && msgDelinkedReason.length() > 0) {
-			    Utils.broadcastMessage(msgDelinkedReason.replace(
+			    ChatUtils.broadcastMessage(msgDelinkedReason.replace(
 				    "{LinkName}", Config.getLinkName())
 				    .replace("{Reason}", reason));
 			}
@@ -128,8 +129,8 @@ public class IRCFunctionality {
 	if (IRCd.capabSent) {
 	    return false;
 	}
-	Utils.println("CAPAB START 1201");
-	Utils.println("CAPAB CAPABILITIES :NICKMAX=" + (Config.getIrcdMaxNickLength() + 1) +
+	ChatUtils.println("CAPAB START 1201");
+	ChatUtils.println("CAPAB CAPABILITIES :NICKMAX=" + (Config.getIrcdMaxNickLength() + 1) +
 		" CHANMAX=50 IDENTMAX=33 MAXTOPIC=500 MAXQUIT=500 MAXKICK=500 MAXGECOS=500 MAXAWAY=999 MAXMODES=1 HALFOP=1 PROTOCOL=1201");
 	// Utils.println("CAPAB CHANMODES :admin=&a ban=b founder=~q halfop=%h op=@o operonly=O voice=+ v");
 	// // Don't send this line, the server will complain that we don't
@@ -137,8 +138,8 @@ public class IRCFunctionality {
 	// Utils.println("CAPAB USERMODES :bot=B oper=o u_registered=r"); // Don't
 	// send this line, the server will complain that we don't support
 	// various modes and refuse to link
-	Utils.println("CAPAB END");
-	Utils.println("SERVER " + Config.getIrcdServerHostName() + " " +
+	ChatUtils.println("CAPAB END");
+	ChatUtils.println("SERVER " + Config.getIrcdServerHostName() + " " +
 		Config.getLinkConnectPassword() + " 0 " +
 		Config.getLinkServerID() + " :" +
 		Config.getIrcdServerDescription());
@@ -154,28 +155,28 @@ public class IRCFunctionality {
 	if (IRCd.burstSent) {
 	    return false;
 	}
-	Utils.println(pre + "BURST " + (System.currentTimeMillis() / 1000L));
-	Utils.println(pre + "VERSION :" + BukkitIRCdPlugin.ircdVersion);
+	ChatUtils.println(pre + "BURST " + (System.currentTimeMillis() / 1000L));
+	ChatUtils.println(pre + "VERSION :" + BukkitIRCdPlugin.ircdVersion);
 
-	Utils.println(pre + "UID " + serverUID + " " + serverStartTime + " " +
+	ChatUtils.println(pre + "UID " + serverUID + " " + serverStartTime + " " +
 		Config.getIrcdServerName() + " " +
 		Config.getIrcdServerHostName() + " " +
 		Config.getIrcdServerHostName() + " " +
 		Config.getIrcdServerName() + " 0.0.0.0 " + serverStartTime +
 		" +Brok :" + BukkitIRCdPlugin.ircdVersion);
-	Utils.println(":" + serverUID + " OPERTYPE Network_Service");
+	ChatUtils.println(":" + serverUID + " OPERTYPE Network_Service");
 
 	for (BukkitPlayer bp : bukkitPlayers) {
 	    String UID = ugen.generateUID(Config.getLinkServerID());
 	    bp.setUID(UID);
 	    if (bp.hasPermission("bukkitircd.oper")) {
-		Utils.println(pre + "UID " + UID + " " + (bp.idleTime / 1000L) + " " +
+		ChatUtils.println(pre + "UID " + UID + " " + (bp.idleTime / 1000L) + " " +
 			bp.nick + Config.getIrcdIngameSuffix() + " " +
 			bp.realhost + " " + bp.host + " " + bp.nick + " " +
 			bp.ip + " " + bp.signedOn + " +or :Minecraft Player");
-		Utils.println(":" + UID + " OPERTYPE IRC_Operator");
+		ChatUtils.println(":" + UID + " OPERTYPE IRC_Operator");
 	    } else {
-		Utils.println(pre + "UID " + UID + " " + (bp.idleTime / 1000L) + " " +
+		ChatUtils.println(pre + "UID " + UID + " " + (bp.idleTime / 1000L) + " " +
 			bp.nick + Config.getIrcdIngameSuffix() + " " +
 			bp.realhost + " " + bp.host + " " + bp.nick + " " +
 			bp.ip + " " + bp.signedOn + " +r :Minecraft Player");
@@ -183,14 +184,14 @@ public class IRCFunctionality {
 
 	    String world = bp.getWorld();
 	    if (world != null) {
-		Utils.println(pre + "METADATA " + UID + " swhois :is currently in " + world);
+		ChatUtils.println(pre + "METADATA " + UID + " swhois :is currently in " + world);
 	    } else {
-		Utils.println(pre + "METADATA " + UID + " swhois :is currently in an unknown world");
+		ChatUtils.println(pre + "METADATA " + UID + " swhois :is currently in an unknown world");
 	    }
 	}
 
-	Utils.println(pre + "FJOIN " + Config.getIrcdConsoleChannel() + " " + consoleChannelTS + " +nt :qaohv," + serverUID);
-	Utils.println(pre + "FJOIN " + Config.getIrcdChannel() + " " + channelTS + " +nt :qaohv," + serverUID);
+	ChatUtils.println(pre + "FJOIN " + Config.getIrcdConsoleChannel() + " " + consoleChannelTS + " +nt :qaohv," + serverUID);
+	ChatUtils.println(pre + "FJOIN " + Config.getIrcdChannel() + " " + channelTS + " +nt :qaohv," + serverUID);
 
 	int avail = 0;
 	StringBuilder sb = null;
@@ -201,7 +202,7 @@ public class IRCFunctionality {
 	    if (nextPart.length() > avail) {
 		// flush
 		if (sb != null) {
-		    Utils.println(sb.toString());
+		    ChatUtils.println(sb.toString());
 		}
 
 		sb = new StringBuilder(400);
@@ -215,10 +216,10 @@ public class IRCFunctionality {
 
 	// flush
 	if (sb != null) {
-	    Utils.println(sb.toString());
+	    ChatUtils.println(sb.toString());
 	}
 
-	Utils.println(pre + "ENDBURST");
+	ChatUtils.println(pre + "ENDBURST");
 	IRCd.burstSent = true;
 	return true;
     }
@@ -422,7 +423,7 @@ public class IRCFunctionality {
      message to send encoded with IRC colors
      */
     public static void privmsg(final String source, final String target, final String message) {
-	Utils.println(":" + source + " PRIVMSG " + target + " :" + message);
+	ChatUtils.println(":" + source + " PRIVMSG " + target + " :" + message);
     }
 
     /**

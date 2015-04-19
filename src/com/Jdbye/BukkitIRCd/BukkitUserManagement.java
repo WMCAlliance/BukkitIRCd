@@ -11,6 +11,7 @@ import static com.Jdbye.BukkitIRCd.IRCd.msgIRCKickReason;
 import static com.Jdbye.BukkitIRCd.IRCd.pre;
 import static com.Jdbye.BukkitIRCd.IRCd.serverUID;
 import static com.Jdbye.BukkitIRCd.IRCd.ugen;
+import Utilities.ChatUtils;
 
 import com.Jdbye.BukkitIRCd.Configuration.Config;
 
@@ -64,7 +65,7 @@ public class BukkitUserManagement {
 	    synchronized (csBukkitPlayers) {
 		BukkitPlayer kickedBukkitPlayer = bukkitPlayers.get(kickedID);
 		if (!kickReason.isEmpty()) {
-		    kickReason = " :" + Utils.convertColors(kickReason, false);
+		    kickReason = " :" + ChatUtils.convertColors(kickReason, false);
 		}
 		if (mode == Modes.STANDALONE) {
 		    IRCFunctionality.writeAll(":" + Config.getIrcdServerName() + "!" +
@@ -76,7 +77,7 @@ public class BukkitUserManagement {
 		} else {
 
 		    // KICK
-		    Utils.println(":" + serverUID + " KICK " +
+		    ChatUtils.println(":" + serverUID + " KICK " +
 			    Config.getIrcdChannel() + " " +
 			    kickedBukkitPlayer.nick +
 			    Config.getIrcdIngameSuffix() + kickReason);
@@ -107,7 +108,7 @@ public class BukkitUserManagement {
 		String kickerName = kickerBukkitPlayer.nick;
 
 		if (!kickReason.isEmpty()) {
-		    kickReason = " :" + Utils.convertColors(kickReason, false);
+		    kickReason = " :" + ChatUtils.convertColors(kickReason, false);
 		}
 		if (mode == Modes.STANDALONE) {
 		    IRCFunctionality.writeAll(":" + kickerName + Config.getIrcdIngameSuffix() +
@@ -115,15 +116,15 @@ public class BukkitUserManagement {
 			    Config.getIrcdChannel() + " " +
 			    kickedBukkitPlayer.nick +
 			    Config.getIrcdIngameSuffix() +
-			    Utils.convertColors(kickReason, false));
+			    ChatUtils.convertColors(kickReason, false));
 		} else {
 
 		    // KICK
-		    Utils.println(":" + kickerBukkitPlayer.getUID() + " KICK " +
+		    ChatUtils.println(":" + kickerBukkitPlayer.getUID() + " KICK " +
 			    Config.getIrcdChannel() + " " +
 			    kickedBukkitPlayer.nick +
 			    Config.getIrcdIngameSuffix() +
-			    Utils.convertColors(kickReason, false));
+			    ChatUtils.convertColors(kickReason, false));
 		}
 		return true;
 	    }
@@ -240,7 +241,7 @@ public class BukkitUserManagement {
 		if (!bp.world.equals(world)) {
 		    bp.world = world;
 		    if (mode == Modes.INSPIRCD) {
-			Utils.println(pre + "METADATA " + bp.getUID() +	" swhois :is currently in " + world);
+			ChatUtils.println(pre + "METADATA " + bp.getUID() +	" swhois :is currently in " + world);
 		    }
 		}
 		return true;
@@ -381,7 +382,7 @@ public class BukkitUserManagement {
 
 			// Register new UID
 			final String userModes = isOper ? "+or" : "+r";
-			Utils.println(pre + "UID", UID,
+			ChatUtils.println(pre + "UID", UID,
 				Long.toString(bp.idleTime / 1000L), bp.nick +
 				Config.getIrcdIngameSuffix(),
 				bp.realhost, bp.host,
@@ -390,22 +391,22 @@ public class BukkitUserManagement {
 
 			// Set oper type if appropriate
 			if (isOper) {
-			    Utils.println(":" + UID, "OPERTYPE", "IRC_Operator");
+			    ChatUtils.println(":" + UID, "OPERTYPE", "IRC_Operator");
 			}
 
 			// Game client uses encrypted connection
-			Utils.println(pre + "METADATA", UID, "ssl_cert",
+			ChatUtils.println(pre + "METADATA", UID, "ssl_cert",
 				":vtrsE The peer did not send any certificate.");
 
 			// Join in-game channel with modes set
-			Utils.println(pre + "FJOIN", Config.getIrcdChannel(),
+			ChatUtils.println(pre + "FJOIN", Config.getIrcdChannel(),
 				Long.toString(channelTS), "+nt",
 				":" + bp.getTextMode() + "," + UID);
 
 			// Send swhois field (extra metadata used for current world here)
 			final String worldString = world == null ? "an unknown world" :
 				world;
-			Utils.println(pre + "METADATA ", UID, "swhois", ":is currently in " + worldString);
+			ChatUtils.println(pre + "METADATA ", UID, "swhois", ":is currently in " + worldString);
 		    }
 		}
 		return true;
@@ -429,7 +430,7 @@ public class BukkitUserManagement {
 		    IRCFunctionality.writeAll(":" + bp.nick + Config.getIrcdIngameSuffix() + "!" +
 			    bp.nick + "@" + bp.host + " QUIT :" + IRCd.userDisconnectMsg);
 		} else if (mode == Modes.INSPIRCD) {
-		    Utils.println(":" + bp.getUID() + " QUIT :" + IRCd.userDisconnectMsg);
+		    ChatUtils.println(":" + bp.getUID() + " QUIT :" + IRCd.userDisconnectMsg);
 		}
 		bukkitPlayers.remove(ID);
 		return true;

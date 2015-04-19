@@ -13,13 +13,14 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
+import Utilities.ChatUtils;
+
 import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
 import com.Jdbye.BukkitIRCd.BukkitPlayer;
 import com.Jdbye.BukkitIRCd.BukkitUserManagement;
 import com.Jdbye.BukkitIRCd.IRCFunctionality;
 import com.Jdbye.BukkitIRCd.IRCd;
 import com.Jdbye.BukkitIRCd.Modes;
-import com.Jdbye.BukkitIRCd.Utils;
 import com.Jdbye.BukkitIRCd.Configuration.Config;
 
 /**
@@ -49,7 +50,7 @@ public class BukkitIRCdPlayerListener implements Listener {
 	if (!Config.isIrcdColorDeathMessagesEnabled()) {
 	    message = ChatColor.stripColor(message);
 	} else {
-	    message = Utils.convertColors(message, false);
+	    message = ChatUtils.convertColors(message, false);
 	}
 	if (IRCd.mode == Modes.INSPIRCD) {
 	    if (IRCd.isLinkcompleted()) {
@@ -157,18 +158,18 @@ public class BukkitIRCdPlayerListener implements Listener {
 
 	switch (IRCd.mode) {
 	    case STANDALONE:
-		IRCFunctionality.writeAll(Utils.convertColors(event.getMessage(), false), event.getPlayer());
+		IRCFunctionality.writeAll(ChatUtils.convertColors(event.getMessage(), false), event.getPlayer());
 		break;
 
 	    case INSPIRCD:
 		final BukkitPlayer bp = BukkitUserManagement.getUserObject(event.getPlayer().getName());
 		if (bp != null && IRCd.isLinkcompleted()) {
-		    IRCFunctionality.privmsg(bp.getUID(), Config.getIrcdChannel(), Utils.convertColors(event.getMessage(), false));
+		    IRCFunctionality.privmsg(bp.getUID(), Config.getIrcdChannel(), ChatUtils.convertColors(event.getMessage(), false));
 		}
 		break;
 	}
 
-	event.setMessage(Utils.stripIRCFormatting(event.getMessage()));
+	event.setMessage(ChatUtils.stripIRCFormatting(event.getMessage()));
     }
 
     /**
@@ -186,17 +187,17 @@ public class BukkitIRCdPlayerListener implements Listener {
 	    if (split[0].equalsIgnoreCase("/me")) {
 		switch (IRCd.mode) {
 		    case STANDALONE:
-			IRCFunctionality.writeAll((char) 1 + "ACTION " + Utils.convertColors(Utils.join(event.getMessage().split(" "), " ", 1), false) + (char) 1, event.getPlayer());
+			IRCFunctionality.writeAll((char) 1 + "ACTION " + ChatUtils.convertColors(ChatUtils.join(event.getMessage().split(" "), " ", 1), false) + (char) 1, event.getPlayer());
 			break;
 
 		    case INSPIRCD:
 			final BukkitPlayer bp = BukkitUserManagement.getUserObject(event.getPlayer().getName());
 			if (bp != null && IRCd.isLinkcompleted()) {
-			    IRCFunctionality.action(bp.getUID(), Config.getIrcdChannel(), Utils.convertColors(Utils.join(event.getMessage().split(" "), " ", 1), false));
+			    IRCFunctionality.action(bp.getUID(), Config.getIrcdChannel(), ChatUtils.convertColors(ChatUtils.join(event.getMessage().split(" "), " ", 1), false));
 			}
 			break;
 		}
-		event.setMessage(Utils.stripIRCFormatting(event.getMessage()));
+		event.setMessage(ChatUtils.stripIRCFormatting(event.getMessage()));
 	    }
 
 	    if (Config.getKickCommands().contains(

@@ -1,5 +1,7 @@
 package com.Jdbye.BukkitIRCd;
 
+import Utilities.ChatUtils;
+
 import com.Jdbye.BukkitIRCd.Configuration.Config;
 
 import java.io.BufferedReader;
@@ -159,7 +161,7 @@ public class ClientConnection implements Runnable {
 			if ((IRCd.isPlugin()) &&
 				(BukkitIRCdPlugin.thePlugin != null)) {
 			    if (IRCd.msgIRCNickChange.length() > 0) {
-				Utils.broadcastMessage(IRCd.msgIRCNickChange
+				ChatUtils.broadcastMessage(IRCd.msgIRCNickChange
 					.replace("{OldNick}", nick)
 					.replace("{Prefix}", IRCFunctionality.getGroupPrefix(modes))
 					.replace("{Suffix}", IRCFunctionality.getGroupSuffix(modes))
@@ -203,7 +205,7 @@ public class ClientConnection implements Runnable {
 		if (split[1].indexOf(":") == 0) {
 		    split[1] = split[1].substring(1);
 		}
-		quitmsg = Utils.join(split, " ", 1);
+		quitmsg = ChatUtils.join(split, " ", 1);
 		if (isIdented && isNickSet) {
 		    IRCFunctionality.writeAll(":" + getFullHost() + " QUIT :Quit: " + quitmsg);
 		}
@@ -237,7 +239,7 @@ public class ClientConnection implements Runnable {
 		    if (split[1].indexOf(":") == 0) {
 			split[1] = split[1].substring(1);
 		    }
-		    writeln("PONG :" + Utils.join(split, " ", 1));
+		    writeln("PONG :" + ChatUtils.join(split, " ", 1));
 		}
 	    } else if (split[0].equalsIgnoreCase("PONG")) {
 		lastPingResponse = System.currentTimeMillis();
@@ -273,7 +275,7 @@ public class ClientConnection implements Runnable {
 			split[2] = split[2].substring(1);
 		    }
 		    if (split[1].equalsIgnoreCase(Config.getIrcdChannel())) {
-			String chantopic = Utils.join(split, " ", 2);
+			String chantopic = ChatUtils.join(split, " ", 2);
 			if (modes.contains("%") || modes.contains("@") ||
 				modes.contains("&") || modes.contains("~")) {
 			    IRCFunctionality.setTopic(chantopic, nick, getFullHost());
@@ -341,13 +343,13 @@ public class ClientConnection implements Runnable {
 						modes.contains("~")) {
 					    // User is op
 					    String host;
-					    if (Utils.wildCardMatch(mask,
+					    if (ChatUtils.wildCardMatch(mask,
 						    "*!*@*")) {
 						host = mask;
-					    } else if (Utils.wildCardMatch(mask,
+					    } else if (ChatUtils.wildCardMatch(mask,
 						    "*!*")) {
 						host = mask + "@*";
-					    } else if (Utils.wildCardMatch(mask,
+					    } else if (ChatUtils.wildCardMatch(mask,
 						    "*@*")) {
 						host = "*!" + mask;
 					    } else {
@@ -355,7 +357,7 @@ public class ClientConnection implements Runnable {
 					    }
 					    if (add == 1) {
 						if (IRCd.msgIRCBan.length() > 0) {
-						    Utils.broadcastMessage(IRCd.msgIRCBan
+						    ChatUtils.broadcastMessage(IRCd.msgIRCBan
 							    .replace(
 								    "{BannedUser}",
 								    host)
@@ -381,7 +383,7 @@ public class ClientConnection implements Runnable {
 							getFullHost());
 					    } else if (add == 0) {
 						if (IRCd.msgIRCUnban.length() > 0) {
-						    Utils.broadcastMessage(IRCd.msgIRCUnban
+						    ChatUtils.broadcastMessage(IRCd.msgIRCUnban
 							    .replace(
 								    "{BannedUser}",
 								    host)
@@ -508,7 +510,7 @@ public class ClientConnection implements Runnable {
 			    if (split[3].indexOf(":") == 0) {
 				split[3] = split[3].substring(1);
 			    }
-			    reason = Utils.join(split, " ", 3);
+			    reason = ChatUtils.join(split, " ", 3);
 			}
 
 			IRCUser ircuser;
@@ -530,20 +532,20 @@ public class ClientConnection implements Runnable {
 
 				if (reason != null) {
 				    if (IRCd.msgIRCKickReason.length() > 0) {
-					Utils.broadcastMessage(IRCd.msgIRCKickReason
+					ChatUtils.broadcastMessage(IRCd.msgIRCKickReason
 						.replace("{KickedUser}",
 							bannick)
 						.replace("{KickedBy}", nick)
 						.replace(
 							"{Reason}",
-							Utils.convertColors(
+							ChatUtils.convertColors(
 								reason, true)));
 				    }
 				    BukkitUserManagement.kickPlayerIngame(nick, bannick,
-					    Utils.stripIRCFormatting(reason));
+					    ChatUtils.stripIRCFormatting(reason));
 				} else {
 				    if (IRCd.msgIRCKick.length() > 0) {
-					Utils.broadcastMessage(IRCd.msgIRCKick
+					ChatUtils.broadcastMessage(IRCd.msgIRCKick
 						.replace("{KickedUser}",
 							bannick).replace(
 							"{KickedBy}", nick));
@@ -676,7 +678,7 @@ public class ClientConnection implements Runnable {
 		    if (split[1].indexOf(":") == 0) {
 			split[1] = split[1].substring(1);
 		    }
-		    awayMsg = Utils.join(split, " ", 1);
+		    awayMsg = ChatUtils.join(split, " ", 1);
 		    writeln(IRCd.serverMessagePrefix + " 306 " + nick +
 			    " :You have been marked as being away");
 		} else {
@@ -703,14 +705,14 @@ public class ClientConnection implements Runnable {
 		    if (split[2].indexOf(":") == 0) {
 			split[2] = split[2].substring(1);
 		    }
-		    String message = Utils.join(split, " ", 2);
+		    String message = ChatUtils.join(split, " ", 2);
 		    boolean isCTCP = (message.startsWith((char) 1 + "") && message
 			    .endsWith((char) 1 + ""));
 		    boolean isAction = (message.startsWith((char) 1 + "ACTION") && message
 			    .endsWith((char) 1 + ""));
 		    String message2;
 		    if (isAction) {
-			message2 = Utils.join(
+			message2 = ChatUtils.join(
 				message.substring(1, message.length() - 1)
 				.split(" "), " ", 1);
 		    } else {
@@ -747,7 +749,7 @@ public class ClientConnection implements Runnable {
 						" PRIVMSG " +
 						Config.getIrcdChannel() +
 						" :" +
-						Utils.convertColors(
+						ChatUtils.convertColors(
 							IRCd.msgPlayerList
 							.replace(
 								"{Count}",
@@ -763,7 +765,7 @@ public class ClientConnection implements Runnable {
 				    if (isAction) {
 
 					if (IRCd.msgIRCAction.length() > 0) {
-					    Utils.broadcastMessage(IRCd.msgIRCAction
+					    ChatUtils.broadcastMessage(IRCd.msgIRCAction
 						    .replace("{User}", nick)
 						    .replace(
 							    "{Suffix}",
@@ -773,7 +775,7 @@ public class ClientConnection implements Runnable {
 							    IRCFunctionality.getGroupPrefix(modes))
 						    .replace(
 							    "{Message}",
-							    Utils.convertColors(
+							    ChatUtils.convertColors(
 								    message2,
 								    true)));
 					}
@@ -789,12 +791,12 @@ public class ClientConnection implements Runnable {
 								    nick)
 							    .replace(
 								    "{Message}",
-								    Utils.stripIRCFormatting(message2)));
+								    ChatUtils.stripIRCFormatting(message2)));
 					}
 				    } else {
 
 					if (IRCd.msgIRCMessage.length() > 0) {
-					    Utils.broadcastMessage(IRCd.msgIRCMessage
+					    ChatUtils.broadcastMessage(IRCd.msgIRCMessage
 						    .replace("{User}", nick)
 						    .replace(
 							    "{Suffix}",
@@ -804,7 +806,7 @@ public class ClientConnection implements Runnable {
 							    IRCFunctionality.getGroupPrefix(modes))
 						    .replace(
 							    "{Message}",
-							    Utils.convertColors(
+							    ChatUtils.convertColors(
 								    message2,
 								    true)));
 					}
@@ -820,7 +822,7 @@ public class ClientConnection implements Runnable {
 								    nick)
 							    .replace(
 								    "{Message}",
-								    Utils.stripIRCFormatting(message2)));
+								    ChatUtils.stripIRCFormatting(message2)));
 					}
 				    }
 				}
@@ -847,7 +849,7 @@ public class ClientConnection implements Runnable {
 							    IRCFunctionality.getGroupPrefix(modes))
 						    .replace(
 							    "{Message}",
-							    Utils.convertColors(
+							    ChatUtils.convertColors(
 								    message2,
 								    true)));
 				}
@@ -865,7 +867,7 @@ public class ClientConnection implements Runnable {
 							    IRCFunctionality.getGroupPrefix(modes))
 						    .replace(
 							    "{Message}",
-							    Utils.convertColors(
+							    ChatUtils.convertColors(
 								    message2,
 								    true)));
 				}
@@ -893,7 +895,7 @@ public class ClientConnection implements Runnable {
 
 				if (message.startsWith("!")) {
 				    message = message.substring(1);
-				    Utils.executeCommand(message);
+				    ChatUtils.executeCommand(message);
 				}
 			    }
 			}
@@ -913,7 +915,7 @@ public class ClientConnection implements Runnable {
 					    bukkitnick, nick);
 				    if (isAction) {
 					if (IRCd.msgIRCPrivateAction.length() > 0) {
-					    Utils.sendMessage(
+					    ChatUtils.sendMessage(
 						    bukkitnick,
 						    IRCd.msgIRCPrivateAction
 						    .replace("{User}",
@@ -926,13 +928,13 @@ public class ClientConnection implements Runnable {
 							    IRCFunctionality.getGroupPrefix(modes))
 						    .replace(
 							    "{Message}",
-							    Utils.convertColors(
+							    ChatUtils.convertColors(
 								    message2,
 								    true)));
 					}
 				    } else {
 					if (IRCd.msgIRCPrivateMessage.length() > 0) {
-					    Utils.sendMessage(
+					    ChatUtils.sendMessage(
 						    bukkitnick,
 						    IRCd.msgIRCPrivateMessage
 						    .replace("{User}",
@@ -945,7 +947,7 @@ public class ClientConnection implements Runnable {
 							    IRCFunctionality.getGroupPrefix(modes))
 						    .replace(
 							    "{Message}",
-							    Utils.convertColors(
+							    ChatUtils.convertColors(
 								    message2,
 								    true)));
 					}
@@ -967,7 +969,7 @@ public class ClientConnection implements Runnable {
 		    if (split[2].indexOf(":") == 0) {
 			split[2] = split[2].substring(1);
 		    }
-		    String message = Utils.join(split, " ", 2);
+		    String message = ChatUtils.join(split, " ", 2);
 		    boolean isCTCP = (message.startsWith((char) 1 + "") && message
 			    .endsWith((char) 1 + ""));
 		    if (split[1].equalsIgnoreCase(Config
@@ -978,7 +980,7 @@ public class ClientConnection implements Runnable {
 				(BukkitIRCdPlugin.thePlugin != null)) {
 			    if ((!isCTCP) && Config.isIrcdNoticesEnabled()) {
 				if (IRCd.msgIRCNotice.length() > 0) {
-				    Utils.broadcastMessage(IRCd.msgIRCNotice
+				    ChatUtils.broadcastMessage(IRCd.msgIRCNotice
 					    .replace("{User}", nick)
 					    .replace("{Prefix}",
 						    IRCFunctionality.getGroupPrefix(modes))
@@ -986,7 +988,7 @@ public class ClientConnection implements Runnable {
 						    IRCFunctionality.getGroupSuffix(modes))
 					    .replace(
 						    "{Message}",
-						    Utils.convertColors(message,
+						    ChatUtils.convertColors(message,
 							    true)));
 				}
 				if ((BukkitIRCdPlugin.dynmap != null) &&
@@ -999,7 +1001,7 @@ public class ClientConnection implements Runnable {
 							    nick)
 						    .replace(
 							    "{Message}",
-							    Utils.stripIRCFormatting(message)));
+							    ChatUtils.stripIRCFormatting(message)));
 				}
 			    }
 			}
@@ -1013,13 +1015,13 @@ public class ClientConnection implements Runnable {
 			    if ((IRCd.isPlugin()) && (BukkitIRCdPlugin.thePlugin != null) && (!isCTCP) && (Config.isIrcdNoticesEnabled())) {
 				synchronized (IRCd.csBukkitPlayers) {
 				    if (IRCd.msgIRCPrivateMessage.length() > 0) {
-					Utils.sendMessage(
+					ChatUtils.sendMessage(
 						IRCd.bukkitPlayers.get(user).nick,
 						IRCd.msgIRCPrivateAction
 						.replace("{User}", nick)
 						.replace("{Suffix}", IRCFunctionality.getGroupSuffix(modes))
 						.replace("{Prefix}", IRCFunctionality.getGroupPrefix(modes))
-						.replace("{Message}", Utils.convertColors(message, true)));
+						.replace("{Message}", ChatUtils.convertColors(message, true)));
 				    }
 				}
 			    }
@@ -1094,7 +1096,7 @@ public class ClientConnection implements Runnable {
 	    sendMOTD();
 	    if ((IRCd.isPlugin()) && (BukkitIRCdPlugin.thePlugin != null)) {
 		if (IRCd.msgIRCJoin.length() > 0) {
-		    Utils.broadcastMessage(IRCd.msgIRCJoin
+		    ChatUtils.broadcastMessage(IRCd.msgIRCJoin
 			    .replace("{User}", nick)
 			    .replace("{Suffix}", IRCFunctionality.getGroupSuffix(modes))
 			    .replace("{Prefix}", IRCFunctionality.getGroupPrefix(modes)));
@@ -1387,8 +1389,8 @@ public class ClientConnection implements Runnable {
 
 		if ((opersOnly && user.isOper) || (!opersOnly)) {
 		    if (addAll ||
-			    Utils.wildCardMatch(onick, pattern) ||
-			    Utils.wildCardMatch(onick + "!" + oident + "@" +
+			    ChatUtils.wildCardMatch(onick, pattern) ||
+			    ChatUtils.wildCardMatch(onick + "!" + oident + "@" +
 				    ohost, pattern)) {
 			users.add(IRCd.serverMessagePrefix + " 352 " + nick +
 				" " + channel + " " + oident + " " + ohost +
@@ -1410,11 +1412,11 @@ public class ClientConnection implements Runnable {
 		    String oper = "";
 
 		    if (addAll ||
-			    Utils.wildCardMatch(onick, pattern) ||
-			    Utils.wildCardMatch(oident, pattern) ||
-			    Utils.wildCardMatch(onick + "!" + oident + "@" +
+			    ChatUtils.wildCardMatch(onick, pattern) ||
+			    ChatUtils.wildCardMatch(oident, pattern) ||
+			    ChatUtils.wildCardMatch(onick + "!" + oident + "@" +
 				    ohost, pattern) ||
-			    Utils.wildCardMatch(oident + "!" + oident + "@" +
+			    ChatUtils.wildCardMatch(oident + "!" + oident + "@" +
 				    ohost, pattern)) {
 			users.add(IRCd.serverMessagePrefix + " 352 " + nick +
 				" " + channel + " " + oident + " " + ohost +

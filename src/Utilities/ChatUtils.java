@@ -1,8 +1,10 @@
-package com.Jdbye.BukkitIRCd;
+package Utilities;
 
 import static com.Jdbye.BukkitIRCd.IRCd.csServer;
 import static com.Jdbye.BukkitIRCd.IRCd.out;
 
+import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
+import com.Jdbye.BukkitIRCd.IRCd;
 import com.Jdbye.BukkitIRCd.Configuration.Config;
 
 import org.bukkit.Bukkit;
@@ -16,7 +18,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 /**
  A general collection of utilities used within the plugin, sometimes for transferring data between IRC and game.
  */
-public class Utils {
+public class ChatUtils {
 	static char IRC_Color = (char) 3; // ETX Control Code (^C)
 	static char IRC_Bold = (char) 2; // STX Control Code (^B)
 	static char IRC_Ital = (char) 29; // GS Control Code
@@ -59,7 +61,7 @@ public class Utils {
 	String output = null;
 	if (fromIRCtoGame) {
 	    if (!Config.isIrcdConvertColorCodes()) {
-		return Utils.stripIRCFormatting(input);
+		return ChatUtils.stripIRCFormatting(input);
 	    }
 	    output = input.replaceAll("(\\d),\\d{1,2}", "$1"); // Remove IRC background color code
 
@@ -146,7 +148,7 @@ public class Utils {
      @return Whether the message was successfully sent.
      */
     public static boolean println(String... parts) {
-	final String line = Utils.join(parts, " ", 0);
+	final String line = ChatUtils.join(parts, " ", 0);
 	if ((IRCd.server == null) || (!IRCd.server.isConnected()) || (IRCd.server.isClosed()) || (out == null)) {
 	    return false;
 	}

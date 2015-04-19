@@ -1,4 +1,4 @@
-package com.Jdbye.BukkitIRCd;
+package Utilities;
 
 public class UidGenerator {
 

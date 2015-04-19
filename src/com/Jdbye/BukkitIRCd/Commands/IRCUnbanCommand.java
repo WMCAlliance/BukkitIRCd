@@ -1,9 +1,10 @@
 package com.Jdbye.BukkitIRCd.Commands;
 
+import Utilities.ChatUtils;
+
 import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
 import com.Jdbye.BukkitIRCd.IRCUserManagement;
 import com.Jdbye.BukkitIRCd.IRCd;
-import com.Jdbye.BukkitIRCd.Utils;
 import com.Jdbye.BukkitIRCd.Configuration.Config;
 
 import org.bukkit.ChatColor;
@@ -30,10 +31,10 @@ public class IRCUnbanCommand implements CommandExecutor {
 		    String ban;
 		    ban = args[0];
 		    if (args.length > 1) {
-			Utils.join(args, " ", 1);
+			ChatUtils.join(args, " ", 1);
 		    }
 
-		    if (Utils.wildCardMatch(ban, "*!*@*")) { // Full hostmask
+		    if (ChatUtils.wildCardMatch(ban, "*!*@*")) { // Full hostmask
 			if (IRCUserManagement.unBanIRCUser(ban,
 				player.getName() +
 				Config.getIrcdIngameSuffix() +
@@ -131,10 +132,10 @@ public class IRCUnbanCommand implements CommandExecutor {
 		String ban;
 		ban = args[0];
 		if (args.length > 1) {
-		    Utils.join(args, " ", 1);
+		    ChatUtils.join(args, " ", 1);
 		}
 
-		if (Utils.wildCardMatch(ban, "*!*@*")) { // Full hostmask
+		if (ChatUtils.wildCardMatch(ban, "*!*@*")) { // Full hostmask
 		    if (IRCUserManagement.unBanIRCUser(
 			    ban,
 			    Config.getIrcdServerName() + "!" +

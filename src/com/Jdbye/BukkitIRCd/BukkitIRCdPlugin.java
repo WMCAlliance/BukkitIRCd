@@ -16,6 +16,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.dynmap.DynmapAPI;
 
+import Utilities.ChatUtils;
+import Utilities.Metrics;
+
 import com.Jdbye.BukkitIRCd.Commands.BukkitIRCdCommand;
 import com.Jdbye.BukkitIRCd.Commands.IRCBanCommand;
 import com.Jdbye.BukkitIRCd.Commands.IRCKickCommand;
@@ -95,7 +98,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 			@Override
 			public void run() {
-				Utils.println("The server is still loading, so you cannot connect yet!");
+				ChatUtils.println("The server is still loading, so you cannot connect yet!");
 			}
 
 		}.runTaskLater(BukkitIRCdPlugin.thePlugin, 20);

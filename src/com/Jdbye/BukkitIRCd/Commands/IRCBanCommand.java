@@ -1,10 +1,11 @@
 package com.Jdbye.BukkitIRCd.Commands;
 
+import Utilities.ChatUtils;
+
 import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
 import com.Jdbye.BukkitIRCd.IRCUser;
 import com.Jdbye.BukkitIRCd.IRCUserManagement;
 import com.Jdbye.BukkitIRCd.IRCd;
-import com.Jdbye.BukkitIRCd.Utils;
 import com.Jdbye.BukkitIRCd.Configuration.Config;
 
 import org.bukkit.ChatColor;
@@ -39,16 +40,16 @@ public class IRCBanCommand implements CommandExecutor {
 						ban = args[1];
 						banType = args[0];
 						if (args.length > 2) {
-							reason = Utils.join(args, " ", 2);
+							reason = ChatUtils.join(args, " ", 2);
 						}
 					} else {
 						ircuser = IRCUserManagement.getIRCUser(args[0]);
 						ban = args[0];
 						if (args.length > 1) {
-							reason = Utils.join(args, " ", 1);
+							reason = ChatUtils.join(args, " ", 1);
 						}
 					}
-					if (Utils.wildCardMatch(ban, "*!*@*")) {
+					if (ChatUtils.wildCardMatch(ban, "*!*@*")) {
 						// Full hostmask
 						if (IRCUserManagement.banIRCUser(ban,
 								player.getName() +
@@ -120,16 +121,16 @@ public class IRCBanCommand implements CommandExecutor {
 					ban = args[1];
 					banType = args[0];
 					if (args.length > 2) {
-						reason = Utils.join(args, " ", 2);
+						reason = ChatUtils.join(args, " ", 2);
 					}
 				} else {
 					ircuser = IRCUserManagement.getIRCUser(args[0]);
 					ban = args[0];
 					if (args.length > 1) {
-						reason = Utils.join(args, " ", 1);
+						reason = ChatUtils.join(args, " ", 1);
 					}
 				}
-				if (Utils.wildCardMatch(ban, "*!*@*")) {
+				if (ChatUtils.wildCardMatch(ban, "*!*@*")) {
 					// Full hostmask
 					if (IRCUserManagement.banIRCUser(
 							ban,

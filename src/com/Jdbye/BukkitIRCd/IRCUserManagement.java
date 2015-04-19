@@ -20,6 +20,8 @@ import static com.Jdbye.BukkitIRCd.IRCd.msgIRCLeaveReason;
 import static com.Jdbye.BukkitIRCd.IRCd.msgIRCLeaveReasonDynmap;
 import static com.Jdbye.BukkitIRCd.IRCd.serverUID;
 import static com.Jdbye.BukkitIRCd.IRCd.servers;
+import Utilities.ChatUtils;
+import Utilities.TimeUtils;
 
 import com.Jdbye.BukkitIRCd.Configuration.Config;
 
@@ -298,20 +300,20 @@ public class IRCUserManagement {
 				BukkitIRCdPlugin.thePlugin.removeLastReceivedFrom(processor.nick);
 				if (reason != null) {
 				    if (msgIRCLeave.length() > 0) {
-					Utils.broadcastMessage(msgIRCLeaveReason
+					ChatUtils.broadcastMessage(msgIRCLeaveReason
 						.replace("{User}", processor.nick)
 						.replace("{Suffix}", IRCFunctionality.getGroupSuffix(processor.modes))
 						.replace("{Prefix}", IRCFunctionality.getGroupPrefix(processor.modes))
-						.replace("{Reason}", Utils.convertColors(reason, IRCToGame)));
+						.replace("{Reason}", ChatUtils.convertColors(reason, IRCToGame)));
 				    }
 				    if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCLeaveDynmap.length() > 0)) {
 					BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveReasonDynmap
 							.replace("{User}", processor.nick)
-							.replace("{Reason}", Utils.stripIRCFormatting(reason)));
+							.replace("{Reason}", ChatUtils.stripIRCFormatting(reason)));
 				    }
 				} else {
 				    if (msgIRCLeave.length() > 0) {
-					Utils.broadcastMessage(msgIRCLeave
+					ChatUtils.broadcastMessage(msgIRCLeave
 							.replace("{User}", processor.nick)
 							.replace("{Suffix}",IRCFunctionality.getGroupSuffix(processor.modes))
 							.replace("{Prefix}", IRCFunctionality.getGroupPrefix(processor.modes)));
@@ -348,7 +350,7 @@ public class IRCUserManagement {
 			    BukkitIRCdPlugin.thePlugin
 				    .removeLastReceivedFrom(processor.nick);
 			    if (msgIRCLeave.length() > 0 && reason != null) {
-				Utils.broadcastMessage(msgIRCLeaveReason
+				ChatUtils.broadcastMessage(msgIRCLeaveReason
 					.replace("{User}", processor.nick)
 					.replace("{Prefix}", IRCFunctionality.getGroupPrefix(processor.modes))
 					.replace("{Suffix}", IRCFunctionality.getGroupSuffix(processor.modes))
@@ -392,7 +394,7 @@ public class IRCUserManagement {
 		    if (curUser.joined) {
 
 			if (msgIRCLeaveReason.length() > 0) {
-			    Utils.broadcastMessage(msgIRCLeaveReason
+			    ChatUtils.broadcastMessage(msgIRCLeaveReason
 				    .replace("{User}", curUser.nick)
 				    .replace("{Prefix}", IRCFunctionality.getGroupPrefix(curUser.getTextModes()))
 				    .replace("{Suffix}", IRCFunctionality.getGroupSuffix(curUser.getTextModes()))
@@ -459,10 +461,10 @@ public class IRCUserManagement {
 				    (BukkitIRCdPlugin.thePlugin != null)) {
 				if (reason != null) {
 				    if (msgIRCKickReason.length() > 0) {
-					Utils.broadcastMessage(msgIRCKickReason
+					ChatUtils.broadcastMessage(msgIRCKickReason
 						.replace("{KickedUser}", processor.nick)
 						.replace("{KickedBy}", kickedByNick)
-						.replace("{Reason}", Utils.convertColors(reason, true))
+						.replace("{Reason}", ChatUtils.convertColors(reason, true))
 						.replace("{KickedPrefix}", IRCFunctionality.getGroupPrefix(processor.modes))
 						.replace("{KickedSuffix}", IRCFunctionality.getGroupSuffix(processor.modes))
 						.replace("{KickerPrefix}", IRCFunctionality.getGroupPrefix(getIRCUser(kickedByNick).getTextModes()))
@@ -472,11 +474,11 @@ public class IRCUserManagement {
 					BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC",msgIRCKickReasonDynmap
 							.replace("{KickedUser}",processor.nick)
 							.replace("{KickedBy}", kickedByNick)
-							.replace( "{Reason}", Utils.stripIRCFormatting(reason)));
+							.replace( "{Reason}", ChatUtils.stripIRCFormatting(reason)));
 				    }
 				} else {
 				    if (msgIRCKick.length() > 0) {
-					Utils.broadcastMessage(msgIRCKick
+					ChatUtils.broadcastMessage(msgIRCKick
 						.replace("{KickedUser}", processor.nick)
 						.replace("{KickedBy}", kickedByNick)
 						.replace("{KickedPrefix}", IRCFunctionality.getGroupPrefix(processor.modes))
@@ -495,7 +497,7 @@ public class IRCUserManagement {
 			if (isIngame) {
 			    kickedByNick += Config.getIrcdIngameSuffix();
 			    if (reason != null) {
-				reason = Utils.convertColors(reason, false);
+				reason = ChatUtils.convertColors(reason, false);
 			    }
 			}
 			if (reason != null) {
@@ -538,21 +540,21 @@ public class IRCUserManagement {
 		    boolean returnVal = false;
 		    if (iuser.consoleJoined) {
 			if (reason != null) {
-			    Utils.println(":" + sourceUID + " KICK " + Config.getIrcdConsoleChannel() + " " + uid + " :" + reason);
+			    ChatUtils.println(":" + sourceUID + " KICK " + Config.getIrcdConsoleChannel() + " " + uid + " :" + reason);
 			} else {
-			    Utils.println(":" + sourceUID + " KICK " + Config.getIrcdConsoleChannel() + " " + uid + " :" + kickedByNick);
+			    ChatUtils.println(":" + sourceUID + " KICK " + Config.getIrcdConsoleChannel() + " " + uid + " :" + kickedByNick);
 			}
 			returnVal = true;
 			iuser.consoleJoined = false;
 		    }
 		    if (iuser.joined) {
 			if (reason != null) {
-			    Utils.println(":" + sourceUID + " KICK " + Config.getIrcdChannel() + " " + uid + " :" + reason);
+			    ChatUtils.println(":" + sourceUID + " KICK " + Config.getIrcdChannel() + " " + uid + " :" + reason);
 			    if (msgIRCKickReason.length() > 0) {
-				Utils.broadcastMessage(msgIRCKickReason
+				ChatUtils.broadcastMessage(msgIRCKickReason
 					.replace("{KickedUser}", iuser.nick)
 					.replace("{KickedBy}", kickedByNick)
-					.replace("{Reason}", Utils.convertColors(reason, true))
+					.replace("{Reason}", ChatUtils.convertColors(reason, true))
 					.replace("{KickedPrefix}", IRCFunctionality.getGroupPrefix(iuser.getTextModes()))
 					.replace("{KickedSuffix}", IRCFunctionality.getGroupSuffix(iuser.getTextModes()))
 					.replace("{KickerPrefix}", IRCFunctionality.getGroupPrefix(getIRCUser(kickedByNick).getTextModes()))
@@ -562,14 +564,14 @@ public class IRCUserManagement {
 				BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCKickReasonDynmap
 						.replace("{KickedUser}", iuser.nick)
 						.replace("{KickedBy}", kickedByNick)
-						.replace("{Reason}", Utils.stripIRCFormatting(reason)));
+						.replace("{Reason}", ChatUtils.stripIRCFormatting(reason)));
 			    }
 			} else {
-			    Utils.println(":" + sourceUID + " KICK " +
+			    ChatUtils.println(":" + sourceUID + " KICK " +
 				    Config.getIrcdChannel() + " " + uid +
 				    " :" + kickedByNick);
 			    if (msgIRCKick.length() > 0) {
-				Utils.broadcastMessage(msgIRCKick
+				ChatUtils.broadcastMessage(msgIRCKick
 					.replace("{KickedUser}", iuser.nick)
 					.replace("{KickedBy}", kickedByNick)
 					.replace("{KickedPrefix}", IRCFunctionality.getGroupPrefix(iuser.getTextModes()))
@@ -633,7 +635,7 @@ public class IRCUserManagement {
 		    if (result) {
 			if (ircuser.joined) {
 			    if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
-				if (msgIRCBan.length() > 0) { Utils.broadcastMessage(msgIRCBan
+				if (msgIRCBan.length() > 0) { ChatUtils.broadcastMessage(msgIRCBan
 						.replace("{BannedUser}", ircuser.nick)
 					    .replace("{BannedBy}", bannedBy));
 				}
@@ -679,7 +681,7 @@ public class IRCUserManagement {
 			} else if (UID == null) {
 			    UID = bp.getUID();
 			}
-			Utils.println(":" + UID + " FMODE " + Config.getIrcdChannel() +
+			ChatUtils.println(":" + UID + " FMODE " + Config.getIrcdChannel() +
 				" " + channelTS + " + b :" + banHost);
 			return true;
 		    } else {
@@ -723,7 +725,7 @@ public class IRCUserManagement {
 		    } else if (UID == null) {
 			UID = bp.getUID();
 		    }
-		    Utils.println(":" + UID + " FMODE " + Config.getIrcdChannel() +
+		    ChatUtils.println(":" + UID + " FMODE " + Config.getIrcdChannel() +
 			    " " + channelTS + " -b :" + banHost);
 		    return true;
 		} else {
@@ -744,7 +746,7 @@ public class IRCUserManagement {
     public static boolean isBanned(String fullHost) {
 	synchronized (csIrcBans) {
 	    for (IrcBan ircBan : ircBans) {
-		if (Utils.wildCardMatch(fullHost, ircBan.fullHost)) {
+		if (ChatUtils.wildCardMatch(fullHost, ircBan.fullHost)) {
 		    return true;
 		}
 	    }

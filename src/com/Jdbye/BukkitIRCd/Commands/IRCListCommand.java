@@ -5,8 +5,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
+import Utilities.ChatUtils;
+
 import com.Jdbye.BukkitIRCd.IRCUserManagement;
-import com.Jdbye.BukkitIRCd.Utils;
 
 public class IRCListCommand implements CommandExecutor {
 
@@ -20,7 +21,7 @@ public class IRCListCommand implements CommandExecutor {
 		players.length + ChatColor.BLUE + " users on IRC.");
 	if (players.length > 0) {
 	    sender.sendMessage(ChatColor.GRAY +
-		    Utils.join(players, ChatColor.WHITE + ", " +
+		    ChatUtils.join(players, ChatColor.WHITE + ", " +
 			    ChatColor.GRAY, 0));
 	}
 
