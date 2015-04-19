@@ -71,7 +71,7 @@ public class IRCUnbanCommand implements CommandExecutor {
 			    player.sendMessage(ChatColor.RED +
 				    "User is not banned.");
 			}
-		    } else if (thePlugin.countStr(ban, ".") == 3) { // It's an IP
+		    } else if (BukkitIRCdPlugin.countStr(ban, ".") == 3) { // It's an IP
 			if (IRCUserManagement.unBanIRCUser("*!*@" + ban,
 				player.getName() +
 				Config.getIrcdIngameSuffix() +
@@ -158,7 +158,7 @@ public class IRCUnbanCommand implements CommandExecutor {
 			sender.sendMessage(ChatColor.RED +
 				"User is not banned.");
 		    }
-		} else if (thePlugin.countStr(ban, ".") == 3) { // It's an IP
+		} else if (BukkitIRCdPlugin.countStr(ban, ".") == 3) { // It's an IP
 		    if (IRCUserManagement.unBanIRCUser(
 			    "*!*@" + ban,
 			    Config.getIrcdServerName() + "!" +

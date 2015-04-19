@@ -43,15 +43,15 @@ public class IRCUserManagement {
 		ClientConnection processor;
 		while (i < clientConnections.size()) {
 		    processor = clientConnections.get(i);
-		    if ((processor != null) &&
-			    (processor.nick.equalsIgnoreCase(nick))) {
-			return new IRCUser(processor.nick, processor.realname,
+		    if ((processor != null) && (processor.nick.equalsIgnoreCase(nick))) {
+			return new IRCUser(
+				processor.nick, 
+				processor.realname,
 				processor.ident, processor.hostmask,
 				processor.ipaddress, processor.modes,
 				processor.customWhois, processor.isRegistered,
 				processor.isOper, processor.awayMsg,
-				processor.signonTime, processor.lastActivity,
-				"");
+				processor.signonTime, processor.lastActivity, "");
 		    }
 		    i++;
 		}
@@ -258,37 +258,22 @@ public class IRCUserManagement {
 	}
 	ArrayList<String> whois = new ArrayList<String>(10);
 	synchronized (csIrcUsers) {
-	    String idletime = TimeUtils.millisToLongDHMS(ircuser
-		    .getSecondsIdle() * 1000);
-	    whois.add(ChatColor.DARK_GREEN + "Nickname: " + ChatColor.GRAY +
-		    ircuser.nick + ChatColor.WHITE);
-	    whois.add(ChatColor.DARK_GREEN + "Ident: " + ChatColor.GRAY +
-		    ircuser.ident + ChatColor.WHITE);
-	    whois.add(ChatColor.DARK_GREEN + "Hostname: " + ChatColor.GRAY +
-		    ircuser.hostmask + ChatColor.WHITE);
+	    String idletime = TimeUtils.millisToLongDHMS(ircuser.getSecondsIdle() * 1000);
+	    whois.add(ChatColor.DARK_GREEN + "Nickname: " + ChatColor.GRAY + ircuser.nick + ChatColor.WHITE);
+	    whois.add(ChatColor.DARK_GREEN + "Ident: " + ChatColor.GRAY + ircuser.ident + ChatColor.WHITE);
+	    whois.add(ChatColor.DARK_GREEN + "Hostname: " + ChatColor.GRAY + ircuser.hostmask + ChatColor.WHITE);
 	    if (isOper && !ircuser.hostmask.equalsIgnoreCase(ircuser.realhost)) {
-		whois.add(ChatColor.DARK_GREEN + "Real Hostname: " +
-			ChatColor.GRAY + ircuser.realhost + ChatColor.WHITE);
+		whois.add(ChatColor.DARK_GREEN + "Real Hostname: " + ChatColor.GRAY + ircuser.realhost + ChatColor.WHITE);
 	    }
-	    whois.add(ChatColor.DARK_GREEN + "Realname: " + ChatColor.GRAY +
-		    ircuser.realname + ChatColor.WHITE);
-	    whois.add(ChatColor.DARK_GREEN + "Is registered: " + ChatColor.GRAY +
-		    (ircuser.isRegistered ? "Yes" : "No") + ChatColor.WHITE);
+	    whois.add(ChatColor.DARK_GREEN + "Realname: " + ChatColor.GRAY + ircuser.realname + ChatColor.WHITE);
+	    whois.add(ChatColor.DARK_GREEN + "Is registered: " + ChatColor.GRAY + (ircuser.isRegistered ? "Yes" : "No") + ChatColor.WHITE);
 	    if (!ircuser.accountname.isEmpty()) {
-		whois.add(ChatColor.DARK_GREEN + "Account name: " +
-			ChatColor.GRAY + ircuser.accountname +
-			ChatColor.WHITE);
+		whois.add(ChatColor.DARK_GREEN + "Account name: " + ChatColor.GRAY + ircuser.accountname + ChatColor.WHITE);
 	    }
-	    whois.add(ChatColor.DARK_GREEN + "Is operator: " + ChatColor.GRAY +
-		    (ircuser.isOper ? "Yes" : "No") + ChatColor.WHITE);
-	    whois.add(ChatColor.DARK_GREEN + "Away: " + ChatColor.GRAY +
-		    ((!ircuser.awayMsg.equals("")) ? ircuser.awayMsg : "No") +
-		    ChatColor.WHITE);
-	    whois.add(ChatColor.DARK_GREEN + "Idle " + ChatColor.GRAY +
-		    idletime + ChatColor.WHITE);
-	    whois.add(ChatColor.DARK_GREEN + "Signed on at " + ChatColor.GRAY +
-		    dateFormat.format(ircuser.signonTime * 1000) +
-		    ChatColor.WHITE);
+	    whois.add(ChatColor.DARK_GREEN + "Is operator: " + ChatColor.GRAY + (ircuser.isOper ? "Yes" : "No") + ChatColor.WHITE);
+	    whois.add(ChatColor.DARK_GREEN + "Away: " + ChatColor.GRAY + ((!ircuser.awayMsg.equals("")) ? ircuser.awayMsg : "No") + ChatColor.WHITE);
+	    whois.add(ChatColor.DARK_GREEN + "Idle " + ChatColor.GRAY + idletime + ChatColor.WHITE);
+	    whois.add(ChatColor.DARK_GREEN + "Signed on at " + ChatColor.GRAY + dateFormat.format(ircuser.signonTime * 1000) + ChatColor.WHITE);
 	}
 	return whois;
     }
@@ -307,58 +292,31 @@ public class IRCUserManagement {
 			if (processor.isIdented && processor.isNickSet) {
 			    if ((IRCd.isPlugin) &&
 				    (BukkitIRCdPlugin.thePlugin != null)) {
-				BukkitIRCdPlugin.thePlugin
-					.removeLastReceivedFrom(processor.nick);
+				BukkitIRCdPlugin.thePlugin.removeLastReceivedFrom(processor.nick);
 				if (reason != null) {
 				    if (msgIRCLeave.length() > 0) {
 					Utils.broadcastMessage(msgIRCLeaveReason
-						.replace("{User}",
-							processor.nick)
-						.replace(
-							"{Suffix}",
-							IRCFunctionality.getGroupSuffix(processor.modes))
-						.replace(
-							"{Prefix}",
-							IRCFunctionality.getGroupPrefix(processor.modes))
-						.replace(
-							"{Reason}",
-							Utils.convertColors(reason,
-								IRCToGame)));
+						.replace("{User}", processor.nick)
+						.replace("{Suffix}", IRCFunctionality.getGroupSuffix(processor.modes))
+						.replace("{Prefix}", IRCFunctionality.getGroupPrefix(processor.modes))
+						.replace("{Reason}", Utils.convertColors(reason, IRCToGame)));
 				    }
-				    if ((BukkitIRCdPlugin.dynmap != null) &&
-					    (msgIRCLeaveDynmap.length() > 0)) {
-					BukkitIRCdPlugin.dynmap
-						.sendBroadcastToWeb(
-							"IRC",
-							msgIRCLeaveReasonDynmap
-							.replace(
-								"{User}",
-								processor.nick)
-							.replace(
-								"{Reason}",
-								Utils.stripIRCFormatting(reason)));
+				    if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCLeaveDynmap.length() > 0)) {
+					BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCLeaveReasonDynmap
+							.replace("{User}", processor.nick)
+							.replace("{Reason}", Utils.stripIRCFormatting(reason)));
 				    }
 				} else {
 				    if (msgIRCLeave.length() > 0) {
 					Utils.broadcastMessage(msgIRCLeave
-						.replace("{User}",
-							processor.nick)
-						.replace(
-							"{Suffix}",
-							IRCFunctionality.getGroupSuffix(processor.modes))
-						.replace(
-							"{Prefix}",
-							IRCFunctionality.getGroupPrefix(processor.modes)));
+							.replace("{User}", processor.nick)
+							.replace("{Suffix}",IRCFunctionality.getGroupSuffix(processor.modes))
+							.replace("{Prefix}", IRCFunctionality.getGroupPrefix(processor.modes)));
 				    }
 				    if ((BukkitIRCdPlugin.dynmap != null) &&
 					    (msgIRCLeaveDynmap.length() > 0)) {
 					BukkitIRCdPlugin.dynmap
-						.sendBroadcastToWeb(
-							"IRC",
-							msgIRCLeaveDynmap
-							.replace(
-								"{User}",
-								processor.nick));
+						.sendBroadcastToWeb("IRC", msgIRCLeaveDynmap.replace("{User}", processor.nick));
 				    }
 				}
 			    }
@@ -389,19 +347,14 @@ public class IRCUserManagement {
 			    if (msgIRCLeave.length() > 0 && reason != null) {
 				Utils.broadcastMessage(msgIRCLeaveReason
 					.replace("{User}", processor.nick)
-					.replace(
-						"{Prefix}",
-						IRCFunctionality.getGroupPrefix(processor.modes))
-					.replace(
-						"{Suffix}",
-						IRCFunctionality.getGroupSuffix(processor.modes))
+					.replace("{Prefix}", IRCFunctionality.getGroupPrefix(processor.modes))
+					.replace("{Suffix}", IRCFunctionality.getGroupSuffix(processor.modes))
 					.replace("{Reason}", reason));
 			    }
 			    if ((BukkitIRCdPlugin.dynmap != null) &&
 				    (msgIRCLeaveDynmap.length() > 0)) {
 				BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
-					"IRC", msgIRCLeaveDynmap.replace(
-						"%USER%", processor.nick));
+					"IRC", msgIRCLeaveDynmap.replace("%USER%", processor.nick));
 			    }
 			}
 		    }
@@ -438,23 +391,12 @@ public class IRCUserManagement {
 			if (msgIRCLeaveReason.length() > 0) {
 			    Utils.broadcastMessage(msgIRCLeaveReason
 				    .replace("{User}", curUser.nick)
-				    .replace(
-					    "{Prefix}",
-					    IRCFunctionality.getGroupPrefix(curUser
-						    .getTextModes()))
-				    .replace(
-					    "{Suffix}",
-					    IRCFunctionality.getGroupSuffix(curUser
-						    .getTextModes()))
+				    .replace("{Prefix}", IRCFunctionality.getGroupPrefix(curUser.getTextModes()))
+				    .replace("{Suffix}", IRCFunctionality.getGroupSuffix(curUser.getTextModes()))
 				    .replace("{Reason}", is.host + " split"));
 			}
-			if ((BukkitIRCdPlugin.dynmap != null) &&
-				(msgIRCLeaveReasonDynmap.length() > 0)) {
-			    BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
-				    "IRC",
-				    msgIRCLeaveReasonDynmap.replace("{User}",
-					    curUser.nick).replace("{Reason}",
-					    is.host + " split"));
+			if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCLeaveReasonDynmap.length() > 0)) {
+			    BukkitIRCdPlugin.dynmap.sendBroadcastToWeb( "IRC",msgIRCLeaveReasonDynmap.replace("{User}", curUser.nick).replace("{Reason}",is.host + " split"));
 			}
 		    }
 		    iter.remove();
@@ -469,42 +411,30 @@ public class IRCUserManagement {
 	return false;
     }
 
-    public static boolean kickBanIRCUser(IRCUser ircuser, String kickBannedBy,
-	    String kickBannedByHost, boolean isIngame) {
-	return kickBanIRCUser(ircuser, kickBannedBy, kickBannedByHost, null,
-		isIngame, Config.getIrcdBantype());
+    public static boolean kickBanIRCUser(IRCUser ircuser, String kickBannedBy, String kickBannedByHost, boolean isIngame) {
+    	return kickBanIRCUser(ircuser, kickBannedBy, kickBannedByHost, null, isIngame, Config.getIrcdBantype());
     }
 
-    public static boolean kickBanIRCUser(IRCUser ircuser, String kickBannedBy,
-	    String kickBannedByHost, boolean isIngame, String banType) {
-	return kickBanIRCUser(ircuser, kickBannedBy, kickBannedByHost, null,
-		isIngame, banType);
+    public static boolean kickBanIRCUser(IRCUser ircuser, String kickBannedBy, String kickBannedByHost, boolean isIngame, String banType) {
+    	return kickBanIRCUser(ircuser, kickBannedBy, kickBannedByHost, null, isIngame, banType);
     }
 
-    public static boolean kickBanIRCUser(IRCUser ircuser, String kickBannedBy,
-	    String kickBannedByHost, String reason, boolean isIngame) {
-	return kickBanIRCUser(ircuser, kickBannedBy, kickBannedByHost, null,
-		isIngame, Config.getIrcdBantype());
+    public static boolean kickBanIRCUser(IRCUser ircuser, String kickBannedBy, String kickBannedByHost, String reason, boolean isIngame) {
+    	return kickBanIRCUser(ircuser, kickBannedBy, kickBannedByHost, null, isIngame, Config.getIrcdBantype());
     }
 
-    public static boolean kickBanIRCUser(IRCUser ircuser, String kickBannedBy,
-	    String kickBannedByHost, String reason, boolean isIngame,
-	    String banType) {
-	if (banType == null) {
-	    banType = Config.getIrcdBantype();
-	}
+    public static boolean kickBanIRCUser(IRCUser ircuser, String kickBannedBy, String kickBannedByHost, String reason, boolean isIngame, String banType) {
+		if (banType == null) {
+		    banType = Config.getIrcdBantype();
+		}
 	String split[] = kickBannedByHost.split("!")[1].split("@");
 	String kickedByIdent = split[0];
 	String kickedByHostname = split[1];
-	return (banIRCUser(ircuser, kickBannedBy, kickBannedByHost, isIngame,
-		banType) && kickIRCUser(ircuser, kickBannedBy, kickedByIdent,
-			kickedByHostname, reason, isIngame));
+		return (banIRCUser(ircuser, kickBannedBy, kickBannedByHost, isIngame, banType) && kickIRCUser(ircuser, kickBannedBy, kickedByIdent, kickedByHostname, reason, isIngame));
     }
 
-    public static boolean kickIRCUser(IRCUser ircuser, String kickedByNick,
-	    String kickedByIdent, String kickedByHost, boolean isIngame) {
-	return kickIRCUser(ircuser, kickedByNick, kickedByIdent, kickedByHost,
-		null, isIngame);
+    public static boolean kickIRCUser(IRCUser ircuser, String kickedByNick, String kickedByIdent, String kickedByHost, boolean isIngame) {
+    	return kickIRCUser(ircuser, kickedByNick, kickedByIdent, kickedByHost, null, isIngame);
     }
 
     @SuppressWarnings("unchecked")
@@ -527,83 +457,34 @@ public class IRCUserManagement {
 				if (reason != null) {
 				    if (msgIRCKickReason.length() > 0) {
 					Utils.broadcastMessage(msgIRCKickReason
-						.replace("{KickedUser}",
-							processor.nick)
-						.replace("{KickedBy}",
-							kickedByNick)
-						.replace(
-							"{Reason}",
-							Utils.convertColors(reason,
-								true))
-						.replace(
-							"{KickedPrefix}",
-							IRCFunctionality.getGroupPrefix(processor.modes))
-						.replace(
-							"{KickedSuffix}",
-							IRCFunctionality.getGroupSuffix(processor.modes))
-						.replace(
-							"{KickerPrefix}",
-							IRCFunctionality.getGroupPrefix(getIRCUser(
-									kickedByNick)
-								.getTextModes()))
-						.replace(
-							"{KickerSuffix}",
-							IRCFunctionality.getGroupSuffix(getIRCUser(
-									kickedByNick)
-								.getTextModes())));
+						.replace("{KickedUser}", processor.nick)
+						.replace("{KickedBy}", kickedByNick)
+						.replace("{Reason}", Utils.convertColors(reason, true))
+						.replace("{KickedPrefix}", IRCFunctionality.getGroupPrefix(processor.modes))
+						.replace("{KickedSuffix}", IRCFunctionality.getGroupSuffix(processor.modes))
+						.replace("{KickerPrefix}", IRCFunctionality.getGroupPrefix(getIRCUser(kickedByNick).getTextModes()))
+						.replace("{KickerSuffix}", IRCFunctionality.getGroupSuffix(getIRCUser(kickedByNick).getTextModes())));
 				    }
-				    if ((BukkitIRCdPlugin.dynmap != null) &&
-					    (msgIRCKickReasonDynmap.length() > 0)) {
-					BukkitIRCdPlugin.dynmap
-						.sendBroadcastToWeb(
-							"IRC",
-							msgIRCKickReasonDynmap
-							.replace(
-								"{KickedUser}",
-								processor.nick)
-							.replace(
-								"{KickedBy}",
-								kickedByNick)
-							.replace(
-								"{Reason}",
-								Utils.stripIRCFormatting(reason)));
+				    if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCKickReasonDynmap.length() > 0)) {
+					BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC",msgIRCKickReasonDynmap
+							.replace("{KickedUser}",processor.nick)
+							.replace("{KickedBy}", kickedByNick)
+							.replace( "{Reason}", Utils.stripIRCFormatting(reason)));
 				    }
 				} else {
 				    if (msgIRCKick.length() > 0) {
 					Utils.broadcastMessage(msgIRCKick
-						.replace("{KickedUser}",
-							processor.nick)
-						.replace("{KickedBy}",
-							kickedByNick)
-						.replace(
-							"{KickedPrefix}",
-							IRCFunctionality.getGroupPrefix(processor.modes))
-						.replace(
-							"{KickedSuffix}",
-							IRCFunctionality.getGroupSuffix(processor.modes))
-						.replace(
-							"{KickerPrefix}",
-							IRCFunctionality.getGroupPrefix(getIRCUser(
-									kickedByNick)
-								.getTextModes()))
-						.replace(
-							"{KickerSuffix}",
-							IRCFunctionality.getGroupSuffix(getIRCUser(
-									kickedByNick)
-								.getTextModes())));
+						.replace("{KickedUser}", processor.nick)
+						.replace("{KickedBy}", kickedByNick)
+						.replace("{KickedPrefix}", IRCFunctionality.getGroupPrefix(processor.modes))
+						.replace("{KickedSuffix}", IRCFunctionality.getGroupSuffix(processor.modes))
+						.replace("{KickerPrefix}", IRCFunctionality.getGroupPrefix(getIRCUser(kickedByNick).getTextModes()))
+						.replace("{KickerSuffix}", IRCFunctionality.getGroupSuffix(getIRCUser(kickedByNick).getTextModes())));
 				    }
-				    if ((BukkitIRCdPlugin.dynmap != null) &&
-					    (msgIRCKickDynmap.length() > 0)) {
-					BukkitIRCdPlugin.dynmap
-						.sendBroadcastToWeb(
-							"IRC",
-							msgIRCKickDynmap
-							.replace(
-								"{KickedUser}",
-								processor.nick)
-							.replace(
-								"{KickedBy}",
-								kickedByNick));
+				    if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCKickDynmap.length() > 0)) {
+					BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC",msgIRCKickDynmap
+							.replace( "{KickedUser}", processor.nick)
+							.replace( "{KickedBy}", kickedByNick));
 				    }
 				}
 			    }
@@ -615,29 +496,13 @@ public class IRCUserManagement {
 			    }
 			}
 			if (reason != null) {
-			    IRCFunctionality.writeAll(":" + processor.getFullHost() +
-				    " QUIT :Kicked by " + kickedByNick + ": " +
-				    reason);
-			    processor.writeln(":" + kickedByNick + "!" +
-				    kickedByIdent + "@" + kickedByHost +
-				    " KILL " + processor.nick + " :" +
-				    kickedByHost + "!" + kickedByNick + " (" +
-				    reason + ")");
-			    processor.writeln("ERROR :Closing Link: " +
-				    processor.nick + "[" + processor.hostmask +
-				    "] " + kickedByNick + " (Kicked by " +
-				    kickedByNick + " (" + reason + "))");
+			    IRCFunctionality.writeAll(":" + processor.getFullHost() + " QUIT :Kicked by " + kickedByNick + ": " + reason);
+			    processor.writeln(":" + kickedByNick + "!" +  kickedByIdent + "@" + kickedByHost + " KILL " + processor.nick + " :" + kickedByHost + "!" + kickedByNick + " (" + reason + ")");
+			    processor.writeln("ERROR :Closing Link: " + processor.nick + "[" + processor.hostmask + "] " + kickedByNick + " (Kicked by " + kickedByNick + " (" + reason + "))");
 			} else {
-			    IRCFunctionality.writeAll(":" + processor.getFullHost() +
-				    " QUIT :Kicked by " + kickedByNick);
-			    processor.writeln(":" + kickedByNick + "!" +
-				    kickedByIdent + "@" + kickedByHost +
-				    " KILL " + processor.nick + " :" +
-				    kickedByHost + "!" + kickedByNick);
-			    processor.writeln("ERROR :Closing Link: " +
-				    processor.nick + "[" + processor.hostmask +
-				    "] " + kickedByNick + " (Kicked by " +
-				    kickedByNick + ")");
+			    IRCFunctionality.writeAll(":" + processor.getFullHost() + " QUIT :Kicked by " + kickedByNick);
+			    processor.writeln(":" + kickedByNick + "!" + kickedByIdent + "@" + kickedByHost + " KILL " + processor.nick + " :" + kickedByHost + "!" + kickedByNick);
+			    processor.writeln("ERROR :Closing Link: " + processor.nick + "[" + processor.hostmask + "] " + kickedByNick + " (Kicked by " + kickedByNick + ")");
 			}
 			processor.disconnect();
 			iter.remove();
@@ -670,61 +535,31 @@ public class IRCUserManagement {
 		    boolean returnVal = false;
 		    if (iuser.consoleJoined) {
 			if (reason != null) {
-			    Utils.println(":" + sourceUID + " KICK " +
-				    Config.getIrcdConsoleChannel() + " " +
-				    uid + " :" + reason);
+			    Utils.println(":" + sourceUID + " KICK " + Config.getIrcdConsoleChannel() + " " + uid + " :" + reason);
 			} else {
-			    Utils.println(":" + sourceUID + " KICK " +
-				    Config.getIrcdConsoleChannel() + " " +
-				    uid + " :" + kickedByNick);
+			    Utils.println(":" + sourceUID + " KICK " + Config.getIrcdConsoleChannel() + " " + uid + " :" + kickedByNick);
 			}
 			returnVal = true;
 			iuser.consoleJoined = false;
 		    }
 		    if (iuser.joined) {
 			if (reason != null) {
-			    Utils.println(":" + sourceUID + " KICK " +
-				    Config.getIrcdChannel() + " " + uid +
-				    " :" + reason);
+			    Utils.println(":" + sourceUID + " KICK " + Config.getIrcdChannel() + " " + uid + " :" + reason);
 			    if (msgIRCKickReason.length() > 0) {
 				Utils.broadcastMessage(msgIRCKickReason
 					.replace("{KickedUser}", iuser.nick)
 					.replace("{KickedBy}", kickedByNick)
-					.replace("{Reason}",
-						Utils.convertColors(reason, true))
-					.replace(
-						"{KickedPrefix}",
-						IRCFunctionality.getGroupPrefix(iuser
-							.getTextModes()))
-					.replace(
-						"{KickedSuffix}",
-						IRCFunctionality.getGroupSuffix(iuser
-							.getTextModes()))
-					.replace(
-						"{KickerPrefix}",
-						IRCFunctionality.getGroupPrefix(getIRCUser(
-								kickedByNick)
-							.getTextModes()))
-					.replace(
-						"{KickerSuffix}",
-						IRCFunctionality.getGroupSuffix(getIRCUser(
-								kickedByNick)
-							.getTextModes())));
+					.replace("{Reason}", Utils.convertColors(reason, true))
+					.replace("{KickedPrefix}", IRCFunctionality.getGroupPrefix(iuser.getTextModes()))
+					.replace("{KickedSuffix}", IRCFunctionality.getGroupSuffix(iuser.getTextModes()))
+					.replace("{KickerPrefix}", IRCFunctionality.getGroupPrefix(getIRCUser(kickedByNick).getTextModes()))
+					.replace("{KickerSuffix}", IRCFunctionality.getGroupSuffix(getIRCUser(kickedByNick).getTextModes())));
 			    }
-			    if ((BukkitIRCdPlugin.dynmap != null) &&
-				    (msgIRCKickReasonDynmap.length() > 0)) {
-				BukkitIRCdPlugin.dynmap
-					.sendBroadcastToWeb(
-						"IRC",
-						msgIRCKickReasonDynmap
-						.replace(
-							"{KickedUser}",
-							iuser.nick)
-						.replace("{KickedBy}",
-							kickedByNick)
-						.replace(
-							"{Reason}",
-							Utils.stripIRCFormatting(reason)));
+			    if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCKickReasonDynmap.length() > 0)) {
+				BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCKickReasonDynmap
+						.replace("{KickedUser}", iuser.nick)
+						.replace("{KickedBy}", kickedByNick)
+						.replace("{Reason}", Utils.stripIRCFormatting(reason)));
 			    }
 			} else {
 			    Utils.println(":" + sourceUID + " KICK " +
@@ -734,33 +569,15 @@ public class IRCUserManagement {
 				Utils.broadcastMessage(msgIRCKick
 					.replace("{KickedUser}", iuser.nick)
 					.replace("{KickedBy}", kickedByNick)
-					.replace(
-						"{KickedPrefix}",
-						IRCFunctionality.getGroupPrefix(iuser
-							.getTextModes()))
-					.replace(
-						"{KickedSuffix}",
-						IRCFunctionality.getGroupSuffix(iuser
-							.getTextModes()))
-					.replace(
-						"{KickerPrefix}",
-						IRCFunctionality.getGroupPrefix(getIRCUser(
-								kickedByNick)
-							.getTextModes()))
-					.replace(
-						"{KickerSuffix}",
-						IRCFunctionality.getGroupSuffix(getIRCUser(
-								kickedByNick)
-							.getTextModes())));
+					.replace("{KickedPrefix}", IRCFunctionality.getGroupPrefix(iuser.getTextModes()))
+					.replace("{KickedSuffix}", IRCFunctionality.getGroupSuffix(iuser.getTextModes()))
+					.replace("{KickerPrefix}", IRCFunctionality.getGroupPrefix(getIRCUser(kickedByNick).getTextModes()))
+					.replace("{KickerSuffix}", IRCFunctionality.getGroupSuffix(getIRCUser(kickedByNick).getTextModes())));
 			    }
-			    if ((BukkitIRCdPlugin.dynmap != null) &&
-				    (msgIRCKickDynmap.length() > 0)) {
-				BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
-					"IRC",
-					msgIRCKickDynmap.replace(
-						"{KickedUser}", iuser.nick)
-					.replace("{KickedBy}",
-						kickedByNick));
+			    if ((BukkitIRCdPlugin.dynmap != null) && (msgIRCKickDynmap.length() > 0)) {
+				BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC",msgIRCKickDynmap
+					.replace("{KickedUser}", iuser.nick)
+					.replace("{KickedBy}", kickedByNick));
 			    }
 			}
 			returnVal = true;
@@ -768,39 +585,22 @@ public class IRCUserManagement {
 		    } else {
 			BukkitIRCdPlugin.log.info("Player " + kickedByNick +
 				" tried to kick IRC user not on channel: " +
-				iuser.nick); // Log this as severe since it
-		    }					// should never occur unless
-		    // something is wrong with the
-		    // code
+				iuser.nick); 
+		    } 
+		    // this as severe since it should never occur unless something is wrong with the code
 
 		    return returnVal;
 		} else {
-		    BukkitIRCdPlugin.log.severe("[BukkitIRCd] User " +
-			    ircuser.nick +
-			    " not found in UID list. Error code IRCd942."); // Log
-		}				// this
-		// as
-		// severe
-		// since
-		// it
-		// should
-		// never
-		// occur
-		// unless
-		// something
-		// is
-		// wrong
-		// with
-		// the
-		// code
+		    BukkitIRCdPlugin.log.severe("[BukkitIRCd] User " + ircuser.nick + " not found in UID list. Error code IRCd942."); 
+		}				
+		// log this as severe since it should never occur unless something is wrong with the code
 	    }
 	}
 	return false;
 
     }
 
-    public static boolean banIRCUser(IRCUser ircuser, String bannedBy,
-	    String bannedByHost, boolean isIngame, String banType) {
+    public static boolean banIRCUser(IRCUser ircuser, String bannedBy, String bannedByHost, boolean isIngame, String banType) {
 	// TODO: Add support for banning in linking mode
 	if (ircuser == null) {
 	    return false;
@@ -817,35 +617,28 @@ public class IRCUserManagement {
 			bannedBy += Config.getIrcdIngameSuffix();
 		    }
 		    String banHost;
-		    if ((banType.equals("host")) ||
-			    (banType.equals("hostname"))) {
-			banHost = "*!*@" + ircuser.hostmask;
-		    } else if ((banType.equals("ip")) ||
-			    (banType.equals("ipaddress"))) {
-			banHost = "*!*@" + ircuser.ipaddress;
+		    if ((banType.equals("host")) || (banType.equals("hostname"))) {
+		    	banHost = "*!*@" + ircuser.hostmask;
+		    } else if ((banType.equals("ip")) || (banType.equals("ipaddress"))) {
+		    	banHost = "*!*@" + ircuser.ipaddress;
 		    } else if (banType.equals("ident")) {
-			banHost = "*!" + ircuser.ident + "@*";
+		    	banHost = "*!" + ircuser.ident + "@*";
 		    } else {
-			banHost = ircuser.nick + "!*@*";
+		    	banHost = ircuser.nick + "!*@*";
 		    }
 		    boolean result = banIRCUser(banHost, bannedByHost);
 		    if (result) {
 			if (ircuser.joined) {
-			    if ((IRCd.isPlugin) &&
-				    (BukkitIRCdPlugin.thePlugin != null)) {
-				if (msgIRCBan.length() > 0) {
-				    Utils.broadcastMessage(msgIRCBan.replace(
-					    "{BannedUser}", ircuser.nick)
+			    if ((IRCd.isPlugin) && (BukkitIRCdPlugin.thePlugin != null)) {
+				if (msgIRCBan.length() > 0) { Utils.broadcastMessage(msgIRCBan
+						.replace("{BannedUser}", ircuser.nick)
 					    .replace("{BannedBy}", bannedBy));
 				}
 				if ((BukkitIRCdPlugin.dynmap != null) &&
 					(msgIRCBanDynmap.length() > 0)) {
-				    BukkitIRCdPlugin.dynmap.sendBroadcastToWeb(
-					    "IRC",
-					    msgIRCBanDynmap.replace(
-						    "{BannedUser}",
-						    ircuser.nick).replace(
-						    "{BannedBy}", bannedBy));
+				    	BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", msgIRCBanDynmap
+				    			.replace("{BannedUser}", ircuser.nick)
+				    			.replace("{BannedBy}", bannedBy));
 				}
 			    }
 			}
@@ -871,8 +664,7 @@ public class IRCUserManagement {
 		} else if (mode == Modes.INSPIRCD) {
 		    String user = bannedByHost.split("!")[0];
 		    if (user.endsWith(Config.getIrcdIngameSuffix())) {
-			user = user.substring(0, user.length() -
-				Config.getIrcdIngameSuffix().length());
+			user = user.substring(0, user.length() - Config.getIrcdIngameSuffix().length());
 		    }
 		    String UID;
 		    BukkitPlayer bp = null;
@@ -890,9 +682,7 @@ public class IRCUserManagement {
 		    } else {
 			if (Config.isDebugModeEnabled()) {
 			    BukkitIRCdPlugin.log
-				    .severe("[BukkitIRCd] User " +
-					    user +
-					    " not found in UID list. Error code IRCd1004."); // Log
+				    .severe("[BukkitIRCd] User " + user + " not found in UID list. Error code IRCd1004."); // Log
 			}
 
 			return false;

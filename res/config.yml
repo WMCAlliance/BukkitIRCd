@@ -33,7 +33,7 @@ kick-commands:
 standalone: 
   channel-topic: "Minecraft Server Chatroom"
   channel-topic-set-by: BukkitIRCd
-  channel-topic-set-date: "Fri Jan 16 10:53:26 1970"
+  channel-topic-set-date: "Sunday May 17 12:00:31 2009"
   max-connections: 1000
   max-nick-length: 32
   oper-modes: ~&@%+
