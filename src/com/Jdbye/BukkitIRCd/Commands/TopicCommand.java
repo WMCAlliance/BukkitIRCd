@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 import com.Jdbye.BukkitIRCd.Configuration.Config;
 import com.Jdbye.BukkitIRCd.Utilities.ChatUtils;
 
-public class IRCTopicCommand implements CommandExecutor {
+public class TopicCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label,

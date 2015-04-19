@@ -17,24 +17,24 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.dynmap.DynmapAPI;
 
 import com.Jdbye.BukkitIRCd.Commands.BukkitIRCdCommand;
-import com.Jdbye.BukkitIRCd.Commands.IRCBanCommand;
-import com.Jdbye.BukkitIRCd.Commands.IRCKickCommand;
-import com.Jdbye.BukkitIRCd.Commands.IRCLinkCommand;
-import com.Jdbye.BukkitIRCd.Commands.IRCListCommand;
-import com.Jdbye.BukkitIRCd.Commands.IRCMsgCommand;
-import com.Jdbye.BukkitIRCd.Commands.IRCReloadCommand;
-import com.Jdbye.BukkitIRCd.Commands.IRCReplyCommand;
-import com.Jdbye.BukkitIRCd.Commands.IRCTopicCommand;
-import com.Jdbye.BukkitIRCd.Commands.IRCUnbanCommand;
-import com.Jdbye.BukkitIRCd.Commands.IRCUserCommands;
-import com.Jdbye.BukkitIRCd.Commands.IRCWhoisCommand;
+import com.Jdbye.BukkitIRCd.Commands.BanCommand;
+import com.Jdbye.BukkitIRCd.Commands.KickCommand;
+import com.Jdbye.BukkitIRCd.Commands.LinkCommand;
+import com.Jdbye.BukkitIRCd.Commands.ListCommand;
+import com.Jdbye.BukkitIRCd.Commands.MsgCommand;
+import com.Jdbye.BukkitIRCd.Commands.ReloadCommand;
+import com.Jdbye.BukkitIRCd.Commands.ReplyCommand;
+import com.Jdbye.BukkitIRCd.Commands.TopicCommand;
+import com.Jdbye.BukkitIRCd.Commands.UnbanCommand;
+import com.Jdbye.BukkitIRCd.Commands.UserCommands;
+import com.Jdbye.BukkitIRCd.Commands.WhoisCommand;
 import com.Jdbye.BukkitIRCd.Commands.RawsendCommand;
 import com.Jdbye.BukkitIRCd.Configuration.Bans;
 import com.Jdbye.BukkitIRCd.Configuration.Config;
 import com.Jdbye.BukkitIRCd.Configuration.MOTD;
 import com.Jdbye.BukkitIRCd.Configuration.Messages;
-import com.Jdbye.BukkitIRCd.Listeners.BukkitIRCdDynmapListener;
-import com.Jdbye.BukkitIRCd.Listeners.BukkitIRCdPlayerListener;
+import com.Jdbye.BukkitIRCd.Listeners.DynmapListener;
+import com.Jdbye.BukkitIRCd.Listeners.PlayerListener;
 import com.Jdbye.BukkitIRCd.Utilities.ChatUtils;
 import com.Jdbye.BukkitIRCd.Utilities.Metrics;
 
@@ -44,8 +44,8 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	}
 
 	static public CriticalSection csLastReceived = new CriticalSection();
-	private final BukkitIRCdPlayerListener playerListener = new BukkitIRCdPlayerListener(this);
-	private BukkitIRCdDynmapListener dynmapListener = null;
+	private final PlayerListener playerListener = new PlayerListener(this);
+	private DynmapListener dynmapListener = null;
 	public static BukkitIRCdPlugin thePlugin = null;
 	public static SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
 	public Map<String, String> lastReceived = new HashMap<String, String>();
@@ -78,17 +78,17 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		setupMetrics();
 		pluginInit();
 
-		getCommand("irc").setExecutor(new IRCUserCommands());
-		getCommand("ircban").setExecutor(new IRCBanCommand(this));
-		getCommand("irckick").setExecutor(new IRCKickCommand());
-		getCommand("irclist").setExecutor(new IRCListCommand());
-		getCommand("ircunban").setExecutor(new IRCUnbanCommand(this));
-		getCommand("ircwhois").setExecutor(new IRCWhoisCommand());
-		getCommand("ircmsg").setExecutor(new IRCMsgCommand());
-		getCommand("ircreply").setExecutor(new IRCReplyCommand(this));
-		getCommand("irctopic").setExecutor(new IRCTopicCommand());
-		getCommand("irclink").setExecutor(new IRCLinkCommand(this));
-		getCommand("ircreload").setExecutor(new IRCReloadCommand(this));
+		getCommand("irc").setExecutor(new UserCommands());
+		getCommand("ircban").setExecutor(new BanCommand(this));
+		getCommand("irckick").setExecutor(new KickCommand());
+		getCommand("irclist").setExecutor(new ListCommand());
+		getCommand("ircunban").setExecutor(new UnbanCommand(this));
+		getCommand("ircwhois").setExecutor(new WhoisCommand());
+		getCommand("ircmsg").setExecutor(new MsgCommand());
+		getCommand("ircreply").setExecutor(new ReplyCommand(this));
+		getCommand("irctopic").setExecutor(new TopicCommand());
+		getCommand("irclink").setExecutor(new LinkCommand(this));
+		getCommand("ircreload").setExecutor(new ReloadCommand(this));
 		getCommand("rawsend").setExecutor(new RawsendCommand());
 		getCommand("bircd").setExecutor(new BukkitIRCdCommand());
 
@@ -215,7 +215,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 			if (plugin != null) {
 				if (dynmapListener == null) {
-					dynmapListener = new BukkitIRCdDynmapListener();
+					dynmapListener = new DynmapListener();
 				}
 
 				if (!dynmapEventRegistered) {

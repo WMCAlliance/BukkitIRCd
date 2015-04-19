@@ -11,7 +11,7 @@ import com.Jdbye.BukkitIRCd.IRCUserManagement;
 import com.Jdbye.BukkitIRCd.Configuration.Config;
 import com.Jdbye.BukkitIRCd.Utilities.ChatUtils;
 
-public class IRCKickCommand implements CommandExecutor {
+public class KickCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label,

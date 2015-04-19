@@ -11,9 +11,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class IRCLinkCommand implements CommandExecutor {
+public class LinkCommand implements CommandExecutor {
 
-    public IRCLinkCommand(BukkitIRCdPlugin plugin) {
+    public LinkCommand(BukkitIRCdPlugin plugin) {
     }
 
     @Override

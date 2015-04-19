@@ -16,7 +16,7 @@ import com.Jdbye.BukkitIRCd.IRCd;
 import com.Jdbye.BukkitIRCd.Configuration.Config;
 import com.Jdbye.BukkitIRCd.Utilities.ChatUtils;
 
-public class IRCMsgCommand implements CommandExecutor {
+public class MsgCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label,

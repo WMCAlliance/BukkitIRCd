@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import com.Jdbye.BukkitIRCd.IRCUser;
 import com.Jdbye.BukkitIRCd.IRCUserManagement;
 
-public class IRCWhoisCommand implements CommandExecutor {
+public class WhoisCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label,

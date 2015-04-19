@@ -4,7 +4,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class IRCUserCommands implements CommandExecutor {
+public class UserCommands implements CommandExecutor {
 
 	final String[] userCommands = new String[] {
 			"All BukkitIRCd Commands:",

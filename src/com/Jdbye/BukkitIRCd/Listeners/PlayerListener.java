@@ -26,11 +26,11 @@ import com.Jdbye.BukkitIRCd.Utilities.ChatUtils;
  Handle events for all Player related events
  <p>
  */
-public class BukkitIRCdPlayerListener implements Listener {
+public class PlayerListener implements Listener {
 
     private final BukkitIRCdPlugin plugin;
 
-    public BukkitIRCdPlayerListener(BukkitIRCdPlugin instance) {
+    public PlayerListener(BukkitIRCdPlugin instance) {
 	plugin = instance;
     }
 

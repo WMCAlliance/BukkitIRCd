@@ -7,11 +7,11 @@ import org.bukkit.command.CommandSender;
 
 import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
 
-public class IRCReloadCommand implements CommandExecutor {
+public class ReloadCommand implements CommandExecutor {
 
     private final BukkitIRCdPlugin thePlugin;
 
-    public IRCReloadCommand(BukkitIRCdPlugin plugin) {
+    public ReloadCommand(BukkitIRCdPlugin plugin) {
 	this.thePlugin = plugin;
     }
 

@@ -12,11 +12,11 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class IRCUnbanCommand implements CommandExecutor {
+public class UnbanCommand implements CommandExecutor {
 
     private BukkitIRCdPlugin thePlugin;
 
-    public IRCUnbanCommand(BukkitIRCdPlugin plugin) {
+    public UnbanCommand(BukkitIRCdPlugin plugin) {
 	this.thePlugin = plugin;
     }
 

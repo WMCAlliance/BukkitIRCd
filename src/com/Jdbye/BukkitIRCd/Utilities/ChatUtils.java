@@ -335,6 +335,7 @@ public class ChatUtils {
         // TODO Replace .getPlayer as it seems to be Deprecated. 
 	try {
 	    new BukkitRunnable() {
+		@SuppressWarnings("deprecation")
 		@Override
 		public void run() {
 		    final Player p = Bukkit.getServer().getPlayer(player);

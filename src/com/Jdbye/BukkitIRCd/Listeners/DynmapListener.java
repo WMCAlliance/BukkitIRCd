@@ -10,7 +10,7 @@ import com.Jdbye.BukkitIRCd.IRCFunctionality;
 import com.Jdbye.BukkitIRCd.IRCd;
 import com.Jdbye.BukkitIRCd.Configuration.Config;
 
-public class BukkitIRCdDynmapListener implements Listener {
+public class DynmapListener implements Listener {
 
     /**
      Listener for the Dynmap web chat event.

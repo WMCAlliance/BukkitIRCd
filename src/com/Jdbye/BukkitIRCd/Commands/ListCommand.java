@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 import com.Jdbye.BukkitIRCd.IRCUserManagement;
 import com.Jdbye.BukkitIRCd.Utilities.ChatUtils;
 
-public class IRCListCommand implements CommandExecutor {
+public class ListCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label,

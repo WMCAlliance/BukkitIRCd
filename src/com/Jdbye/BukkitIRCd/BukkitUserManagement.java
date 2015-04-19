@@ -147,6 +147,7 @@ public class BukkitUserManagement {
     // TODO Replace .getPlayer as it seems to be Deprecated. 
 	try {
 	    new BukkitRunnable() {
+		@SuppressWarnings("deprecation")
 		@Override
 		public void run() {
 		    final Server server = Bukkit.getServer();
@@ -160,8 +161,7 @@ public class BukkitUserManagement {
 			} else {
 			    server.broadcastMessage(msgIRCKickReason
 				    .replace("{KickedBy}", kicker)
-				    .replace("{KickedUser}",
-					    player.getDisplayName())
+				    .replace("{KickedUser}", player.getDisplayName())
 				    .replace("{Reason}", kickReason));
 			}
 

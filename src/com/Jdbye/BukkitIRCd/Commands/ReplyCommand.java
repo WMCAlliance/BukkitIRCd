@@ -16,11 +16,11 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class IRCReplyCommand implements CommandExecutor {
+public class ReplyCommand implements CommandExecutor {
 
     private final BukkitIRCdPlugin thePlugin;
 
-    public IRCReplyCommand(BukkitIRCdPlugin plugin) {
+    public ReplyCommand(BukkitIRCdPlugin plugin) {
 	this.thePlugin = plugin;
     }
 
