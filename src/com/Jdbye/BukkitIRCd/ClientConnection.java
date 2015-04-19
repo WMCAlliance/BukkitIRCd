@@ -1,8 +1,7 @@
 package com.Jdbye.BukkitIRCd;
 
-import Utilities.ChatUtils;
-
 import com.Jdbye.BukkitIRCd.Configuration.Config;
+import com.Jdbye.BukkitIRCd.Utilities.ChatUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;

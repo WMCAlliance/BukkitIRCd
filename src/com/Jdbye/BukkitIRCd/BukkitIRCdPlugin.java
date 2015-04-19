@@ -16,9 +16,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.dynmap.DynmapAPI;
 
-import Utilities.ChatUtils;
-import Utilities.Metrics;
-
 import com.Jdbye.BukkitIRCd.Commands.BukkitIRCdCommand;
 import com.Jdbye.BukkitIRCd.Commands.IRCBanCommand;
 import com.Jdbye.BukkitIRCd.Commands.IRCKickCommand;
@@ -38,6 +35,8 @@ import com.Jdbye.BukkitIRCd.Configuration.MOTD;
 import com.Jdbye.BukkitIRCd.Configuration.Messages;
 import com.Jdbye.BukkitIRCd.Listeners.BukkitIRCdDynmapListener;
 import com.Jdbye.BukkitIRCd.Listeners.BukkitIRCdPlayerListener;
+import com.Jdbye.BukkitIRCd.Utilities.ChatUtils;
+import com.Jdbye.BukkitIRCd.Utilities.Metrics;
 
 public class BukkitIRCdPlugin extends JavaPlugin {
 

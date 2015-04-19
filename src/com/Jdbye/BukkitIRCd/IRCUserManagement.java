@@ -20,10 +20,10 @@ import static com.Jdbye.BukkitIRCd.IRCd.msgIRCLeaveReason;
 import static com.Jdbye.BukkitIRCd.IRCd.msgIRCLeaveReasonDynmap;
 import static com.Jdbye.BukkitIRCd.IRCd.serverUID;
 import static com.Jdbye.BukkitIRCd.IRCd.servers;
-import Utilities.ChatUtils;
-import Utilities.TimeUtils;
 
 import com.Jdbye.BukkitIRCd.Configuration.Config;
+import com.Jdbye.BukkitIRCd.Utilities.ChatUtils;
+import com.Jdbye.BukkitIRCd.Utilities.TimeUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

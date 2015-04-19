@@ -1,4 +1,4 @@
-package Utilities;
+package com.Jdbye.BukkitIRCd.Utilities;
 
 /**
 

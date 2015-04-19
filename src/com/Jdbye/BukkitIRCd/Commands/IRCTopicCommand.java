@@ -1,7 +1,5 @@
 package com.Jdbye.BukkitIRCd.Commands;
 
-import Utilities.ChatUtils;
-
 import com.Jdbye.BukkitIRCd.IRCFunctionality;
 
 import org.bukkit.ChatColor;
@@ -11,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.Jdbye.BukkitIRCd.Configuration.Config;
+import com.Jdbye.BukkitIRCd.Utilities.ChatUtils;
 
 public class IRCTopicCommand implements CommandExecutor {
 

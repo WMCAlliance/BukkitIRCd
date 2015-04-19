@@ -11,9 +11,9 @@ import static com.Jdbye.BukkitIRCd.IRCd.msgIRCKickReason;
 import static com.Jdbye.BukkitIRCd.IRCd.pre;
 import static com.Jdbye.BukkitIRCd.IRCd.serverUID;
 import static com.Jdbye.BukkitIRCd.IRCd.ugen;
-import Utilities.ChatUtils;
 
 import com.Jdbye.BukkitIRCd.Configuration.Config;
+import com.Jdbye.BukkitIRCd.Utilities.ChatUtils;
 
 import java.net.InetAddress;
 import java.security.MessageDigest;

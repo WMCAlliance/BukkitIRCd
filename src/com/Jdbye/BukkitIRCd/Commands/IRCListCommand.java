@@ -5,9 +5,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import Utilities.ChatUtils;
-
 import com.Jdbye.BukkitIRCd.IRCUserManagement;
+import com.Jdbye.BukkitIRCd.Utilities.ChatUtils;
 
 public class IRCListCommand implements CommandExecutor {
 

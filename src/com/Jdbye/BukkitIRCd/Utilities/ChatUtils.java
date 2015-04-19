@@ -1,4 +1,4 @@
-package Utilities;
+package com.Jdbye.BukkitIRCd.Utilities;
 
 import static com.Jdbye.BukkitIRCd.IRCd.csServer;
 import static com.Jdbye.BukkitIRCd.IRCd.out;

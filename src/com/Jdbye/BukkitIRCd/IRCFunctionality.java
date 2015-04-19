@@ -18,9 +18,9 @@ import static com.Jdbye.BukkitIRCd.IRCd.server;
 import static com.Jdbye.BukkitIRCd.IRCd.serverStartTime;
 import static com.Jdbye.BukkitIRCd.IRCd.serverUID;
 import static com.Jdbye.BukkitIRCd.IRCd.ugen;
-import Utilities.ChatUtils;
 
 import com.Jdbye.BukkitIRCd.Configuration.Config;
+import com.Jdbye.BukkitIRCd.Utilities.ChatUtils;
 
 import java.io.IOException;
 import java.net.Socket;

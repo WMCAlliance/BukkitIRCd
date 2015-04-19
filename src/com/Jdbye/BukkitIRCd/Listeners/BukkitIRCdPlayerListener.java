@@ -13,8 +13,6 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
-import Utilities.ChatUtils;
-
 import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
 import com.Jdbye.BukkitIRCd.BukkitPlayer;
 import com.Jdbye.BukkitIRCd.BukkitUserManagement;
@@ -22,6 +20,7 @@ import com.Jdbye.BukkitIRCd.IRCFunctionality;
 import com.Jdbye.BukkitIRCd.IRCd;
 import com.Jdbye.BukkitIRCd.Modes;
 import com.Jdbye.BukkitIRCd.Configuration.Config;
+import com.Jdbye.BukkitIRCd.Utilities.ChatUtils;
 
 /**
  Handle events for all Player related events

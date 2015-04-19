@@ -23,11 +23,10 @@ package com.Jdbye.BukkitIRCd;
 // - bukkitircd.topic - Permission for /irctopic
 // - bukkitircd.oper - Gives the player IRC Operator status. Currently doesn't do anything apart from show it in /whois
 // - bukkitircd.mode.owner, bukkitircd.mode.protect, bukkitircd.mode.op, bukkitircd.mode.halfop, bukkitircd.mode.voice - Gives the player the corresponding IRC user mode.
-import Utilities.ChatUtils;
-import Utilities.MessageFormatter;
-import Utilities.UidGenerator;
-
 import com.Jdbye.BukkitIRCd.Configuration.Config;
+import com.Jdbye.BukkitIRCd.Utilities.ChatUtils;
+import com.Jdbye.BukkitIRCd.Utilities.MessageFormatter;
+import com.Jdbye.BukkitIRCd.Utilities.UidGenerator;
 
 import java.io.BufferedReader;
 import java.io.IOException;
