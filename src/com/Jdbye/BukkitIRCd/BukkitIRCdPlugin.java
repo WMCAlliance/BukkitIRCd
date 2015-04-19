@@ -16,23 +16,25 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.dynmap.DynmapAPI;
 
-import com.Jdbye.BukkitIRCd.commands.BukkitIRCdCommand;
-import com.Jdbye.BukkitIRCd.commands.IRCBanCommand;
-import com.Jdbye.BukkitIRCd.commands.IRCKickCommand;
-import com.Jdbye.BukkitIRCd.commands.IRCLinkCommand;
-import com.Jdbye.BukkitIRCd.commands.IRCListCommand;
-import com.Jdbye.BukkitIRCd.commands.IRCMsgCommand;
-import com.Jdbye.BukkitIRCd.commands.IRCReloadCommand;
-import com.Jdbye.BukkitIRCd.commands.IRCReplyCommand;
-import com.Jdbye.BukkitIRCd.commands.IRCTopicCommand;
-import com.Jdbye.BukkitIRCd.commands.IRCUnbanCommand;
-import com.Jdbye.BukkitIRCd.commands.IRCUserCommands;
-import com.Jdbye.BukkitIRCd.commands.IRCWhoisCommand;
-import com.Jdbye.BukkitIRCd.commands.RawsendCommand;
-import com.Jdbye.BukkitIRCd.configuration.Bans;
-import com.Jdbye.BukkitIRCd.configuration.Config;
-import com.Jdbye.BukkitIRCd.configuration.MOTD;
-import com.Jdbye.BukkitIRCd.configuration.Messages;
+import com.Jdbye.BukkitIRCd.Commands.BukkitIRCdCommand;
+import com.Jdbye.BukkitIRCd.Commands.IRCBanCommand;
+import com.Jdbye.BukkitIRCd.Commands.IRCKickCommand;
+import com.Jdbye.BukkitIRCd.Commands.IRCLinkCommand;
+import com.Jdbye.BukkitIRCd.Commands.IRCListCommand;
+import com.Jdbye.BukkitIRCd.Commands.IRCMsgCommand;
+import com.Jdbye.BukkitIRCd.Commands.IRCReloadCommand;
+import com.Jdbye.BukkitIRCd.Commands.IRCReplyCommand;
+import com.Jdbye.BukkitIRCd.Commands.IRCTopicCommand;
+import com.Jdbye.BukkitIRCd.Commands.IRCUnbanCommand;
+import com.Jdbye.BukkitIRCd.Commands.IRCUserCommands;
+import com.Jdbye.BukkitIRCd.Commands.IRCWhoisCommand;
+import com.Jdbye.BukkitIRCd.Commands.RawsendCommand;
+import com.Jdbye.BukkitIRCd.Configuration.Bans;
+import com.Jdbye.BukkitIRCd.Configuration.Config;
+import com.Jdbye.BukkitIRCd.Configuration.MOTD;
+import com.Jdbye.BukkitIRCd.Configuration.Messages;
+import com.Jdbye.BukkitIRCd.Listeners.BukkitIRCdDynmapListener;
+import com.Jdbye.BukkitIRCd.Listeners.BukkitIRCdPlayerListener;
 
 public class BukkitIRCdPlugin extends JavaPlugin {
 
@@ -351,7 +353,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
      @return List of modes they should have, based on permissions
      // TODO Enum modes
 	 */
-	String computePlayerModes(final Player player) {
+	public String computePlayerModes(final Player player) {
 		final StringBuffer mode = new StringBuffer(5);
 
 		final char[] modeSigils = {'~', '&', '@', '%', '+'};

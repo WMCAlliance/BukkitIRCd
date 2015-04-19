@@ -12,7 +12,7 @@ import static com.Jdbye.BukkitIRCd.IRCd.pre;
 import static com.Jdbye.BukkitIRCd.IRCd.serverUID;
 import static com.Jdbye.BukkitIRCd.IRCd.ugen;
 
-import com.Jdbye.BukkitIRCd.configuration.Config;
+import com.Jdbye.BukkitIRCd.Configuration.Config;
 
 import java.net.InetAddress;
 import java.security.MessageDigest;

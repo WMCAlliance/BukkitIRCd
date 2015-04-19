@@ -18,10 +18,13 @@ import static com.Jdbye.BukkitIRCd.IRCd.server;
 import static com.Jdbye.BukkitIRCd.IRCd.serverStartTime;
 import static com.Jdbye.BukkitIRCd.IRCd.serverUID;
 import static com.Jdbye.BukkitIRCd.IRCd.ugen;
-import com.Jdbye.BukkitIRCd.configuration.Config;
+
+import com.Jdbye.BukkitIRCd.Configuration.Config;
+
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Iterator;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 

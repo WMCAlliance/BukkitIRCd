@@ -1,4 +1,4 @@
-package com.Jdbye.BukkitIRCd.commands;
+package com.Jdbye.BukkitIRCd.Commands;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

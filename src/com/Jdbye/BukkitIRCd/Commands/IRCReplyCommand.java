@@ -1,4 +1,4 @@
-package com.Jdbye.BukkitIRCd.commands;
+package com.Jdbye.BukkitIRCd.Commands;
 
 import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
 import com.Jdbye.BukkitIRCd.BukkitPlayer;
@@ -8,7 +8,8 @@ import com.Jdbye.BukkitIRCd.IRCUser;
 import com.Jdbye.BukkitIRCd.IRCUserManagement;
 import com.Jdbye.BukkitIRCd.IRCd;
 import com.Jdbye.BukkitIRCd.Utils;
-import com.Jdbye.BukkitIRCd.configuration.Config;
+import com.Jdbye.BukkitIRCd.Configuration.Config;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

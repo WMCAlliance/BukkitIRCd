@@ -1,4 +1,4 @@
-package com.Jdbye.BukkitIRCd.configuration;
+package com.Jdbye.BukkitIRCd.Configuration;
 
 import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
 import com.Jdbye.BukkitIRCd.Hash;

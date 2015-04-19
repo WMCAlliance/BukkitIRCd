@@ -1,6 +1,7 @@
 package com.Jdbye.BukkitIRCd;
 
-import com.Jdbye.BukkitIRCd.configuration.Config;
+import com.Jdbye.BukkitIRCd.Configuration.Config;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

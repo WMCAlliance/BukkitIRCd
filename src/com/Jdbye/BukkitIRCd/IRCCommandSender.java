@@ -11,9 +11,10 @@ import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
-import com.Jdbye.BukkitIRCd.configuration.Config;
+import com.Jdbye.BukkitIRCd.Configuration.Config;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+
 import java.util.ArrayList;
 
 public class IRCCommandSender implements CommandSender {

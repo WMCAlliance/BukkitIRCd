@@ -1,4 +1,4 @@
-package com.Jdbye.BukkitIRCd;
+package com.Jdbye.BukkitIRCd.Listeners;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -13,7 +13,14 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
-import com.Jdbye.BukkitIRCd.configuration.Config;
+import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
+import com.Jdbye.BukkitIRCd.BukkitPlayer;
+import com.Jdbye.BukkitIRCd.BukkitUserManagement;
+import com.Jdbye.BukkitIRCd.IRCFunctionality;
+import com.Jdbye.BukkitIRCd.IRCd;
+import com.Jdbye.BukkitIRCd.Modes;
+import com.Jdbye.BukkitIRCd.Utils;
+import com.Jdbye.BukkitIRCd.Configuration.Config;
 
 /**
  Handle events for all Player related events

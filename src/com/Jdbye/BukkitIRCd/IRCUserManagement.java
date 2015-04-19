@@ -20,7 +20,9 @@ import static com.Jdbye.BukkitIRCd.IRCd.msgIRCLeaveReason;
 import static com.Jdbye.BukkitIRCd.IRCd.msgIRCLeaveReasonDynmap;
 import static com.Jdbye.BukkitIRCd.IRCd.serverUID;
 import static com.Jdbye.BukkitIRCd.IRCd.servers;
-import com.Jdbye.BukkitIRCd.configuration.Config;
+
+import com.Jdbye.BukkitIRCd.Configuration.Config;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,6 +31,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import org.bukkit.ChatColor;
 
 public class IRCUserManagement {

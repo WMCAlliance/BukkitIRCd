@@ -2,7 +2,9 @@ package com.Jdbye.BukkitIRCd;
 
 import static com.Jdbye.BukkitIRCd.IRCd.csServer;
 import static com.Jdbye.BukkitIRCd.IRCd.out;
-import com.Jdbye.BukkitIRCd.configuration.Config;
+
+import com.Jdbye.BukkitIRCd.Configuration.Config;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;

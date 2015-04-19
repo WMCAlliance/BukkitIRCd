@@ -1,11 +1,14 @@
-package com.Jdbye.BukkitIRCd;
+package com.Jdbye.BukkitIRCd.Listeners;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.dynmap.DynmapWebChatEvent;
 
-import com.Jdbye.BukkitIRCd.configuration.Config;
+import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
+import com.Jdbye.BukkitIRCd.IRCFunctionality;
+import com.Jdbye.BukkitIRCd.IRCd;
+import com.Jdbye.BukkitIRCd.Configuration.Config;
 
 public class BukkitIRCdDynmapListener implements Listener {
 
