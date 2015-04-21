@@ -95,10 +95,10 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		log.info(ircdVersion + " is now enabled");
 		new BukkitRunnable() {
 
-			@Override
-			public void run() {
-				ChatUtils.println("The server is still loading, so you cannot connect yet!");
-			}
+		@Override
+		public void run() {
+			ChatUtils.println("The server is still loading, so you cannot connect yet!");
+		}
 
 		}.runTaskLater(BukkitIRCdPlugin.thePlugin, 20);
 	}
@@ -325,20 +325,20 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			Metrics.Graph features = metrics.createGraph("IRC Server Type");
 
 			features.addPlotter(new Metrics.Plotter("INSPIRCD") {
-				@Override
-				public int getValue() {
-					if (Config.getMode().equalsIgnoreCase("inspire") || Config.getMode().equalsIgnoreCase("inspircd"))
-						return 1;
-					return 0;
+			@Override
+			public int getValue() {
+				if (Config.getMode().equalsIgnoreCase("inspire") || Config.getMode().equalsIgnoreCase("inspircd"))
+					return 1;
+				return 0;
 				}
 			});
 
 			features.addPlotter(new Metrics.Plotter("STANDALONE") {
-				@Override
-				public int getValue() {
-					if (Config.getMode().equalsIgnoreCase("standalone"))
-						return 1;
-					return 0;
+			@Override
+			public int getValue() {
+				if (Config.getMode().equalsIgnoreCase("standalone"))
+					return 1;
+				return 0;
 				}
 			});            
 			metrics.start();

@@ -15,6 +15,7 @@ import com.Jdbye.BukkitIRCd.IRCUserManagement;
 import com.Jdbye.BukkitIRCd.IRCd;
 import com.Jdbye.BukkitIRCd.Configuration.Config;
 import com.Jdbye.BukkitIRCd.Utilities.ChatUtils;
+import com.Jdbye.BukkitIRCd.Utilities.MessageFormatter;
 
 public class MsgCommand implements CommandExecutor {
 
@@ -30,8 +31,7 @@ public class MsgCommand implements CommandExecutor {
 	}
 	final String targetNick = args[0];
 	final String rawMessage = ChatUtils.join(args, " ", 1);
-	final String gameMessage = ChatColor.translateAlternateColorCodes('&',
-		rawMessage);
+	final String gameMessage = ChatColor.translateAlternateColorCodes('&', rawMessage);
 	final String ircMessage = ChatUtils.convertColors(rawMessage, false);
 
 	final IRCUser targetIrcUser = IRCUserManagement.getIRCUser(targetNick);
@@ -56,17 +56,14 @@ public class MsgCommand implements CommandExecutor {
 		    sourceNick = sourceUser + Config.getIrcdIngameSuffix();
 		    sourceHost = player.getAddress().getAddress().getHostName();
 		}
-		final String sourceHostmask = sourceNick + "!" + sourceUser + "@" +
-			sourceHost;
+		final String sourceHostmask = sourceNick + "!" + sourceUser + "@" + sourceHost;
 
-		IRCFunctionality.writeTo(targetIrcUser.nick, ":" + sourceHostmask + " PRIVMSG " +
-			targetIrcUser.nick + " :" + ircMessage);
+		IRCFunctionality.writeTo(targetIrcUser.nick, ":" + sourceHostmask + " PRIVMSG " + targetIrcUser.nick + " :" + ircMessage);
 		break;
 
 	    case INSPIRCD:
 		if (!IRCd.isLinkcompleted()) {
-		    sender.sendMessage(ChatColor.RED +
-			    "Failed to send message, not currently linked to IRC server.");
+		    sender.sendMessage(ChatColor.RED + "Failed to send message, not currently linked to IRC server.");
 		    return true;
 		}
 
@@ -75,11 +72,9 @@ public class MsgCommand implements CommandExecutor {
 		if (player == null) {
 		    sourceUID = IRCd.serverUID;
 		} else {
-		    final BukkitPlayer bp = BukkitUserManagement.getUserObject(player
-			    .getName());
+		    final BukkitPlayer bp = BukkitUserManagement.getUserObject(player.getName());
 		    if (bp == null) {
-			sender.sendMessage(ChatColor.RED +
-				"Failed to send message, you could not be found in the UID list. This should not happen, please report it to http://git.io/K2XanA");
+			sender.sendMessage(ChatColor.RED + "Failed to send message, you could not be found in the UID list. This should not happen, please report it to http://git.io/K2XanA");
 			return true;
 		    }
 		    sourceUID = bp.getUID();
@@ -92,8 +87,7 @@ public class MsgCommand implements CommandExecutor {
 			    targetIrcUser.nick);
 		    // Log this as severe since it should never occur unless
 		    // something is wrong with the code
-		    sender.sendMessage(ChatColor.RED +
-			    "Failed to send message, UID not found. This should not happen, please report it to Jdbye.");
+		    sender.sendMessage(ChatColor.RED + "Failed to send message, UID not found. This should not happen, please report it to Jdbye.");
 		    return true;
 		}
 
@@ -102,12 +96,7 @@ public class MsgCommand implements CommandExecutor {
 	}
 
 	final String targetModes = targetIrcUser.getTextModes();
-	sender.sendMessage(IRCd.msgSendQueryFromIngame
-		.replace("{Prefix}", IRCFunctionality.getGroupPrefix(targetModes))
-		.replace("{Suffix}", IRCFunctionality.getGroupSuffix(targetModes))
-		.replace("{User}", targetIrcUser.nick)
-		.replace("{Message}", gameMessage));
-
-	return true;
+	sender.sendMessage(MessageFormatter.sendMsg(IRCd.msgSendQueryFromIngame, IRCFunctionality.getGroupPrefix(targetModes), IRCFunctionality.getGroupSuffix(targetModes), targetIrcUser.nick, gameMessage)); 
+		return true;
     }
 }

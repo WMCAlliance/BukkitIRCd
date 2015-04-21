@@ -9,6 +9,7 @@ import com.Jdbye.BukkitIRCd.IRCUserManagement;
 import com.Jdbye.BukkitIRCd.IRCd;
 import com.Jdbye.BukkitIRCd.Configuration.Config;
 import com.Jdbye.BukkitIRCd.Utilities.ChatUtils;
+import com.Jdbye.BukkitIRCd.Utilities.MessageFormatter;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -63,35 +64,9 @@ public class ReplyCommand implements CommandExecutor {
 	switch (IRCd.mode) {
 	    case STANDALONE:
 		if (player == null) {
-		    IRCFunctionality.writeTo(
-			    ircuser.nick,
-			    ":" +
-			    Config.getIrcdServerName() +
-			    "!" +
-			    Config.getIrcdServerName() +
-			    "@" +
-			    Config.getIrcdServerHostName() +
-			    " PRIVMSG " +
-			    ircuser.nick +
-			    " :" +
-			    ChatUtils.convertColors(ChatUtils.join(args, " ", 0),
-				    false));
+		    IRCFunctionality.writeTo(ircuser.nick, ":" + Config.getIrcdServerName() + "!" + Config.getIrcdServerName() + "@" + Config.getIrcdServerHostName() + " PRIVMSG " + ircuser.nick + " :" + ChatUtils.convertColors(ChatUtils.join(args, " ", 0), false));
 		} else {
-		    IRCFunctionality.writeTo(
-			    ircuser.nick,
-			    ":" +
-			    player.getName() +
-			    Config.getIrcdIngameSuffix() +
-			    "!" +
-			    player.getName() +
-			    "@" +
-			    player.getAddress().getAddress()
-			    .getHostName() +
-			    " PRIVMSG " +
-			    ircuser.nick +
-			    " :" +
-			    ChatUtils.convertColors(ChatUtils.join(args, " ", 0),
-				    false));
+		    IRCFunctionality.writeTo(ircuser.nick, ":" + player.getName() + Config.getIrcdIngameSuffix() + "!" + player.getName() + "@" + player.getAddress().getAddress().getHostName() + " PRIVMSG " + ircuser.nick + " :" + ChatUtils.convertColors(ChatUtils.join(args, " ", 0), false));
 		}
 		break;
 	    case INSPIRCD:
@@ -103,8 +78,7 @@ public class ReplyCommand implements CommandExecutor {
 
 		final String UID = IRCUserManagement.getUIDFromIRCUser(ircuser);
 		if (UID == null) {
-		    sender.sendMessage(ChatColor.RED +
-			    "Failed to reply, UID not found");
+		    sender.sendMessage(ChatColor.RED + "Failed to reply, UID not found");
 		    return true;
 		}
 
@@ -112,11 +86,9 @@ public class ReplyCommand implements CommandExecutor {
 		    IRCFunctionality.privmsg(IRCd.serverUID, UID,
 			    ChatUtils.convertColors(ChatUtils.join(args, " ", 0), false));
 		} else {
-		    final BukkitPlayer bp = BukkitUserManagement.getUserObject(player
-			    .getName());
+		    final BukkitPlayer bp = BukkitUserManagement.getUserObject(player.getName());
 		    if (bp == null) {
-			sender.sendMessage(ChatColor.RED +
-				"Internal error, unable to reply");
+			sender.sendMessage(ChatColor.RED + "Internal error, unable to reply");
 			return true;
 		    }
 
@@ -128,18 +100,8 @@ public class ReplyCommand implements CommandExecutor {
 	}
 
 	// Report command to sender's chat
-	sender.sendMessage(IRCd.msgSendQueryFromIngame
-		.replace("{Prefix}",
-			IRCFunctionality.getGroupPrefix(ircuser.getTextModes()))
-		.replace("{Suffix}",
-			IRCFunctionality.getGroupSuffix(ircuser.getTextModes()))
-		.replace("{User}", ircuser.nick)
-		.replace(
-			"{Message}",
-			ChatColor.translateAlternateColorCodes('&',
-				ChatUtils.join(args, " ", 0))));
-
-	return true;
+	sender.sendMessage(MessageFormatter.sendMsg(IRCd.msgSendQueryFromIngame, IRCFunctionality.getGroupPrefix(ircuser.getTextModes()), IRCFunctionality.getGroupSuffix(ircuser.getTextModes()), ircuser.nick, ChatColor.translateAlternateColorCodes('&', ChatUtils.join(args, " ", 0))));
+		return true;
     }
 
 }
