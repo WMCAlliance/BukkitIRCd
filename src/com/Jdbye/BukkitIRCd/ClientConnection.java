@@ -894,7 +894,7 @@ public class ClientConnection implements Runnable {
 			sendMOTD();
 			if ((IRCd.isPlugin()) && (BukkitIRCdPlugin.thePlugin != null)) {
 				if (IRCd.msgIRCJoin.length() > 0) {
-					ChatUtils.broadcastMessage(MessageFormatter.joinIRC(IRCd.msgIRCJoin, IRCFunctionality.getGroupPrefix(modes), IRCFunctionality.getGroupSuffix(modes), nick));
+					ChatUtils.broadcastMessage(MessageFormatter.joinIRC(IRCd.msgIRCJoin, IRCFunctionality.getGroupPrefix(modes), nick, IRCFunctionality.getGroupSuffix(modes)));
 				}
 				if ((BukkitIRCdPlugin.dynmap != null) &&
 						(IRCd.msgIRCJoinDynmap.length() > 0)) {

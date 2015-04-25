@@ -57,8 +57,7 @@ public class BanCommand implements CommandExecutor {
 							if (IRCd.msgIRCBan.length() > 0) {
 								thePlugin.getServer().broadcastMessage(MessageFormatter.banMsg(IRCd.msgIRCBan, ban, player.getName()));	
 							}
-							if ((BukkitIRCdPlugin.dynmap != null) &&
-									(IRCd.msgIRCBanDynmap.length() > 0)) {
+							if ((BukkitIRCdPlugin.dynmap != null) && (IRCd.msgIRCBanDynmap.length() > 0)) {
 								BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", MessageFormatter.banMsg(IRCd.msgIRCBanDynmap, ban, player.getName()));
 							}
 							player.sendMessage(ChatColor.RED + "User banned.");

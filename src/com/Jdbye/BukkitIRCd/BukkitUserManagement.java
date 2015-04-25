@@ -139,11 +139,7 @@ public class BukkitUserManagement {
 					if (player != null) {
 
 						if (kickReason == null || kickReason == kicker) {
-							// New
 							server.broadcastMessage(MessageFormatter.kickMsg(msgIRCKick, kicker, player.getDisplayName()));
-							/** Old
-							server.broadcastMessage(msgIRCKick.replace("{KickedBy}", kicker).replace("{KickedUser}", player.getDisplayName()));
-							*/
 						} else {
 							server.broadcastMessage(MessageFormatter.kickMsgReason(msgIRCKickReason, kicker, player.getDisplayName(), kickReason));
 						}

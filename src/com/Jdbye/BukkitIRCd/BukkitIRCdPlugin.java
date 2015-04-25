@@ -35,6 +35,7 @@ import com.Jdbye.BukkitIRCd.Configuration.MOTD;
 import com.Jdbye.BukkitIRCd.Configuration.Messages;
 import com.Jdbye.BukkitIRCd.Listeners.DynmapListener;
 import com.Jdbye.BukkitIRCd.Listeners.PlayerListener;
+import com.Jdbye.BukkitIRCd.Listeners.PlayerAchievementListener;
 import com.Jdbye.BukkitIRCd.Utilities.ChatUtils;
 import com.Jdbye.BukkitIRCd.Utilities.Metrics;
 
@@ -45,6 +46,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 	static public CriticalSection csLastReceived = new CriticalSection();
 	private final PlayerListener playerListener = new PlayerListener(this);
+	private final PlayerAchievementListener playerAchievementListener = new PlayerAchievementListener(this);
 	private DynmapListener dynmapListener = null;
 	public static BukkitIRCdPlugin thePlugin = null;
 	public static SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
@@ -72,6 +74,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		// Register our events
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(this.playerListener, this);
+		pm.registerEvents(this.playerAchievementListener, this);
 
 		PluginDescriptionFile pdfFile = getDescription();
 		ircdVersion = pdfFile.getName() + " " + pdfFile.getVersion() + " by " + pdfFile.getAuthors().get(0);

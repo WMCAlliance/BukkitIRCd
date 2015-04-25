@@ -54,21 +54,28 @@ public class MessageFormatter {
 		output = output.replace("{Reason}", reason);
 		return output;
     }
-
-    public static String dynmapMsg(String input, String user, String message) {
-		String output = input;		
-		output = output.replace("{User}", user);
-		output = output.replace("{Message}", message);
-		return output;
-    }    
     
     public static String ircleaveDynmapMsg(String input, String user, String reason) {
 		String output = input;		
 		output = output.replace("{User}", user);
 		output = output.replace("{Reason}", reason);
 		return output;
+    }
+
+    public static String playerMsg(String input, String count, String users) {
+		String output = input;		
+		output = output.replace("{Count}", count);
+		output = output.replace("{Users}", users);
+		return output;
+    }
+        
+    public static String dynmapMsg(String input, String user, String message) {
+		String output = input;		
+		output = output.replace("{User}", user);
+		output = output.replace("{Message}", message);
+		return output;
     }    
-    
+      
     public static String banMsg(String input, String banneduser, String bannedby) {
 		String output = input;
 		output = output.replace("{BannedUser}", banneduser);
@@ -107,7 +114,7 @@ public class MessageFormatter {
 
     public static String delinkedMsg(String input, String linkname, String reason) {
 		String output = input;
-		output = output.replace("{LinkNamey}", linkname);	
+		output = output.replace("{LinkName}", linkname);	
 		output = output.replace("{Reason}", reason);
 		return output;
     }    
