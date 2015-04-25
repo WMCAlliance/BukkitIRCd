@@ -9,19 +9,18 @@ import com.Jdbye.BukkitIRCd.BukkitIRCdPlugin;
 
 public class ReloadCommand implements CommandExecutor {
 
-    private final BukkitIRCdPlugin thePlugin;
+	private final BukkitIRCdPlugin thePlugin;
 
-    public ReloadCommand(BukkitIRCdPlugin plugin) {
-	this.thePlugin = plugin;
-    }
+	public ReloadCommand(BukkitIRCdPlugin plugin) {
+		this.thePlugin = plugin;
+	}
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label,
-	    String[] args) {
-	thePlugin.pluginInit(true);
-	BukkitIRCdPlugin.log.info("[BukkitIRCd] Configuration file reloaded.");
-	sender.sendMessage(ChatColor.RED + "Configuration file reloaded.");
-	return true;
-    }
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		thePlugin.pluginInit(true);
+		BukkitIRCdPlugin.log.info("[BukkitIRCd] Configuration file reloaded.");
+		sender.sendMessage(ChatColor.RED + "Configuration file reloaded.");
+		return true;
+	}
 
 }

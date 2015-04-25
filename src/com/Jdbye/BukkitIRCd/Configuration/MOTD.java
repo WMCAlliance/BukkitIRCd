@@ -17,21 +17,15 @@ import java.util.Date;
 public class MOTD extends JavaPlugin {
 
     public static void enableMOTD() {
-	if (!(new File(BukkitIRCdPlugin.thePlugin.getDataFolder(), "motd.txt"))
-		.exists()) {
-	    saveDefaultMOTD(BukkitIRCdPlugin.thePlugin.getDataFolder(),
-		    "motd.txt");
-	    BukkitIRCdPlugin.log
-		    .info("[BukkitIRCd] Default MOTD file created." +
-			    (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin199." :
-			    ""));
+	if (!(new File(BukkitIRCdPlugin.thePlugin.getDataFolder(), "motd.txt")).exists()) {
+	    saveDefaultMOTD(BukkitIRCdPlugin.thePlugin.getDataFolder(), "motd.txt");
+	    BukkitIRCdPlugin.log.info("[BukkitIRCd] Default MOTD file created." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin199." : ""));
 	}
     }
 
     // Set up the MOTD for the standalone BukkitIRCd server
     public static void loadMOTD() {
-	File motdFile = new File(BukkitIRCdPlugin.thePlugin.getDataFolder(),
-		"motd.txt");
+	File motdFile = new File(BukkitIRCdPlugin.thePlugin.getDataFolder(), "motd.txt");
 
 	IRCd.MOTD.clear();
 
@@ -52,23 +46,16 @@ public class MOTD extends JavaPlugin {
 		}
 	    } finally {
 		input.close();
-		BukkitIRCdPlugin.log
-			.info("[BukkitIRCd] Loaded MOTD file." +
-				(Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin516." :
-				""));
+		BukkitIRCdPlugin.log.info("[BukkitIRCd] Loaded MOTD file." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin516." : ""));
 	    }
 	} catch (Exception e) {
-	    BukkitIRCdPlugin.log.info("[BukkitIRCd] Failed to load MOTD file: " +
-		    e.toString());
+	    BukkitIRCdPlugin.log.info("[BukkitIRCd] Failed to load MOTD file: " + e.toString());
 	}
     }
 
     // If a motd is not found, save it
     private static void saveDefaultMOTD(File dataFolder, String fileName) {
-	BukkitIRCdPlugin.log
-		.info("[BukkitIRCd] MOTD file not found, creating new one." +
-			(Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin616." :
-			""));
+	BukkitIRCdPlugin.log.info("[BukkitIRCd] MOTD file not found, creating new one." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin616." : ""));
 	dataFolder.mkdirs();
 
 	File motdFile = new File(dataFolder, fileName);
@@ -77,10 +64,7 @@ public class MOTD extends JavaPlugin {
 		throw new IOException("Failed file creation.");
 	    }
 	} catch (IOException e) {
-	    BukkitIRCdPlugin.log
-		    .warning("[BukkitIRCd] Could not create MOTD file!" +
-			    (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin627." :
-			    ""));
+	    BukkitIRCdPlugin.log.warning("[BukkitIRCd] Could not create MOTD file!" + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin627." : ""));
 	}
 
 	writeMOTD(motdFile);
@@ -107,42 +91,31 @@ public class MOTD extends JavaPlugin {
 	    bufferWriter.newLine();
 	    bufferWriter.append("");
 	    bufferWriter.newLine();
-	    bufferWriter
-		    .append("_________        __    __   .__        ___________  _____     _");
+	    bufferWriter.append("_________        __    __   .__        ___________  _____     _");
 	    bufferWriter.newLine();
-	    bufferWriter
-		    .append("\\______  \\___ __|  |  |  |  |__| __   |_   _| ___ \\/  __ \\   | |");
+	    bufferWriter.append("\\______  \\___ __|  |  |  |  |__| __   |_   _| ___ \\/  __ \\   | |");
 	    bufferWriter.newLine();
-	    bufferWriter
-		    .append(" |   |_\\  \\  |  |  | _|  | _____/  |_   | | | |_/ /| /  \\/ __| |");
+	    bufferWriter.append(" |   |_\\  \\  |  |  | _|  | _____/  |_   | | | |_/ /| /  \\/ __| |");
 	    bufferWriter.newLine();
-	    bufferWriter
-		    .append(" |    __ _/  |  \\  |/ /  |/ /  \\   __\\  | | |    / | |    / _` |");
+	    bufferWriter.append(" |    __ _/  |  \\  |/ /  |/ /  \\   __\\  | | |    / | |    / _` |");
 	    bufferWriter.newLine();
-	    bufferWriter
-		    .append(" |   |_/  \\  |  /    <|    <|  ||  |   _| |_| |\\ \\ | \\__/\\ (_| |");
+	    bufferWriter.append(" |   |_/  \\  |  /    <|    <|  ||  |   _| |_| |\\ \\ | \\__/\\ (_| |");
 	    bufferWriter.newLine();
-	    bufferWriter
-		    .append(" |______  /____/|__|_ \\__|_ \\__||__|   \\___/\\_| \\_| \\____/\\__,_|");
+	    bufferWriter.append(" |______  /____/|__|_ \\__|_ \\__||__|   \\___/\\_| \\_| \\____/\\__,_|");
 	    bufferWriter.newLine();
 	    bufferWriter.append("        \\/           \\/    \\/");
 	    bufferWriter.newLine();
 	    bufferWriter.append("");
 	    bufferWriter.newLine();
-	    bufferWriter.append("Welcome to " + Config.getIrcdServerName() +
-		    ", running " + BukkitIRCdPlugin.ircdVersion + ".");
+	    bufferWriter.append("Welcome to " + Config.getIrcdServerName() + ", running " + BukkitIRCdPlugin.ircdVersion + ".");
 	    bufferWriter.newLine();
 	    bufferWriter.append("Enjoy your stay!");
 	    bufferWriter.newLine();
 
 	    bufferWriter.flush();
-	    BukkitIRCdPlugin.log
-		    .info("[BukkitIRCd] Saved MOTD file." +
-			    (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin674" :
-			    ""));
+	    BukkitIRCdPlugin.log.info("[BukkitIRCd] Saved MOTD file." + (Config.isDebugModeEnabled() ? " Code BukkitIRCdPlugin674" : ""));
 	} catch (IOException e) {
-	    BukkitIRCdPlugin.log
-		    .warning("[BukkitIRCd] Caught exception while writing MOTD to file: ");
+	    BukkitIRCdPlugin.log .warning("[BukkitIRCd] Caught exception while writing MOTD to file: ");
 	    e.printStackTrace();
 	} finally {
 	    try {
@@ -155,9 +128,7 @@ public class MOTD extends JavaPlugin {
 		    fileWriter.close();
 		}
 	    } catch (IOException e) {
-		BukkitIRCdPlugin.log
-			.warning("[BukkitIRCd] IO Exception writing file: " +
-				motdFile.getName());
+		BukkitIRCdPlugin.log.warning("[BukkitIRCd] IO Exception writing file: " + motdFile.getName());
 	    }
 	}
     }

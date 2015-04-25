@@ -211,10 +211,7 @@ public final class Config {
 
 	public static long getIrcdTopicSetDate() {
 		try {
-			return BukkitIRCdPlugin.dateFormat.parse(
-					config.getString("standalone.channel-topic-set-date",
-							BukkitIRCdPlugin.dateFormat.format(System
-									.currentTimeMillis() / 1000L))).getTime();
+			return BukkitIRCdPlugin.dateFormat.parse(config.getString("standalone.channel-topic-set-date", BukkitIRCdPlugin.dateFormat.format(System.currentTimeMillis() / 1000L))).getTime();
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -240,19 +237,16 @@ public final class Config {
 		return config.getBoolean("convert-color-codes", ircdConvertColorCodes);
 	}
 
-	public static void setIrcdConvertColorCodes(
-			final boolean ircdConvertColorCodes) {
+	public static void setIrcdConvertColorCodes(final boolean ircdConvertColorCodes) {
 		config.set("convert-color-codes", ircdConvertColorCodes);
 	}
 
 	public static boolean isIrcdHandleAmpersandColors() {
 		final boolean ircdHandleAmpersandColors = true;
-		return config.getBoolean("handle-ampersand-colors",
-				ircdHandleAmpersandColors);
+		return config.getBoolean("handle-ampersand-colors", ircdHandleAmpersandColors);
 	}
 
-	public static void setIrcdHandleAmpersandColors(
-			final boolean ircdHandleAmpersandColors) {
+	public static void setIrcdHandleAmpersandColors(final boolean ircdHandleAmpersandColors) {
 		config.set("handle-ampersand-colors", ircdHandleAmpersandColors);
 	}
 
@@ -333,23 +327,19 @@ public final class Config {
 
 	public static boolean isIrcdColorDeathMessagesEnabled() {
 		final boolean ircdColorDeathMessagesEnabled = false;
-		return config.getBoolean("color-death-messages",
-				ircdColorDeathMessagesEnabled);
+		return config.getBoolean("color-death-messages", ircdColorDeathMessagesEnabled);
 	}
 
-	public static void setIrcdColorDeathMessagesEnabled(
-			final boolean ircdColorDeathMessagesEnabled) {
+	public static void setIrcdColorDeathMessagesEnabled(final boolean ircdColorDeathMessagesEnabled) {
 		config.set("color-death-messages", ircdColorDeathMessagesEnabled);
 	}
 
 	public static boolean isIrcdColorSayMessageEnabled() {
 		final boolean ircdColorSayMessageEnabled = false;
-		return config.getBoolean("color-say-messages",
-				ircdColorSayMessageEnabled);
+		return config.getBoolean("color-say-messages", ircdColorSayMessageEnabled);
 	}
 
-	public static void setIrcdColorSayMessageEnabled(
-			final boolean ircdColorSayMessageEnabled) {
+	public static void setIrcdColorSayMessageEnabled(final boolean ircdColorSayMessageEnabled) {
 		config.set("color-say-messages", ircdColorSayMessageEnabled);
 	}
 
@@ -359,8 +349,7 @@ public final class Config {
 				ircdBroadCastDeathMessages);
 	}
 
-	public static void setIrcdBroadCastDeathMessages(
-			final boolean ircdBroadCastDeathMessages) {
+	public static void setIrcdBroadCastDeathMessages(final boolean ircdBroadCastDeathMessages) {
 		config.set("broadcast-death-messages", ircdBroadCastDeathMessages);
 	}
 
@@ -378,8 +367,7 @@ public final class Config {
 				ircdIngameSuffixStripEnabled);
 	}
 
-	public static void setIrcdIngameSuffixStripEnabled(
-			final boolean ircdIngameSuffixStripEnabled) {
+	public static void setIrcdIngameSuffixStripEnabled(final boolean ircdIngameSuffixStripEnabled) {
 		config.set("strip-ingame-suffix", ircdIngameSuffixStripEnabled);
 	}
 
@@ -430,8 +418,7 @@ public final class Config {
 
 	public static String getLinkConnectPassword() {
 		final String linkConnectPassword = "test";
-		return config.getString("inspircd.connect-password",
-				linkConnectPassword);
+		return config.getString("inspircd.connect-password", linkConnectPassword);
 	}
 
 	public static void setLinkConnectPassword(final String linkConnectPassword) {
@@ -440,8 +427,7 @@ public final class Config {
 
 	public static String getLinkReceivePassword() {
 		final String linkReceivePassword = "test";
-		return config.getString("inspircd.receive-password",
-				linkReceivePassword);
+		return config.getString("inspircd.receive-password", linkReceivePassword);
 	}
 
 	public static void setLinkReceivePassword(final String linkReceivePassword) {
@@ -476,8 +462,7 @@ public final class Config {
 	}
 
 	public static int getLinkServerID() {
-		return config.getInt("inspircd.server-id",
-				new Random().nextInt(900) + 100);
+		return config.getInt("inspircd.server-id", new Random().nextInt(900) + 100);
 	}
 
 	public static void setLinkServerID(final int linkServerID) {

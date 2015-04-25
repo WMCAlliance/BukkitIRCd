@@ -6,6 +6,7 @@ import com.Jdbye.BukkitIRCd.IRCUserManagement;
 import com.Jdbye.BukkitIRCd.IRCd;
 import com.Jdbye.BukkitIRCd.Configuration.Config;
 import com.Jdbye.BukkitIRCd.Utilities.ChatUtils;
+import com.Jdbye.BukkitIRCd.Utilities.MessageFormatter;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -54,17 +55,11 @@ public class BanCommand implements CommandExecutor {
 								player.getName() +
 								Config.getIrcdIngameSuffix() + "!" + player.getName() + "@" + player.getAddress().getAddress().getHostName())) {
 							if (IRCd.msgIRCBan.length() > 0) {
-								thePlugin.getServer().broadcastMessage(IRCd.msgIRCBan
-										.replace("{BannedUser}", ban)
-										.replace("{BannedBy}",player.getName()));
-								
+								thePlugin.getServer().broadcastMessage(MessageFormatter.banMsg(IRCd.msgIRCBan, ban, player.getName()));	
 							}
 							if ((BukkitIRCdPlugin.dynmap != null) &&
 									(IRCd.msgIRCBanDynmap.length() > 0)) {
-								BukkitIRCdPlugin.dynmap
-								.sendBroadcastToWeb("IRC",IRCd.msgIRCBanDynmap
-										.replace("{BannedUser}", ban)
-										.replace("{BannedBy}", player.getName()));
+								BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", MessageFormatter.banMsg(IRCd.msgIRCBanDynmap, ban, player.getName()));
 							}
 							player.sendMessage(ChatColor.RED + "User banned.");
 						} else {
@@ -73,16 +68,11 @@ public class BanCommand implements CommandExecutor {
 					} else if (BukkitIRCdPlugin.countStr(ban, ".") == 3) { // It's an IP
 						if (IRCUserManagement.banIRCUser("*!*@" + ban, player.getName() + "!" + player.getName() + "@" + player.getAddress().getAddress().getHostName())) {
 							if (IRCd.msgIRCBan.length() > 0) {
-								thePlugin.getServer().broadcastMessage(IRCd.msgIRCBan
-										.replace("{BannedUser}", ban)
-										.replace("{BannedBy}", player.getName()));
+								thePlugin.getServer().broadcastMessage(MessageFormatter.banMsg(IRCd.msgIRCBan, ban, player.getName()));
 							}
 							if ((BukkitIRCdPlugin.dynmap != null) &&
 									(IRCd.msgIRCBanDynmap.length() > 0)) {
-								BukkitIRCdPlugin.dynmap
-								.sendBroadcastToWeb("IRC",IRCd.msgIRCBanDynmap
-										.replace("{BannedUser}", ban)
-										.replace("{BannedBy}", player.getName()));
+								BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", MessageFormatter.banMsg(IRCd.msgIRCBanDynmap, ban, player.getName()));
 							}
 							player.sendMessage(ChatColor.RED + "IP banned.");
 						} else {
@@ -136,14 +126,11 @@ public class BanCommand implements CommandExecutor {
 							ban,
 							Config.getIrcdServerName() + "!" + Config.getIrcdServerName() + "@" +  Config.getIrcdServerHostName())) {
 						if (IRCd.msgIRCBan.length() > 0) {
-							thePlugin.getServer().broadcastMessage(IRCd.msgIRCBan.replace("{BannedUser}", ban).replace("{BannedBy}", "console"));
+							thePlugin.getServer().broadcastMessage(MessageFormatter.banMsg(IRCd.msgIRCBan, ban, "console"));
 						}
 						if ((BukkitIRCdPlugin.dynmap != null) &&
 								(IRCd.msgIRCBanDynmap.length() > 0)) {
-							BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC",
-									IRCd.msgIRCBanDynmap
-									.replace("{BannedUser}", ban)
-									.replace("{BannedBy}", "console"));
+							BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC",MessageFormatter.banMsg(IRCd.msgIRCBanDynmap, ban, "console"));
 						}
 						sender.sendMessage(ChatColor.RED + "User banned.");
 					} else {
@@ -152,19 +139,14 @@ public class BanCommand implements CommandExecutor {
 				} else if (BukkitIRCdPlugin.countStr(ban, ".") == 3) { // It's an IP
 					if (IRCUserManagement.banIRCUser("*!*@" + ban,
 							Config.getIrcdServerName() + "!" +
-							Config.getIrcdServerName() + "@" +
-							Config.getIrcdServerHostName())) {
+									Config.getIrcdServerName() + "@" +
+									Config.getIrcdServerHostName())) {
 						if (IRCd.msgIRCBan.length() > 0) {
-							thePlugin.getServer().broadcastMessage(IRCd.msgIRCBan
-									.replace("{BannedUser}", ban)
-									.replace("{BannedBy}", "console"));
+							thePlugin.getServer().broadcastMessage(MessageFormatter.banMsg(IRCd.msgIRCBan, ban, "console"));
 						}
 						if ((BukkitIRCdPlugin.dynmap != null) &&
 								(IRCd.msgIRCBanDynmap.length() > 0)) {
-							BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC",
-									IRCd.msgIRCBanDynmap
-									.replace("{BannedUser}", ban)
-									.replace("{BannedBy}", "console"));
+							BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC",MessageFormatter.banMsg(IRCd.msgIRCBanDynmap, ban, "console"));
 						}
 						sender.sendMessage(ChatColor.RED + "IP banned.");
 					} else {
@@ -172,10 +154,7 @@ public class BanCommand implements CommandExecutor {
 					}
 				} else {
 					if (ircuser != null) {
-						if (IRCUserManagement.kickBanIRCUser(
-								ircuser,
-								"server",
-								Config.getIrcdServerName() + "!" + Config.getIrcdServerName() + "@" + Config.getIrcdServerHostName(), reason, true, banType)) {
+						if (IRCUserManagement.kickBanIRCUser(ircuser, "server", Config.getIrcdServerName() + "!" + Config.getIrcdServerName() + "@" + Config.getIrcdServerHostName(), reason, true, banType)) {
 							sender.sendMessage(ChatColor.RED + "User banned.");
 						} else {
 							sender.sendMessage(ChatColor.RED + "User is already banned.");

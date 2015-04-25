@@ -19,89 +19,86 @@ import org.bukkit.entity.Player;
 
 public class ReplyCommand implements CommandExecutor {
 
-    private final BukkitIRCdPlugin thePlugin;
+	private final BukkitIRCdPlugin thePlugin;
 
-    public ReplyCommand(BukkitIRCdPlugin plugin) {
-	this.thePlugin = plugin;
-    }
-
-    @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label,
-	    String[] args) {
-
-	if (args.length < 1) {
-	    return false; // Print usage message
+	public ReplyCommand(BukkitIRCdPlugin plugin) {
+		this.thePlugin = plugin;
 	}
 
-	final Player player = sender instanceof Player ? (Player) sender : null;
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String label,
+			String[] args) {
 
-	// Determine sender name
-	final String senderName;
-	if (player == null) {
-	    senderName = "@CONSOLE@";
-	} else {
-	    senderName = player.getName();
-	}
+		if (args.length < 1) {
+			return false; // Print usage message
+		}
 
-	// Determine target name
-	final String lastReceivedFrom = thePlugin.lastReceived.get(senderName);
+		final Player player = sender instanceof Player ? (Player) sender : null;
 
-	// Verify target
-	if (lastReceivedFrom == null) {
-	    sender.sendMessage(ChatColor.RED +
-		    "There are no messages to reply to!");
-	    return true;
-	}
-
-	// Lookup target's user object
-	final IRCUser ircuser = IRCUserManagement.getIRCUser(lastReceivedFrom);
-	if (ircuser == null) {
-	    sender.sendMessage(ChatColor.RED + "Player offline");
-	    return true;
-	}
-
-	// Attempt to send IRC message
-	switch (IRCd.mode) {
-	    case STANDALONE:
+		// Determine sender name
+		final String senderName;
 		if (player == null) {
-		    IRCFunctionality.writeTo(ircuser.nick, ":" + Config.getIrcdServerName() + "!" + Config.getIrcdServerName() + "@" + Config.getIrcdServerHostName() + " PRIVMSG " + ircuser.nick + " :" + ChatUtils.convertColors(ChatUtils.join(args, " ", 0), false));
+			senderName = "@CONSOLE@";
 		} else {
-		    IRCFunctionality.writeTo(ircuser.nick, ":" + player.getName() + Config.getIrcdIngameSuffix() + "!" + player.getName() + "@" + player.getAddress().getAddress().getHostName() + " PRIVMSG " + ircuser.nick + " :" + ChatUtils.convertColors(ChatUtils.join(args, " ", 0), false));
-		}
-		break;
-	    case INSPIRCD:
-		if (!IRCd.isLinkcompleted()) {
-		    sender.sendMessage(ChatColor.RED +
-			    "Failed to send message, not currently linked to IRC server.");
-		    return true;
+			senderName = player.getName();
 		}
 
-		final String UID = IRCUserManagement.getUIDFromIRCUser(ircuser);
-		if (UID == null) {
-		    sender.sendMessage(ChatColor.RED + "Failed to reply, UID not found");
-		    return true;
-		}
+		// Determine target name
+		final String lastReceivedFrom = thePlugin.lastReceived.get(senderName);
 
-		if (player == null) {
-		    IRCFunctionality.privmsg(IRCd.serverUID, UID,
-			    ChatUtils.convertColors(ChatUtils.join(args, " ", 0), false));
-		} else {
-		    final BukkitPlayer bp = BukkitUserManagement.getUserObject(player.getName());
-		    if (bp == null) {
-			sender.sendMessage(ChatColor.RED + "Internal error, unable to reply");
+		// Verify target
+		if (lastReceivedFrom == null) {
+			sender.sendMessage(ChatColor.RED + "There are no messages to reply to!");
 			return true;
-		    }
-
-		    IRCFunctionality.privmsg(bp.getUID(), UID,
-			    ChatUtils.convertColors(ChatUtils.join(args, " ", 0), false));
 		}
 
-		break;
-	}
+		// Lookup target's user object
+		final IRCUser ircuser = IRCUserManagement.getIRCUser(lastReceivedFrom);
+		if (ircuser == null) {
+			sender.sendMessage(ChatColor.RED + "Player offline");
+			return true;
+		}
 
-	// Report command to sender's chat
-	sender.sendMessage(MessageFormatter.sendMsg(IRCd.msgSendQueryFromIngame, IRCFunctionality.getGroupPrefix(ircuser.getTextModes()), IRCFunctionality.getGroupSuffix(ircuser.getTextModes()), ircuser.nick, ChatColor.translateAlternateColorCodes('&', ChatUtils.join(args, " ", 0))));
+		// Attempt to send IRC message
+		switch (IRCd.mode) {
+		case STANDALONE:
+			if (player == null) {
+				IRCFunctionality.writeTo(ircuser.nick, ":" + Config.getIrcdServerName() + "!" + Config.getIrcdServerName() + "@" + Config.getIrcdServerHostName() + " PRIVMSG " + ircuser.nick + " :" + ChatUtils.convertColors(ChatUtils.join(args, " ", 0), false));
+			} else {
+				IRCFunctionality.writeTo(ircuser.nick, ":" + player.getName() + Config.getIrcdIngameSuffix() + "!" + player.getName() + "@" + player.getAddress().getAddress().getHostName() + " PRIVMSG " + ircuser.nick + " :" + ChatUtils.convertColors(ChatUtils.join(args, " ", 0), false));
+			}
+			break;
+		case INSPIRCD:
+			if (!IRCd.isLinkcompleted()) {
+				sender.sendMessage(ChatColor.RED + "Failed to send message, not currently linked to IRC server.");
+				return true;
+			}
+
+			final String UID = IRCUserManagement.getUIDFromIRCUser(ircuser);
+			if (UID == null) {
+				sender.sendMessage(ChatColor.RED + "Failed to reply, UID not found");
+				return true;
+			}
+
+			if (player == null) {
+				IRCFunctionality.privmsg(IRCd.serverUID, UID,
+						ChatUtils.convertColors(ChatUtils.join(args, " ", 0), false));
+			} else {
+				final BukkitPlayer bp = BukkitUserManagement.getUserObject(player.getName());
+				if (bp == null) {
+					sender.sendMessage(ChatColor.RED + "Internal error, unable to reply");
+					return true;
+				}
+
+				IRCFunctionality.privmsg(bp.getUID(), UID, ChatUtils.convertColors(ChatUtils.join(args, " ", 0), false));
+			}
+
+			break;
+		}
+
+		// Report command to sender's chat
+		sender.sendMessage(MessageFormatter.sendMsg(IRCd.msgSendQueryFromIngame, IRCFunctionality.getGroupPrefix(ircuser.getTextModes()), IRCFunctionality.getGroupSuffix(ircuser.getTextModes()), ircuser.nick, ChatColor.translateAlternateColorCodes('&', ChatUtils.join(args, " ", 0))));
 		return true;
-    }
+	}
 
 }

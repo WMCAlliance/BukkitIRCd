@@ -13,45 +13,44 @@ import com.Jdbye.BukkitIRCd.Utilities.ChatUtils;
 
 public class KickCommand implements CommandExecutor {
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label,
-	    String[] args) {
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String label,
+			String[] args) {
 
-	// Check arguments
-	if (args.length == 0) {
-	    return false; // prints usage
+		// Check arguments
+		if (args.length == 0) {
+			return false; // prints usage
+		}
+		final String targetNick = args[0];
+		final String reason = args.length > 1 ? ChatUtils.join(args, " ", 1) : null;
+
+		// Compute target
+		final IRCUser targetIrcUser = IRCUserManagement.getIRCUser(targetNick);
+		if (targetIrcUser == null) {
+			sender.sendMessage(ChatColor.RED + "That user is not online.");
+			return true;
+		}
+
+		// Compute kicker
+		final String kickerNick;
+		final String kickerHost;
+		if (sender instanceof Player) {
+			final Player player = (Player) sender;
+			kickerNick = player.getName();
+			kickerHost = player.getAddress().getAddress().getHostName();
+		} else {
+			kickerNick = Config.getIrcdServerName();
+			kickerHost = Config.getIrcdServerHostName();
+		}
+
+		// Execute kick
+		if (IRCUserManagement.kickIRCUser(targetIrcUser, kickerNick, kickerNick, kickerHost, reason, true)) {
+			sender.sendMessage(ChatColor.RED + "Player kicked.");
+		} else {
+			sender.sendMessage(ChatColor.RED + "Failed to kick player.");
+		}
+
+		return true;
 	}
-	final String targetNick = args[0];
-	final String reason = args.length > 1 ? ChatUtils.join(args, " ", 1) : null;
-
-	// Compute target
-	final IRCUser targetIrcUser = IRCUserManagement.getIRCUser(targetNick);
-	if (targetIrcUser == null) {
-	    sender.sendMessage(ChatColor.RED + "That user is not online.");
-	    return true;
-	}
-
-	// Compute kicker
-	final String kickerNick;
-	final String kickerHost;
-	if (sender instanceof Player) {
-	    final Player player = (Player) sender;
-	    kickerNick = player.getName();
-	    kickerHost = player.getAddress().getAddress().getHostName();
-	} else {
-	    kickerNick = Config.getIrcdServerName();
-	    kickerHost = Config.getIrcdServerHostName();
-	}
-
-	// Execute kick
-	if (IRCUserManagement.kickIRCUser(targetIrcUser, kickerNick, kickerNick, kickerHost,
-		reason, true)) {
-	    sender.sendMessage(ChatColor.RED + "Player kicked.");
-	} else {
-	    sender.sendMessage(ChatColor.RED + "Failed to kick player.");
-	}
-
-	return true;
-    }
 
 }

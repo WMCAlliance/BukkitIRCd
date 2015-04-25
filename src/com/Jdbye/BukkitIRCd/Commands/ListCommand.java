@@ -10,20 +10,18 @@ import com.Jdbye.BukkitIRCd.Utilities.ChatUtils;
 
 public class ListCommand implements CommandExecutor {
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label,
-	    String[] args) {
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String label,
+			String[] args) {
 
-	final String players[] = IRCUserManagement.getIRCNicks();
+		final String players[] = IRCUserManagement.getIRCNicks();
 
-	sender.sendMessage(ChatColor.BLUE + "There are " + ChatColor.RED +
-		players.length + ChatColor.BLUE + " users on IRC.");
-	if (players.length > 0) {
-	    sender.sendMessage(ChatColor.GRAY +
-		    ChatUtils.join(players, ChatColor.WHITE + ", " +
-			    ChatColor.GRAY, 0));
+		sender.sendMessage(ChatColor.BLUE + "There are " + ChatColor.RED + players.length + ChatColor.BLUE + " users on IRC.");
+		if (players.length > 0) {
+			sender.sendMessage(ChatColor.GRAY +
+					ChatUtils.join(players, ChatColor.WHITE + ", " + ChatColor.GRAY, 0));
+		}
+
+		return true;
 	}
-
-	return true;
-    }
 }
