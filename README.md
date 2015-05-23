@@ -1,4 +1,4 @@
-![BukkitIRCd](https://raw.github.com/WMCAlliance/BukkitIRCd/master/bdev/bukkitircd-logo.png "BukkitIRCd")
+![BukkitIRCd](https://raw.githubusercontent.com/WMCAlliance/BukkitIRCd/development/bdev/bukkitircd-logo.png "BukkitIRCd")
 =============
 
 ### Description 
