@@ -20,6 +20,10 @@ commands:
   irc:
     description: 'BukkitIRCd command(s).'
     usage: /irc
+  ircinfo:
+    description: 'Returns current info on BukkitIRCd setup'
+    usage: /ircinfo  
+    permission: bukkitircd.info
   ircban:
     aliases:
       - iban
@@ -99,6 +103,7 @@ permissions:
       bukkitircd.topic: true
       bukkitircd.unban: true
       bukkitircd.whois: true
+      bukkitircd.info: true
     description: 'Allows you to use every /irc command'
   bukkitircd.ban:
     default: op
@@ -156,3 +161,6 @@ permissions:
   bukkitircd.whois:
     default: op
     description: 'Allows you to use the /ircwhois command'
+  bukkitircd.info:
+    default: op
+    description: 'Allows you to use the /ircinfo command'    

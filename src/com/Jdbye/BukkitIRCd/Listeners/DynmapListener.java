@@ -21,7 +21,7 @@ public class DynmapListener implements Listener {
     public void onDynmapWebChatEvent(DynmapWebChatEvent webevt) {
 	try {
 	    if (BukkitIRCdPlugin.dynmap == null) {
-		return;
+	    	return;
 	    }
 
 	    switch (IRCd.mode) {

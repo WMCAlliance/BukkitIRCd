@@ -13,7 +13,7 @@ public class BukkitIRCdCommand implements CommandExecutor {
 	@Override
     public boolean onCommand(CommandSender sender, Command cmd, String label,
     	    String[] args) {
-		sender.sendMessage(ChatColor.RED + "BukkitIRCd " + ChatColor.RESET + "v" + BukkitIRCdPlugin.thePlugin.getDescription().getVersion());
+		sender.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "BukkitIRCd " + ChatColor.RESET + "v" + BukkitIRCdPlugin.thePlugin.getDescription().getVersion());
 		return false;
 	}
 

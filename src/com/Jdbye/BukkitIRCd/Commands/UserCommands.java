@@ -1,5 +1,6 @@
 package com.Jdbye.BukkitIRCd.Commands;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -7,7 +8,6 @@ import org.bukkit.command.CommandSender;
 public class UserCommands implements CommandExecutor {
 
 	final String[] userCommands = new String[] {
-			"All BukkitIRCd Commands:",
 			"/bircd - Shows the BukkitIRCd version",
 			"/irclist - Lists the online users on IRC.",
 			"/irckick - Kick a user from IRC.",
@@ -24,6 +24,7 @@ public class UserCommands implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
+		sender.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "BukkitIRCd Commands");
 		sender.sendMessage(userCommands);
 		return true;
 	}

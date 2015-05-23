@@ -16,19 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.dynmap.DynmapAPI;
 
-import com.Jdbye.BukkitIRCd.Commands.BukkitIRCdCommand;
-import com.Jdbye.BukkitIRCd.Commands.BanCommand;
-import com.Jdbye.BukkitIRCd.Commands.KickCommand;
-import com.Jdbye.BukkitIRCd.Commands.LinkCommand;
-import com.Jdbye.BukkitIRCd.Commands.ListCommand;
-import com.Jdbye.BukkitIRCd.Commands.MsgCommand;
-import com.Jdbye.BukkitIRCd.Commands.ReloadCommand;
-import com.Jdbye.BukkitIRCd.Commands.ReplyCommand;
-import com.Jdbye.BukkitIRCd.Commands.TopicCommand;
-import com.Jdbye.BukkitIRCd.Commands.UnbanCommand;
-import com.Jdbye.BukkitIRCd.Commands.UserCommands;
-import com.Jdbye.BukkitIRCd.Commands.WhoisCommand;
-import com.Jdbye.BukkitIRCd.Commands.RawsendCommand;
+import com.Jdbye.BukkitIRCd.Commands.*;
 import com.Jdbye.BukkitIRCd.Configuration.Bans;
 import com.Jdbye.BukkitIRCd.Configuration.Config;
 import com.Jdbye.BukkitIRCd.Configuration.MOTD;
@@ -82,6 +70,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		pluginInit();
 
 		getCommand("irc").setExecutor(new UserCommands());
+		getCommand("ircinfo").setExecutor(new IRCInfoCommand());
 		getCommand("ircban").setExecutor(new BanCommand(this));
 		getCommand("irckick").setExecutor(new KickCommand());
 		getCommand("irclist").setExecutor(new ListCommand());
