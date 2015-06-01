@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -35,17 +34,18 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	static public CriticalSection csLastReceived = new CriticalSection();
 	private final PlayerListener playerListener = new PlayerListener(this);
 	private final PlayerAchievementListener playerAchievementListener = new PlayerAchievementListener(this);
-	private DynmapListener dynmapListener = null;
 	public static BukkitIRCdPlugin thePlugin = null;
 	public static SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
 	public Map<String, String> lastReceived = new HashMap<String, String>();
 	public static String ircdVersion;
-	public boolean dynmapEventRegistered = false;
 	public static final Logger log = Logger.getLogger("Minecraft");
 	public static DynmapAPI dynmap = null;
 	static IRCd ircd = null;
 	private Thread thr = null;
-
+	
+	final String PL_Dynmap = "Dynmap";
+	List<String> pluginList = new ArrayList<>();
+	
 	public BukkitIRCdPlugin() {
 		thePlugin = this;
 	}
@@ -68,7 +68,8 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		ircdVersion = pdfFile.getName() + " " + pdfFile.getVersion() + " by " + pdfFile.getAuthors().get(0);
 		setupMetrics();
 		pluginInit();
-
+		detectPlugins();
+		
 		getCommand("irc").setExecutor(new UserCommands());
 		getCommand("ircinfo").setExecutor(new IRCInfoCommand());
 		getCommand("ircban").setExecutor(new BanCommand(this));
@@ -110,7 +111,6 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 			thr = null;
 		}
 
-		dynmapEventRegistered = false;
 		// File configFile = new File(getDataFolder(), "config.yml");
 		Config.saveConfiguration();
 
@@ -148,8 +148,6 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 		MOTD.enableMOTD();
 		MOTD.loadMOTD();
-
-		setupDynmap();
 
 		ircd = new IRCd();
 
@@ -200,31 +198,34 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 	/**
      Check for Dynmap, and if it's installed, register events and hooks.
 	 */
-	private void setupDynmap() {
-		if (BukkitIRCdPlugin.dynmap == null) {
-			final PluginManager pm = getServer().getPluginManager();
-			final Plugin plugin = pm.getPlugin("dynmap");
+	
+    public boolean isPluginEnabled(String pluginName) {
+        return getServer().getPluginManager().getPlugin(pluginName) != null;
+    }
 
-			if (plugin != null) {
-				if (dynmapListener == null) {
-					dynmapListener = new DynmapListener();
-				}
+    private String pluginFormat(String name, boolean enabled) {
+        String message;
 
-				if (!dynmapEventRegistered) {
-					pm.registerEvents(dynmapListener, this);
-				}
-				log.info("[BukkitIRCd] Hooked into Dynmap.");
-			}
-		}
-	}
+        if (enabled) {
+            String version = getServer().getPluginManager().getPlugin(name).getDescription().getVersion();
+            log.info("Enabling " + name + " support.");
+            message ="["+ "Y" + "]";
+            message = message + " ["+ name + "] [" + "v" + version + "]";
+        } else {
+        	log.info("Enabling " + name + " support.");
+            message = "[" + "N" + "]";
+            message = message + " [" + name + "]";
+        }
 
-	/**
-     Unloads Dynmap API links
-	 */
-	public void unloadDynmap() {
-		if (BukkitIRCdPlugin.dynmap != null) {
-			BukkitIRCdPlugin.dynmap = null;
-			log.info("[BukkitIRCd] Dynmap plugin unloaded.");
+        return message;
+    }    
+	
+	private void detectPlugins() {
+		if (isPluginEnabled(PL_Dynmap)) {
+			pluginList.add(pluginFormat(PL_Dynmap, true));
+			getServer().getPluginManager().registerEvents(new DynmapListener(), this);
+		} else {
+			pluginList.add(pluginFormat(PL_Dynmap, false));
 		}
 	}
 
