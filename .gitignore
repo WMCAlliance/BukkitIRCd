@@ -11,4 +11,5 @@
 target/
 .settings/
 bin/
+.idea/
 Thumbs.db
