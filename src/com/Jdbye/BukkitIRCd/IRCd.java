@@ -92,6 +92,7 @@ public class IRCd implements Runnable {
 	public static String msgIRCNoticeDynmap = "-{User}- {Message}";
 	public static String msgDynmapMessage = "[Dynmap] {User}: {Message}";
 	public static String msgPlayerList = "^BOnline Players ({Count}):^B {Users}";
+	public static String msgAchievement = "{User} has just earned the achievement [{message}]";
 
 	public static String userDisconnectMsg = "Left the server :(";
 	public static String userModeMsg = "Left the server :(";

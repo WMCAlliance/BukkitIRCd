@@ -35,9 +35,7 @@ public class DynmapListener implements Listener {
 		case INSPIRCD:
 		    if (IRCd.isLinkcompleted() &&
 			    IRCd.msgDynmapMessage.length() > 0) {
-			final String message = IRCd.msgDynmapMessage.replace(
-				"{User}", webevt.getName()).replace("{Message}",
-					webevt.getMessage());
+			final String message = IRCd.msgDynmapMessage.replace("{User}", webevt.getName()).replace("{Message}", webevt.getMessage());
 
 			IRCFunctionality.privmsg(IRCd.serverUID, Config.getIrcdChannel(),
 				message);
