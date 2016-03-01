@@ -34,7 +34,7 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 
 	static public CriticalSection csLastReceived = new CriticalSection();
 	private final PlayerListener playerListener = new PlayerListener(this);
-	private final PlayerAchievementListener playerAchievementListener = new PlayerAchievementListener(this);
+	private final PlayerAchievementListener playerAchievementListener = new PlayerAchievementListener();
 	private DynmapListener dynmapListener = null;
 	public static BukkitIRCdPlugin thePlugin = null;
 	public static SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
@@ -187,9 +187,10 @@ public class BukkitIRCdPlugin extends JavaPlugin {
 		IRCd.bukkitPlayers.clear();
 
 		// Set players to different IRC modes based on permission
-		for (final Player player : getServer().getOnlinePlayers()) {
-			final String mode = computePlayerModes(player);
-			BukkitUserManagement.addBukkitUser(mode, player);
+		for (final Object player : getServer().getOnlinePlayers()) {
+
+			final String mode = computePlayerModes((Player) player);
+			BukkitUserManagement.addBukkitUser(mode,(Player) player);
 		}
 
 		thr = new Thread(ircd);
