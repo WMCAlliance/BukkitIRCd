@@ -100,7 +100,7 @@ public class IRCd implements Runnable {
 	boolean debug = Config.isDebugModeEnabled();
 
 	// server 'names' to not send messages into the channel from
-	public static ArrayList<String> globalNameIgnoreList = new ArrayList<String>();
+	public static ArrayList<String> globalNameIgnoreList = new ArrayList<>();
 
 	public static final long serverStartTime = System.currentTimeMillis() / 1000L;
 	public static long channelTS = serverStartTime,
@@ -115,7 +115,6 @@ public class IRCd implements Runnable {
 	public static String serverUID;
 	public static boolean linkcompleted = false;
 	public static boolean burstSent = false, capabSent = false;
-	private static boolean lastconnected = false;
 	public static boolean isIncoming = false;
 	// private static boolean broadcastDeathMessages = true;
 	// private static boolean colorDeathMessages = false;
@@ -158,7 +157,7 @@ public class IRCd implements Runnable {
 	static public CriticalSection csBukkitPlayers = new CriticalSection();
 	static public CriticalSection csIrcUsers = new CriticalSection();
 	static public CriticalSection csIrcBans = new CriticalSection();
-	static public CriticalSection csServer = new CriticalSection();
+	static public final CriticalSection csServer = new CriticalSection();
 
 	public static BufferedReader in;
 	public static PrintStream out;
@@ -249,7 +248,7 @@ public class IRCd implements Runnable {
 					String line = null;
 					serverUID = ugen.generateUID(Config.getLinkServerID());
 					pre = ":" + Config.getLinkServerID() + " ";
-					lastconnected = false;
+					boolean lastconnected = false;
 					isIncoming = false;
 					remoteSID = null;
 
@@ -710,9 +709,7 @@ public class IRCd implements Runnable {
 					hub = split[0];
 					IRCServer is = servers.get(hub);
 					if (is == null) {
-						Iterator<Entry<String, IRCServer>> iter = servers.entrySet().iterator();
-						while (iter.hasNext()) {
-							Map.Entry<String, IRCServer> entry = iter.next();
+						for (Entry<String, IRCServer> entry : servers.entrySet()) {
 							entry.getKey();
 							IRCServer curServer = entry.getValue();
 							if (curServer.host.equalsIgnoreCase(split[0])) {
@@ -936,67 +933,71 @@ public class IRCd implements Runnable {
 						user = user.substring(1);
 					}
 					String mode = split[4].charAt(i) + "";
-					if (mode.equals("+")) {
-						add = true;
-					} else if (mode.equals("-")) {
-						add = false;
-					} else {
-						if ((ircusertarget = IRCUserManagement.uid2ircuser.get(user)) != null) {
-							if (split[2].equalsIgnoreCase(Config.getIrcdChannel())) {
-								String textModes = ircusertarget.getTextModes();
-								if (add) {
-									System.out.println("Adding mode " + mode + " for " + ircusertarget.nick);
-									if (!textModes.contains(mode)) {
-										ircusertarget.setModes(textModes + mode);
-									}
-								} else {
-									System.out.println("Removing mode " + mode + " for " + ircusertarget.nick);
-									if (textModes.contains(mode)) {
-										ircusertarget.setModes(textModes.replace(mode, ""));
-									}
-								}
-							} else if (split[2].equalsIgnoreCase(Config.getIrcdConsoleChannel())) {
-								String consoleTextModes = ircusertarget.getConsoleTextModes();
-								if (add) {
-									System.out.println("Adding console mode " + mode + " for " + ircusertarget.nick);
-									if (!consoleTextModes.contains(mode)) {
-										ircusertarget.setConsoleModes(consoleTextModes + mode);
-									}
-								} else {
-									System.out.println("Removing console mode " +
-											mode + " for " +
-											ircusertarget.nick);
-									if (consoleTextModes.contains(mode)) {
-										ircusertarget
-										.setConsoleModes(consoleTextModes
-												.replace(mode, ""));
-									}
-								}
-							}
-						} else if (ChatUtils.wildCardMatch(user, "*!*@*")) {
-							if (mode.equals("b")) {
-								if ((ircuser = IRCUserManagement.uid2ircuser.get(split[0])) != null) {
+					switch (mode) {
+						case "+":
+							add = true;
+							break;
+						case "-":
+							add = false;
+							break;
+						default:
+							if ((ircusertarget = IRCUserManagement.uid2ircuser.get(user)) != null) {
+								if (split[2].equalsIgnoreCase(Config.getIrcdChannel())) {
+									String textModes = ircusertarget.getTextModes();
 									if (add) {
-										if (msgIRCBan.length() > 0) {
-											ChatUtils.broadcastMessage(MessageFormatter.banMsg(msgIRCBan, user, ircuser.nick));
-										}
-										if ((BukkitIRCdPlugin.dynmap != null) &&
-												(msgIRCBanDynmap.length() > 0)) {
-											BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", MessageFormatter.banMsg(msgIRCBanDynmap, user, ircuser.nick));
+										System.out.println("Adding mode " + mode + " for " + ircusertarget.nick);
+										if (!textModes.contains(mode)) {
+											ircusertarget.setModes(textModes + mode);
 										}
 									} else {
-										if (msgIRCUnban.length() > 0) {
-											ChatUtils.broadcastMessage(MessageFormatter.banMsg(msgIRCUnban, user, ircuser.nick));
+										System.out.println("Removing mode " + mode + " for " + ircusertarget.nick);
+										if (textModes.contains(mode)) {
+											ircusertarget.setModes(textModes.replace(mode, ""));
 										}
-										if ((BukkitIRCdPlugin.dynmap != null) &&
-												(msgIRCUnbanDynmap.length() > 0)) {
-											BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", MessageFormatter.banMsg(msgIRCUnbanDynmap, user, ircuser.nick));
+									}
+								} else if (split[2].equalsIgnoreCase(Config.getIrcdConsoleChannel())) {
+									String consoleTextModes = ircusertarget.getConsoleTextModes();
+									if (add) {
+										System.out.println("Adding console mode " + mode + " for " + ircusertarget.nick);
+										if (!consoleTextModes.contains(mode)) {
+											ircusertarget.setConsoleModes(consoleTextModes + mode);
+										}
+									} else {
+										System.out.println("Removing console mode " +
+												mode + " for " +
+												ircusertarget.nick);
+										if (consoleTextModes.contains(mode)) {
+											ircusertarget
+													.setConsoleModes(consoleTextModes
+															.replace(mode, ""));
+										}
+									}
+								}
+							} else if (ChatUtils.wildCardMatch(user, "*!*@*")) {
+								if (mode.equals("b")) {
+									if ((ircuser = IRCUserManagement.uid2ircuser.get(split[0])) != null) {
+										if (add) {
+											if (msgIRCBan.length() > 0) {
+												ChatUtils.broadcastMessage(MessageFormatter.banMsg(msgIRCBan, user, ircuser.nick));
+											}
+											if ((BukkitIRCdPlugin.dynmap != null) &&
+													(msgIRCBanDynmap.length() > 0)) {
+												BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", MessageFormatter.banMsg(msgIRCBanDynmap, user, ircuser.nick));
+											}
+										} else {
+											if (msgIRCUnban.length() > 0) {
+												ChatUtils.broadcastMessage(MessageFormatter.banMsg(msgIRCUnban, user, ircuser.nick));
+											}
+											if ((BukkitIRCdPlugin.dynmap != null) &&
+													(msgIRCUnbanDynmap.length() > 0)) {
+												BukkitIRCdPlugin.dynmap.sendBroadcastToWeb("IRC", MessageFormatter.banMsg(msgIRCUnbanDynmap, user, ircuser.nick));
+											}
 										}
 									}
 								}
 							}
-						}
-						modecount++;
+							modecount++;
+							break;
 					}
 				}
 			}
